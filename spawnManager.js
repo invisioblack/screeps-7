@@ -40,22 +40,22 @@ module.exports = function()
 			if (sHarvesterCount < 3)
 			{
 				console.log('Attempting to spawn harvester');
-				spawnManager.spawnUnit('harvester', spawn.name);
+				spawnManager.spawnUnit('harvester', spawn);
 			}
 			else if (sGuardCount < 5)
 			{
 				console.log('Attempting to spawn guard');
-				spawnManager.spawnUnit('guard', spawn.name);
+				spawnManager.spawnUnit('guard', spawn);
 			}
 			else if (sBuilderCount < 1)
 			{
 				console.log('Attempting to spawn builder');
-				spawnManager.spawnUnit('builder', spawn.name);
+				spawnManager.spawnUnit('builder', spawn);
 			}
 			else
 			{
 				console.log('Attempting to spawn guard');
-				spawnManager.spawnUnit('guard', spawn.name);	
+				spawnManager.spawnUnit('guard', spawn);	
 			}
 		}
 	}
