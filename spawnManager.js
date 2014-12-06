@@ -23,8 +23,9 @@ module.exports = function()
 		//spawn a harvester if we don't have 3
 		var workerCount = jobManager.countUnitWithMeans('harvest');
 		var guardCount = jobManager.countUnitWithMeans('attack');
+		var healerCount = jobManager.countUnitWithMeans('heal');
 
-		console.log('Total Unit Count - Worker: ' + workerCount + " Guard: " + guardCount);
+		console.log('Total Unit Count - Worker: ' + workerCount + " Guard: " + guardCount + " Healer: " + healerCount);
 
 		for (var x in Game.spawns)
 		{
@@ -33,7 +34,9 @@ module.exports = function()
 			
 			var sWorkerCount = jobManager.countUnitWithMeans('harvest', spawn.name);
 			var sGuardCount = jobManager.countUnitWithMeans('attack', spawn.name);
-			console.log(spawn.name + ' Unit Count - Worker: ' + sWorkerCount + " Guard: " + sGuardCount);
+			var sHealerCount = jobManager.countUnitWithMeans('heal', spawn.name);
+
+			console.log(spawn.name + ' Unit Count - Worker: ' + sWorkerCount + " Guard: " + sGuardCount + " Healer: " + sHealerCount);
 
 			if (sWorkerCount < 3)
 			{
@@ -45,7 +48,22 @@ module.exports = function()
 				console.log('Attempting to spawn guard');
 				spawnManager.spawnUnit('guard', spawn);	
 			}
+			else if (sHealerCount < 1)
+			{
+				console.log('Attempting to spawn healer');
+				spawnManager.spawnUnit('healer', spawn);
+			}
 			else if (sWorkerCount < 4)
+			{
+				console.log('Attempting to spawn worker');
+				spawnManager.spawnUnit('worker', spawn);
+			}
+			else if (sGuardCount < 8)
+			{
+				console.log('Attempting to spawn guard');
+				spawnManager.spawnUnit('guard', spawn);	
+			}
+			else if (sWorkerCount < 5)
 			{
 				console.log('Attempting to spawn worker');
 				spawnManager.spawnUnit('worker', spawn);

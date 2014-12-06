@@ -3,6 +3,7 @@ var _ = require('lodash');
 var jobAttackHostile = require('jobAttackHostile')();
 var jobBuild = require('jobBuild')();
 var jobHarvest = require('jobHarvest')();
+var jobHeal = require('jobHeal')();
 var means = require('means');
 
 module.exports = function()
@@ -28,6 +29,10 @@ module.exports = function()
 			{
 				jobBuild.work(creep);
 			}
+			else if (creep.memory.job == 'heal')
+			{
+				jobHeal.work(creep);
+			}
 
 		}	
 	}
@@ -37,22 +42,28 @@ module.exports = function()
 		for(var i in Game.creeps) 
 		{
     		var creep = Game.creeps[i];
-    		if (jobManager.creepHasMeans(creep, "harvest"))
+    		if (jobManager.creepHasMeans(creep, 'harvest'))
     		{
-    			creep.memory.job = "harvest";	
+    			creep.memory.job = 'harvest';	
     		}
     		
-    		if (jobManager.creepHasMeans(creep, "attack") && creep.room.find(Game.HOSTILE_CREEPS).length > 0)
+    		if (jobManager.creepHasMeans(creep, 'attack') && creep.room.find(Game.HOSTILE_CREEPS).length > 0)
     		{
-    			creep.memory.job = "guard";
+    			creep.memory.job = 'guard';
     		}
     		
-    		if (jobManager.creepHasMeans(creep, "build"))
+    		if (jobManager.creepHasMeans(creep, 'build'))
     		{
-    			if (jobManager.countUnitsWithJob('harvest', creep.memory.spawn) > 3 && creep.room.find(Game.CONSTRUCTION_SITES).length > 0)
+    			if (jobManager.countUnitsWithJob('harvest', creep.memory.spawn) > 4 && creep.room.find(Game.CONSTRUCTION_SITES).length > 0)
     			{
-    				creep.memory.job = "build";
+    				creep.memory.job = 'build';
     			}
+    		}
+
+    		//this should also filter that if there is somone hurt in room
+    		if (jobManager.creepHasMeans(creep, 'heal'))
+    		{
+    			creep.memory.job = 'heal';
     		}
 		}
 	}

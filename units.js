@@ -11,5 +11,11 @@ module.exports =
 		"memory": {
 			"name": "guard"
 		}
+	},
+	"healer": {
+		"parts": [Game.HEAL, Game.MOVE],
+		"memory": {
+			"name": "healer"
+		}	
 	}
 }
