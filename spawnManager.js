@@ -1,3 +1,4 @@
+var jobManager = require('jobManager')();
 var units = require('units');
 
 module.exports = function()
@@ -15,6 +16,25 @@ module.exports = function()
 	spawnManager.costs[Game.RANGED_ATTACK] = 150;
 	spawnManager.costs[Game.HEAL] = 200;
 	spawnManager.costs[Game.TOUGH] = 5;
+
+	//spawn
+	spawnManager.spawn = function ()
+	{
+		//spawn a harvester if we don't have 3
+		var harvesterCount = jobManager.countUnitWithMeans('harvest');
+		var guardCount = jobManager.countUnitWithMeans('attack');
+
+		console.log('Unit Count - Harvest: ' + harvesterCount + " Guard: " + guardCount);
+
+		if (harvesterCount < 3)
+		{
+			console.log('Attempting to spawn harvester');
+			spawnManager.spawnUnit('harvester');
+		} else {
+			console.log('Attempting to spawn guard');
+			spawnManager.spawnUnit('guard');
+		}
+	}
 
 	// returns cost for list of parts
 	spawnManager.getCostParts = function (parts) {
