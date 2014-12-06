@@ -1,10 +1,10 @@
 module.exports = function()
 {
 	//declare base object
-	var jobAttackHostile = function() {};
+	var jobAttack = function() {};
 	//-------------------------------------------------------------------------
 
-	jobAttackHostile.work = function (creep)
+	jobAttack.work = function (creep)
 	{
 		var targets = creep.room.find(Game.HOSTILE_CREEPS);
 		if (targets.length) {
@@ -14,5 +14,5 @@ module.exports = function()
 	}
 	//-------------------------------------------------------------------------
 	//return populated object
-	return jobAttackHostile;
+	return jobAttack;
 }

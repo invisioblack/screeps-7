@@ -1,6 +1,6 @@
 var _ = require('lodash');
 
-var jobAttackHostile = require('jobAttackHostile')();
+var jobAttack = require('jobAttack')();
 var jobBuild = require('jobBuild')();
 var jobHarvest = require('jobHarvest')();
 var jobHeal = require('jobHeal')();
@@ -23,7 +23,7 @@ module.exports = function()
 			}
 			else if (creep.memory.job == 'guard')
 			{
-				jobAttackHostile.work(creep);
+				jobAttack.work(creep);
 			}
 			else if (creep.memory.job == 'build')
 			{
@@ -54,7 +54,10 @@ module.exports = function()
     		
     		if (jobManager.creepHasMeans(creep, 'build'))
     		{
-    			if (jobManager.countUnitsWithJob('harvest', creep.memory.spawn) > 4 && creep.room.find(Game.CONSTRUCTION_SITES).length > 0)
+    			if (jobManager.countUnitsWithJob('harvest', creep.memory.spawn) > 3 
+    					&& creep.room.find(Game.CONSTRUCTION_SITES).length > 0 
+    					&& jobManager.countUnitWithMeans('attack', creep.memory.spawn) > 5
+    					&& Game.spawns[creep.memory.spawn].energy >= 50)
     			{
     				creep.memory.job = 'build';
     			}
