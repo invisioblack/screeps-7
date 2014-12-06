@@ -17,5 +17,11 @@ module.exports =
 		"memory": {
 			"name": "healer"
 		}	
+	},
+	"archer": {
+		"parts": [Game.TOUGH, Game.MOVE, Game.RANGED_ATTACK],
+		"memory": {
+			"name": "archer"
+		}
 	}
 }

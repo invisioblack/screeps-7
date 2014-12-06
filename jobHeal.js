@@ -1,3 +1,5 @@
+var jobHelpers = require('jobHelpers')();
+
 module.exports = function()
 {
 	//declare base object
@@ -27,10 +29,7 @@ module.exports = function()
 		else
 		{
 			var creepSpawn = Game.spawns[creep.memory.spawn];
-			if (!creep.pos.inRangeTo(creepSpawn.pos, 3))
-			{
-				creep.moveTo(creepSpawn);
-			}
+			jobHelpers.moveToRange(creep, creepSpawn, 3);
 		}
 	}
 	//-------------------------------------------------------------------------

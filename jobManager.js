@@ -1,9 +1,10 @@
 var _ = require('lodash');
 
-var jobAttack = require('jobAttack')();
 var jobBuild = require('jobBuild')();
+var jobGuard = require('jobGuard')();
 var jobHarvest = require('jobHarvest')();
 var jobHeal = require('jobHeal')();
+var jobRangedGuard = require('jobRangedGuard')();
 var means = require('means');
 
 module.exports = function()
@@ -23,7 +24,11 @@ module.exports = function()
 			}
 			else if (creep.memory.job == 'guard')
 			{
-				jobAttack.work(creep);
+				jobGuard.work(creep);
+			}
+			else if (creep.memory.job == 'rangedGuard')
+			{
+				jobRangedGuard.work(creep);
 			}
 			else if (creep.memory.job == 'build')
 			{
@@ -33,8 +38,7 @@ module.exports = function()
 			{
 				jobHeal.work(creep);
 			}
-
-		}	
+		}
 	}
 
 	jobManager.assignJobs = function ()
@@ -47,16 +51,22 @@ module.exports = function()
     			creep.memory.job = 'harvest';	
     		}
     		
-    		if (jobManager.creepHasMeans(creep, 'attack') && creep.room.find(Game.HOSTILE_CREEPS).length > 0)
+    		if (jobManager.creepHasMeans(creep, 'attack'))
     		{
     			creep.memory.job = 'guard';
+    		}
+
+			if (jobManager.creepHasMeans(creep, 'rangedAttack'))
+    		{
+    			creep.memory.job = 'rangedGuard';
     		}
     		
     		if (jobManager.creepHasMeans(creep, 'build'))
     		{
     			if (jobManager.countUnitsWithJob('harvest', creep.memory.spawn) > 3 
     					&& creep.room.find(Game.CONSTRUCTION_SITES).length > 0 
-    					&& jobManager.countUnitWithMeans('attack', creep.memory.spawn) > 5
+    					&& jobManager.countUnitWithMeans('attack', creep.memory.spawn) > 3
+    					&& jobManager.countUnitWithMeans('rangedAttack', creep.memory.spawn) > 1
     					&& jobManager.countUnitWithMeans('heal', creep.memory.spawn) > 1
     					&& Game.spawns[creep.memory.spawn].energy >= 50)
     			{
@@ -64,7 +74,6 @@ module.exports = function()
     			}
     		}
 
-    		//this should also filter that if there is somone hurt in room
     		if (jobManager.creepHasMeans(creep, 'heal'))
     		{
     			creep.memory.job = 'heal';
@@ -122,6 +131,20 @@ module.exports = function()
 			}
 		}
 		return result;
+	}
+
+	jobManager.moveToRange = function (creep, target, range)
+	{
+		if (target.pos.inRangeTo(creep.pos, range - 1)) {
+			creep.moveTo(creep.pos.x + creep.pos.x - target.pos.x, creep.pos.y + creep.pos.y - target.pos.y );
+			return true;
+		} else if (target.pos.inRangeTo(creep.pos, range)) {
+			return true;
+		}
+		else {
+			creep.moveTo(target);
+			return true;
+		}
 	}
 	//-------------------------------------------------------------------------
 	//return populated object
