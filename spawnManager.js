@@ -17,26 +17,37 @@ module.exports = function()
 	spawnManager.costs[Game.HEAL] = 200;
 	spawnManager.costs[Game.TOUGH] = 5;
 
-	//spawn
+	//spawn, should be called form main() every tick
 	spawnManager.spawn = function ()
 	{
 		//spawn a harvester if we don't have 3
 		var harvesterCount = jobManager.countUnitWithMeans('harvest');
 		var guardCount = jobManager.countUnitWithMeans('attack');
+		console.log('Total Unit Count - Harvest: ' + harvesterCount + " Guard: " + guardCount);
 
-		console.log('Unit Count - Harvest: ' + harvesterCount + " Guard: " + guardCount);
-
-		if (harvesterCount < 3)
+		for (var x in Game.spawns)
 		{
-			console.log('Attempting to spawn harvester');
-			spawnManager.spawnUnit('harvester');
-		} else {
-			console.log('Attempting to spawn guard');
-			spawnManager.spawnUnit('guard');
+			var spawn = Game.spawns[x];
+			console.log('-- spawn: ' + spawn.name);
+			
+			var sHarvesterCount = jobManager.countUnitWithMeans('harvest', spawn.name);
+			var sGuardCount = jobManager.countUnitWithMeans('attack', spawn.name);
+			console.log(spawn.name + ' Unit Count - Harvest: ' + sHarvesterCount + " Guard: " + sGuardCount);
+
+			if (sHarvesterCount < 3)
+			{
+				console.log('Attempting to spawn harvester');
+				spawnManager.spawnUnit('harvester', spawn.name);
+			} else {
+				console.log('Attempting to spawn guard');
+				spawnManager.spawnUnit('guard', spawn.name);
+			}	
 		}
+
+		
 	}
 
-	// returns cost for list of parts
+	// returns cost for an array of parts
 	spawnManager.getCostParts = function (parts) {
 	    var result = 0;
 	    if(parts.length)
@@ -49,6 +60,7 @@ module.exports = function()
 	    return result;
 	}
 
+	// get the first available spawn owned by player
 	spawnManager.getAvailableSpawn = function ()
 	{
 		for (var x in Game.spawns)
@@ -59,17 +71,21 @@ module.exports = function()
 		return false;
 	}
 
-	spawnManager.spawnUnit = function (name)
+	//spawn a unit
+	spawnManager.spawnUnit = function (name, spawn)
 	{
-		var spawn = spawnManager.getAvailableSpawn();
 		if (spawn)
 		{
 			console.log("Availble spawn: " + spawn);
 			console.log(" Energy: " + spawn.energy);
 			if (spawn.energy >= spawnManager.getCostParts(units[name].parts))
 			{
-				var creepName = spawnManager.generateName(name)
-				console.log("creating creep " + name + " : " + creepName);
+				//set up the spawn
+				var creepName = spawnManager.generateName(name);
+				var m = units[name].memory;
+				m.spawn = spawn.name;
+				//call creating the creep
+				console.log(" Creating creep " + name + " : " + creepName);
 				spawn.createCreep(units[name].parts, creepName, units[name].memory);
 			}
 		}
@@ -79,6 +95,7 @@ module.exports = function()
 		}
 	}
 
+	//generate a name for a spawn
 	spawnManager.generateName = function (name)
 	{
 		var result = false;

@@ -64,13 +64,19 @@ module.exports = function()
 			return true;
 	}
 
-	jobManager.countUnitWithMeans = function (mean)
+	jobManager.countUnitWithMeans = function (mean, spawnName)
 	{
+		if(typeof(spawnName)==='undefined') spawnName = '*';
 		var result = 0;
 		for(var i in Game.creeps) 
 		{
-			if (jobManager.creepHasMeans(Game.creeps[i], mean))
-				result++;
+			var creep = Game.creeps[i];
+			if (jobManager.creepHasMeans(creep, mean))
+			{
+				if (creep.memory.spawn == spawnName || spawnName == '*')
+					result++;
+			}
+				
 		}
 		return result;
 	}
