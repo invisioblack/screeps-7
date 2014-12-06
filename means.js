@@ -1,7 +1,7 @@
 module.exports =
 {
 	"attack": [Game.ATTACK, Game.MOVE],
-	"build": [Game.WORK, Game.MOVE],
+	"build": [Game.WORK, Game.CARRY, Game.MOVE],
 	"deliver": [Game.CARRY, Game.MOVE],
 	"harvest": [Game.WORK, Game.CARRY, Game.MOVE],
 	"heal": [Game.HEAL, Game.MOVE],

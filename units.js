@@ -7,7 +7,7 @@ module.exports =
 		}
 	},
 	"builder": {
-		"parts": [Game.WORK, Game.MOVE],
+		"parts": [Game.WORK, Game.CARRY, Game.MOVE],
 		"memory": {
 			"name": "builder"
 		}

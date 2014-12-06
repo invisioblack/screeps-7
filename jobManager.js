@@ -1,6 +1,7 @@
 var _ = require('lodash');
 
 var jobAttackHostile = require('jobAttackHostile')();
+var jobBuild = require('jobBuild')();
 var jobHarvest = require('jobHarvest')();
 var means = require('means');
 
@@ -23,6 +24,10 @@ module.exports = function()
 			{
 				jobAttackHostile.work(creep);
 			}
+			else if (creep.memory.job == 'build')
+			{
+				jobBuild.work(creep);
+			}
 
 		}	
 	}
@@ -38,6 +43,10 @@ module.exports = function()
     		else if (jobManager.creepHasMeans(Game.creeps[i], "attack"))
     		{
     			Game.creeps[i].memory.job = "guard";
+    		}
+    		else if (jobManager.creepHasMeans(Game.creeps[i], "build"))
+    		{
+    			Game.creeps[i].memory.job = "build";
     		}
     		else
     		{

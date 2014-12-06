@@ -23,7 +23,9 @@ module.exports = function()
 		//spawn a harvester if we don't have 3
 		var harvesterCount = jobManager.countUnitWithMeans('harvest');
 		var guardCount = jobManager.countUnitWithMeans('attack');
-		console.log('Total Unit Count - Harvest: ' + harvesterCount + " Guard: " + guardCount);
+		var builderCount = jobManager.countUnitWithMeans('build');
+
+		console.log('Total Unit Count - Harvest: ' + harvesterCount + " Guard: " + guardCount + " Builder: " + builderCount);
 
 		for (var x in Game.spawns)
 		{
@@ -32,19 +34,30 @@ module.exports = function()
 			
 			var sHarvesterCount = jobManager.countUnitWithMeans('harvest', spawn.name);
 			var sGuardCount = jobManager.countUnitWithMeans('attack', spawn.name);
-			console.log(spawn.name + ' Unit Count - Harvest: ' + sHarvesterCount + " Guard: " + sGuardCount);
+			var sBuilderCount = jobManager.countUnitWithMeans('build', spawn.name);
+			console.log(spawn.name + ' Unit Count - Harvest: ' + sHarvesterCount + " Guard: " + sGuardCount + " Builder: " + sBuilderCount);
 
 			if (sHarvesterCount < 3)
 			{
 				console.log('Attempting to spawn harvester');
 				spawnManager.spawnUnit('harvester', spawn.name);
-			} else {
+			}
+			else if (sGuardCount < 5)
+			{
 				console.log('Attempting to spawn guard');
 				spawnManager.spawnUnit('guard', spawn.name);
-			}	
+			}
+			else if (sBuilderCount < 1)
+			{
+				console.log('Attempting to spawn builder');
+				spawnManager.spawnUnit('builder', spawn.name);
+			}
+			else
+			{
+				console.log('Attempting to spawn guard');
+				spawnManager.spawnUnit('guard', spawn.name);	
+			}
 		}
-
-		
 	}
 
 	// returns cost for an array of parts
