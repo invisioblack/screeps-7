@@ -21,42 +21,41 @@ module.exports = function()
 	spawnManager.spawn = function ()
 	{
 		//spawn a harvester if we don't have 3
-		var harvesterCount = jobManager.countUnitWithMeans('harvest');
+		var workerCount = jobManager.countUnitWithMeans('harvest');
 		var guardCount = jobManager.countUnitWithMeans('attack');
-		var builderCount = jobManager.countUnitWithMeans('build');
 
-		console.log('Total Unit Count - Harvest: ' + harvesterCount + " Guard: " + guardCount + " Builder: " + builderCount);
+		console.log('Total Unit Count - Worker: ' + workerCount + " Guard: " + guardCount);
 
 		for (var x in Game.spawns)
 		{
 			var spawn = Game.spawns[x];
 			console.log('-- spawn: ' + spawn.name);
 			
-			var sHarvesterCount = jobManager.countUnitWithMeans('harvest', spawn.name);
+			var sWorkerCount = jobManager.countUnitWithMeans('harvest', spawn.name);
 			var sGuardCount = jobManager.countUnitWithMeans('attack', spawn.name);
-			var sBuilderCount = jobManager.countUnitWithMeans('build', spawn.name);
-			console.log(spawn.name + ' Unit Count - Harvest: ' + sHarvesterCount + " Guard: " + sGuardCount + " Builder: " + sBuilderCount);
+			console.log(spawn.name + ' Unit Count - Worker: ' + sWorkerCount + " Guard: " + sGuardCount);
 
-			if (sHarvesterCount < 3)
+			if (sWorkerCount < 3)
 			{
-				console.log('Attempting to spawn harvester');
-				spawnManager.spawnUnit('harvester', spawn);
+				console.log('Attempting to spawn worker');
+				spawnManager.spawnUnit('worker', spawn);
 			}
-			else if (sGuardCount < 5)
+			else if (sGuardCount < 3)
 			{
 				console.log('Attempting to spawn guard');
-				spawnManager.spawnUnit('guard', spawn);
+				spawnManager.spawnUnit('guard', spawn);	
 			}
-			else if (sBuilderCount < 1)
+			else if (sWorkerCount < 4)
 			{
-				console.log('Attempting to spawn builder');
-				spawnManager.spawnUnit('builder', spawn);
+				console.log('Attempting to spawn worker');
+				spawnManager.spawnUnit('worker', spawn);
 			}
 			else
 			{
 				console.log('Attempting to spawn guard');
 				spawnManager.spawnUnit('guard', spawn);	
 			}
+
 		}
 	}
 

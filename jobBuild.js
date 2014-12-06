@@ -8,14 +8,16 @@ module.exports = function()
 	{       
 		if(creep.energy === 0) {
 
-			creep.moveTo(Game.spawns[creep.memory.parentSpawn]);
-			Game.spawns[creep.memory.parentSpawn].transferEnergy(creep);
+			creep.moveTo(Game.spawns[creep.memory.spawn]);
+			Game.spawns[creep.memory.spawn].transferEnergy(creep);
 		}
-		else {
+		else
+		{
 			var neartarget = creep.pos.findNearest(Game.CONSTRUCTION_SITES);
-			if(neartarget) {
-			creep.moveTo(neartarget);
-			creep.build(neartarget);
+			if(neartarget)
+			{
+				creep.moveTo(neartarget);
+				creep.build(neartarget);
 			}
 		}
 	}

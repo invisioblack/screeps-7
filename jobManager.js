@@ -36,21 +36,23 @@ module.exports = function()
 	{
 		for(var i in Game.creeps) 
 		{
-    		if (jobManager.creepHasMeans(Game.creeps[i], "harvest"))
+    		var creep = Game.creeps[i];
+    		if (jobManager.creepHasMeans(creep, "harvest"))
     		{
-    			Game.creeps[i].memory.job = "harvest";	
+    			creep.memory.job = "harvest";	
     		}
-    		else if (jobManager.creepHasMeans(Game.creeps[i], "attack"))
+    		
+    		if (jobManager.creepHasMeans(creep, "attack") && creep.room.find(Game.HOSTILE_CREEPS).length > 0)
     		{
-    			Game.creeps[i].memory.job = "guard";
+    			creep.memory.job = "guard";
     		}
-    		else if (jobManager.creepHasMeans(Game.creeps[i], "build"))
+    		
+    		if (jobManager.creepHasMeans(creep, "build"))
     		{
-    			Game.creeps[i].memory.job = "build";
-    		}
-    		else
-    		{
-    			Game.creeps[i].memory.job = "nothing";
+    			if (jobManager.countUnitsWithJob('harvest', creep.memory.spawn) > 3 && creep.room.find(Game.CONSTRUCTION_SITES).length > 0)
+    			{
+    				creep.memory.job = "build";
+    			}
     		}
 		}
 	}
@@ -90,6 +92,22 @@ module.exports = function()
 		return result;
 	}
 
+
+	jobManager.countUnitsWithJob = function (job, spawnName)
+	{
+		if(typeof(spawnName)==='undefined') spawnName = '*';
+		var result = 0;
+		for(var i in Game.creeps) 
+		{
+			var creep = Game.creeps[i];
+			if (creep.memory.job == job)
+			{
+				if (creep.memory.spawn == spawnName || spawnName == '*')
+					result++;
+			}
+		}
+		return result;
+	}
 	//-------------------------------------------------------------------------
 	//return populated object
 	return jobManager;

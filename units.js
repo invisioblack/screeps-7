@@ -1,15 +1,9 @@
 module.exports =
 {
-	"harvester": {
+	"worker": {
 		"parts": [Game.CARRY, Game.WORK, Game.MOVE],
 		"memory": {
-			"name": "harvester"
-		}
-	},
-	"builder": {
-		"parts": [Game.WORK, Game.CARRY, Game.MOVE],
-		"memory": {
-			"name": "builder"
+			"name": "worker"
 		}
 	},
 	"guard": {
