@@ -57,6 +57,7 @@ module.exports = function()
     			if (jobManager.countUnitsWithJob('harvest', creep.memory.spawn) > 3 
     					&& creep.room.find(Game.CONSTRUCTION_SITES).length > 0 
     					&& jobManager.countUnitWithMeans('attack', creep.memory.spawn) > 5
+    					&& jobManager.countUnitWithMeans('heal', creep.memory.spawn) > 1
     					&& Game.spawns[creep.memory.spawn].energy >= 50)
     			{
     				creep.memory.job = 'build';

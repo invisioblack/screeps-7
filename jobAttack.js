@@ -11,6 +11,14 @@ module.exports = function()
 			creep.moveTo(targets[0]);
 			creep.attack(targets[0]);
 		}
+		else
+		{
+			var creepSpawn = Game.spawns[creep.memory.spawn];
+			if (!creep.pos.inRangeTo(creepSpawn.pos, 5))
+			{
+				creep.moveTo(creepSpawn);
+			}
+		}
 	}
 	//-------------------------------------------------------------------------
 	//return populated object
