@@ -9,10 +9,14 @@ module.exports = function()
 	jobGuard.work = function (creep)
 	{
 		var targets = creep.room.find(Game.HOSTILE_CREEPS);
-		var target = creep.pos.findNearest(Game.HOSTILE_CREEPS);
+
 		if (targets.length) {
-			creep.moveTo(target);
-			creep.attack(target);
+			var target = creep.pos.findNearest(Game.HOSTILE_CREEPS);
+			if (target)
+			{
+				creep.moveTo(target);
+				creep.attack(target);
+			}
 		}
 		else
 		{
