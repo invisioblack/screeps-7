@@ -158,15 +158,17 @@ module.exports = function()
 		{
 			console.log('Availble spawn: ' + spawn);
 			console.log(' Energy: ' + spawn.energy);
-			if (spawn.energy >= spawnManager.getCostParts(units[name].parts))
+			var spawnLevel = spawnManager.getSpawnLevel(spawn.room);
+			var parts = units[name][spawnLevel].parts;
+			if (spawn.energy >= spawnManager.getCostParts(parts))
 			{
 				//set up the spawn
 				var creepName = spawnManager.generateName(name);
-				var m = units[name].memory;
+				var m = units[name][spawnLevel].memory;
 				m.spawn = spawn.name;
 				//call creating the creep
-				console.log(' Creating creep ' + name + ' : ' + creepName);
-				spawn.createCreep(units[name].parts, creepName, units[name].memory);
+				console.log(' Creating level ' + spawnLevel + ' creep ' + name + ' : ' + creepName);
+				spawn.createCreep(parts, creepName, m);
 			}
 		}
 		else
@@ -197,6 +199,11 @@ module.exports = function()
 			}
 			x++;
 		}
+	}
+
+	spawnManager.getSpawnLevel = function (room)
+	{
+		return 1;
 	}
 
 	//-------------------------------------------------------------------------
