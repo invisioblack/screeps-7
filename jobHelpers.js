@@ -16,7 +16,7 @@ module.exports = function()
 			creep.moveTo(target);
 			return true;
 		}
-	}
+	};
 
 	jobHelpers.avoidHostile = function (creep, range)
 	{
@@ -32,13 +32,33 @@ module.exports = function()
 			}
 		}
 		return false;
-	}
+	};
 
 	jobHelpers.moveAwayFromTarget = function (creep, target)
 	{
 		var avoid = creep.pos.getDirectionTo(target);
 		creep.move((avoid+4)%8);
 	};
+
+	jobHelpers.rendevous = function (creep, range)
+	{
+		var flags = creep.room.find(Game.FLAGS, { 'name': 'Flag1'});
+
+		if (creep.memory.rendevous)
+		{
+			jobHelpers.moveToRange(creep, creep.memory.rendevous, range);
+		}
+		else if (flags && flags.length)
+		{
+			var flag = flags[0];
+			jobHelpers.moveToRange(creep, flag, range);
+		}
+		else
+		{
+			var creepSpawn = Game.spawns[creep.memory.spawn];
+			jobHelpers.moveToRange(creep, creepSpawn, range);
+		}
+	}
 
 	//-------------------------------------------------------------------------
 	//return populated object

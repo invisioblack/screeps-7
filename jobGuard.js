@@ -20,8 +20,7 @@ module.exports = function()
 		}
 		else
 		{
-			var creepSpawn = Game.spawns[creep.memory.spawn];
-			jobHelpers.moveToRange(creep, creepSpawn, 5);
+			jobHelpers.rendevous(creep, 5);
 		}
 	}
 	//-------------------------------------------------------------------------

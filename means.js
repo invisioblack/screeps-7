@@ -7,5 +7,6 @@ module.exports =
 	"heal": [Game.HEAL, Game.MOVE],
 	"turret": [Game.RANGED_ATTACK],
 	"rangedAttack": [Game.RANGED_ATTACK, Game.MOVE],
-	"repair": [Game.WORK, Game.CARRY, Game.MOVE]
+	"repair": [Game.WORK, Game.CARRY, Game.MOVE],
+	"collect": [Game.CARRY, Game.MOVE]
 }

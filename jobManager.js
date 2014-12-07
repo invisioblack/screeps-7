@@ -1,6 +1,7 @@
 var _ = require('lodash');
 
 var jobBuild = require('jobBuild')();
+var jobCollect = require('jobCollect')();
 var jobGuard = require('jobGuard')();
 var jobHarvest = require('jobHarvest')();
 var jobHeal = require('jobHeal')();
@@ -38,6 +39,10 @@ module.exports = function()
 			{
 				jobHeal.work(creep);
 			}
+			else if (creep.memory.job == 'collect')
+			{
+				jobCollect.work(creep);
+			}
 		}
 	}
 
@@ -49,6 +54,15 @@ module.exports = function()
     		if (jobManager.creepHasMeans(creep, 'harvest'))
     		{
     			creep.memory.job = 'harvest';	
+    		}
+
+    		if (jobManager.creepHasMeans(creep, 'collect'))
+    		{
+    			var dropped = creep.pos.findNearest(Game.DROPPED_ENERGY);
+				if (dropped)
+				{
+    				creep.memory.job = 'collect';
+				}
     		}
     		
     		if (jobManager.creepHasMeans(creep, 'attack'))

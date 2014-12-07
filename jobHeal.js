@@ -9,7 +9,7 @@ module.exports = function()
 	jobHeal.work = function (creep)
 	{
 		//avoid hostiles
-		if (jobHelpers.avoidHostile(creep, 5))
+		if (jobHelpers.avoidHostile(creep, 4))
 			return;
 
 		//continue if no nearby hostiles
@@ -52,8 +52,7 @@ module.exports = function()
 			} //go back home if it is boring
 			else
 			{
-				var creepSpawn = Game.spawns[creep.memory.spawn];
-				jobHelpers.moveToRange(creep, creepSpawn, 3);
+				jobHelpers.rendevous(creep, 3);
 			}
 		}
 	}
