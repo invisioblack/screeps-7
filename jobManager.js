@@ -63,12 +63,7 @@ module.exports = function()
     		
     		if (jobManager.creepHasMeans(creep, 'build'))
     		{
-    			if (jobManager.countUnitsWithJob('harvest', creep.memory.spawn) > 3 
-    					&& creep.room.find(Game.CONSTRUCTION_SITES).length > 0 
-    					&& jobManager.countUnitWithMeans('attack', creep.memory.spawn) > 3
-    					&& jobManager.countUnitWithMeans('rangedAttack', creep.memory.spawn) > 1
-    					&& jobManager.countUnitWithMeans('heal', creep.memory.spawn) > 1
-    					&& Game.spawns[creep.memory.spawn].energy >= 50)
+    			if (jobManager.countUnitsWithJob('harvest', creep.memory.spawn) > 3 && creep.pos.findNearest(Game.CONSTRUCTION_SITES) && creep.pos.findNearest(Game.CONSTRUCTION_SITES).length)
     			{
     				creep.memory.job = 'build';
     			}
@@ -99,16 +94,19 @@ module.exports = function()
 			return true;
 	}
 
-	jobManager.countUnitWithMeans = function (mean, spawnName)
+	jobManager.countUnitWithMeans = function (mean, spawnName, roomName)
 	{
 		if(typeof(spawnName)==='undefined') spawnName = '*';
+		if(typeof(roomName)==='undefined') roomName = '*';
 		var result = 0;
 		for(var i in Game.creeps) 
 		{
 			var creep = Game.creeps[i];
 			if (jobManager.creepHasMeans(creep, mean))
 			{
-				if (creep.memory.spawn == spawnName || spawnName == '*')
+				//test spawn
+				if ( (creep.memory.spawn == spawnName || spawnName == '*') 
+						&& (creep.room.name == roomName || roomName == '*'))
 					result++;
 			}
 				
@@ -117,35 +115,24 @@ module.exports = function()
 	}
 
 
-	jobManager.countUnitsWithJob = function (job, spawnName)
+	jobManager.countUnitsWithJob = function (job, spawnName, roomName)
 	{
 		if(typeof(spawnName)==='undefined') spawnName = '*';
+		if(typeof(roomName)==='undefined') roomName = '*';
 		var result = 0;
 		for(var i in Game.creeps) 
 		{
 			var creep = Game.creeps[i];
 			if (creep.memory.job == job)
 			{
-				if (creep.memory.spawn == spawnName || spawnName == '*')
+				if ( (creep.memory.spawn == spawnName || spawnName == '*') 
+					&& (creep.room.name == roomName || roomName == '*'))
 					result++;
 			}
 		}
 		return result;
 	}
 
-	jobManager.moveToRange = function (creep, target, range)
-	{
-		if (target.pos.inRangeTo(creep.pos, range - 1)) {
-			creep.moveTo(creep.pos.x + creep.pos.x - target.pos.x, creep.pos.y + creep.pos.y - target.pos.y );
-			return true;
-		} else if (target.pos.inRangeTo(creep.pos, range)) {
-			return true;
-		}
-		else {
-			creep.moveTo(target);
-			return true;
-		}
-	}
 	//-------------------------------------------------------------------------
 	//return populated object
 	return jobManager;

@@ -1,13 +1,13 @@
 module.exports =
 {
 	"worker": {
-		"parts": [Game.CARRY, Game.WORK, Game.MOVE],
+		"parts": [Game.CARRY, Game.WORK, Game.Work, Game.MOVE, Game.MOVE],
 		"memory": {
 			"name": "worker"
 		}
 	},
 	"guard": {
-		"parts": [Game.TOUGH, Game.MOVE, Game.ATTACK],
+		"parts": [Game.TOUGH, Game.MOVE, Game.ATTACK, Game.ATTACK],
 		"memory": {
 			"name": "guard"
 		}
@@ -19,7 +19,7 @@ module.exports =
 		}	
 	},
 	"archer": {
-		"parts": [Game.TOUGH, Game.MOVE, Game.RANGED_ATTACK],
+		"parts": [Game.TOUGH, Game.MOVE, Game.RANGED_ATTACK, Game.RANGED_ATTACK],
 		"memory": {
 			"name": "archer"
 		}
