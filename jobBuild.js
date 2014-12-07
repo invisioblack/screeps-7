@@ -1,3 +1,5 @@
+var jobHelpers = require('jobHelpers')();
+
 module.exports = function()
 {
 	//declare base object
@@ -6,6 +8,11 @@ module.exports = function()
 
 	jobBuild.work = function (creep)
 	{       
+		//avoid hostiles
+		if (jobHelpers.avoidHostile(creep))
+			return;
+
+		//continue if no nearby hostiles
 		var neartarget = creep.pos.findNearest(Game.CONSTRUCTION_SITES);
 
 		if (creep.energy === 0)

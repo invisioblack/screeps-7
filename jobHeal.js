@@ -8,9 +8,11 @@ module.exports = function()
 
 	jobHeal.work = function (creep)
 	{
-		//Need a avoid enemies behavior
-		//Needs a return to some point behavior when not healing
+		//avoid hostiles
+		if (jobHelpers.avoidHostile(creep))
+			return;
 
+		//continue if no nearby hostiles
 		var needsHealing = [ ];
 
 		//Find my creeps that are hurt. If they're hurt, heal them.

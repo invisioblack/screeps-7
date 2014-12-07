@@ -1,3 +1,5 @@
+var jobHelpers = require('jobHelpers')();
+
 module.exports = function()
 {
 	//declare base object
@@ -6,6 +8,11 @@ module.exports = function()
 
 	jobHarvest.work = function (creep)
 	{
+		//avoid hostiles
+		if (jobHelpers.avoidHostile(creep))
+			return;
+
+		//continue if no nearby hostiles
 		if(creep.energy < creep.energyCapacity) {
 			var sources = creep.pos.findNearest(Game.SOURCES);
 			creep.moveTo(sources);
