@@ -9,7 +9,7 @@ module.exports = function()
 	jobHeal.work = function (creep)
 	{
 		//avoid hostiles
-		if (jobHelpers.avoidHostile(creep, 4))
+		if (jobHelpers.avoidHostile(creep, 3))
 			return;
 
 		//continue if no nearby hostiles
