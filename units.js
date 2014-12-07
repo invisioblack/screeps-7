@@ -71,10 +71,24 @@ module.exports =
 	},
 	"archer": {
 		1: {
-			"parts": [Game.TOUGH, Game.TOUGH, Game.RANGED_ATTACK, Game.RANGED_ATTACK, Game.MOVE],
+			"parts": [Game.RANGED_ATTACK, Game.MOVE],
 			"memory": {
 				"name": "archer",
 				"level": 1
+			}
+		},
+		2: {
+			"parts": [Game.RANGED_ATTACK, Game.RANGED_ATTACK, Game.MOVE],
+			"memory": {
+				"name": "archer",
+				"level": 2
+			}
+		},
+		3: {
+			"parts": [Game.TOUGH, Game.RANGED_ATTACK, Game.RANGED_ATTACK, Game.RANGED_ATTACK, Game.MOVE],
+			"memory": {
+				"name": "archer",
+				"level": 3
 			}
 		}
 	}

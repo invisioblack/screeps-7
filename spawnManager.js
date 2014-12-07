@@ -32,58 +32,50 @@ module.exports = function()
 		var rangedGuardCount = jobManager.countUnitWithMeans('rangedAttack');
 		var healerCount = jobManager.countUnitWithMeans('heal');
 
-		console.log('Total Unit Count - Worker: ' + workerCount + ' Guard: ' + guardCount + '/' + rangedGuardCount + ' Healer: ' + healerCount);
+		console.log('==Total Unit Count - Worker: ' + workerCount + ' Guard: ' + guardCount + '/' + rangedGuardCount + ' Healer: ' + healerCount);
 
 		for (var x in Game.spawns)
 		{
 			var spawn = Game.spawns[x];
-			console.log('-- spawn: ' + spawn.name);
+			//console.log('-- spawn: ' + spawn.name);
 			
 			var sWorkerCount = jobManager.countUnitWithMeans('harvest', spawn.name);
 			var sGuardCount = jobManager.countUnitWithMeans('attack', spawn.name);
 			var sRangedGuardCount = jobManager.countUnitWithMeans('rangedAttack', spawn.name);
 			var sHealerCount = jobManager.countUnitWithMeans('heal', spawn.name);
 
-			console.log(spawn.name + ' Unit Count - Worker: ' + sWorkerCount + ' Guard: ' + sGuardCount + '/' + sRangedGuardCount + ' Healer: ' + sHealerCount);
+			console.log('=' + spawn.name + ' Unit Count - Worker: ' + sWorkerCount + ' Guard: ' + sGuardCount + '/' + sRangedGuardCount + ' Healer: ' + sHealerCount);
 
 			if (sWorkerCount < WORKER_THRESHOLD_MIN)
 			{
-				console.log('Attempting to spawn worker');
 				spawnManager.spawnUnit('worker', spawn);
 			}
 			else if (sGuardCount < GUARD_THRESHOLD_MIN)
 			{
-				console.log('Attempting to spawn guard');
 				spawnManager.spawnUnit('guard', spawn);	
 			}
 			else if (sRangedGuardCount < RANGED_GUARD_THRESHOLD_MIN)
 			{
-				console.log('Attempting to spawn archer');
 				spawnManager.spawnUnit('archer', spawn);	
 			}
 			else if (sHealerCount < HEALER_THRESHOLD_MIN)
 			{
-				console.log('Attempting to spawn healer');
 				spawnManager.spawnUnit('healer', spawn);
 			}
 			else if (sWorkerCount < WORKER_THRESHOLD_MIN + 1)
 			{
-				console.log('Attempting to spawn worker');
 				spawnManager.spawnUnit('worker', spawn);
 			}
 			else if (sGuardCount < GUARD_THRESHOLD_MIN + 1)
 			{
-				console.log('Attempting to spawn guard');
 				spawnManager.spawnUnit('guard', spawn);	
 			}
 			else if (sRangedGuardCount < RANGED_GUARD_THRESHOLD_MIN + 1)
 			{
-				console.log('Attempting to spawn archer');
 				spawnManager.spawnUnit('archer', spawn);	
 			}
 			else if (sHealerCount < HEALER_THRESHOLD_MIN + 1)
 			{
-				console.log('Attempting to spawn healer');
 				spawnManager.spawnUnit('healer', spawn);
 			}
 			else
@@ -92,18 +84,15 @@ module.exports = function()
 				{
 					if ((sGuardCount + sRangedGuardCount) % 2 === 0)
 					{
-						console.log('Attempting to spawn guard');
 						spawnManager.spawnUnit('guard', spawn);	
 					}
 					else
 					{
-						console.log('Attempting to spawn archer');
 						spawnManager.spawnUnit('archer', spawn);		
 					}
 				}
 				else
 				{
-					console.log('Attempting to spawn worker');
 					spawnManager.spawnUnit('worker', spawn);
 				}
 			}
@@ -119,7 +108,7 @@ module.exports = function()
 					{
 						worker.memory.spawn = spawn.name;
 						worker.memory.job = 'harvest';
-						console.log("***" + spawn.name + " assumed control of " + worker.name);
+						console.log("+*+" + spawn.name + " assumed control of " + worker.name);
 					}
 				}
 			}
@@ -156,18 +145,19 @@ module.exports = function()
 	{
 		if (spawn)
 		{
-			console.log('Availble spawn: ' + spawn);
-			console.log(' Energy: ' + spawn.energy);
+			
 			var spawnLevel = spawnManager.getSpawnLevel(spawn.room);
 			var parts = units[name][spawnLevel].parts;
-			if (spawn.energy >= spawnManager.getCostParts(parts))
+			var cost = spawnManager.getCostParts(parts);
+			console.log('+Spawn(level ' + spawnLevel + ' ' + name + '): ' + spawn + ' Energy: ' + spawn.energy + '/' + cost);
+			if (spawn.energy >= cost)
 			{
 				//set up the spawn
 				var creepName = spawnManager.generateName(name);
 				var m = units[name][spawnLevel].memory;
 				m.spawn = spawn.name;
 				//call creating the creep
-				console.log(' Creating level ' + spawnLevel + ' creep ' + name + ' : ' + creepName);
+				console.log('++Creating level ' + spawnLevel + ' creep ' + name + ' : ' + creepName);
 				spawn.createCreep(parts, creepName, m);
 			}
 		}
@@ -203,7 +193,25 @@ module.exports = function()
 
 	spawnManager.getSpawnLevel = function (room)
 	{
-		return 1;
+		var numSpawns = room.find(Game.MY_SPAWNS).length;
+		var numHarvester = jobManager.countUnitWithMeans('harvest', '*', room.name);
+		var numWarrior = jobManager.countUnitWithMeans('attack', '*', room.name);
+		numWarrior += jobManager.countUnitWithMeans('rangedAttack', '*', room.name);
+
+		if (numSpawns < 2)
+		{
+			if (numHarvester <= WORKER_THRESHOLD_MIN && numWarrior <= GUARD_THRESHOLD_MIN)
+				return 1;
+			else
+				return 2;
+		}
+		else
+		{
+			if (numHarvester <= WORKER_THRESHOLD_MIN * 2 && numWarrior <= GUARD_THRESHOLD_MIN * 2)
+				return 2;
+			else
+				return 3;
+		}
 	}
 
 	//-------------------------------------------------------------------------
