@@ -63,7 +63,7 @@ module.exports = function()
     		
     		if (jobManager.creepHasMeans(creep, 'build'))
     		{
-    			if (jobManager.countUnitsWithJob('harvest', creep.memory.spawn) > 3 && creep.pos.findNearest(Game.CONSTRUCTION_SITES) && creep.pos.findNearest(Game.CONSTRUCTION_SITES).length)
+    			if (jobManager.countUnitsWithJob('harvest', creep.memory.spawn) > 3 && creep.pos.findNearest(Game.CONSTRUCTION_SITES))
     			{
     				creep.memory.job = 'build';
     			}

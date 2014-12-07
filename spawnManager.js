@@ -115,11 +115,11 @@ module.exports = function()
 				for (var y in workers)
 				{
 					var worker = workers[y];
-					if (worker.memory.spawn != spawn.name && worker.memory.job = 'build')
+					if (worker.memory.spawn != spawn.name && worker.memory.job == 'build')
 					{
 						worker.memory.spawn = spawn.name;
 						worker.memory.job = 'harvest';
-						console.log("---" + spawn.name + " assumed control of " + worker.name);
+						console.log("***" + spawn.name + " assumed control of " + worker.name);
 					}
 				}
 			}
