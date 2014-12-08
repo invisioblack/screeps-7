@@ -1,3 +1,5 @@
+//-----------------------------------------------------------------------------
+
 var _ = require('lodash');
 
 var jobBuild = require('jobBuild')();
@@ -7,6 +9,17 @@ var jobHarvest = require('jobHarvest')();
 var jobHeal = require('jobHeal')();
 var jobRangedGuard = require('jobRangedGuard')();
 var means = require('means');
+
+//-----------------------------------------------------------------------------
+//valid jobs
+//----------
+var JOB_BUILD = 'build';
+var JOB_COLLECT = 'collect';
+var JOB_GUARD = 'guard';
+var JOB_HARVEST = 'harvest';
+var JOB_HEAL = 'heal';
+var JOB_RANGED_GUARD = 'rangedGuard';
+
 
 module.exports = function()
 {
@@ -19,29 +32,26 @@ module.exports = function()
 		for(var i in Game.creeps) 
 		{
 			var creep = Game.creeps[i];
-			if (creep.memory.job == 'harvest')
+			switch(creep.memory.job)
 			{
-				jobHarvest.work(creep);
-			}
-			else if (creep.memory.job == 'guard')
-			{
-				jobGuard.work(creep);
-			}
-			else if (creep.memory.job == 'rangedGuard')
-			{
-				jobRangedGuard.work(creep);
-			}
-			else if (creep.memory.job == 'build')
-			{
-				jobBuild.work(creep);
-			}
-			else if (creep.memory.job == 'heal')
-			{
-				jobHeal.work(creep);
-			}
-			else if (creep.memory.job == 'collect')
-			{
-				jobCollect.work(creep);
+				case JOB_BUILD:
+					jobBuild.work(creep);
+					break;
+				case JOB_COLLECT:
+					jobCollect.work(creep);
+					break;
+				case JOB_GUARD:
+					jobGuard.work(creep);
+					break;
+				case JOB_HARVEST:
+					jobHarvest.work(creep);
+					break;
+				case JOB_HEAL:
+					jobHeal.work(creep);
+					break;
+				case JOB_RANGED_GUARD:
+					jobRangedGuard.work(creep);
+					break;
 			}
 		}
 	}
@@ -51,43 +61,43 @@ module.exports = function()
 		for(var i in Game.creeps) 
 		{
     		var creep = Game.creeps[i];
-    		if (jobManager.creepHasMeans(creep, 'harvest'))
+    		if (jobManager.creepHasMeans(creep, JOB_HARVEST))
     		{
-    			creep.memory.job = 'harvest';	
+    			creep.memory.job = JOB_HARVEST;	
     		}
 
-    		if (jobManager.creepHasMeans(creep, 'collect'))
+    		if (jobManager.creepHasMeans(creep, JOB_COLLECT))
     		{
     			var dropped = creep.pos.findNearest(Game.DROPPED_ENERGY);
 				if (dropped)
 				{
 					var numDropped = creep.pos.find(Game.DROPPED_ENERGY);
-					if (numDropped > jobManager.countUnitsWithJob('collect', '*', creep.room.name))
-    					creep.memory.job = 'collect';
+					if (numDropped > jobManager.countUnitsWithJob(JOB_COLLECT, '*', creep.room.name))
+    					creep.memory.job = JOB_COLLECT;
 				}
     		}
     		
-    		if (jobManager.creepHasMeans(creep, 'attack'))
+    		if (jobManager.creepHasMeans(creep, JOB_GUARD))
     		{
-    			creep.memory.job = 'guard';
+    			creep.memory.job = JOB_GUARD;
     		}
 
-			if (jobManager.creepHasMeans(creep, 'rangedAttack'))
+			if (jobManager.creepHasMeans(creep, JOB_RANGED_GUARD))
     		{
-    			creep.memory.job = 'rangedGuard';
+    			creep.memory.job = JOB_RANGED_GUARD;
     		}
     		
-    		if (jobManager.creepHasMeans(creep, 'build'))
+    		if (jobManager.creepHasMeans(creep, JOB_BUILD))
     		{
-    			if (jobManager.countUnitsWithJob('harvest', creep.memory.spawn) > 3 && creep.pos.findNearest(Game.CONSTRUCTION_SITES))
+    			if (jobManager.countUnitsWithJob(JOB_HARVEST, creep.memory.spawn) > 3 && creep.pos.findNearest(Game.CONSTRUCTION_SITES))
     			{
-    				creep.memory.job = 'build';
+    				creep.memory.job = JOB_BUILD;
     			}
     		}
 
-    		if (jobManager.creepHasMeans(creep, 'heal'))
+    		if (jobManager.creepHasMeans(creep, JOB_HEAL))
     		{
-    			creep.memory.job = 'heal';
+    			creep.memory.job = JOB_HEAL;
     		}
 		}
 	}
