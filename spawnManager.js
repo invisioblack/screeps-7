@@ -1,4 +1,6 @@
+var _ = require('lodash');
 var jobManager = require('jobManager')();
+var C = require('C');
 var units = require('units');
 
 var WORKER_THRESHOLD_MIN = 3;
@@ -27,77 +29,105 @@ module.exports = function()
 	spawnManager.spawn = function ()
 	{
 		//spawn a harvester if we don't have 3
-		var workerCount = jobManager.countUnitWithMeans('harvest');
-		var guardCount = jobManager.countUnitWithMeans('attack');
-		var rangedGuardCount = jobManager.countUnitWithMeans('rangedAttack');
-		var healerCount = jobManager.countUnitWithMeans('heal');
+		var workerCount = jobManager.countUnitWithMeans(C.JOB_HARVEST);
+		var guardCount = jobManager.countUnitWithMeans(C.JOB_GUARD);
+		var rangedGuardCount = jobManager.countUnitWithMeans(C.JOB_RANGED_GUARD);
+		var healerCount = jobManager.countUnitWithMeans(C.JOB_HEAL);
 
 		console.log('==Total Unit Count - Worker: ' + workerCount + ' Guard: ' + guardCount + '/' + rangedGuardCount + ' Healer: ' + healerCount);
 
 		for (var x in Game.spawns)
 		{
+			//count and report
 			var spawn = Game.spawns[x];
-			//console.log('-- spawn: ' + spawn.name);
-			
-			var sWorkerCount = jobManager.countUnitWithMeans('harvest', spawn.name);
-			var sGuardCount = jobManager.countUnitWithMeans('attack', spawn.name);
-			var sRangedGuardCount = jobManager.countUnitWithMeans('rangedAttack', spawn.name);
-			var sHealerCount = jobManager.countUnitWithMeans('heal', spawn.name);
+			var sWorkerCount = jobManager.countUnitWithMeans(C.JOB_HARVEST, spawn.name);
+			var sGuardCount = jobManager.countUnitWithMeans(C.JOB_GUARD, spawn.name);
+			var sRangedGuardCount = jobManager.countUnitWithMeans(C.JOB_RANGED_GUARD, spawn.name);
+			var sHealerCount = jobManager.countUnitWithMeans(C.JOB_HEAL, spawn.name);
+			var sWarriorCount = sGuardCount + sRangedGuardCount;
+			var sEnemyCount = spawn.room.find(Game.HOSTILE_CREEPS).length;
 
 			console.log('=' + spawn.name + ' Unit Count - Worker: ' + sWorkerCount + ' Guard: ' + sGuardCount + '/' + sRangedGuardCount + ' Healer: ' + sHealerCount);
 
+			//determine spawning needs
+
+
+			var needs = {};
+			needs['worker'] = 0;
+			needs['guard'] = 0;
+			needs['archer'] = 0;
+			needs['healer'] = 0;
+			
+			//worker need
 			if (sWorkerCount < WORKER_THRESHOLD_MIN)
 			{
-				spawnManager.spawnUnit('worker', spawn);
-			}
-			else if (sGuardCount < GUARD_THRESHOLD_MIN)
+				needs['worker'] = needs['worker'] + (C.NEED_WEIGHT_CRITICAL * (WORKER_THRESHOLD_MIN - sWorkerCount));
+			} 
+			else if (!jobManager.countUnitsWithJob(C.JOB_BUILD, spawn.name) && spawn.pos.findNearest(Game.CONSTRUCTION_SITES))
 			{
-				spawnManager.spawnUnit('guard', spawn);	
-			}
-			else if (sRangedGuardCount < RANGED_GUARD_THRESHOLD_MIN)
-			{
-				spawnManager.spawnUnit('archer', spawn);	
-			}
-			else if (sHealerCount < HEALER_THRESHOLD_MIN)
-			{
-				spawnManager.spawnUnit('healer', spawn);
-			}
-			else if (sWorkerCount < WORKER_THRESHOLD_MIN + 1)
-			{
-				spawnManager.spawnUnit('worker', spawn);
-			}
-			else if (sGuardCount < GUARD_THRESHOLD_MIN + 1)
-			{
-				spawnManager.spawnUnit('guard', spawn);	
-			}
-			else if (sRangedGuardCount < RANGED_GUARD_THRESHOLD_MIN + 1)
-			{
-				spawnManager.spawnUnit('archer', spawn);	
-			}
-			else if (sHealerCount < HEALER_THRESHOLD_MIN + 1)
-			{
-				spawnManager.spawnUnit('healer', spawn);
+				needs['worker'] = needs['worker'] + C.NEED_WEIGHT_HIGH;
 			}
 			else
 			{
-				if (sGuardCount < sWorkerCount && sRangedGuardCount < sWorkerCount)
+				needs['worker'] = needs['worker'] + C.NEED_WEIGHT_LOW;
+			}
+
+			//Guard need
+			if (sGuardCount < GUARD_THRESHOLD_MIN)
+			{
+				needs['guard'] = needs['guard'] + (C.NEED_WEIGHT_HIGH * GUARD_THRESHOLD_MIN);
+			}
+			else
+			{
+				if (sGuardCount <= sRangedGuardCount)
 				{
-					if ((sGuardCount + sRangedGuardCount) % 2 === 0)
-					{
-						spawnManager.spawnUnit('guard', spawn);	
-					}
-					else
-					{
-						spawnManager.spawnUnit('archer', spawn);		
-					}
+					needs['guard'] = needs['guard'] + C.NEED_WEIGHT_HIGH;
 				}
 				else
 				{
-					spawnManager.spawnUnit('worker', spawn);
+					needs['guard'] = needs['guard'] + C.NEED_WEIGHT_MEDIUM;
 				}
 			}
 
-			//if spawnpoint has less than 3 builders and there are builders around, then assign them to this spawn
+			//rangedGuard need
+			if (sGuardCount < GUARD_THRESHOLD_MIN)
+			{
+				needs['archer'] = needs['archer'] + (C.NEED_WEIGHT_HIGH * RANGED_GUARD_THRESHOLD_MIN);
+			}
+			else
+			{
+				if (sRangedGuardCount <= sGuardCount)
+				{
+					needs['archer'] = needs['archer'] + C.NEED_WEIGHT_HIGH;
+				}
+			}
+
+			//healer need
+			if (sGuardCount < HEALER_THRESHOLD_MIN)
+			{
+				needs['healer'] = needs['healer'] + (C.NEED_WEIGHT_CRITICAL * HEALER_THRESHOLD_MIN);
+			}
+			else
+			{
+				if (sHealerCount <= (sWarriorCount / 4))
+				{
+					needs['healer'] = needs['healer'] + C.NEED_WEIGHT_HIGH;
+				}
+			}
+
+			//sort needs and spawn based on what is highest
+			var sortedNeeds = [];
+			sortedNeeds.push({name: 'worker', val: needs['worker']});
+			sortedNeeds.push({name: 'guard', val: needs['guard']});
+			sortedNeeds.push({name: 'archer', val: needs['archer']});
+			sortedNeeds.push({name: 'healer', val: needs['healer']});
+			sortedNeeds.sort(function(a,b) {return b.val - a.val;});
+
+			//spawn the unit
+			spawnManager.spawnUnit(sortedNeeds[0].name, spawn);
+
+			//-----------------------------------------------------------------
+			//if spawnpoint has less than WORKER_THRESHOLD_MIN and there are builders around, then assign them to this spawn
 			if (sWorkerCount < WORKER_THRESHOLD_MIN && jobManager.countUnitsWithJob('build', '*', spawn.room.name))
 			{
 				var workers = spawn.room.find(Game.MY_CREEPS);
@@ -107,13 +137,13 @@ module.exports = function()
 					if (worker.memory.spawn != spawn.name && worker.memory.job == 'build')
 					{
 						worker.memory.spawn = spawn.name;
-						worker.memory.job = 'harvest';
+						worker.memory.job = C.JOB_HARVEST;
 						console.log("+*+" + spawn.name + " assumed control of " + worker.name);
 					}
 				}
 			}
 		}
-	}
+	};
 
 	// returns cost for an array of parts
 	spawnManager.getCostParts = function (parts)
@@ -127,7 +157,7 @@ module.exports = function()
 	        }
 	    }
 	    return result;
-	}
+	};
 
 	// get the first available spawn owned by player
 	spawnManager.getAvailableSpawn = function ()
@@ -138,7 +168,7 @@ module.exports = function()
 				return Game.spawns[x];
 		}
 		return false;
-	}
+	};
 
 	//spawn a unit
 	spawnManager.spawnUnit = function (name, spawn)
@@ -165,7 +195,7 @@ module.exports = function()
 		{
 			console.log('No available spawn');
 		}
-	}
+	};
 
 	//generate a name for a spawn
 	spawnManager.generateName = function (name)
@@ -189,14 +219,14 @@ module.exports = function()
 			}
 			x++;
 		}
-	}
+	};
 
 	spawnManager.getSpawnLevel = function (room)
 	{
 		var numSpawns = room.find(Game.MY_SPAWNS).length;
-		var numHarvester = jobManager.countUnitWithMeans('harvest', '*', room.name);
-		var numWarrior = jobManager.countUnitWithMeans('attack', '*', room.name);
-		numWarrior += jobManager.countUnitWithMeans('rangedAttack', '*', room.name);
+		var numHarvester = jobManager.countUnitWithMeans(C.JOB_HARVEST, '*', room.name);
+		var numWarrior = jobManager.countUnitWithMeans(C.JOB_GUARD, '*', room.name);
+		numWarrior += jobManager.countUnitWithMeans(C.JOB_RANGED_GUARD, '*', room.name);
 
 		if (numSpawns < 2)
 		{
@@ -212,7 +242,7 @@ module.exports = function()
 			else
 				return 3;
 		}
-	}
+	};
 
 	//-------------------------------------------------------------------------
 	//return populated object
