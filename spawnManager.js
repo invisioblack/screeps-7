@@ -3,7 +3,7 @@ var jobManager = require('jobManager')();
 var C = require('C');
 var units = require('units');
 
-var WORKER_THRESHOLD_MIN = 3;
+var WORKER_THRESHOLD_MIN = 2;
 var GUARD_THRESHOLD_MIN = 2;
 var RANGED_GUARD_THRESHOLD_MIN = 1;
 var HEALER_THRESHOLD_MIN = 1;
@@ -30,6 +30,7 @@ module.exports = function()
 	{
 		//spawn a harvester if we don't have 3
 		var workerCount = jobManager.countUnitWithMeans(C.JOB_HARVEST);
+		var workerCount = jobManager.countUnitWithMeans(C.JOB_COLLECT);
 		var guardCount = jobManager.countUnitWithMeans(C.JOB_GUARD);
 		var rangedGuardCount = jobManager.countUnitWithMeans(C.JOB_RANGED_GUARD);
 		var healerCount = jobManager.countUnitWithMeans(C.JOB_HEAL);
@@ -41,19 +42,19 @@ module.exports = function()
 			//count and report
 			var spawn = Game.spawns[x];
 			var sWorkerCount = jobManager.countUnitWithMeans(C.JOB_HARVEST, spawn.name);
+			var sCollectorCount = jobManager.countUnitWithMeans(C.JOB_COLLECT, spawn.name);
 			var sGuardCount = jobManager.countUnitWithMeans(C.JOB_GUARD, spawn.name);
 			var sRangedGuardCount = jobManager.countUnitWithMeans(C.JOB_RANGED_GUARD, spawn.name);
 			var sHealerCount = jobManager.countUnitWithMeans(C.JOB_HEAL, spawn.name);
 			var sWarriorCount = sGuardCount + sRangedGuardCount;
 			var sEnemyCount = spawn.room.find(Game.HOSTILE_CREEPS).length;
 
-			console.log('=' + spawn.name + ' Unit Count - Worker: ' + sWorkerCount + ' Guard: ' + sGuardCount + '/' + sRangedGuardCount + ' Healer: ' + sHealerCount);
+			console.log('=' + spawn.name + ' Unit Count - Worker: ' + sWorkerCount + ' Collector: ' + sCollectorCount +  ' Guard: ' + sGuardCount + '/' + sRangedGuardCount + ' Healer: ' + sHealerCount);
 
 			//determine spawning needs
-
-
 			var needs = {};
 			needs['worker'] = 0;
+			needs['collector'] = 0;
 			needs['guard'] = 0;
 			needs['archer'] = 0;
 			needs['healer'] = 0;
@@ -71,6 +72,9 @@ module.exports = function()
 			{
 				needs['worker'] = needs['worker'] + C.NEED_WEIGHT_LOW;
 			}
+
+			//collector need
+			needs['collector'] = ((sWorkerCount * 2) - sCollectorCount) * C.NEED_WEIGHT_CRITICAL;
 
 			//Guard need
 			if (sGuardCount < GUARD_THRESHOLD_MIN)
@@ -115,9 +119,23 @@ module.exports = function()
 				}
 			}
 
+			//getting attacked need
+			if ((sWarriorCount/2) <= sEnemyCount)
+			{
+				if (sGuardCount < sRangedGuardCount)
+				{
+					needs['guard'] = needs['guard'] + (C.NEED_WEIGHT_CRITICAL * (2 * (sEnemyCount - sGuardCount)));
+				}
+				else
+				{
+					needs['archer'] = needs['archer'] + (C.NEED_WEIGHT_CRITICAL * (2 * (sEnemyCount - sRangedGuardCount)));
+				}
+			}
+
 			//sort needs and spawn based on what is highest
 			var sortedNeeds = [];
 			sortedNeeds.push({name: 'worker', val: needs['worker']});
+			sortedNeeds.push({name: 'collector', val: needs['collector']});
 			sortedNeeds.push({name: 'guard', val: needs['guard']});
 			sortedNeeds.push({name: 'archer', val: needs['archer']});
 			sortedNeeds.push({name: 'healer', val: needs['healer']});
@@ -223,6 +241,8 @@ module.exports = function()
 
 	spawnManager.getSpawnLevel = function (room)
 	{
+		return 1;
+		/*
 		var numSpawns = room.find(Game.MY_SPAWNS).length;
 		var numHarvester = jobManager.countUnitWithMeans(C.JOB_HARVEST, '*', room.name);
 		var numWarrior = jobManager.countUnitWithMeans(C.JOB_GUARD, '*', room.name);
@@ -242,6 +262,7 @@ module.exports = function()
 			else
 				return 3;
 		}
+		*/
 	};
 
 	//-------------------------------------------------------------------------

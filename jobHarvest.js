@@ -13,7 +13,7 @@ module.exports = function()
 			return;
 
 		//continue if no nearby hostiles
-		if(creep.energy < creep.energyCapacity) {
+		if(creep.energyCapacity === 0 || creep.energy < creep.energyCapacity) {
 			var sources = creep.pos.findNearest(Game.SOURCES);
 			creep.moveTo(sources);
 			creep.harvest(sources);

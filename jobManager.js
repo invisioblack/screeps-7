@@ -61,8 +61,8 @@ module.exports = function()
     			var dropped = creep.pos.findNearest(Game.DROPPED_ENERGY);
 				if (dropped)
 				{
-					var numDropped = creep.pos.find(Game.DROPPED_ENERGY);
-					if (numDropped > jobManager.countUnitsWithJob(C.JOB_COLLECT, '*', creep.room.name))
+					var numDropped = creep.room.find(Game.DROPPED_ENERGY).length;
+					if ((numDropped*2) > jobManager.countUnitsWithJob(C.JOB_COLLECT, '*', creep.room.name))
     					creep.memory.job = C.JOB_COLLECT;
 				}
     		}

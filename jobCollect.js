@@ -17,8 +17,7 @@ module.exports = function()
 		{
 			if (creep.energy == creep.energyCapacity)
 			{
-				creep.moveTo(creep.pos.findNearest(Game.MY_SPAWNS));
-				creep.transferEnergy(creep.pos.findNearest(Game.MY_SPAWNS));
+				jobCollect.returnEnergy(creep);
 			}
 			else
 			{
@@ -26,8 +25,20 @@ module.exports = function()
 				creep.pickup(dropped);
 			}
 		}
+		else if (creep.energy > 0)
+		{
+			jobCollect.returnEnergy(creep);
+		}
+
+	}
+
+	jobCollect.returnEnergy = function (creep)
+	{
+		creep.moveTo(creep.pos.findNearest(Game.MY_SPAWNS));
+		creep.transferEnergy(creep.pos.findNearest(Game.MY_SPAWNS));
 	}
 	//-------------------------------------------------------------------------
 	//return populated object
 	return jobCollect;
+
 }

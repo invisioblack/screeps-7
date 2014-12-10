@@ -10,7 +10,7 @@ module.exports =
 		"means": [Game.ATTACK, Game.MOVE]
 	},
 	"harvest": {
-		"means": [Game.WORK, Game.CARRY, Game.MOVE]
+		"means": [Game.WORK, Game.MOVE]
 	},
 	"heal": {
 		"means": [Game.HEAL, Game.MOVE]

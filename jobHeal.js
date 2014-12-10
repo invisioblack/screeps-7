@@ -19,7 +19,7 @@ module.exports = function()
 		var healTarget = creep.pos.findNearest(Game.MY_CREEPS, {
 			filter: function(t)
 			{
-				return t.hits < t.hitsMax
+				return t != creep && t.hits < t.hitsMax
 			}
 		});
 
