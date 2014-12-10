@@ -20,7 +20,7 @@ module.exports =
 	},
 	"guard": {
 		1: {
-			"parts": [Game.TOUGH, Game.TOUGH, Game.ATTACK, Game.ATTACK, Game.MOVE],
+			"parts": [Game.TOUGH, Game.ATTACK, Game.ATTACK, Game.ATTACK, Game.MOVE],
 			"memory": {
 				"name": "guard",
 				"level": 1
@@ -29,7 +29,7 @@ module.exports =
 	},
 	"healer": {
 		1: {
-			"parts": [Game.Touch, Game.HEAL, Game.HEAL, Game.MOVE, Game.MOVE],
+			"parts": [Game.TOUGH, Game.HEAL, Game.HEAL, Game.HEAL, Game.MOVE],
 			"memory": {
 				"name": "healer",
 				"level": 1

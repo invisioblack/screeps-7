@@ -58,13 +58,7 @@ module.exports = function()
 
     		if (jobManager.creepHasMeans(creep, C.JOB_COLLECT))
     		{
-    			var dropped = creep.pos.findNearest(Game.DROPPED_ENERGY);
-				if (dropped)
-				{
-					var numDropped = creep.room.find(Game.DROPPED_ENERGY).length;
-					if ((numDropped*2) > jobManager.countUnitsWithJob(C.JOB_COLLECT, '*', creep.room.name))
-    					creep.memory.job = C.JOB_COLLECT;
-				}
+    			creep.memory.job = C.JOB_COLLECT;
     		}
     		
     		if (jobManager.creepHasMeans(creep, C.JOB_GUARD))
@@ -79,12 +73,11 @@ module.exports = function()
     		
     		if (jobManager.creepHasMeans(creep, C.JOB_BUILD))
     		{
-    			if (jobManager.countUnitsWithJob(C.JOB_HARVEST, creep.memory.spawn) > 3 && creep.pos.findNearest(Game.CONSTRUCTION_SITES))
+    			if (creep.pos.findNearest(Game.CONSTRUCTION_SITES))
     			{
     				creep.memory.job = C.JOB_BUILD;
     			}
     		}
-
     		if (jobManager.creepHasMeans(creep, C.JOB_HEAL))
     		{
     			creep.memory.job = C.JOB_HEAL;

@@ -107,7 +107,7 @@ module.exports = function()
 			}
 
 			//healer need
-			if (sGuardCount < HEALER_THRESHOLD_MIN)
+			if (sHealerCount < HEALER_THRESHOLD_MIN && sGuardCount >= GUARD_THRESHOLD_MIN)
 			{
 				needs['healer'] = needs['healer'] + (C.NEED_WEIGHT_CRITICAL * HEALER_THRESHOLD_MIN);
 			}
@@ -115,7 +115,7 @@ module.exports = function()
 			{
 				if (sHealerCount <= (sWarriorCount / 4))
 				{
-					needs['healer'] = needs['healer'] + C.NEED_WEIGHT_HIGH;
+					needs['healer'] = needs['healer'] + C.NEED_WEIGHT_CRITICAL;
 				}
 			}
 
