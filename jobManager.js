@@ -44,7 +44,7 @@ module.exports = function()
 					break;
 			}
 		}
-	}
+	};
 
 	jobManager.assignJobs = function ()
 	{
@@ -83,7 +83,7 @@ module.exports = function()
     			creep.memory.job = C.JOB_HEAL;
     		}
 		}
-	}
+	};
 
 	jobManager.creepHasMeans = function (creep, mean)
 	{
@@ -102,7 +102,7 @@ module.exports = function()
 			return false;
 		else
 			return true;
-	}
+	};
 
 	jobManager.countUnitWithMeans = function (mean, spawnName, roomName)
 	{
@@ -122,7 +122,7 @@ module.exports = function()
 				
 		}
 		return result;
-	}
+	};
 
 
 	jobManager.countUnitsWithJob = function (job, spawnName, roomName)
@@ -141,7 +141,7 @@ module.exports = function()
 			}
 		}
 		return result;
-	}
+	};
 
 	//-------------------------------------------------------------------------
 	//return populated object

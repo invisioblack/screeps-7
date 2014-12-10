@@ -113,7 +113,7 @@ module.exports = function()
 			}
 			else
 			{
-				if (sHealerCount <= (sWarriorCount / 4))
+				if (sHealerCount <= (sWarriorCount / 5))
 				{
 					needs['healer'] = needs['healer'] + C.NEED_WEIGHT_CRITICAL;
 				}
@@ -264,6 +264,60 @@ module.exports = function()
 		}
 		*/
 	};
+
+	// this function will assign collectors that are assigned to the collection
+	// job to specific pieces of energy to pick up
+	spawnManager.manageCollection = function (spawn)
+	{
+		var energyCollection = [];
+		if (spawn.memory.energyCollection && _.isArray(spawn.memory.energyCollection))
+		{
+			energyCollection = spawn.memory.energyCollection;
+		}
+
+		var droppedEnergy = spawn.room.find(Game.DROPPED_ENERGY);
+		if (droppedEnergy && _isArray(droppedEnergy))
+		{
+			//validate and update droppedEnergy vs energyCollection
+			for (var de in droppedEnergy)
+			{
+				var ec = _.findIndex(energyCollection, function (e) {
+					return e.id = de.id;
+				});
+				if (ec)
+				{ //update ec object
+					energyCollection[ec].energy = de.energy;
+					energyCollection[ec].time = Game.time;
+				}
+				else
+				{ //create ecobject
+					var e = {};
+					e.id = de.id;
+					e.energy = de.energy;
+					e.pos = de.pos;
+					e.time = Game.time;
+					energyCollection.push(e) -1;
+				}
+			}
+			//clear out old records
+			for (var x = energyCollection.length - 1;x > 0;x--)
+			{
+				if (energyCollection[x].time != Game.time)
+				{
+					energyCollection.splice(x,1);
+				}
+			}
+			
+			//assign harvesters
+
+			//update spawn memory
+			spawn.memory.energyCollection = energyCollection;
+		}
+		else
+		{ //no dropped energy, clear all assignments
+			spawn.memory.energyCollection = [];
+		}
+	}
 
 	//-------------------------------------------------------------------------
 	//return populated object

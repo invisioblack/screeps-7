@@ -58,7 +58,7 @@ module.exports = function()
 			var creepSpawn = Game.spawns[creep.memory.spawn];
 			jobHelpers.moveToRange(creep, creepSpawn, range);
 		}
-	}
+	};
 
 	//-------------------------------------------------------------------------
 	//return populated object

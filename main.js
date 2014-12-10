@@ -3,11 +3,11 @@ var spawnManager = require('spawnManager')();
 
 console.log("------ new tick ------");
 
-//assign spawns
-spawnManager.spawn();
-
 //assign jobs
 jobManager.assignJobs();
+
+//assign spawns
+spawnManager.spawn();
 
 //action jobs
 jobManager.actionJobs();
