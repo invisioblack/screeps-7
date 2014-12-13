@@ -16,7 +16,7 @@ module.exports = function ()
 	};
 	//-------------------------------------------------------------------------
 
-	//game costs for spawning parts
+	// game costs for spawning parts
 	spawnManager.costs = {};
 	spawnManager.costs[Game.MOVE] = 50;
 	spawnManager.costs[Game.WORK] = 20;
@@ -26,7 +26,7 @@ module.exports = function ()
 	spawnManager.costs[Game.HEAL] = 200;
 	spawnManager.costs[Game.TOUGH] = 5;
 
-	//spawn, should be called form main() every tick
+	// spawn, should be called form main() every tick
 	spawnManager.spawn = function ()
 	{
 		//spawn a harvester if we don't have 3
@@ -194,7 +194,7 @@ module.exports = function ()
 		return false;
 	};
 
-	//spawn a unit
+	// spawn a unit
 	spawnManager.spawnUnit = function (name, spawn)
 	{
 		if (spawn)
@@ -221,7 +221,7 @@ module.exports = function ()
 		}
 	};
 
-	//generate a name for a spawn
+	// generate a name for a spawn
 	spawnManager.generateName = function (name)
 	{
 		var result = false;
@@ -245,6 +245,7 @@ module.exports = function ()
 		}
 	};
 
+	// get level of units to spawn
 	spawnManager.getSpawnLevel = function (room)
 	{
 		return 1;
@@ -271,30 +272,31 @@ module.exports = function ()
 		 */
 	};
 
-	// this function will assign collectors that are assigned to the collection
-	// job to specific pieces of energy to pick up
+	// this function will assign collectors that are assigned to the collection job to specific pieces of energy to pick
+	// up
 	spawnManager.manageCollection = function (spawn)
 	{
-		var energyCollection = [];
-		if (spawn.memory.energyCollection && _.isArray(spawn.memory.energyCollection))
+		//Make sure the spawn.memory.energyCollection is an array
+		if (!spawn.memory.energyCollection || !_.isArray(spawn.memory.energyCollection))
 		{
-			energyCollection = spawn.memory.energyCollection;
+			spawn.memory.energyCollection = [];
 		}
 
+		// make sure there is a spawn.memory.energyCollection record for all existing dropped energy pieces
 		var droppedEnergy = spawn.room.find(Game.DROPPED_ENERGY);
 		if (droppedEnergy && _isArray(droppedEnergy))
 		{
-			//validate and update droppedEnergy vs energyCollection
+			// validate and update droppedEnergy vs energyCollection
 			for (var de in droppedEnergy)
 			{
-				var ec = _.findIndex(energyCollection, function (e)
+				var ec = _.findIndex(spawn.memory.energyCollection , function (e)
 				{
 					return e.id == de.id;
 				});
 				if (ec)
 				{ //update ec object
-					energyCollection[ec].energy = de.energy;
-					energyCollection[ec].time = Game.time;
+					spawn.memory.energyCollection[ec].energy = de.energy;
+					spawn.memory.energyCollection[ec].time = Game.time;
 				}
 				else
 				{ //create ecobject
@@ -303,25 +305,54 @@ module.exports = function ()
 					e.energy = de.energy;
 					e.pos = de.pos;
 					e.time = Game.time;
-					energyCollection.push(e);
+					spawn.memory.energyCollection.push(e);
 				}
 			}
-			//clear out old records
-			for (var x = energyCollection.length - 1; x > 0; x--)
+
+			// clear out spawn.memory.energyCollection records that no longer have an associated dropped energy piece
+			// either they were picked up or have despawned
+			for (var x = spawn.memory.energyCollection.length - 1; x > 0; x--)
 			{
-				if (energyCollection[x].time != Game.time)
+				if (spawn.memory.energyCollection[x].time != Game.time)
 				{
-					energyCollection.splice(x, 1);
+					spawn.memory.energyCollection.splice(x , 1);
 				}
 			}
 
-			//assign harvesters
+			//remove assignments for harvesters that do not exist or are not assigned to this spawn (they could have
+			// been killed and the name reused)
+			for (var x = 0; x < spawn.memory.energyCollection.length; x++)
+			{
+				if (spawn.memory.energyCollection[x].harvester && !Game.creeps[spawn.memory.energyCollection[x].harvester])
+				{
+					spawn.memory.energyCollection[x].harvester = null;
+				}
+			}
 
-			//update spawn memory
-			spawn.memory.energyCollection = energyCollection;
+			//assign collectors
+			// find collectors assigned to this spawn and not assigned to an energy drop
+			var collectors = spawn.room.find(Game.MY_CREEPS , {
+				filter: function (c)
+				{
+					return c.memory.spawn == spawn.name && !c.memory.memory.collect;
+				}
+			});
+
+			// loop over unassigned dropped energy units and assign them to unassigned collectors
+			var next = 0;
+			for (var e = 0; e < spawn.memory.energyCollection.length; e++)
+			{
+				if (!spawn.memory.energyCollection[e].harvester && collectors[next])
+				{
+					collectors[next].memory.collect = spawn.memory.energyCollection[e].id;
+					spawn.memory.energyCollection[e].harvester = collectors[next].name;
+					next++;
+				}
+			}
+
 		}
 		else
-		{ //no dropped energy, clear all assignments
+		{   //no dropped energy, clear spawn collection memory
 			spawn.memory.energyCollection = [];
 		}
 	};
