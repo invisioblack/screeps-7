@@ -29,8 +29,8 @@ module.exports = function()
 		{
 			jobHelpers.rendevous(creep, 4);
 		}
-	}
+	};
 	//-------------------------------------------------------------------------
 	//return populated object
 	return jobRangedGuard;
-}
+};
