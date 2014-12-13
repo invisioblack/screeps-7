@@ -13,7 +13,7 @@ module.exports =
 		1: {
 			"parts": [Game.CARRY, Game.CARRY, Game.CARRY, Game.MOVE, Game.MOVE],
 			"memory": {
-				"name": "worker",
+				"name": "collector" ,
 				"level": 1
 			}
 		}

@@ -11,36 +11,74 @@ module.exports = function ()
 	jobCollect.work = function (creep)
 	{
 		//avoid hostiles
-		if (jobHelpers.avoidHostile(creep))
+		if (jobHelpers.avoidHostile(creep , 5))
 		{
 			return;
 		}
 
-		var dropped = creep.pos.findNearest(Game.DROPPED_ENERGY);
-		if (dropped)
-		{
-			if (creep.energy == creep.energyCapacity)
-			{
-				jobCollect.returnEnergy(creep);
-			}
-			else
-			{
-				creep.moveTo(dropped);
-				creep.pickup(dropped);
-			}
+		// if collector is assigned something to collect handle the collection
+		if (creep.memory.collect)
+		{   // we're assigned a pickup, let's try to pick it up
+			var dropped = Game.getObjectById(creep.memory.collect);
+			jobCollect.getEnergy(creep , dropped);
 		}
-		else if (creep.energy > 0)
-		{
+		else
+		{   // we're not assigned a pickup, lets try to return energy
 			jobCollect.returnEnergy(creep);
 		}
-
 	};
 
 	jobCollect.returnEnergy = function (creep)
 	{
-		creep.moveTo(creep.pos.findNearest(Game.MY_SPAWNS));
-		creep.transferEnergy(creep.pos.findNearest(Game.MY_SPAWNS));
+		// find spawn to return energy too
+		var spawn = Game.spawns[creep.memory.spawn];
+		if (!spawn)
+		{
+			spawn = creep.pos.findNearest(Game.MY_SPAWNS);
+		}
+
+		// confirm that collection assignment is cleared
+		creep.memory.collect = null;
+
+		if (creep.energy > 0)
+		{   // return the energy
+			creep.moveTo(spawn);
+			creep.transferEnergy(spawn);
+		}
+		else
+		{
+			jobCollect.idle(creep);
+		}
 	};
+
+	jobCollect.getEnergy = function (creep , dropped)
+	{
+		// confirm the dropped item exists and is in this room
+		if (dropped && dropped.room == creep.room)
+		{   // do we have room to pick up the energy?
+			if (creep.energy < creep.energyCapacity)
+			{
+				creep.moveTo(dropped);
+				creep.pickup(dropped);
+			}
+			else
+			{   // if we don't have any space, return the energy
+				jobCollect.returnEnergy(creep);
+			}
+		}
+		else
+		{
+			// the assignment is invalid, so reset it
+			creep.memory.collect = null;
+			jobCollect.returnEnergy(creep);
+		}
+	};
+
+	jobCollect.idle = function (creep)
+	{
+		// TODO: handle idle behavior
+	};
+
 	//-------------------------------------------------------------------------
 	//return populated object
 	return jobCollect;
