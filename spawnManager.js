@@ -8,7 +8,6 @@ var GUARD_THRESHOLD_MIN = 2;
 var RANGED_GUARD_THRESHOLD_MIN = 1;
 var HEALER_THRESHOLD_MIN = 1;
 
-
 module.exports = function()
 {
 	//declare base object
@@ -30,12 +29,12 @@ module.exports = function()
 	{
 		//spawn a harvester if we don't have 3
 		var workerCount = jobManager.countUnitWithMeans(C.JOB_HARVEST);
-		var workerCount = jobManager.countUnitWithMeans(C.JOB_COLLECT);
+		var collectorCount = jobManager.countUnitWithMeans(C.JOB_COLLECT);
 		var guardCount = jobManager.countUnitWithMeans(C.JOB_GUARD);
 		var rangedGuardCount = jobManager.countUnitWithMeans(C.JOB_RANGED_GUARD);
 		var healerCount = jobManager.countUnitWithMeans(C.JOB_HEAL);
 
-		console.log('==Total Unit Count - Worker: ' + workerCount + ' Guard: ' + guardCount + '/' + rangedGuardCount + ' Healer: ' + healerCount);
+		console.log('==Total Unit Count - Worker: ' + workerCount + ' Collector:' + collectorCount + ' Guard: ' + guardCount + '/' + rangedGuardCount + ' Healer: ' + healerCount);
 
 		for (var x in Game.spawns)
 		{
@@ -166,15 +165,15 @@ module.exports = function()
 	// returns cost for an array of parts
 	spawnManager.getCostParts = function (parts)
 	{
-	    var result = 0;
-	    if(parts.length)
-	    {
-	        for (var x in parts)
-	        {
-	            result += spawnManager.costs[parts[x]];
-	        }
-	    }
-	    return result;
+		var result = 0;
+		if(parts.length)
+		{
+			for (var x in parts)
+			{
+				result += spawnManager.costs[parts[x]];
+			}
+		}
+		return result;
 	};
 
 	// get the first available spawn owned by player
@@ -296,7 +295,7 @@ module.exports = function()
 					e.energy = de.energy;
 					e.pos = de.pos;
 					e.time = Game.time;
-					energyCollection.push(e) -1;
+					energyCollection.push(e);
 				}
 			}
 			//clear out old records
