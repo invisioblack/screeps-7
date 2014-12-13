@@ -1,16 +1,20 @@
 var jobHelpers = require('jobHelpers')();
 
-module.exports = function()
+module.exports = function ()
 {
 	//declare base object
-	var jobBuild = function() {};
+	var jobBuild = function ()
+	{
+	};
 	//-------------------------------------------------------------------------
 
 	jobBuild.work = function (creep)
-	{       
+	{
 		//avoid hostiles
 		if (jobHelpers.avoidHostile(creep))
+		{
 			return;
+		}
 
 		//continue if no nearby hostiles
 		var neartarget = creep.pos.findNearest(Game.CONSTRUCTION_SITES);
@@ -21,10 +25,10 @@ module.exports = function()
 		}
 		if (creep.energy == creep.energyCapacity)
 		{
-			creep.memory.building = true;	
+			creep.memory.building = true;
 		}
 
-		if(creep.energy < creep.energyCapacity && !creep.memory.building)
+		if (creep.energy < creep.energyCapacity && !creep.memory.building)
 		{
 			//this isn't null protected
 			var mySpawn = Game.spawns[creep.memory.spawn];
@@ -45,14 +49,14 @@ module.exports = function()
 		}
 		else
 		{
-			if(neartarget)
+			if (neartarget)
 			{
 				creep.moveTo(neartarget);
 				creep.build(neartarget);
 			}
 		}
-	}
+	};
 	//-------------------------------------------------------------------------
 	//return populated object
 	return jobBuild;
-}
+};

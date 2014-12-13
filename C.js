@@ -1,4 +1,4 @@
-module.exports = 
+module.exports =
 {
 	//-----------------------------------------------------------------------------
 	//valid jobs
@@ -15,4 +15,4 @@ module.exports =
 	"NEED_WEIGHT_MEDIUM": 64,
 	"NEED_WEIGHT_LOW": 32,
 	"NEED_WEIGHT_TRIVIAL": 16
-}
+};

@@ -1,6 +1,6 @@
 module.exports =
 {
-	"build": { 
+	"build": {
 		"means": [Game.WORK, Game.CARRY, Game.MOVE]
 	},
 	"collect": {
@@ -25,4 +25,4 @@ module.exports =
 	"turret": {
 		"means": [Game.RANGED_ATTACK]
 	}
-}
+};

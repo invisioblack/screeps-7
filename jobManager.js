@@ -11,18 +11,20 @@ var jobHarvest = require('jobHarvest')();
 var jobHeal = require('jobHeal')();
 var jobRangedGuard = require('jobRangedGuard')();
 
-module.exports = function()
+module.exports = function ()
 {
 	//declare base object
-	var jobManager = function() {};
+	var jobManager = function ()
+	{
+	};
 	//-------------------------------------------------------------------------
 
 	jobManager.actionJobs = function ()
 	{
-		for(var i in Game.creeps) 
+		for (var i in Game.creeps)
 		{
 			var creep = Game.creeps[i];
-			switch(creep.memory.job)
+			switch (creep.memory.job)
 			{
 				case C.JOB_BUILD:
 					jobBuild.work(creep);
@@ -48,40 +50,40 @@ module.exports = function()
 
 	jobManager.assignJobs = function ()
 	{
-		for(var i in Game.creeps) 
+		for (var i in Game.creeps)
 		{
-    		var creep = Game.creeps[i];
-    		if (jobManager.creepHasMeans(creep, C.JOB_HARVEST))
-    		{
-    			creep.memory.job = C.JOB_HARVEST;	
-    		}
+			var creep = Game.creeps[i];
+			if (jobManager.creepHasMeans(creep, C.JOB_HARVEST))
+			{
+				creep.memory.job = C.JOB_HARVEST;
+			}
 
-    		if (jobManager.creepHasMeans(creep, C.JOB_COLLECT))
-    		{
-    			creep.memory.job = C.JOB_COLLECT;
-    		}
-    		
-    		if (jobManager.creepHasMeans(creep, C.JOB_GUARD))
-    		{
-    			creep.memory.job = C.JOB_GUARD;
-    		}
+			if (jobManager.creepHasMeans(creep, C.JOB_COLLECT))
+			{
+				creep.memory.job = C.JOB_COLLECT;
+			}
+
+			if (jobManager.creepHasMeans(creep, C.JOB_GUARD))
+			{
+				creep.memory.job = C.JOB_GUARD;
+			}
 
 			if (jobManager.creepHasMeans(creep, C.JOB_RANGED_GUARD))
-    		{
-    			creep.memory.job = C.JOB_RANGED_GUARD;
-    		}
-    		
-    		if (jobManager.creepHasMeans(creep, C.JOB_BUILD))
-    		{
-    			if (creep.pos.findNearest(Game.CONSTRUCTION_SITES))
-    			{
-    				creep.memory.job = C.JOB_BUILD;
-    			}
-    		}
-    		if (jobManager.creepHasMeans(creep, C.JOB_HEAL))
-    		{
-    			creep.memory.job = C.JOB_HEAL;
-    		}
+			{
+				creep.memory.job = C.JOB_RANGED_GUARD;
+			}
+
+			if (jobManager.creepHasMeans(creep, C.JOB_BUILD))
+			{
+				if (creep.pos.findNearest(Game.CONSTRUCTION_SITES))
+				{
+					creep.memory.job = C.JOB_BUILD;
+				}
+			}
+			if (jobManager.creepHasMeans(creep, C.JOB_HEAL))
+			{
+				creep.memory.job = C.JOB_HEAL;
+			}
 		}
 	};
 
@@ -98,46 +100,59 @@ module.exports = function()
 
 		var result = _.difference(jobs[mean].means, creepParts);
 		//console.log('result: ' + result);
-		if (result.length)
-			return false;
-		else
-			return true;
+
+		return result.length;
 	};
 
 	jobManager.countUnitWithMeans = function (mean, spawnName, roomName)
 	{
-		if(typeof(spawnName)==='undefined') spawnName = '*';
-		if(typeof(roomName)==='undefined') roomName = '*';
+		if (typeof(spawnName) === 'undefined')
+		{
+			spawnName = '*';
+		}
+		if (typeof(roomName) === 'undefined')
+		{
+			roomName = '*';
+		}
 		var result = 0;
-		for(var i in Game.creeps) 
+		for (var i in Game.creeps)
 		{
 			var creep = Game.creeps[i];
 			if (jobManager.creepHasMeans(creep, mean))
 			{
 				//test spawn
-				if ( (creep.memory.spawn == spawnName || spawnName == '*') 
-						&& (creep.room.name == roomName || roomName == '*'))
+				if ((creep.memory.spawn == spawnName || spawnName == '*')
+					&& (creep.room.name == roomName || roomName == '*'))
+				{
 					result++;
+				}
 			}
-				
+
 		}
 		return result;
 	};
 
-
 	jobManager.countUnitsWithJob = function (job, spawnName, roomName)
 	{
-		if(typeof(spawnName)==='undefined') spawnName = '*';
-		if(typeof(roomName)==='undefined') roomName = '*';
+		if (typeof(spawnName) === 'undefined')
+		{
+			spawnName = '*';
+		}
+		if (typeof(roomName) === 'undefined')
+		{
+			roomName = '*';
+		}
 		var result = 0;
-		for(var i in Game.creeps) 
+		for (var i in Game.creeps)
 		{
 			var creep = Game.creeps[i];
 			if (creep.memory.job == job)
 			{
-				if ( (creep.memory.spawn == spawnName || spawnName == '*') 
+				if ((creep.memory.spawn == spawnName || spawnName == '*')
 					&& (creep.room.name == roomName || roomName == '*'))
+				{
 					result++;
+				}
 			}
 		}
 		return result;
@@ -146,4 +161,4 @@ module.exports = function()
 	//-------------------------------------------------------------------------
 	//return populated object
 	return jobManager;
-}
+};

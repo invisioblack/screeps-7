@@ -1,16 +1,19 @@
 var jobHelpers = require('jobHelpers')();
 
-module.exports = function()
+module.exports = function ()
 {
 	//declare base object
-	var jobGuard = function() {};
+	var jobGuard = function ()
+	{
+	};
 	//-------------------------------------------------------------------------
 
 	jobGuard.work = function (creep)
 	{
 		var targets = creep.room.find(Game.HOSTILE_CREEPS);
 
-		if (targets.length) {
+		if (targets.length)
+		{
 			var target = creep.pos.findNearest(Game.HOSTILE_CREEPS);
 			if (target)
 			{
@@ -22,8 +25,8 @@ module.exports = function()
 		{
 			jobHelpers.rendevous(creep, 5);
 		}
-	}
+	};
 	//-------------------------------------------------------------------------
 	//return populated object
 	return jobGuard;
-}
+};

@@ -8,16 +8,18 @@ var GUARD_THRESHOLD_MIN = 2;
 var RANGED_GUARD_THRESHOLD_MIN = 1;
 var HEALER_THRESHOLD_MIN = 1;
 
-module.exports = function()
+module.exports = function ()
 {
 	//declare base object
-	var spawnManager = function() {};
+	var spawnManager = function ()
+	{
+	};
 	//-------------------------------------------------------------------------
 
 	//game costs for spawning parts
 	spawnManager.costs = {};
-	spawnManager.costs[Game.MOVE] = 50; 
-	spawnManager.costs[Game.WORK] = 20; 
+	spawnManager.costs[Game.MOVE] = 50;
+	spawnManager.costs[Game.WORK] = 20;
 	spawnManager.costs[Game.CARRY] = 50;
 	spawnManager.costs[Game.ATTACK] = 100;
 	spawnManager.costs[Game.RANGED_ATTACK] = 150;
@@ -48,7 +50,7 @@ module.exports = function()
 			var sWarriorCount = sGuardCount + sRangedGuardCount;
 			var sEnemyCount = spawn.room.find(Game.HOSTILE_CREEPS).length;
 
-			console.log('=' + spawn.name + ' Unit Count - Worker: ' + sWorkerCount + ' Collector: ' + sCollectorCount +  ' Guard: ' + sGuardCount + '/' + sRangedGuardCount + ' Healer: ' + sHealerCount);
+			console.log('=' + spawn.name + ' Unit Count - Worker: ' + sWorkerCount + ' Collector: ' + sCollectorCount + ' Guard: ' + sGuardCount + '/' + sRangedGuardCount + ' Healer: ' + sHealerCount);
 
 			//determine spawning needs
 			var needs = {};
@@ -57,12 +59,12 @@ module.exports = function()
 			needs['guard'] = 0;
 			needs['archer'] = 0;
 			needs['healer'] = 0;
-			
+
 			//worker need
 			if (sWorkerCount < WORKER_THRESHOLD_MIN)
 			{
 				needs['worker'] = needs['worker'] + (C.NEED_WEIGHT_CRITICAL * (WORKER_THRESHOLD_MIN - sWorkerCount));
-			} 
+			}
 			else if (!jobManager.countUnitsWithJob(C.JOB_BUILD, spawn.name) && spawn.pos.findNearest(Game.CONSTRUCTION_SITES))
 			{
 				needs['worker'] = needs['worker'] + C.NEED_WEIGHT_HIGH;
@@ -119,7 +121,7 @@ module.exports = function()
 			}
 
 			//getting attacked need
-			if ((sWarriorCount/2) <= sEnemyCount)
+			if ((sWarriorCount / 2) <= sEnemyCount)
 			{
 				if (sGuardCount < sRangedGuardCount)
 				{
@@ -138,7 +140,10 @@ module.exports = function()
 			sortedNeeds.push({name: 'guard', val: needs['guard']});
 			sortedNeeds.push({name: 'archer', val: needs['archer']});
 			sortedNeeds.push({name: 'healer', val: needs['healer']});
-			sortedNeeds.sort(function(a,b) {return b.val - a.val;});
+			sortedNeeds.sort(function (a, b)
+			{
+				return b.val - a.val;
+			});
 
 			//spawn the unit
 			spawnManager.spawnUnit(sortedNeeds[0].name, spawn);
@@ -166,7 +171,7 @@ module.exports = function()
 	spawnManager.getCostParts = function (parts)
 	{
 		var result = 0;
-		if(parts.length)
+		if (parts.length)
 		{
 			for (var x in parts)
 			{
@@ -182,7 +187,9 @@ module.exports = function()
 		for (var x in Game.spawns)
 		{
 			if (!Game.spawns[x].spawning)
+			{
 				return Game.spawns[x];
+			}
 		}
 		return false;
 	};
@@ -192,7 +199,7 @@ module.exports = function()
 	{
 		if (spawn)
 		{
-			
+
 			var spawnLevel = spawnManager.getSpawnLevel(spawn.room);
 			var parts = units[name][spawnLevel].parts;
 			var cost = spawnManager.getCostParts(parts);
@@ -219,11 +226,11 @@ module.exports = function()
 	{
 		var result = false;
 		var x = 1;
-		while(!result)
+		while (!result)
 		{
 			var found = false;
 			var nameTry = name + '-' + x;
-			for(var i in Game.creeps)
+			for (var i in Game.creeps)
 			{
 				if (Game.creeps[i].name == nameTry)
 				{
@@ -242,26 +249,26 @@ module.exports = function()
 	{
 		return 1;
 		/*
-		var numSpawns = room.find(Game.MY_SPAWNS).length;
-		var numHarvester = jobManager.countUnitWithMeans(C.JOB_HARVEST, '*', room.name);
-		var numWarrior = jobManager.countUnitWithMeans(C.JOB_GUARD, '*', room.name);
-		numWarrior += jobManager.countUnitWithMeans(C.JOB_RANGED_GUARD, '*', room.name);
+		 var numSpawns = room.find(Game.MY_SPAWNS).length;
+		 var numHarvester = jobManager.countUnitWithMeans(C.JOB_HARVEST, '*', room.name);
+		 var numWarrior = jobManager.countUnitWithMeans(C.JOB_GUARD, '*', room.name);
+		 numWarrior += jobManager.countUnitWithMeans(C.JOB_RANGED_GUARD, '*', room.name);
 
-		if (numSpawns < 2)
-		{
-			if (numHarvester <= WORKER_THRESHOLD_MIN && numWarrior <= GUARD_THRESHOLD_MIN)
-				return 1;
-			else
-				return 2;
-		}
-		else
-		{
-			if (numHarvester <= WORKER_THRESHOLD_MIN * 2 && numWarrior <= GUARD_THRESHOLD_MIN * 2)
-				return 2;
-			else
-				return 3;
-		}
-		*/
+		 if (numSpawns < 2)
+		 {
+		 if (numHarvester <= WORKER_THRESHOLD_MIN && numWarrior <= GUARD_THRESHOLD_MIN)
+		 return 1;
+		 else
+		 return 2;
+		 }
+		 else
+		 {
+		 if (numHarvester <= WORKER_THRESHOLD_MIN * 2 && numWarrior <= GUARD_THRESHOLD_MIN * 2)
+		 return 2;
+		 else
+		 return 3;
+		 }
+		 */
 	};
 
 	// this function will assign collectors that are assigned to the collection
@@ -280,8 +287,9 @@ module.exports = function()
 			//validate and update droppedEnergy vs energyCollection
 			for (var de in droppedEnergy)
 			{
-				var ec = _.findIndex(energyCollection, function (e) {
-					return e.id = de.id;
+				var ec = _.findIndex(energyCollection, function (e)
+				{
+					return e.id == de.id;
 				});
 				if (ec)
 				{ //update ec object
@@ -299,14 +307,14 @@ module.exports = function()
 				}
 			}
 			//clear out old records
-			for (var x = energyCollection.length - 1;x > 0;x--)
+			for (var x = energyCollection.length - 1; x > 0; x--)
 			{
 				if (energyCollection[x].time != Game.time)
 				{
-					energyCollection.splice(x,1);
+					energyCollection.splice(x, 1);
 				}
 			}
-			
+
 			//assign harvesters
 
 			//update spawn memory
@@ -316,9 +324,9 @@ module.exports = function()
 		{ //no dropped energy, clear all assignments
 			spawn.memory.energyCollection = [];
 		}
-	}
+	};
 
 	//-------------------------------------------------------------------------
 	//return populated object
 	return spawnManager;
-}
+};
