@@ -96,12 +96,12 @@ module.exports = function ()
 		}
 
 		//console.log('mean: ' + mean);
-		//console.log('creep: ' + creepParts);
-
+		//console.log('job means: ' + jobs[mean].means);
+		//console.log('creep parts: ' + creepParts);
 		var result = _.difference(jobs[mean].means, creepParts);
 		//console.log('result: ' + result);
 
-		return result.length;
+		return !result.length;
 	};
 
 	jobManager.countUnitWithMeans = function (mean, spawnName, roomName)
