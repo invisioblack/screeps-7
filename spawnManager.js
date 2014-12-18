@@ -27,6 +27,9 @@ module.exports = function ()
 	spawnManager.costs[Game.HEAL] = 200;
 	spawnManager.costs[Game.TOUGH] = 5;
 
+	//declare needs
+	spawnManager.needs = [7];
+
 	//-------------------------------------------------------------------------
 	// top level functions
 	//-------------------------------------------------------------------------
@@ -47,10 +50,17 @@ module.exports = function ()
 		//loop over spawns
 		for (var x in Game.spawns)
 		{
-			//count and report
+			//init local reference
 			var spawn = Game.spawns[x];
 
-			// manage spawning units
+			//-----------------------------------------------------------------
+			// init manage spawning units, this should be called first
+			spawnManager.manageSpawningInit(spawn);
+
+			//-----------------------------------------------------------------
+			// all individual task management functions and such should be called here in the middle
+
+			// handle generic spawning needs
 			spawnManager.manageSpawning(spawn);
 
 			// manage energy collection
@@ -74,10 +84,17 @@ module.exports = function ()
 					}
 				}
 			 }*/
+
+			//-----------------------------------------------------------------
+			// sort and spawn spawn units - this should be called after all management functions
+			spawnManager.sortAndSpawn(spawn);
+
 		} // end looping over spawns
 	};
 
 	//-------------------------------------------------------------------------
+	// top level helper functions
+
 	// returns cost for an array of parts
 	spawnManager.getCostParts = function (parts)
 	{
@@ -184,8 +201,21 @@ module.exports = function ()
 	};
 
 	//-------------------------------------------------------------------------
-	// Spawn managing functions
+	// Spawn managing functions, these are called by .spawn()
 	//-------------------------------------------------------------------------
+
+	// this should be called first
+	spawnManager.manageSpawningInit = function (spawn)
+	{
+		spawnManager.needs = [7];
+		spawnManager.needs[C.JOB_NOTHING] = {'job': C.JOB_NOTHING , 'need': 0};
+		spawnManager.needs[C.JOB_BUILD] = {'job': C.JOB_BUILD , 'need': 0};
+		spawnManager.needs[C.JOB_COLLECT] = {'job': C.JOB_COLLECT , 'need': 0};
+		spawnManager.needs[C.JOB_GUARD] = {'job': C.JOB_GUARD , 'need': 0};
+		spawnManager.needs[C.JOB_HARVEST] = {'job': C.JOB_HARVEST , 'need': 0};
+		spawnManager.needs[C.JOB_HEAL] = {'job': C.JOB_HEAL , 'need': 0};
+		spawnManager.needs[C.JOB_RANGED_GUARD] = {'job': C.JOB_RANGED_GUARD , 'need': 0};
+	};
 
 	// Determines unit needs for spawn spawns units
 	spawnManager.manageSpawning = function (spawn)
@@ -201,70 +231,56 @@ module.exports = function ()
 		console.log('=' + spawn.name + ' Unit Count - Worker: ' + sWorkerCount + ' Collector: ' + sCollectorCount + ' Guard: ' + sGuardCount + '/' + sRangedGuardCount + ' Healer: ' + sHealerCount);
 
 		//determine spawning needs
-		var needs = {};
-		needs['worker'] = 0;
-		needs['collector'] = 0;
-		needs['guard'] = 0;
-		needs['archer'] = 0;
-		needs['healer'] = 0;
 
 		//worker need
 		if (sWorkerCount < WORKER_THRESHOLD_MIN)
 		{
-			needs['worker'] = needs['worker'] + (C.NEED_WEIGHT_CRITICAL * (WORKER_THRESHOLD_MIN - sWorkerCount));
-		}
-		else if (!jobManager.countUnitsWithJob(C.JOB_BUILD , spawn.name) && spawn.pos.findNearest(Game.CONSTRUCTION_SITES))
-		{
-			needs['worker'] = needs['worker'] + C.NEED_WEIGHT_HIGH;
-		}
-		else
-		{
-			needs['worker'] = needs['worker'] + C.NEED_WEIGHT_LOW;
+			spawnManager.needs[C.JOB_HARVEST].need = spawnManager.needs[C.JOB_HARVEST].need + (C.NEED_WEIGHT_CRITICAL * (WORKER_THRESHOLD_MIN - sWorkerCount));
 		}
 
 		//collector need
-		needs['collector'] = ((sWorkerCount * 2) - sCollectorCount) * C.NEED_WEIGHT_CRITICAL;
+		spawnManager.needs[C.JOB_COLLECT].need = ((sWorkerCount * 2) - sCollectorCount) * C.NEED_WEIGHT_CRITICAL;
 
 		//Guard need
 		if (sGuardCount < GUARD_THRESHOLD_MIN)
 		{
-			needs['guard'] = needs['guard'] + (C.NEED_WEIGHT_HIGH * GUARD_THRESHOLD_MIN);
+			spawnManager.needs[C.JOB_GUARD].need = spawnManager.needs[C.JOB_GUARD].need + (C.NEED_WEIGHT_HIGH * GUARD_THRESHOLD_MIN);
 		}
 		else
 		{
 			if (sGuardCount <= sRangedGuardCount)
 			{
-				needs['guard'] = needs['guard'] + C.NEED_WEIGHT_HIGH;
+				spawnManager.needs[C.JOB_GUARD].need = spawnManager.needs[C.JOB_GUARD].need + C.NEED_WEIGHT_HIGH;
 			}
 			else
 			{
-				needs['guard'] = needs['guard'] + C.NEED_WEIGHT_MEDIUM;
+				spawnManager.needs[C.JOB_GUARD].need = spawnManager.needs[C.JOB_GUARD].need + C.NEED_WEIGHT_MEDIUM;
 			}
 		}
 
 		//rangedGuard need
-		if (sGuardCount < GUARD_THRESHOLD_MIN)
+		if (sGuardCount >= GUARD_THRESHOLD_MIN)
 		{
-			needs['archer'] = needs['archer'] + (C.NEED_WEIGHT_HIGH * RANGED_GUARD_THRESHOLD_MIN);
+			spawnManager.needs[C.JOB_RANGED_GUARD].need = spawnManager.needs[C.JOB_RANGED_GUARD].need + (C.NEED_WEIGHT_HIGH * RANGED_GUARD_THRESHOLD_MIN);
 		}
 		else
 		{
 			if (sRangedGuardCount <= sGuardCount)
 			{
-				needs['archer'] = needs['archer'] + C.NEED_WEIGHT_HIGH;
+				spawnManager.needs[C.JOB_RANGED_GUARD].need = spawnManager.needs[C.JOB_RANGED_GUARD].need + C.NEED_WEIGHT_HIGH;
 			}
 		}
 
 		//healer need
 		if (sHealerCount < HEALER_THRESHOLD_MIN && sGuardCount >= GUARD_THRESHOLD_MIN)
 		{
-			needs['healer'] = needs['healer'] + (C.NEED_WEIGHT_CRITICAL * HEALER_THRESHOLD_MIN);
+			spawnManager.needs[C.JOB_HEAL].need = spawnManager.needs[C.JOB_HEAL].need + (C.NEED_WEIGHT_CRITICAL * HEALER_THRESHOLD_MIN);
 		}
 		else
 		{
 			if (sHealerCount <= (sWarriorCount / 6))
 			{
-				needs['healer'] = needs['healer'] + C.NEED_WEIGHT_CRITICAL;
+				spawnManager.needs[C.JOB_HEAL].need = spawnManager.needs[C.JOB_HEAL].need + C.NEED_WEIGHT_CRITICAL;
 			}
 		}
 
@@ -273,28 +289,47 @@ module.exports = function ()
 		{
 			if (sGuardCount < sRangedGuardCount)
 			{
-				needs['guard'] = needs['guard'] + (C.NEED_WEIGHT_CRITICAL * (2 * (sEnemyCount - sGuardCount)));
+				spawnManager.needs[C.JOB_GUARD].need = spawnManager.needs[C.JOB_GUARD].need + (C.NEED_WEIGHT_CRITICAL * (2 * (sEnemyCount - sGuardCount)));
 			}
 			else
 			{
-				needs['archer'] = needs['archer'] + (C.NEED_WEIGHT_CRITICAL * (2 * (sEnemyCount - sRangedGuardCount)));
+				spawnManager.needs[C.JOB_RANGED_GUARD].need = spawnManager.needs[C.JOB_RANGED_GUARD].need + (C.NEED_WEIGHT_CRITICAL * (2 * (sEnemyCount - sRangedGuardCount)));
 			}
 		}
+	};
 
+	spawnManager.sortAndSpawn = function (spawn)
+	{
 		//sort needs and spawn based on what is highest
-		var sortedNeeds = [];
-		sortedNeeds.push({name: 'worker' , val: needs['worker']});
-		sortedNeeds.push({name: 'collector' , val: needs['collector']});
-		sortedNeeds.push({name: 'guard' , val: needs['guard']});
-		sortedNeeds.push({name: 'archer' , val: needs['archer']});
-		sortedNeeds.push({name: 'healer' , val: needs['healer']});
+		var spawnLevel = spawnManager.getSpawnLevel(spawn.room);
+		var sortedNeeds = spawnManager.needs;
 		sortedNeeds.sort(function (a , b)
 		{
-			return b.val - a.val;
+			return b.need - a.need;
 		});
 
+		//console.log("job: " + sortedNeeds[0].job);
+
+		var findunits = _.filter(units , function (f)
+			{
+				return f.jobId == sortedNeeds[0].job;
+			}
+		);
+
 		//spawn the unit
-		spawnManager.spawnUnit(sortedNeeds[0].name , spawn);
+		if (findunits && _.isArray(findunits) && findunits.length)
+		{
+			spawnManager.spawnUnit(findunits[0][spawnLevel].memory.name , spawn);
+		}
+		else
+		{
+			console.log('ERROR: failed to spawn!');
+		}
+	};
+
+	spawnManager.manageSources = function (spawn)
+	{
+		//
 	};
 
 	// assigns collectors that are assigned to the collection job to specific pieces of energy to pick up
