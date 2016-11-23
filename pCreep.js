@@ -45,7 +45,7 @@ module.exports = function()
 			var target = creep.pos.findNearest(Game.HOSTILE_CREEPS);
 			if (target)
 			{
-				jobHelpers.moveAwayFromTarget(creep, target);
+				creep.moveAwayFromTarget(creep, target);
 				return true;
 			}
 		}
@@ -64,17 +64,17 @@ module.exports = function()
 
 		if (creep.memory.rendevous)
 		{
-			jobHelpers.moveToRange(creep, creep.memory.rendevous, range);
+			creep.moveToRange(creep, creep.memory.rendevous, range);
 		}
 		else if (flags && flags.length)
 		{
 			var flag = flags[0];
-			jobHelpers.moveToRange(creep, flag, range);
+			creep.moveToRange(creep, flag, range);
 		}
 		else
 		{
 			var creepSpawn = Game.spawns[creep.memory.spawn];
-			jobHelpers.moveToRange(creep, creepSpawn, range);
+			creep.moveToRange(creep, creep.getSpawn(), range);
 		}
 	};
     
@@ -101,5 +101,12 @@ module.exports = function()
         
         return percent;
     };
+
+	Creep.prototype.getSpawn = function()
+	{
+		// This needs to be null protected.
+		var creepSpawn = Game.spawns[creep.memory.spawn];
+		return creepSpawn;		
+	}
     
 };

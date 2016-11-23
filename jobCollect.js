@@ -44,7 +44,7 @@ module.exports = function ()
 	jobCollect.returnEnergy = function (creep)
 	{
 		// find spawn to return energy too
-		var spawn = Game.spawns[creep.memory.spawn];
+		var spawn = creep.getSpawn();
 		if (!spawn)
 		{
 			spawn = creep.pos.findNearest(Game.MY_SPAWNS);

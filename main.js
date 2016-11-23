@@ -8,27 +8,29 @@ console.log("++++++ new tick ++++++");
 //-------------------------------------------------------------------------
 require('pSource')();
 require('pCreep')();
-var needsManager = require('needsManager')();
-var jobManager = require('jobManager')();
-var spawnManager = require('spawnManager')();
+var motivator = require('motivator')();
+var needManager = require('needManager')();
+
+//var jobManager = require('jobManager')();
+//var spawnManager = require('spawnManager')();
 
 //-------------------------------------------------------------------------
 // Declarations
 //-------------------------------------------------------------------------
 
 // init
-spawnManager.init();
+//spawnManager.init();
 
 //update needs
-needsManager.updateNeeds();
+//needsManager.updateNeeds();
 
 //assign jobs / spawns
-needsManager.manageNeeds();
+//needsManager.manageNeeds();
 
 //spawn
-spawnManager.spawn();
+//spawnManager.spawn();
 
 //action jobs
-jobManager.actionJobs();
+//jobManager.actionJobs();
 
 console.log("------ end tick ------");

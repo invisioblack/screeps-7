@@ -30,6 +30,7 @@ module.exports = function ()
 		}
 
 		//continue if no nearby hostiles
+		//TODO: This needs to be defined by the need.
 		var neartarget = creep.pos.findNearest(Game.CONSTRUCTION_SITES);
 
 		if (creep.energy === 0)
@@ -41,18 +42,19 @@ module.exports = function ()
 			creep.memory.building = true;
 		}
 
+		// If I don't have full energy, and I'm not building right now, then go get energy
 		if (creep.energy < creep.energyCapacity && !creep.memory.building)
 		{
 			//this isn't null protected
-			var mySpawn = Game.spawns[creep.memory.spawn];
+			var mySpawn = creep.getSpawn();
 			var spawnPath = creep.pos.findPathTo(mySpawn);
 			var nearSource = creep.pos.findNearest(Game.SOURCES);
 			var sourcePath = creep.pos.findPathTo(nearSource);
 
 			if (spawnPath.length <= sourcePath.length && mySpawn.energy > 100)
 			{
-				creep.moveTo(Game.spawns[creep.memory.spawn]);
-				Game.spawns[creep.memory.spawn].transferEnergy(creep);
+				creep.moveTo(mySpawn);
+				mySpawn.transferEnergy(creep);
 			}
 			else
 			{
@@ -60,6 +62,7 @@ module.exports = function ()
 				creep.harvest(nearSource);
 			}
 		}
+		// otherwise, go build!
 		else
 		{
 			if (neartarget)
