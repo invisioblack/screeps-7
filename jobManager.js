@@ -1,8 +1,13 @@
-//-----------------------------------------------------------------------------
+//-------------------------------------------------------------------------
+// jobHeal
+//-------------------------------------------------------------------------
 
+//-------------------------------------------------------------------------
+// modules
+//-------------------------------------------------------------------------
 var _ = require('lodash');
-
 var C = require('C');
+var lib = require('lib')();
 var jobs = require('jobs');
 var jobBuild = require('jobBuild')();
 var jobCollect = require('jobCollect')();
@@ -11,6 +16,13 @@ var jobHarvest = require('jobHarvest')();
 var jobHeal = require('jobHeal')();
 var jobRangedGuard = require('jobRangedGuard')();
 
+//-------------------------------------------------------------------------
+// Declarations
+//-------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------
+// function
+//-------------------------------------------------------------------------
 module.exports = function ()
 {
 	//declare base object
@@ -47,45 +59,33 @@ module.exports = function ()
 			}
 		}
 	};
-
-	jobManager.assignJobs = function ()
+	
+	jobManager.assignCreepToNeed = function (creep, need)
 	{
-		for (var i in Game.creeps)
-		{
-			var creep = Game.creeps[i];
-			if (jobManager.creepHasMeans(creep, C.JOB_HARVEST))
-			{
-				creep.memory.job = C.JOB_HARVEST;
-			}
-
-			if (jobManager.creepHasMeans(creep, C.JOB_COLLECT))
-			{
-				creep.memory.job = C.JOB_COLLECT;
-			}
-
-			if (jobManager.creepHasMeans(creep, C.JOB_GUARD))
-			{
-				creep.memory.job = C.JOB_GUARD;
-			}
-
-			if (jobManager.creepHasMeans(creep, C.JOB_RANGED_GUARD))
-			{
-				creep.memory.job = C.JOB_RANGED_GUARD;
-			}
-
-			if (jobManager.creepHasMeans(creep, C.JOB_BUILD))
-			{
-				if (creep.pos.findNearest(Game.CONSTRUCTION_SITES))
-				{
-					creep.memory.job = C.JOB_BUILD;
-				}
-			}
-			if (jobManager.creepHasMeans(creep, C.JOB_HEAL))
-			{
-				creep.memory.job = C.JOB_HEAL;
-			}
-		}
-	};
+	    jobManager.unAssignCreep(creep);
+	    console.log("+++Assigning : " + creep.name + " to : " + need.name);
+	    need.assigned[creep.name] = creep.name;
+	    creep.memory.need = need.name;
+	    creep.memory.job = need.job;
+	    creep.memory.target = need.target;
+	    creep.memory.needId = null;
+	}
+	
+	jobManager.unAssignCreep = function (creep)
+	{
+	    console.log("-UnAssigning : " + creep.name);
+	    if (!lib.isNull(creep.need))
+	    {
+	        var need = Memory.needs[creep.need];
+	        if (!lib.isNull(need))
+	        {
+	            delete need.assigned[creep.name];
+	        }
+	    }
+	    creep.memory.need = null;
+	    creep.memory.job = C.JOB_NOTHING;
+	    creep.memory.target = null;
+	}
 
 	jobManager.creepHasMeans = function (creep, mean)
 	{
@@ -104,55 +104,29 @@ module.exports = function ()
 		return !result.length;
 	};
 
-	jobManager.countUnitWithMeans = function (mean, spawnName, roomName)
+	jobManager.countUnitWithMeans = function (mean)
 	{
-		if (typeof(spawnName) === 'undefined')
-		{
-			spawnName = '*';
-		}
-		if (typeof(roomName) === 'undefined')
-		{
-			roomName = '*';
-		}
 		var result = 0;
 		for (var i in Game.creeps)
 		{
 			var creep = Game.creeps[i];
 			if (jobManager.creepHasMeans(creep, mean))
 			{
-				//test spawn
-				if ((creep.memory.spawn == spawnName || spawnName == '*')
-					&& (creep.room.name == roomName || roomName == '*'))
-				{
-					result++;
-				}
+				result++;
 			}
-
 		}
 		return result;
 	};
 
-	jobManager.countUnitsWithJob = function (job, spawnName, roomName)
+	jobManager.countUnitsWithJob = function (job)
 	{
-		if (typeof(spawnName) === 'undefined')
-		{
-			spawnName = '*';
-		}
-		if (typeof(roomName) === 'undefined')
-		{
-			roomName = '*';
-		}
 		var result = 0;
 		for (var i in Game.creeps)
 		{
 			var creep = Game.creeps[i];
 			if (creep.memory.job == job)
 			{
-				if ((creep.memory.spawn == spawnName || spawnName == '*')
-					&& (creep.room.name == roomName || roomName == '*'))
-				{
-					result++;
-				}
+				result++;
 			}
 		}
 		return result;

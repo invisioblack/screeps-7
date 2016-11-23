@@ -1,5 +1,18 @@
-var jobHelpers = require('jobHelpers')();
+//-------------------------------------------------------------------------
+// jobHarvest
+//-------------------------------------------------------------------------
 
+//-------------------------------------------------------------------------
+// modules
+//-------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------
+// Declarations
+//-------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------
+// function
+//-------------------------------------------------------------------------
 module.exports = function ()
 {
 	//declare base object
@@ -10,30 +23,30 @@ module.exports = function ()
 
 	jobHarvest.work = function (creep)
 	{
+		var need = Memory.needs[creep.memory.need];
+		var target = Game.getObjectById(need.target);
+		
+		// TODO : Null protect need
+		
 		//avoid hostiles
-		if (jobHelpers.avoidHostile(creep))
+		if (creep.avoidHostile(creep))
 		{
 			return;
 		}
 
-		//continue if no nearby hostiles
-		if (creep.energyCapacity === 0 || creep.energy < creep.energyCapacity)
+        if (creep.carryCapacity == 0 || _.sum(creep.carry) < creep.carryCapacity)
 		{
-			var sources = Game.spawns[creep.memory.spawn].pos.findNearest(Game.SOURCES, {
-				filter: function (t)
-				{
-					return t.energy > 0
-				}
-			});
-			creep.moveTo(sources);
-			creep.harvest(sources);
+		    console.log("harvest");
+    		creep.moveTo(target);
+	    	creep.harvest(target);
 		}
-		else
+        else
 		{
-			var target = creep.pos.findNearest(Game.MY_SPAWNS);
+		    console.log("return");
+			var spawn = creep.pos.findClosestByPath(FIND_MY_SPAWNS);
 
-			creep.moveTo(target);
-			creep.transferEnergy(target);
+			creep.moveTo(spawn);
+			creep.transferEnergy(spawn);
 		}
 	};
 	//-------------------------------------------------------------------------

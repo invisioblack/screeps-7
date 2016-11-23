@@ -1,34 +1,28 @@
 //-------------------------------------------------------------------------
-// Main
+// pSource
 //-------------------------------------------------------------------------
-console.log("++++++ new tick ++++++");
 
 //-------------------------------------------------------------------------
-// Modules
+// modules
 //-------------------------------------------------------------------------
-require('pSource')();
-require('pCreep')();
-var needsManager = require('needsManager')();
-var jobManager = require('jobManager')();
-var spawnManager = require('spawnManager')();
 
 //-------------------------------------------------------------------------
 // Declarations
 //-------------------------------------------------------------------------
 
-// init
-spawnManager.init();
-
-//update needs
-needsManager.updateNeeds();
-
-//assign jobs / spawns
-needsManager.manageNeeds();
-
-//spawn
-spawnManager.spawn();
-
-//action jobs
-jobManager.actionJobs();
-
-console.log("------ end tick ------");
+//-------------------------------------------------------------------------
+// function
+//-------------------------------------------------------------------------
+module.exports = function() 
+{
+    Source.prototype.percentFull = function()
+    {
+        var percent = (this.energy / this.energyCapacity) * 10000 / 100
+        return percent;
+    };
+    
+    Source.prototype.harvestersNeeded = function()
+    {
+        return 3;
+    }
+};

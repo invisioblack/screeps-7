@@ -1,5 +1,16 @@
+//-------------------------------------------------------------------------
+// jobs
+//-------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------
+// definition
+//-------------------------------------------------------------------------
 module.exports =
 {
+    9999: {
+		"name": "fresh" ,
+		"means": []
+	} ,
 	0: {
 		"name": "nothing" ,
 		"means": []
@@ -17,7 +28,7 @@ module.exports =
 		"means": [Game.ATTACK, Game.MOVE]
 	},
 	4: {
-		"name": "guard" ,
+		"name": "harvest" ,
 		"means": [Game.WORK, Game.MOVE]
 	},
 	5: {
@@ -28,13 +39,8 @@ module.exports =
 		"name": "rangedGuard" ,
 		"means": [Game.RANGED_ATTACK, Game.MOVE]
 	},
-// not implemented
 	7: {
-		"name": "deliver" ,
+		"name": "unload" ,
 		"means": [Game.CARRY, Game.MOVE]
-	},
-	8: {
-		"name": "turret" ,
-		"means": [Game.RANGED_ATTACK]
 	}
 };

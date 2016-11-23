@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------
-// jobGuard
+// lib
 //-------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------
@@ -10,40 +10,36 @@
 // Declarations
 //-------------------------------------------------------------------------
 
+
 //-------------------------------------------------------------------------
 // function
 //-------------------------------------------------------------------------
-module.exports = function()
+module.exports = function ()
 {
 	//declare base object
-	var jobRangedGuard = function() {};
-	//-------------------------------------------------------------------------
-
-	jobRangedGuard.work = function (creep)
+	var lib = function ()
 	{
-		var targets = creep.room.find(Game.HOSTILE_CREEPS);
-
-		if (targets.length) {
-			var target = creep.pos.findNearest(Game.HOSTILE_CREEPS);
-
-			if (target)
-			{
-				if (target.pos.inRangeTo(creep.pos, 2)) {
-					creep.moveTo(creep.pos.x + creep.pos.x - target.pos.x, creep.pos.y + creep.pos.y - target.pos.y );
-				} else if (target.pos.inRangeTo(creep.pos, 3)) {
-					creep.rangedAttack(target);
-				}
-				else {
-					creep.moveTo(target);
-				}
-			}
-		}
-		else
-		{
-			creep.rendevous(creep, 4);
-		}
 	};
 	//-------------------------------------------------------------------------
+	// Declarations
+
+
+	//-------------------------------------------------------------------------
+	// top level functions
+	//-------------------------------------------------------------------------
+
+   
+	
+	lib.isNull = function (value)
+	{
+        if (typeof value == "undefined" || value == null)
+            return true;
+        else
+            return false;
+	}
+
+
+	//-------------------------------------------------------------------------
 	//return populated object
-	return jobRangedGuard;
+	return lib;
 };
