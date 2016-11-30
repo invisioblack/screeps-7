@@ -16,9 +16,7 @@
 module.exports = function ()
 {
 	//declare base object
-	var jobBuild = function ()
-	{
-	};
+	var jobBuild = function () {};
 	//-------------------------------------------------------------------------
 
 	jobBuild.work = function (creep)

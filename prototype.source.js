@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------
-// pSource
+// prototype.source
 //-------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------
@@ -15,14 +15,10 @@
 //-------------------------------------------------------------------------
 module.exports = function() 
 {
-    Source.prototype.percentFull = function()
+    Source.prototype.getPercentFull = function()
     {
         var percent = (this.energy / this.energyCapacity) * 10000 / 100
         return percent;
     };
-    
-    Source.prototype.harvestersNeeded = function()
-    {
-        return 3;
-    }
+
 };

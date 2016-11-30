@@ -6,31 +6,24 @@ console.log("++++++ new tick ++++++");
 //-------------------------------------------------------------------------
 // Modules
 //-------------------------------------------------------------------------
-require('pSource')();
-require('pCreep')();
+// prototypes
+require('prototype.creep')();
+require('prototype.source')();
+require('prototype.spawn')();
+
+// other modules
 var motivator = require('motivator')();
 var needManager = require('needManager')();
-
-//var jobManager = require('jobManager')();
-//var spawnManager = require('spawnManager')();
 
 //-------------------------------------------------------------------------
 // Declarations
 //-------------------------------------------------------------------------
 
-// init
-//spawnManager.init();
+//-------------------------------------------------------------------------
+// Do stuffs
+//-------------------------------------------------------------------------
 
-//update needs
-//needsManager.updateNeeds();
-
-//assign jobs / spawns
-//needsManager.manageNeeds();
-
-//spawn
-//spawnManager.spawn();
-
-//action jobs
-//jobManager.actionJobs();
-
+//-------------------------------------------------------------------------
+// END
+//-------------------------------------------------------------------------
 console.log("------ end tick ------");

@@ -13,7 +13,6 @@ var _ = require('lodash');
 var C = require('C');
 var lib = require('lib')();
 
-
 //-------------------------------------------------------------------------
 // Declarations
 //-------------------------------------------------------------------------
@@ -24,12 +23,36 @@ var lib = require('lib')();
 module.exports = function ()
 {
 	//declare base object
-	var motivator = function ()
-	{
-	};
+	var motivator = function () {};
 	//-------------------------------------------------------------------------
+	// Main motivator funtion, should be called first from main
+	motivator.motivate = function ()
+	{
+		
+	};
+
+	motivator.init = function ()
+	{
 
 
+		// init motivations in each room we control
+		foreach (room in Game.rooms)
+		{
+			if (room.controller.my)
+			{
+				// init motivations in memory
+				if (lib.isNull(room.memory.motivations))
+				{
+					room.memory.motivations = {};
+				}
+
+				// init each motivation for this room
+				motivationSupplySpawn.init(room.name);
+			}
+		}
+
+
+	};
 
 	//-------------------------------------------------------------------------
 	//return populated object

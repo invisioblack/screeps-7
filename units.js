@@ -1,53 +1,43 @@
 module.exports =
 {
 	"worker": {
-		"jobId": 4 ,
-		1: {
-			"parts": [Game.WORK, Game.WORK, Game.WORK, Game.WORK, Game.MOVE],
-			"memory": {
-				"name": "worker",
-				"level": 1
+		"parts": [
+			{
+				"part" : Game.WORK,
+				"weight" : 0.5,
+				"minimum" : 1
+			},
+			{
+				"part" : Game.CARRY,
+				"weight" : 0.3,
+				"minimum" : 1
+			},
+			{
+				"part" : Game.MOVE,
+				"weight" : 0.2,
+				"minimum" : 1
 			}
-		}
-	},
-	"collector": {
-		"jobId": 2 ,
-		1: {
-			"parts": [Game.CARRY, Game.CARRY, Game.CARRY, Game.MOVE, Game.MOVE],
-			"memory": {
-				"name": "collector" ,
-				"level": 1
-			}
+		],
+		"memory": {
+			"name": "worker"
 		}
 	},
 	"guard": {
-		"jobId": 3 ,
-		1: {
-			"parts": [Game.TOUGH, Game.ATTACK, Game.ATTACK, Game.ATTACK, Game.MOVE],
-			"memory": {
-				"name": "guard",
-				"level": 1
-			}
+		"parts": [Game.TOUGH, Game.ATTACK, Game.ATTACK, Game.ATTACK, Game.MOVE],
+		"memory": {
+			"name": "guard"
 		}
 	},
 	"healer": {
-		"jobId": 5 ,
-		1: {
-			"parts": [Game.TOUGH, Game.HEAL, Game.HEAL, Game.HEAL, Game.MOVE],
-			"memory": {
-				"name": "healer",
-				"level": 1
-			}
+		"parts": [Game.TOUGH, Game.HEAL, Game.HEAL, Game.HEAL, Game.MOVE],
+		"memory": {
+			"name": "healer"
 		}
 	},
 	"archer": {
-		"jobId": 6 ,
-		1: {
-			"parts": [Game.RANGED_ATTACK, Game.RANGED_ATTACK, Game.RANGED_ATTACK, Game.RANGED_ATTACK, Game.MOVE],
-			"memory": {
-				"name": "archer",
-				"level": 1
-			}
+		"parts": [Game.RANGED_ATTACK, Game.RANGED_ATTACK, Game.RANGED_ATTACK, Game.RANGED_ATTACK, Game.MOVE],
+		"memory": {
+			"name": "archer"
 		}
 	}
 };
