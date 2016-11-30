@@ -36,7 +36,7 @@ module.exports = function()
 			for (var x in parts)
 			{
 			    //console.log("P: " + parts[x]);
-				result += spawnManager.costs[parts[x]];
+				result += Spawn.prototype.getCostParts.costs[parts[x]];
 			}
 		}
 		return result;
@@ -68,5 +68,4 @@ module.exports = function()
 			x++;
 		}
 	};
-
 };

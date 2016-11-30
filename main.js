@@ -7,13 +7,13 @@ console.log("++++++ new tick ++++++");
 // Modules
 //-------------------------------------------------------------------------
 // prototypes
-require('prototype.creep')();
-require('prototype.source')();
-require('prototype.spawn')();
+require('prototype.creep');
+require('prototype.source');
+require('prototype.spawn');
 
 // other modules
 var motivator = require('motivator')();
-var needManager = require('needManager')();
+//var needManager = require('needManager')();
 
 //-------------------------------------------------------------------------
 // Declarations
@@ -22,6 +22,7 @@ var needManager = require('needManager')();
 //-------------------------------------------------------------------------
 // Do stuffs
 //-------------------------------------------------------------------------
+motivator.init();
 
 //-------------------------------------------------------------------------
 // END
