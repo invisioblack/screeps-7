@@ -36,7 +36,7 @@ module.exports = function ()
 
 
 		// init motivations in each room we control
-		foreach (room in Game.rooms)
+		for (var room in Game.rooms)
 		{
 			if (room.controller.my)
 			{
