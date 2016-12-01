@@ -107,6 +107,13 @@ module.exports = function()
 		// This needs to be null protected.
 		var creepSpawn = Game.spawns[creep.memory.spawn];
 		return creepSpawn;		
-	}
+	};
+
+	Creep.prototype.getUnit = function()
+	{
+		// This needs to be null protected.
+		var unit = this.memory.unit;
+		return unit;		
+	};
     
 };

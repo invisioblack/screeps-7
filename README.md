@@ -18,7 +18,7 @@ Motivator
         Activate/Deactivate motivations
             Each motivation has shouldBeActive()
         Decide motivation priority
-            priority + status weight 
+            priority
         Allocate resources to each active motivation
 
     The motivator is the part in which the player interacts with.

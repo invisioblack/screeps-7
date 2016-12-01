@@ -16,60 +16,60 @@ var lib = require('lib')();
 module.exports = function ()
 {
 	//declare base object
-	var motivationSupplySpawn = function () {};
+	var motivationSupplyController = function () {};
 	//-------------------------------------------------------------------------
 
-	motivationSupplySpawn.init = function (roomName)
+	motivationSupplyController.init = function (roomName)
 	{
-		if (!motivationSupplySpawn.getInit(roomName))
+		if (!motivationSupplyController.getInit(roomName))
 		{
 			var room = Game.rooms[roomName];
 			// init motivation object
-			if (lib.isNull(room.memory.motivations["motivationSupplySpawn"]))
-					room.memory.motivations["motivationSupplySpawn"] = {};
+			if (lib.isNull(room.memory.motivations["motivationSupplyController"]))
+					room.memory.motivations["motivationSupplyController"] = {};
 			
 			// init default memory
-			motivationSupplySpawn.setActive(roomName, false);
+			motivationSupplyController.setActive(roomName, false);
 			
 			// set init true
-			Game.rooms[roomName].memory.motivations["motivationSupplySpawn"].init = true;
+			Game.rooms[roomName].memory.motivations["motivationSupplyController"].init = true;
 		}
 	};
 
-	motivationSupplySpawn.getInit = function (roomName)
+	motivationSupplyController.getInit = function (roomName)
 	{
 		var room = Game.rooms[roomName];
 
-		if (!lib.isNull(room.memory.motivations["motivationSupplySpawn"])
-			&& room.memory.motivations["motivationSupplySpawn"].init) {
+		if (!lib.isNull(room.memory.motivations["motivationSupplyController"])
+			&& room.memory.motivations["motivationSupplyController"].init) {
 			 return true;
 		} else {
 			return false;
 		}
 	};
 
-	motivationSupplySpawn.setActive = function (roomName, state)
+	motivationSupplyController.setActive = function (roomName, state)
 	{
 		if (state) {
-			Game.rooms[roomName].memory.motivations["motivationSupplySpawn"].active = true;
+			Game.rooms[roomName].memory.motivations["motivationSupplyController"].active = true;
 		} else {
-			Game.rooms[roomName].memory.motivations["motivationSupplySpawn"].active = false;
+			Game.rooms[roomName].memory.motivations["motivationSupplyController"].active = false;
 		}
 	};
 
-	motivationSupplySpawn.getActive = function (roomName)
+	motivationSupplyController.getActive = function (roomName)
 	{
-		if (Game.rooms[roomName].memory.motivations["motivationSupplySpawn"].active) {
+		if (Game.rooms[roomName].memory.motivations["motivationSupplyController"].active) {
 			 return true;
 		} else {
 			return false;
 		}
 	};
 
-	motivationSupplySpawn.getDemands = function (roomName, spawnEnergy, workers)
+	motivationSupplyController.getDemands = function (roomName, collectorStatus, workers)
 	{
 		var result = {};
-		result.energy = spawnEnergy.energyCapacity - spawnEnergy.energy;
+		result.energy = collectorStatus.progressTotal - collectorStatus.progress;
 		result.workers = Math.floor(result.energy / 50);
 		result.spawn = workers < result.workers;
 
@@ -78,5 +78,5 @@ module.exports = function ()
 
 	//-------------------------------------------------------------------------
 	//return populated object
-	return motivationSupplySpawn;
+	return motivationSupplyController;
 };
