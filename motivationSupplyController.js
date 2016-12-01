@@ -29,6 +29,7 @@ module.exports = function ()
 					room.memory.motivations["motivationSupplyController"] = {};
 			
 			// init default memory
+			room.memory.motivations["motivationSupplyController"].name = "motivationSupplyController";
 			motivationSupplyController.setActive(roomName, false);
 			
 			// set init true

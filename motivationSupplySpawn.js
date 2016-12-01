@@ -29,6 +29,7 @@ module.exports = function ()
 					room.memory.motivations["motivationSupplySpawn"] = {};
 			
 			// init default memory
+			room.memory.motivations["motivationSupplySpawn"].name = "motivationSupplySpawn";
 			motivationSupplySpawn.setActive(roomName, false);
 			
 			// set init true
