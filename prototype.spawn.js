@@ -43,7 +43,7 @@ module.exports = function()
 	};
 
 	// generate a name for a creep
-	spawnManager.generateName = function (name)
+	Spawn.prototype.generateName = function (name)
 	{
 		var result = false;
 		var x = 1;
