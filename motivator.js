@@ -50,8 +50,6 @@ module.exports = function ()
 				motivationSupplySpawn.init(room.name);
 			}
 		}
-
-
 	};
 
 	//-------------------------------------------------------------------------

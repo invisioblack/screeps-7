@@ -11,7 +11,12 @@ require('prototype.creep')();
 require('prototype.source')();
 require('prototype.spawn')();
 
-// other modules
+// library modules
+var _ = require("lodash");
+var C = require('C');
+var lib = require("lib")();
+
+// game modules
 var motivator = require('motivator')();
 //var needManager = require('needManager')();
 
