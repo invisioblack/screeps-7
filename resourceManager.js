@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 var _ = require("lodash");
 var C = require('C');
-var lib = require("lib")();
+var lib = require("lib");
 
 require('prototype.creep')();
 require('prototype.source')();

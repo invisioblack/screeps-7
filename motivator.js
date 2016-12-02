@@ -10,7 +10,8 @@
 // modules
 //-------------------------------------------------------------------------
 // library modules
-var lib = require('lib')();
+var C = require('C');
+var lib = require('lib');
 
 // game modules
 var motivationSupplySpawn = require('motivationSupplySpawn')();
@@ -24,13 +25,11 @@ var resourceManager = require('resourceManager')();
 //-------------------------------------------------------------------------
 // function
 //-------------------------------------------------------------------------
-module.exports = function ()
+module.exports =
 {
-	//declare base object
-	var motivator = function () {};
 	//-------------------------------------------------------------------------
 	// Main motivator funtion, should be called first from main
-	motivator.motivate = function ()
+	"motivate": function ()
 	{
 		// motivate in each room we control
 		for (var roomName in Game.rooms)
@@ -56,11 +55,18 @@ module.exports = function ()
 				demands.motivationSupplyController = motivationSupplyController.getDemands(roomName, collectorStatus, workers);
 				console.log('Supply Spawn Demands: e: ' + demands.motivationSupplySpawn.energy + ' Workers: ' + demands.motivationSupplySpawn.workers + ' Spawn: ' + demands.motivationSupplySpawn.spawn);
 				console.log('Supply Collector Demands: e: ' + demands.motivationSupplyController.energy + ' Workers: ' + demands.motivationSupplyController.workers + ' Spawn: ' + demands.motivationSupplyController.spawn);
+			
+				// decide motivator mode
+				if (workers == 0)
+				{
+					
+				}
+
 			}
 		}
-	};
+	},
 
-	motivator.init = function ()
+	"init": function ()
 	{
 		// init motivations in each room we control
 		for (var roomName in Game.rooms)
@@ -79,9 +85,5 @@ module.exports = function ()
 				motivationSupplyController.init(room.name);
 			}
 		}
-	};
-
-	//-------------------------------------------------------------------------
-	//return populated object
-	return motivator;
+	}
 };

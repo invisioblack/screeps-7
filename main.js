@@ -14,10 +14,10 @@ require('prototype.spawn')();
 // library modules
 var _ = require("lodash");
 var C = require('C');
-var lib = require("lib")();
+var lib = require("lib");
 
 // game modules
-var motivator = require('motivator')();
+var motivator = require('motivator');
 //var needManager = require('needManager')();
 
 //-------------------------------------------------------------------------
