@@ -77,20 +77,29 @@ module.exports =
 				console.log('Supply Spawn Active: ' + motivationSupplySpawn.getActive(roomName));
 				console.log('Supply Controller Active: ' + motivationSupplyController.getActive(roomName));
 
-				// decide motivator mode
-				if (workers < 2)
-				{
-					this.mode = C.MOTIVATOR_MODE_SINGLE_MINDED;
-				} else if (workers < 10) {
-					this.mode = C.MOTIVATOR_MODE_LOPSIDED;
-				} else {
-					this.mode = C.MOTIVATOR_MODE_BALANCED;
-				}
+				var sortedMotivations = _.sortBy(_.filter(Memory.rooms[roomName].motivations, (m) => m.active), ['priority']);
 
+				// ------------------------------------------------------------				
 				// distribute resources to motivations
 
+				// workers ----------------------------------------------------
+				// calculate allocated Workers
+				var allocatedWorkers = 0;
+				for (var motivationName in Memory.rooms[roomName].motivations)
+				{
+					var motivation = Memory.rooms[roomName].motivations[motivationName];
+					if (!lib.isNull(motivation.allocatedUnits["worker"]))
+						allocatedWorkers += motivation.allocatedUnits["worker"];
+				}
+
+				var unallocatedWorkers = workers - allocatedWorkers;
+				console.log('Pre: Worker Allocation: ' + allocatedWorkers + '/' + workers);
+
+				// allocate workers
+
+
 				// call motivations in priority
-				
+
 			}
 		}
 	},
@@ -111,7 +120,9 @@ module.exports =
 
 				// init each motivation for this room
 				motivationSupplySpawn.init(room.name);
+				motivationSupplySpawn.setPriority(room.name, C.PRIORITY_1);
 				motivationSupplyController.init(room.name);
+				motivationSupplyController.setPriority(room.name, C.PRIORITY_3);
 			}
 		}
 	}

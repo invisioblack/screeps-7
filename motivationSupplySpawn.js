@@ -21,7 +21,7 @@ var Motivation = require('prototype.motivation')();
 var MotivationSupplySpawn = function ()
 {
 	Motivation.call(this);
-	this.name = "MotivationSupplySpawn";
+	this.name = "motivationSupplySpawn";
 	this.priority = C.PRIORITY_1;
 };
 

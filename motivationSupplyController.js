@@ -22,7 +22,6 @@ var MotivationSupplyController = function ()
 {
 	Motivation.call(this);
 	this.name = "motivationSupplyController";
-	this.priority = C.PRIORITY_2;
 };
 
 MotivationSupplyController.prototype = Object.create(Motivation.prototype);

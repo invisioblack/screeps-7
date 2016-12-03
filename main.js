@@ -27,6 +27,7 @@ var motivator = require('motivator');
 //-------------------------------------------------------------------------
 // Do stuffs
 //-------------------------------------------------------------------------
+cleanupMemory();
 motivator.init();
 motivator.motivate();
 
@@ -34,3 +35,19 @@ motivator.motivate();
 // END
 //-------------------------------------------------------------------------
 console.log("------ end tick ------");
+
+
+
+
+function cleanupMemory ()
+{
+    for(var i in Memory.creeps) {
+        if(!Game.creeps[i])
+            delete Memory.creeps[i];
+    }
+
+    for(var i in Memory.rooms) {
+        if(!Game.rooms[i])
+            delete Memory.rooms[i];
+    }
+};

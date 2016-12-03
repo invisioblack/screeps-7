@@ -17,8 +17,6 @@ module.exports = function ()
 
     Motivation.prototype.name = "Motivation";
 
-	Motivation.prototype.priority = C.PRIORITY_1;
-
     Motivation.prototype.init = function (roomName)
 	{
 		if (!this.getInit(roomName))
@@ -30,6 +28,7 @@ module.exports = function ()
 			
 			// init default memory
 			room.memory.motivations[this.name].name = this.name;
+			room.memory.motivations[this.name].allocatedUnits = {};
 			this.setActive(roomName, false);
 			
 			// set init true
@@ -65,6 +64,34 @@ module.exports = function ()
 		} else {
 			return false;
 		}
+	};
+
+	Motivation.prototype.setPriority = function (roomName, priority)
+	{
+		Game.rooms[roomName].memory.motivations[this.name].priority = priority;
+	};
+
+	Motivation.prototype.getPriority = function (roomName)
+	{
+		var result = C.PRIORITY_5;
+		if (!lib.isNull(Game.rooms[roomName].memory.motivations[this.name])) 
+			result = Game.rooms[roomName].memory.motivations[this.name].priority;
+		
+		return result;
+	};
+
+	Motivation.prototype.setAllocatedUnits = function (roomName, unit, value)
+	{
+		Game.rooms[roomName].memory.motivations[this.name].allocatedUnits[unit] = value;
+	};
+
+	Motivation.prototype.getAllocatedUnits = function (roomName, unit)
+	{
+		var result = C.PRIORITY_5;
+		if (!lib.isNull(Game.rooms[roomName].memory.motivations[this.name])) 
+			result = Game.rooms[roomName].memory.motivations[this.name].allocatedUnits[unit];
+		
+		return result;
 	};
 
 	return Motivation;
