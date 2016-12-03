@@ -13,15 +13,11 @@
 //-------------------------------------------------------------------------
 // function
 //-------------------------------------------------------------------------
-module.exports = function ()
+module.exports =
 {
-	//declare base object
-	var jobHarvest = function ()
-	{
-	};
 	//-------------------------------------------------------------------------
 
-	jobHarvest.work = function (creep)
+	"work": function (creep)
 	{
 		var need = Memory.needs[creep.memory.need];
 		var target = Game.getObjectById(need.target);
@@ -48,8 +44,5 @@ module.exports = function ()
 			creep.moveTo(spawn);
 			creep.transferEnergy(spawn);
 		}
-	};
-	//-------------------------------------------------------------------------
-	//return populated object
-	return jobHarvest;
+	}
 };

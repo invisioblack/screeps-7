@@ -13,15 +13,13 @@ var lib = require('lib');
 //-------------------------------------------------------------------------
 // function
 //-------------------------------------------------------------------------
-module.exports = function ()
+module.exports =
 {
-	//declare base object
-	var motivationSupplyController = function () {};
 	//-------------------------------------------------------------------------
 
-	motivationSupplyController.init = function (roomName)
+	"init": function (roomName)
 	{
-		if (!motivationSupplyController.getInit(roomName))
+		if (!this.getInit(roomName))
 		{
 			var room = Game.rooms[roomName];
 			// init motivation object
@@ -30,14 +28,14 @@ module.exports = function ()
 			
 			// init default memory
 			room.memory.motivations["motivationSupplyController"].name = "motivationSupplyController";
-			motivationSupplyController.setActive(roomName, false);
+			this.setActive(roomName, false);
 			
 			// set init true
 			Game.rooms[roomName].memory.motivations["motivationSupplyController"].init = true;
 		}
-	};
+	},
 
-	motivationSupplyController.getInit = function (roomName)
+	"getInit": function (roomName)
 	{
 		var room = Game.rooms[roomName];
 
@@ -47,27 +45,27 @@ module.exports = function ()
 		} else {
 			return false;
 		}
-	};
+	},
 
-	motivationSupplyController.setActive = function (roomName, state)
+	"setActive": function (roomName, state)
 	{
 		if (state) {
 			Game.rooms[roomName].memory.motivations["motivationSupplyController"].active = true;
 		} else {
 			Game.rooms[roomName].memory.motivations["motivationSupplyController"].active = false;
 		}
-	};
+	},
 
-	motivationSupplyController.getActive = function (roomName)
+	"getActive": function (roomName)
 	{
 		if (Game.rooms[roomName].memory.motivations["motivationSupplyController"].active) {
 			 return true;
 		} else {
 			return false;
 		}
-	};
+	},
 
-	motivationSupplyController.getDemands = function (roomName, collectorStatus, workers)
+	"getDemands": function (roomName, collectorStatus, workers)
 	{
 		var result = {};
 		result.energy = collectorStatus.progressTotal - collectorStatus.progress;
@@ -75,9 +73,5 @@ module.exports = function ()
 		result.spawn = workers < result.workers;
 
 		return result;
-	};
-
-	//-------------------------------------------------------------------------
-	//return populated object
-	return motivationSupplyController;
+	}
 };

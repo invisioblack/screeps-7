@@ -13,15 +13,13 @@ var lib = require('lib');
 //-------------------------------------------------------------------------
 // function
 //-------------------------------------------------------------------------
-module.exports = function ()
+module.exports = 
 {
-	//declare base object
-	var motivationSupplySpawn = function () {};
 	//-------------------------------------------------------------------------
 
-	motivationSupplySpawn.init = function (roomName)
+	"init": function (roomName)
 	{
-		if (!motivationSupplySpawn.getInit(roomName))
+		if (!this.getInit(roomName))
 		{
 			var room = Game.rooms[roomName];
 			// init motivation object
@@ -30,14 +28,14 @@ module.exports = function ()
 			
 			// init default memory
 			room.memory.motivations["motivationSupplySpawn"].name = "motivationSupplySpawn";
-			motivationSupplySpawn.setActive(roomName, false);
+			this.setActive(roomName, false);
 			
 			// set init true
 			Game.rooms[roomName].memory.motivations["motivationSupplySpawn"].init = true;
 		}
-	};
+	},
 
-	motivationSupplySpawn.getInit = function (roomName)
+	"getInit": function (roomName)
 	{
 		var room = Game.rooms[roomName];
 
@@ -47,27 +45,27 @@ module.exports = function ()
 		} else {
 			return false;
 		}
-	};
+	},
 
-	motivationSupplySpawn.setActive = function (roomName, state)
+	"setActive": function (roomName, state)
 	{
 		if (state) {
 			Game.rooms[roomName].memory.motivations["motivationSupplySpawn"].active = true;
 		} else {
 			Game.rooms[roomName].memory.motivations["motivationSupplySpawn"].active = false;
 		}
-	};
+	},
 
-	motivationSupplySpawn.getActive = function (roomName)
+	"getActive": function (roomName)
 	{
 		if (Game.rooms[roomName].memory.motivations["motivationSupplySpawn"].active) {
 			 return true;
 		} else {
 			return false;
 		}
-	};
+	},
 
-	motivationSupplySpawn.getDemands = function (roomName, spawnEnergy, workers)
+	"getDemands": function (roomName, spawnEnergy, workers)
 	{
 		var result = {};
 		result.energy = spawnEnergy.energyCapacity - spawnEnergy.energy;
@@ -75,9 +73,5 @@ module.exports = function ()
 		result.spawn = workers < result.workers;
 
 		return result;
-	};
-
-	//-------------------------------------------------------------------------
-	//return populated object
-	return motivationSupplySpawn;
+	}
 };

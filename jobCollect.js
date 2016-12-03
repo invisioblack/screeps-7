@@ -11,17 +11,13 @@
 //-------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------
-// function
+// object
 //-------------------------------------------------------------------------
-module.exports = function ()
+module.exports =
 {
-	//declare base object
-	var jobCollect = function ()
-	{
-	};
 	//-------------------------------------------------------------------------
 
-	jobCollect.work = function (creep)
+	"work": function (creep)
 	{
 		//avoid hostiles
 		if (creep.avoidHostile(creep , 5))
@@ -39,9 +35,9 @@ module.exports = function ()
 		{   // we're not assigned a pickup, lets try to return energy
 			jobCollect.returnEnergy(creep);
 		}
-	};
+	},
 
-	jobCollect.returnEnergy = function (creep)
+	"returnEnergy": function (creep)
 	{
 		// find spawn to return energy too
 		var spawn = creep.getSpawn();
@@ -62,9 +58,9 @@ module.exports = function ()
 		{
 			jobCollect.idle(creep);
 		}
-	};
+	},
 
-	jobCollect.getEnergy = function (creep , dropped)
+	"getEnergy": function (creep , dropped)
 	{
 		// confirm the dropped item exists and is in this room
 		if (dropped && dropped.room == creep.room)
@@ -85,15 +81,10 @@ module.exports = function ()
 			creep.memory.collect = null;
 			jobCollect.returnEnergy(creep);
 		}
-	};
+	},
 
-	jobCollect.idle = function (creep)
+	"idle": function (creep)
 	{
 		// TODO: handle idle behavior
-	};
-
-	//-------------------------------------------------------------------------
-	//return populated object
-	return jobCollect;
-
+	}
 };

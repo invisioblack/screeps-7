@@ -22,11 +22,8 @@ require('prototype.spawn')();
 //------------------------------------------------------------------------------
 // function
 //------------------------------------------------------------------------------
-module.exports = function ()
+module.exports = 
 {
-    //declare base object
-	var resourceManager = function (){};
-	
 	//--------------------------------------------------------------------------
 	// Declarations
     //--------------------------------------------------------------------------
@@ -34,7 +31,7 @@ module.exports = function ()
 	//--------------------------------------------------------------------------
 	// top level functions
 	//--------------------------------------------------------------------------
-    resourceManager.getRoomSpawnEnergy = function (roomName)
+    "getRoomSpawnEnergy": function (roomName)
     {
     	var result = {};
     	result.energy = 0;
@@ -52,9 +49,9 @@ module.exports = function ()
     	}
 
     	return result;
-    };
+    },
 
-    resourceManager.getCollectorStatus = function (roomName)
+    "getCollectorStatus": function (roomName)
     {
     	var result = {};
     	
@@ -66,9 +63,9 @@ module.exports = function ()
     	result.level = controller.level;
 
     	return result;
-    };
+    },
 
-    resourceManager.getRoomCreeps = function (roomName, unit)
+    "getRoomCreeps": function (roomName, unit)
     {
     	var result = 0;
     	for (var creepName in Game.creeps)
@@ -81,9 +78,5 @@ module.exports = function ()
     	}
 
     	return result;
-    };
-
-	//-------------------------------------------------------------------------
-	//return populated object
-	return resourceManager;
+    }
 };

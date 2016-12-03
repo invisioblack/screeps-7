@@ -11,15 +11,11 @@
 //-------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------
-// function
+// object
 //-------------------------------------------------------------------------
-module.exports = function ()
+module.exports =
 {
-	//declare base object
-	var jobBuild = function () {};
-	//-------------------------------------------------------------------------
-
-	jobBuild.work = function (creep)
+	"work": function (creep)
 	{
 		//avoid hostiles
 		if (creep.avoidHostile(creep))
@@ -69,8 +65,5 @@ module.exports = function ()
 				creep.build(neartarget);
 			}
 		}
-	};
-	//-------------------------------------------------------------------------
-	//return populated object
-	return jobBuild;
+	}
 };

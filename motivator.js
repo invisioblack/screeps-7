@@ -14,9 +14,9 @@ var C = require('C');
 var lib = require('lib');
 
 // game modules
-var motivationSupplySpawn = require('motivationSupplySpawn')();
-var motivationSupplyController = require('motivationSupplyController')();
-var resourceManager = require('resourceManager')();
+var motivationSupplySpawn = require('motivationSupplySpawn');
+var motivationSupplyController = require('motivationSupplyController');
+var resourceManager = require('resourceManager');
 
 //-------------------------------------------------------------------------
 // Declarations

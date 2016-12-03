@@ -13,15 +13,11 @@
 //-------------------------------------------------------------------------
 // function
 //-------------------------------------------------------------------------
-module.exports = function ()
+module.exports = 
 {
-	//declare base object
-	var jobGuard = function ()
-	{
-	};
 	//-------------------------------------------------------------------------
 
-	jobGuard.work = function (creep)
+	"work": function (creep)
 	{
 		var targets = creep.room.find(Game.HOSTILE_CREEPS);
 
@@ -38,8 +34,5 @@ module.exports = function ()
 		{
 			creep.rendevous(creep, 5);
 		}
-	};
-	//-------------------------------------------------------------------------
-	//return populated object
-	return jobGuard;
+	}
 };

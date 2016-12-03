@@ -13,15 +13,11 @@
 //-------------------------------------------------------------------------
 // function
 //-------------------------------------------------------------------------
-module.exports = function ()
+module.exports = 
 {
-	//declare base object
-	var jobHeal = function ()
-	{
-	};
 	//-------------------------------------------------------------------------
 
-	jobHeal.work = function (creep)
+	"work": function (creep)
 	{
 		//avoid hostiles
 		if (creep.avoidHostile(creep, 3))
@@ -73,8 +69,5 @@ module.exports = function ()
 				creep.rendevous(creep, 3);
 			}
 		}
-	};
-	//-------------------------------------------------------------------------
-	//return populated object
-	return jobHeal;
+	}
 };

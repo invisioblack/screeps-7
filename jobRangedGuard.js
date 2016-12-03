@@ -13,10 +13,8 @@
 //-------------------------------------------------------------------------
 // function
 //-------------------------------------------------------------------------
-module.exports = function()
+module.exports = 
 {
-	//declare base object
-	var jobRangedGuard = function() {};
 	//-------------------------------------------------------------------------
 
 	jobRangedGuard.work = function (creep)
@@ -42,8 +40,5 @@ module.exports = function()
 		{
 			creep.rendevous(creep, 4);
 		}
-	};
-	//-------------------------------------------------------------------------
-	//return populated object
-	return jobRangedGuard;
+	}
 };
