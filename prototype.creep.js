@@ -115,5 +115,4 @@ module.exports = function()
 		var unit = this.memory.unit;
 		return unit;		
 	};
-    
 };

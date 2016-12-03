@@ -6,10 +6,10 @@ console.log("++++++ new tick ++++++");
 //-------------------------------------------------------------------------
 // Modules
 //-------------------------------------------------------------------------
-// prototypes
-require('prototype.creep');
-require('prototype.source');
-require('prototype.spawn');
+// game prototypes
+require('prototype.creep')();
+require('prototype.source')();
+require('prototype.spawn')();
 
 // library modules
 var _ = require("lodash");
