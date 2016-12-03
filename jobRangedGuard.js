@@ -17,7 +17,7 @@ module.exports =
 {
 	//-------------------------------------------------------------------------
 
-	jobRangedGuard.work = function (creep)
+	"work": function (creep)
 	{
 		var targets = creep.room.find(Game.HOSTILE_CREEPS);
 
