@@ -6,7 +6,7 @@
 // modules
 //-------------------------------------------------------------------------
 var lib = require('lib');
-
+var C = require('C');
 
 //-------------------------------------------------------------------------
 // object
@@ -16,7 +16,9 @@ module.exports = function ()
     var Motivation = function () {};
 
     Motivation.prototype.name = "Motivation";
-    
+
+	Motivation.prototype.priority = C.PRIORITY_1;
+
     Motivation.prototype.init = function (roomName)
 	{
 		if (!this.getInit(roomName))

@@ -27,6 +27,9 @@ var resourceManager = require('resourceManager');
 //-------------------------------------------------------------------------
 module.exports =
 {
+
+	"mode": C.MOTIVATOR_MODE_SINGLE_MINDED,
+
 	//-------------------------------------------------------------------------
 	// Main motivator funtion, should be called first from main
 	"motivate": function ()
@@ -54,14 +57,40 @@ module.exports =
 				demands.motivationSupplySpawn = motivationSupplySpawn.getDemands(roomName, spawnEnergy, workers);
 				demands.motivationSupplyController = motivationSupplyController.getDemands(roomName, collectorStatus, workers);
 				console.log('Supply Spawn Demands: e: ' + demands.motivationSupplySpawn.energy + ' Workers: ' + demands.motivationSupplySpawn.workers + ' Spawn: ' + demands.motivationSupplySpawn.spawn);
-				console.log('Supply Collector Demands: e: ' + demands.motivationSupplyController.energy + ' Workers: ' + demands.motivationSupplyController.workers + ' Spawn: ' + demands.motivationSupplyController.spawn);
+				console.log('Supply Controller Demands: e: ' + demands.motivationSupplyController.energy + ' Workers: ' + demands.motivationSupplyController.workers + ' Spawn: ' + demands.motivationSupplyController.spawn);
 			
-				// decide motivator mode
-				if (workers == 0)
+				// decide which motivations should be active
+				if (demands.motivationSupplySpawn.energy > 0)
 				{
-					
+					motivationSupplySpawn.setActive(roomName, true);
+				} else {
+					motivationSupplySpawn.setActive(roomName, false);
 				}
 
+				if (demands.motivationSupplyController.energy > 0)
+				{
+					motivationSupplyController.setActive(roomName, true);
+				} else {
+					motivationSupplyController.setActive(roomName, false);
+				}
+
+				console.log('Supply Spawn Active: ' + motivationSupplySpawn.getActive(roomName));
+				console.log('Supply Controller Active: ' + motivationSupplyController.getActive(roomName));
+
+				// decide motivator mode
+				if (workers < 2)
+				{
+					this.mode = C.MOTIVATOR_MODE_SINGLE_MINDED;
+				} else if (workers < 10) {
+					this.mode = C.MOTIVATOR_MODE_LOPSIDED;
+				} else {
+					this.mode = C.MOTIVATOR_MODE_BALANCED;
+				}
+
+				// distribute resources to motivations
+
+				// call motivations in priority
+				
 			}
 		}
 	},

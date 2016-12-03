@@ -6,6 +6,8 @@
 // modules
 //-------------------------------------------------------------------------
 var lib = require('lib');
+var C = require('C');
+
 // script prototypes
 var Motivation = require('prototype.motivation')();
 
@@ -20,6 +22,7 @@ var MotivationSupplyController = function ()
 {
 	Motivation.call(this);
 	this.name = "motivationSupplyController";
+	this.priority = C.PRIORITY_2;
 };
 
 MotivationSupplyController.prototype = Object.create(Motivation.prototype);
