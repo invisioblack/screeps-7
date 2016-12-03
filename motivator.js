@@ -46,16 +46,16 @@ module.exports =
 				
 				// determine room resources
 				var spawnEnergy = resourceManager.getRoomSpawnEnergy(roomName);
-				var workers = resourceManager.getRoomCreeps(roomName, 'worker');
+				var totalWorkers = resourceManager.getRoomCreeps(roomName, 'worker');
 				var collectorStatus = resourceManager.getCollectorStatus(roomName);
 				console.log('Spawn Energy: ' + spawnEnergy.energy + '/' + spawnEnergy.energyCapacity);
-				console.log('Workers: ' + workers);
+				console.log('Workers: ' + totalWorkers);
 				console.log('Collector Level: ' + collectorStatus.level + ' ' + collectorStatus.progress + '/' + collectorStatus.progressTotal + ' Downgrade: ' + collectorStatus.ticksToDowngrade);
 
 				// determine motivation demands
 				var demands = {};
-				demands.motivationSupplySpawn = motivationSupplySpawn.getDemands(roomName, spawnEnergy, workers);
-				demands.motivationSupplyController = motivationSupplyController.getDemands(roomName, collectorStatus, workers);
+				demands.motivationSupplySpawn = motivationSupplySpawn.getDemands(roomName, spawnEnergy, totalWorkers);
+				demands.motivationSupplyController = motivationSupplyController.getDemands(roomName, collectorStatus, totalWorkers);
 				console.log('Supply Spawn Demands: e: ' + demands.motivationSupplySpawn.energy + ' Workers: ' + demands.motivationSupplySpawn.workers + ' Spawn: ' + demands.motivationSupplySpawn.spawn);
 				console.log('Supply Controller Demands: e: ' + demands.motivationSupplyController.energy + ' Workers: ' + demands.motivationSupplyController.workers + ' Spawn: ' + demands.motivationSupplyController.spawn);
 			
@@ -77,10 +77,21 @@ module.exports =
 				console.log('Supply Spawn Active: ' + motivationSupplySpawn.getActive(roomName));
 				console.log('Supply Controller Active: ' + motivationSupplyController.getActive(roomName));
 
-				var sortedMotivations = _.sortBy(_.filter(Memory.rooms[roomName].motivations, (m) => m.active), ['priority']);
+				var sortedMotivations = _.sortBy(Memory.rooms[roomName].motivations, ['priority']);
 
 				// ------------------------------------------------------------				
 				// distribute resources to motivations
+
+				// allocate spawn ---------------------------------------------
+				var isSpawnAllocated = false;
+				sortedMotivations.forEach(function(element) {
+					if (!isSpawnAllocated && element.active && demands[element.name].spawn > 0) {
+						element.spawnAllocated = true;
+						isSpawnAllocated = true;
+					} else {
+						element.spawnAllocated = false;
+					}
+				}, this);
 
 				// workers ----------------------------------------------------
 				// calculate allocated Workers
@@ -88,17 +99,38 @@ module.exports =
 				for (var motivationName in Memory.rooms[roomName].motivations)
 				{
 					var motivation = Memory.rooms[roomName].motivations[motivationName];
-					if (!lib.isNull(motivation.allocatedUnits["worker"]))
-						allocatedWorkers += motivation.allocatedUnits["worker"];
+					if (!lib.isNull(motivation.allocatedUnits['worker']))
+						allocatedWorkers += motivation.allocatedUnits['worker'];
 				}
 
-				var unallocatedWorkers = workers - allocatedWorkers;
-				console.log('Pre: Worker Allocation: ' + allocatedWorkers + '/' + workers);
-
 				// allocate workers
+				var unallocatedWorkers = totalWorkers - allocatedWorkers;
+				console.log('Pre: Worker Allocation: ' + allocatedWorkers + '/' + totalWorkers + ' Unallocated: ' + unallocatedWorkers);
 
+				var x = 1;
+				allocatedWorkers = 0;
+				unallocatedWorkers = workers;
 
-				// call motivations in priority
+				sortedMotivations.forEach(function(element) {
+					console.log(element.name);
+					if (element.active) {
+						// calculate diminishing number of workers on each iteration
+						var workersToAllocate = Math.ceil(totalWorkers / (2 * x));
+
+						// apply workers bounded by number available
+						if (workersToAllocate <= unallocatedWorkers)
+							element.allocatedUnits['worker'] = workersToAllocate;
+						else
+							element.allocatedUnits['worker'] = unallocatedWorkers;
+						
+						// update unallocatedWorkers
+						allocatedWorkers += element.allocatedUnits['worker'];
+						unallocatedWorkers -= element.allocatedUnits['worker'];
+					}
+					x++;
+				}, this);
+
+				// update needs for each motivation
 
 			}
 		}

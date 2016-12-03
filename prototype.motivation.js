@@ -29,6 +29,7 @@ module.exports = function ()
 			// init default memory
 			room.memory.motivations[this.name].name = this.name;
 			room.memory.motivations[this.name].allocatedUnits = {};
+			room.memory.motivations[this.name].spawnAllocated = false;
 			this.setActive(roomName, false);
 			
 			// set init true
