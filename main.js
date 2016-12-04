@@ -12,7 +12,6 @@ require('prototype.source')();
 require('prototype.spawn')();
 
 // library modules
-var _ = require("lodash");
 var C = require('C');
 var lib = require("lib");
 
@@ -35,9 +34,6 @@ motivator.motivate();
 // END
 //-------------------------------------------------------------------------
 console.log("------ end tick ------");
-
-
-
 
 function cleanupMemory ()
 {

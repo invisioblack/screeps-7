@@ -36,6 +36,6 @@ MotivationSupplySpawn.prototype.getDemands = function (roomName, spawnEnergy, wo
 	result.spawn = workers < result.workers;
 
 	return result;
-}
+};
 
 module.exports = new MotivationSupplySpawn();

@@ -109,7 +109,7 @@ module.exports =
 
 				var x = 1;
 				allocatedWorkers = 0;
-				unallocatedWorkers = workers;
+				unallocatedWorkers = totalWorkers;
 
 				sortedMotivations.forEach(function(element) {
 					console.log(element.name);
@@ -130,7 +130,10 @@ module.exports =
 					x++;
 				}, this);
 
+				console.log('Post: Worker Allocation: ' + allocatedWorkers + '/' + totalWorkers + ' Unallocated: ' + unallocatedWorkers);
+
 				// update needs for each motivation
+				motivationSupplyController.updateNeeds(roomName);
 
 			}
 		}
