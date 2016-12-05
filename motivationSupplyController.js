@@ -53,13 +53,45 @@ Motivation.prototype.updateNeeds = function (roomName)
 	var sources = room.find(FIND_SOURCES);
 	sources.forEach(function (s) {
 		var source = Game.getObjectById(s.id);
-		var maxHarvesters = source.getMaxHarvesters();
+		var maxHarvesters = source.getMaxHarvesters(); // will need to use maxHarvesters - allocatedHarvesters when implemented
+		var allocatedHarvesters = 0; // need to read this
+		var availableHarvesters = maxHarvesters - allocatedHarvesters;
 		console.log('Source: ' + s.id + ' Max Harvesters: ' + maxHarvesters);
 
-		// create or confirm 1 harvest energy need for each
+		// create or confirm 1 harvest energy need for each, closest source higher priority
+		var needName = "harvest." + s.id;
+		var need;
 
+		// create new need if one doesn't exist
+		if (lib.isNull(memory.needs[needName]))
+		{
+			memory.needs[needName] = {};
+			need = memory.needs[needName];
+			need.type = "needHarvestEnergy";
+			need.sourceId = s.id;
+			need.targetId = room.controller;
+			need.unitDemands = {};
+			need.unitDemands["worker"] = availableHarvesters;
+			need.allocatedCreeps = {};
+		} else {
+			need = memory.needs[needName];
+		}
 
+		// update unitDemands
+		need.unitDemands["worker"] = availableHarvesters;
+
+		// remove allocated creeps from unit demands
+		for (var creepName in need.allocatedCreeps)
+		{
+			var creep = Game.creeps[creepName];
+			if (creep.memory.type == "worker")
+			{
+				need.unitDemands["worker"]--;
+			}
+		}
 	}, this);
+
+	// cull unneeded harvest energy needs
 };
 
 module.exports = new MotivationSupplyController();
