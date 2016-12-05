@@ -63,7 +63,11 @@ module.exports =
 				demands.motivationSupplyController = motivationSupplyController.getDemands(roomName, resources, collectorStatus);
 				console.log('Supply Spawn Demands: e: ' + demands.motivationSupplySpawn.energy + ' Workers: ' + demands.motivationSupplySpawn.workers + ' Spawn: ' + demands.motivationSupplySpawn.spawn);
 				console.log('Supply Controller Demands: e: ' + demands.motivationSupplyController.energy + ' Workers: ' + demands.motivationSupplyController.workers + ' Spawn: ' + demands.motivationSupplyController.spawn);
-			
+
+
+				// handle motivations
+				var sortedMotivations = _.sortBy(Memory.rooms[roomName].motivations, ['priority']);
+
 				// decide which motivations should be active
 				if (demands.motivationSupplySpawn.energy > 0)
 				{
@@ -81,8 +85,6 @@ module.exports =
 
 				console.log('Supply Spawn Active: ' + motivationSupplySpawn.getActive(roomName));
 				console.log('Supply Controller Active: ' + motivationSupplyController.getActive(roomName));
-
-				var sortedMotivations = _.sortBy(Memory.rooms[roomName].motivations, ['priority']);
 
 				// ------------------------------------------------------------				
 				// distribute resources to motivations

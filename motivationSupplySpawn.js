@@ -32,7 +32,7 @@ MotivationSupplySpawn.prototype.getDemands = function (roomName, resources)
 {
 	var result = {};
 	result.energy = resources.spawnEnergy.energyCapacity - resources.spawnEnergy.energy;
-	result.workers = Math.floor(result.energy / 50);
+	result.workers = Math.floor(result.energy / 50); // this will need to ask the needs what units it wants, needs to be refactors to demand any unit
 	result.spawn = resources.units["worker"].total < result.workers;
 
 	return result;

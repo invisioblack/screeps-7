@@ -30,7 +30,9 @@ module.exports = function ()
 			room.memory.motivations[this.name].name = this.name;
 			room.memory.motivations[this.name].allocatedUnits = {};
 			room.memory.motivations[this.name].spawnAllocated = false;
+			room.memory.motivations[this.name].needs = {};
 			this.setActive(roomName, false);
+
 			
 			// set init true
 			Game.rooms[roomName].memory.motivations[this.name].init = true;
