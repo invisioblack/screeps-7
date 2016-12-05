@@ -28,12 +28,12 @@ var MotivationSupplySpawn = function ()
 MotivationSupplySpawn.prototype = Object.create(Motivation.prototype);
 MotivationSupplySpawn.prototype.constructor = MotivationSupplySpawn;
 
-MotivationSupplySpawn.prototype.getDemands = function (roomName, spawnEnergy, workers)
+MotivationSupplySpawn.prototype.getDemands = function (roomName, resources)
 {
 	var result = {};
-	result.energy = spawnEnergy.energyCapacity - spawnEnergy.energy;
+	result.energy = resources.spawnEnergy.energyCapacity - resources.spawnEnergy.energy;
 	result.workers = Math.floor(result.energy / 50);
-	result.spawn = workers < result.workers;
+	result.spawn = resources.units["worker"].total < result.workers;
 
 	return result;
 };

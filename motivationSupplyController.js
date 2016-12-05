@@ -28,11 +28,11 @@ var MotivationSupplyController = function ()
 MotivationSupplyController.prototype = Object.create(Motivation.prototype);
 MotivationSupplyController.prototype.constructor = MotivationSupplyController;
 
-MotivationSupplyController.prototype.getDemands = function (roomName, collectorStatus, workers) {
+MotivationSupplyController.prototype.getDemands = function (roomName, resources, collectorStatus) {
 	var result = {};
 	result.energy = collectorStatus.progressTotal - collectorStatus.progress;
 	result.workers = Math.floor(result.energy / 50);
-	result.spawn = workers < result.workers;
+	result.spawn = resources.units["worker"].total < result.workers;
 
 	return result;
 };
