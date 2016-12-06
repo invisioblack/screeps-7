@@ -61,6 +61,8 @@ module.exports =
     	result.ticksToDowngrade = controller.ticksToDowngrade;
     	result.level = controller.level;
 
+	    console.log('Collector Level: ' + result.level + ' ' + result.progress + '/' + result.progressTotal + ' Downgrade: ' + result.ticksToDowngrade);
+
     	return result;
     },
 

@@ -46,4 +46,4 @@ function cleanupMemory ()
         if(!Game.rooms[i])
             delete Memory.rooms[i];
     }
-};
+}

@@ -32,7 +32,7 @@ module.exports =
 		}
 		else
 		{
-			creep.rendevous(creep, 5);
+			creep.rendezvous(creep, 5);
 		}
 	}
 };

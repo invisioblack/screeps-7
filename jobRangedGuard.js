@@ -38,7 +38,7 @@ module.exports =
 		}
 		else
 		{
-			creep.rendevous(creep, 4);
+			creep.rendezvous(creep, 4);
 		}
 	}
 };

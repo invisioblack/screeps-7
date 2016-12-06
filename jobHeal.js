@@ -66,7 +66,7 @@ module.exports =
 			} //go back home if it is boring
 			else
 			{
-				creep.rendevous(creep, 3);
+				creep.rendezvous(creep, 3);
 			}
 		}
 	}

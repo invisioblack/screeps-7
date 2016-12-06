@@ -58,13 +58,13 @@ module.exports = function()
 		creep.move((avoid + 4) % 8);
 	};
 
-	Creep.prototype.rendevous = function (creep, range)
+	Creep.prototype.rendezvous = function (creep, range)
 	{
 		var flags = creep.room.find(Game.FLAGS, {'name': 'Flag1'});
 
-		if (creep.memory.rendevous)
+		if (creep.memory.rendezvous)
 		{
-			creep.moveToRange(creep, creep.memory.rendevous, range);
+			creep.moveToRange(creep, creep.memory.rendezvous, range);
 		}
 		else if (flags && flags.length)
 		{

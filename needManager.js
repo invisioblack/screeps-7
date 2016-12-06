@@ -9,7 +9,14 @@
 //------------------------------------------------------------------------------
 // modules
 //------------------------------------------------------------------------------
-var lib = require("lib");
+// library modules
+var C = require('C');
+var lib = require('lib');
+
+// game modules
+var motivationSupplySpawn = require('motivationSupplySpawn');
+var motivationSupplyController = require('motivationSupplyController');
+var resourceManager = require('resourceManager');
 
 //------------------------------------------------------------------------------
 // Declarations
@@ -27,4 +34,12 @@ module.exports =
 	//--------------------------------------------------------------------------
 	// top level functions
 	//--------------------------------------------------------------------------
+	"manageNeeds": function (roomName)
+	{
+		// update needs for each motivation
+		motivationSupplyController.updateNeeds(roomName);
+		motivationSupplySpawn.updateNeeds(roomName);
+
+
+	}
 };
