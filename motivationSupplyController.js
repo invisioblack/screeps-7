@@ -53,7 +53,7 @@ MotivationSupplyController.prototype.updateNeeds = function (roomName)
 	var sources = room.find(FIND_SOURCES);
 	sources.forEach(function (s) {
 		var source = Game.getObjectById(s.id);
-		var maxHarvesters = source.getMaxHarvesters(); // will need to use maxHarvesters - allocatedHarvesters when implemented
+		var maxHarvesters = source.getMaxHarvesters(); // TODO: will need to use maxHarvesters - allocatedHarvesters when implemented
 		var allocatedHarvesters = 0; // need to read this
 		var availableHarvesters = maxHarvesters - allocatedHarvesters;
 		console.log('Source: ' + s.id + ' Max Harvesters: ' + maxHarvesters);
@@ -69,9 +69,9 @@ MotivationSupplyController.prototype.updateNeeds = function (roomName)
 			need = memory.needs[needName];
 			need.type = "needHarvestEnergy";
 			need.sourceId = s.id;
-			need.targetId = room.controller;
+			need.targetId = room.controller.id;
 			need.unitDemands = {};
-			need.unitDemands["worker"] = availableHarvesters;
+			need.unitDemands["worker"] = availableHarvesters; // TODO: Unit demands should be driven by the need
 			need.allocatedCreeps = {};
 		} else {
 			need = memory.needs[needName];
@@ -84,7 +84,7 @@ MotivationSupplyController.prototype.updateNeeds = function (roomName)
 		for (var creepName in need.allocatedCreeps)
 		{
 			var creep = Game.creeps[creepName];
-			if (creep.memory.type == "worker")
+			if (creep.memory.unit == "worker")
 			{
 				need.unitDemands["worker"]--;
 			}

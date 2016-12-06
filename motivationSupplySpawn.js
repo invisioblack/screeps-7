@@ -55,7 +55,7 @@ MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
 	sources.forEach(function (s)
 	{
 		var source = Game.getObjectById(s.id);
-		var maxHarvesters = source.getMaxHarvesters(); // will need to use maxHarvesters - allocatedHarvesters when implemented
+		var maxHarvesters = source.getMaxHarvesters(); // TODO: will need to use maxHarvesters - allocatedHarvesters when implemented
 		var allocatedHarvesters = 0; // need to read this
 		var availableHarvesters = maxHarvesters - allocatedHarvesters;
 		console.log('Source: ' + s.id + ' Max Harvesters: ' + maxHarvesters);
@@ -73,7 +73,7 @@ MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
 			need.sourceId = s.id;
 			need.targetId = room.controller;
 			need.unitDemands = {};
-			need.unitDemands["worker"] = availableHarvesters;
+			need.unitDemands["worker"] = availableHarvesters; // TODO: Unit demands should be driven by the need
 			need.allocatedCreeps = {};
 		}
 		else

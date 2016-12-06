@@ -35,10 +35,12 @@ module.exports =
 	// Main motivator function, should be called first from main
 	"motivate": function ()
 	{
+		var room;
+
 		// motivate in each room we control
 		for (var roomName in Game.rooms)
 		{
-			var room = Game.rooms[roomName];
+			room = Game.rooms[roomName];
 			if (room.controller.my)
 			{
 				//------------------------------------------------------------------------------------------------------
@@ -124,6 +126,10 @@ module.exports =
 						resources.units["worker"].unallocated -= motivation.allocatedUnits['worker'];
 						console.log('Worker Allocation: ' + resources.units["worker"].allocated + '/' + resources.units["worker"].total + ' Unallocated: ' + resources.units["worker"].unallocated);
 					}
+
+					// processes needs for motivation
+					needManager.manageNeeds(roomName, motivations[motivation.name], motivation);
+
 					x++;
 				}, this);
 			}

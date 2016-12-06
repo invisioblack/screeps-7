@@ -14,9 +14,7 @@ var C = require('C');
 var lib = require('lib');
 
 // game modules
-var motivationSupplySpawn = require('motivationSupplySpawn');
-var motivationSupplyController = require('motivationSupplyController');
-var resourceManager = require('resourceManager');
+
 
 //------------------------------------------------------------------------------
 // Declarations
@@ -34,12 +32,16 @@ module.exports =
 	//--------------------------------------------------------------------------
 	// top level functions
 	//--------------------------------------------------------------------------
-	"manageNeeds": function (roomName)
+	"manageNeeds": function (roomName, motivation, motivationMemory)
 	{
-		// update needs for each motivation
-		motivationSupplyController.updateNeeds(roomName);
-		motivationSupplySpawn.updateNeeds(roomName);
+		// create and update needs for motivation
+		motivation.updateNeeds(roomName);
 
+		// loop over each need processing them
+		// TODO: HERE
+		// allocate / cull creeps to needs that are allocated to this motivation
 
+		// call need.manage() for each need
+		// need manage will assign jobs to allocated creeps
 	}
 };
