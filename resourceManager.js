@@ -10,10 +10,6 @@
 var C = require('C');
 var lib = require("lib");
 
-require('prototype.creep')();
-require('prototype.source')();
-require('prototype.spawn')();
-
 //------------------------------------------------------------------------------
 // Declarations
 //------------------------------------------------------------------------------

@@ -42,6 +42,7 @@ MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
 {
 	var room = Game.rooms[roomName];
 	var memory = room.memory.motivations[this.name];
+	var sortedNeedsByDistance, x;
 
 	// insure memory is initialized for needs
 	if (lib.isNull(memory.needs))
@@ -52,17 +53,15 @@ MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
 	// Handle Harvest Energy Needs -------------------------------------------------------------------------------------
 	// look up sources and find out how many needs we should have for each one
 	var sources = room.find(FIND_SOURCES);
-	sources.forEach(function (s)
-	{
+	sources.forEach(function (s) {
 		var source = Game.getObjectById(s.id);
-		var maxHarvesters = source.getMaxHarvesters(); // TODO: will need to use maxHarvesters - allocatedHarvesters when implemented
-		var allocatedHarvesters = 0; // need to read this
+		var maxHarvesters = source.getMaxHarvesters();
+		var allocatedHarvesters = 0; // TODO: need to read this from all motivations/needs
 		var availableHarvesters = maxHarvesters - allocatedHarvesters;
-		console.log('Source: ' + s.id + ' Max Harvesters: ' + maxHarvesters);
-
-		// create or confirm 1 harvest energy need for each, closest source higher priority
 		var needName = "harvest." + s.id;
 		var need;
+
+		console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
 
 		// create new need if one doesn't exist
 		if (lib.isNull(memory.needs[needName]))
@@ -71,13 +70,12 @@ MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
 			need = memory.needs[needName];
 			need.type = "needHarvestEnergy";
 			need.sourceId = s.id;
-			need.targetId = room.controller;
+			need.targetId = Game.spawns["Spawn1"].id; // TODO: this should be dynamic and explicit, and support extenders
+			need.distance = room.findPath(s.pos, room.controller.pos).length;
 			need.unitDemands = {};
-			need.unitDemands["worker"] = availableHarvesters; // TODO: Unit demands should be driven by the need
 			need.allocatedCreeps = {};
-		}
-		else
-		{
+			need.priority = C.PRIORITY_5;
+		} else {
 			need = memory.needs[needName];
 		}
 
@@ -88,12 +86,38 @@ MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
 		for (var creepName in need.allocatedCreeps)
 		{
 			var creep = Game.creeps[creepName];
-			if (creep.memory.type == "worker")
+			if (creep.memory.unit == "worker")
 			{
 				need.unitDemands["worker"]--;
 			}
 		}
-	} , this);
+	}, this);
+
+	// prioritize harvesting needs by distance
+	sortedNeedsByDistance = _.filter(memory.needs, { "type": "needHarvestEnergy" });
+	sortedNeedsByDistance = _.sortByOrder(sortedNeedsByDistance, ['distance'], ['asc']);
+	x = 0;
+	sortedNeedsByDistance.forEach(function(n) {
+		switch (x)
+		{
+			case 0:
+				n.priority = C.PRIORITY_1;
+				break;
+			case 1:
+				n.priority = C.PRIORITY_2;
+				break;
+			case 2:
+				n.priority = C.PRIORITY_3;
+				break;
+			case 3:
+				n.priority = C.PRIORITY_4;
+				break;
+			default:
+				n.priority = C.PRIORITY_5;
+				break;
+		}
+		x++;
+	}, this);
 };
 
 MotivationSupplySpawn.prototype.desiredSpawnUnit = function ()

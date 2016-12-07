@@ -80,7 +80,7 @@ module.exports =
 				resources.collectorStatus = resourceManager.getCollectorStatus(roomName);
 
 				// get sorted motivations
-				sortedMotivations = _.sortBy(Memory.rooms[roomName].motivations, ['priority']);
+				sortedMotivations = _.sortByOrder(Memory.rooms[roomName].motivations, ['priority'], ['desc']);
 
 				// update each motivation in memory --------------------------------------------------------------------
 				sortedMotivations.forEach(function(motivation) {
@@ -130,6 +130,18 @@ module.exports =
 					// processes needs for motivation
 					needManager.manageNeeds(roomName, motivations[motivation.name], motivation);
 
+					// spawn units if allocated spawn
+					console.log("Pre-Spawn:");
+					var unitName = motivations[motivation.name].desiredSpawnUnit();
+					if (motivation.spawnAllocated)
+					{
+						console.log("Attempting Spawn:");
+						if (unitName == "worker" && resourceManager.getRoomCreeps(roomName, unitName) < 2)
+							Game.spawns.Spawn1.spawnUnit(unitName, false);
+						else
+							Game.spawns.Spawn1.spawnUnit(unitName, true);
+
+					}
 					x++;
 				}, this);
 			}

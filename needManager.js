@@ -35,6 +35,7 @@ module.exports =
 	"manageNeeds": function (roomName, motivation, motivationMemory)
 	{
 		// create and update needs for motivation
+		console.log("needManager.manageNeeds: motivation.name: " + motivation.name);
 		motivation.updateNeeds(roomName);
 
 		// loop over each need processing them

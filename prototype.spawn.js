@@ -5,7 +5,8 @@
 //-------------------------------------------------------------------------
 // modules
 //-------------------------------------------------------------------------
-
+var resourceManager = require("resourceManager");
+var units = require("units");
 //-------------------------------------------------------------------------
 // Declarations
 //-------------------------------------------------------------------------
@@ -66,6 +67,53 @@ module.exports = function()
 				return nameTry;
 			}
 			x++;
+		}
+	};
+
+	Spawn.prototype.spawnUnit = function (unitName, fullEnergy)
+	{
+		var energy = resourceManager.getRoomSpawnEnergy(this.room.name);
+
+		if (fullEnergy)
+		{
+			if (energy.energy == energy.energyCapacity)
+			{
+				return this.spawnUnitByEnergy(unitName, energy.energy);
+			} else {
+				return false;
+			}
+
+		} else {
+			return this.spawnUnitByEnergy(unitName, energy.energy);
+		}
+	};
+
+	Spawn.prototype.spawnUnitByEnergy = function (unitName, energy)
+	{
+		var parts = [];
+		var name = this.generateName(unitName);
+		var result;
+
+		units[unitName].parts.forEach(function(part) {
+			var partEnergy = energy * part.weight;
+			var numberParts = Math.floor(partEnergy/this.costs[part.part]);
+
+
+			if (numberParts < part.minimum)
+				numberParts = part.minimum;
+			for (x = 0; x < numberParts; x++)
+			{
+				parts.push(part.part);
+			}
+		}, this);
+		console.log(parts.length);
+		result = this.createCreep(parts, name, units[unitName].memory);
+		if (result)
+		{
+			console.log('++Creating creep ' + unitName + ' : ' + name + " result: " + result);
+		} else
+		{
+			console.log('--Failed creating creep ' + unitName + ' : ' + name + " result: " + result);
 		}
 	};
 };
