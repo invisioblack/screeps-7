@@ -22,8 +22,6 @@ module.exports =
 		var need = Memory.needs[creep.memory.need];
 		var target = Game.getObjectById(need.target);
 		
-		// TODO : Null protect need
-		
 		//avoid hostiles
 		if (creep.avoidHostile(creep))
 		{

@@ -72,7 +72,7 @@ MotivationSupplyController.prototype.updateNeeds = function (roomName)
 			need.targetId = room.controller.id;
 			need.distance = room.findPath(s.pos, room.controller.pos).length;
 			need.unitDemands = {};
-			need.allocatedCreeps = {};
+			need.assignedCreeps = {};
 			need.priority = C.PRIORITY_5;
 		} else {
 			need = memory.needs[needName];

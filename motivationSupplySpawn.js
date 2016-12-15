@@ -73,7 +73,7 @@ MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
 			need.targetId = Game.spawns["Spawn1"].id; // TODO: this should be dynamic and explicit, and support extenders
 			need.distance = room.findPath(s.pos, room.controller.pos).length;
 			need.unitDemands = {};
-			need.allocatedCreeps = {};
+			need.assignedCreeps = {};
 			need.priority = C.PRIORITY_5;
 		} else {
 			need = memory.needs[needName];

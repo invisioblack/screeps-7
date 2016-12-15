@@ -1,11 +1,17 @@
 //-------------------------------------------------------------------------
-// pCreep
+// prototype.creep
 //-------------------------------------------------------------------------
-
+// memory
+// ------------------------------------------------------------------------
+// motive: {}
+//      room: string room name, the room the creep is assigned to
+//      motivation: string motivation name, the motivation the creep is assigned to
+//      need:  string need name, the need the creep is assigned to
+// unit: string - unit type
 //-------------------------------------------------------------------------
 // modules
 //-------------------------------------------------------------------------
-
+var lib = require("lib");
 //-------------------------------------------------------------------------
 // Declarations
 //-------------------------------------------------------------------------
@@ -109,10 +115,14 @@ module.exports = function()
 		return creepSpawn;		
 	};
 
-	Creep.prototype.getUnit = function()
+	Creep.prototype.initMotive = function()
 	{
-		// This needs to be null protected.
-		var unit = this.memory.unit;
-		return unit;		
+		if (lib.isNull(this.memory.motive))
+		{
+			this.memory.motive = {};
+			this.memory.motive.room = this.room.name;
+			this.memory.motive.motivation = "";
+			this.memory.motive.need = "";
+		}
 	};
 };

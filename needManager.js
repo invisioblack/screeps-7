@@ -12,6 +12,7 @@
 // library modules
 var C = require('C');
 var lib = require('lib');
+var resourceManager = require("resourceManager");
 
 // game modules
 
@@ -34,15 +35,22 @@ module.exports =
 	//--------------------------------------------------------------------------
 	"manageNeeds": function (roomName, motivation, motivationMemory)
 	{
+		var room = Game.rooms[roomName];
+		var needs;
+
 		// create and update needs for motivation
 		console.log("needManager.manageNeeds: motivation.name: " + motivation.name);
 		motivation.updateNeeds(roomName);
+		needs = _.sortBy(room.memory.motivations[motivation.name].needs , ['priority'] , ['asc']);
 
-		// loop over each need processing them
-		// TODO: HERE
-		// allocate / cull creeps to needs that are allocated to this motivation
+		// first we need to figure out if we have any open allocations
+		// TODO: this needs to dynamically loop over unit types
+		var assignedUnits = resourceManager.countRoomMotivationUnits(roomName, motivation.name, "worker");
+		var allocatedUnits = motivationMemory.allocatedUnits["worker"];
 
-		// call need.manage() for each need
-		// need manage will assign jobs to allocated creeps
+		console.log("Assigned/Allocated workers: " + assignedUnits + "/" + allocatedUnits);
+		// if we have open allocations, we need to find if there is a creep to assign
+		// if there is a creep to assign, we need to assign it
+
 	}
 };

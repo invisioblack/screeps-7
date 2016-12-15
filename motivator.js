@@ -63,18 +63,13 @@ module.exports =
 				// energy
 				resources.spawnEnergy = resourceManager.getRoomSpawnEnergy(roomName);
 				// units
+				// TODO: dynamically loop over unit types
 				resources.units = [];
 				resources.units['worker'] = {};
-				resources.units['worker'].total = resourceManager.getRoomCreeps(roomName, 'worker');
+				resources.units['worker'].total = resourceManager.countRoomUnits(roomName, 'worker');
 				resources.units["worker"].allocated = 0; // reset worker allocation
-				resources.units["worker"].unallocated = resources.units["worker"].total - resources.units["worker"].allocated;
-				console.log('Pre: Worker Allocation: ' + resources.units["worker"].allocated + '/' + resources.units["worker"].total + ' Unallocated: ' + resources.units["worker"].unallocated);
-
-
-				resources.units["worker"].allocated = 0;
 				resources.units["worker"].unallocated = resources.units["worker"].total;
-				console.log('Spawn Energy: ' + resources.spawnEnergy.energy + '/' + resources.spawnEnergy.energyCapacity);
-				console.log('Workers: ' + resources.units["worker"].total);
+				console.log('Pre: Worker Allocation: ' + resources.units["worker"].allocated + '/' + resources.units["worker"].total + ' Unallocated: ' + resources.units["worker"].unallocated);
 
 				// get room collector status
 				resources.collectorStatus = resourceManager.getCollectorStatus(roomName);
@@ -94,6 +89,7 @@ module.exports =
 						motivations[motivation.name].setActive(roomName, true);
 					else
 						motivations[motivation.name].setActive(roomName, false);
+
 					console.log('Active: ' + motivations[motivation.name].getActive(roomName));
 
 					// allocate spawn ---------------------------------------------
@@ -106,14 +102,10 @@ module.exports =
 					console.log('Spawn: ' + motivation.spawnAllocated);
 
 					// allocate units ----------------------------------------------------------------------------------
-					// init
-					if (!lib.isNull(motivation.allocatedUnits['worker']))
-						resources.units["worker"].allocated += motivation.allocatedUnits['worker'];
-
-					// allocate units
 					if (motivation.active) {
+						// TODO: This needs to loop over unit types
 						// calculate diminishing number of workers on each iteration
-						var workersToAllocate = Math.ceil(resources.units["worker"].total / (2 * x));
+						var workersToAllocate = Math.ceil(resources.units["worker"].unallocated / (2 * x));
 
 						// apply workers bounded by number available
 						if (workersToAllocate <= resources.units["worker"].unallocated)
@@ -127,20 +119,20 @@ module.exports =
 						console.log('Worker Allocation: ' + resources.units["worker"].allocated + '/' + resources.units["worker"].total + ' Unallocated: ' + resources.units["worker"].unallocated);
 					}
 
-					// processes needs for motivation
+					// processes needs for motivation ------------------------------------------------------------------
 					needManager.manageNeeds(roomName, motivations[motivation.name], motivation);
 
-					// spawn units if allocated spawn
+					// spawn units if allocated spawn ------------------------------------------------------------------
 					console.log("Pre-Spawn:");
 					var unitName = motivations[motivation.name].desiredSpawnUnit();
 					if (motivation.spawnAllocated)
 					{
+						// TODO: assign the spawn dynamically
 						console.log("Attempting Spawn:");
-						if (unitName == "worker" && resourceManager.getRoomCreeps(roomName, unitName) < 2)
+						if (unitName == "worker" && resourceManager.countRoomUnits(roomName, unitName) < 2)
 							Game.spawns.Spawn1.spawnUnit(unitName, false);
 						else
 							Game.spawns.Spawn1.spawnUnit(unitName, true);
-
 					}
 					x++;
 				}, this);

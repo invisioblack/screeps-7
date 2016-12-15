@@ -98,7 +98,6 @@ module.exports = function()
 			var partEnergy = energy * part.weight;
 			var numberParts = Math.floor(partEnergy/this.costs[part.part]);
 
-
 			if (numberParts < part.minimum)
 				numberParts = part.minimum;
 			for (x = 0; x < numberParts; x++)
@@ -106,14 +105,16 @@ module.exports = function()
 				parts.push(part.part);
 			}
 		}, this);
-		console.log(parts.length);
+
 		result = this.createCreep(parts, name, units[unitName].memory);
-		if (result)
+		if (_.isString(result))
 		{
-			console.log('++Creating creep ' + unitName + ' : ' + name + " result: " + result);
-		} else
-		{
-			console.log('--Failed creating creep ' + unitName + ' : ' + name + " result: " + result);
+			console.log('+++++++++++++++++++Creating creep ' + unitName + ' : ' + name + " result: " + result);
+			var creep = Game.creeps[name];
+			creep.initMotive();
+
+		} else {
+			console.log('-------------------Failed creating creep ' + unitName + ' : ' + name + " result: " + result);
 		}
 	};
 };

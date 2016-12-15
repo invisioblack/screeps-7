@@ -62,18 +62,103 @@ module.exports =
     	return result;
     },
 
-    "getRoomCreeps": function (roomName, unit)
+    "countRoomCreeps": function (roomName)
     {
-    	var result = 0;
-    	for (var creepName in Game.creeps)
-    	{
-    		var creep = Game.creeps[creepName];
-    		if (creep.room.name == roomName && creep.getUnit() == unit)
-    		{
-    			result++;
-    		}
-    	}
+	    var result = 0;
+	    for (var creepName in Game.creeps)
+	    {
+		    var creep = Game.creeps[creepName];
+		    if (creep.room.name == roomName)
+		    {
+			    result++;
+		    }
+	    }
 
-    	return result;
-    }
+	    return result;
+    },
+
+	"countRoomUnits": function (roomName, unitName)
+	{
+		var result = 0;
+		for (var creepName in Game.creeps)
+		{
+			var creep = Game.creeps[creepName];
+			if (creep.room.name == roomName
+				&& creep.memory.unit == unitName)
+			{
+				result++;
+			}
+		}
+
+		return result;
+	},
+
+	"countRoomMotivationCreeps": function (roomName, motivationName)
+	{
+		var result = 0;
+		for (var creepName in Game.creeps)
+		{
+			var creep = Game.creeps[creepName];
+			if (creep.room.name == roomName
+				&& creep.memory.motive.motivation == motivationName)
+			{
+				result++;
+			}
+		}
+
+		return result;
+	},
+
+	"countRoomMotivationUnits": function (roomName, motivationName, unitName)
+	{
+		var result = 0;
+		for (var creepName in Game.creeps)
+		{
+			var creep = Game.creeps[creepName];
+			if (creep.room.name == roomName
+				&& creep.memory.motive.motivation == motivationName
+				&& creep.memory.unit == unitName)
+			{
+				result++;
+			}
+		}
+
+		return result;
+	},
+
+	"countRoomMotivationNeedCreeps": function (roomName, motivationName, needName)
+	{
+		var result = 0;
+		for (var creepName in Game.creeps)
+		{
+			var creep = Game.creeps[creepName];
+			if (creep.room.name == roomName
+				&& creep.memory.motive.motivation == motivationName
+				&& creep.memory.motive.need == needName)
+			{
+				result++;
+			}
+		}
+
+		return result;
+	},
+
+	"countRoomMotivationNeedUnits": function (roomName, motivationName, needName, unitName)
+	{
+		var result = 0;
+		for (var creepName in Game.creeps)
+		{
+			var creep = Game.creeps[creepName];
+			if (creep.room.name == roomName
+				&& creep.memory.motive.motivation == motivationName
+				&& creep.memory.motive.need == needName
+				&& creep.memory.unit == unitName)
+			{
+				result++;
+			}
+		}
+
+		return result;
+	}
+
 };
