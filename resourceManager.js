@@ -46,7 +46,7 @@ module.exports =
     	return result;
     },
 
-    "getCollectorStatus": function (roomName)
+    "getControllerStatus": function (roomName)
     {
     	var result = {};
     	
@@ -56,8 +56,6 @@ module.exports =
     	result.progressTotal = controller.progressTotal;
     	result.ticksToDowngrade = controller.ticksToDowngrade;
     	result.level = controller.level;
-
-	    console.log('Collector Level: ' + result.level + ' ' + result.progress + '/' + result.progressTotal + ' Downgrade: ' + result.ticksToDowngrade);
 
     	return result;
     },

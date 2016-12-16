@@ -45,16 +45,16 @@ module.exports =
 			{
 				//------------------------------------------------------------------------------------------------------
 				// motivate
-				console.log('motivate ' + roomName);
+				console.log('+motivator.motivate: ' + roomName);
 
-				// declarations
+				// declarations ----------------------------------------------------------------------------------------
 				var resources = {};
 				var demands = {};
 				var sortedMotivations;
 				var isSpawnAllocated = false;
 				var x = 1;
 
-				// set up hack motivations reference
+				// set up hack motivations reference -------------------------------------------------------------------
 				var motivations = {};
 				motivations["motivationSupplySpawn"] = motivationSupplySpawn;
 				motivations["motivationSupplyController"] = motivationSupplyController;
@@ -69,17 +69,19 @@ module.exports =
 				resources.units['worker'].total = resourceManager.countRoomUnits(roomName, 'worker');
 				resources.units["worker"].allocated = 0; // reset worker allocation
 				resources.units["worker"].unallocated = resources.units["worker"].total;
-				console.log('Pre: Worker Allocation: ' + resources.units["worker"].allocated + '/' + resources.units["worker"].total + ' Unallocated: ' + resources.units["worker"].unallocated);
 
 				// get room collector status
-				resources.collectorStatus = resourceManager.getCollectorStatus(roomName);
+				resources.controllerStatus = resourceManager.getControllerStatus(roomName);
+				console.log('Controller Level: ' + resources.controllerStatus.level + ' ' + resources.controllerStatus.progress + '/' + resources.controllerStatus.progressTotal + ' Downgrade: ' + resources.controllerStatus.ticksToDowngrade);
 
+				// -----------------------------------------------------------------------------------------------------
+				// process motivations in order of priority ------------------------------------------------------------
 				// get sorted motivations
 				sortedMotivations = _.sortByOrder(Memory.rooms[roomName].motivations, ['priority'], ['desc']);
 
 				// update each motivation in memory --------------------------------------------------------------------
 				sortedMotivations.forEach(function(motivation) {
-					console.log("Motivating: " + motivation.name);
+					console.log("+Motivating: " + motivation.name);
 
 					// set up demands
 					demands[motivation.name] = motivations[motivation.name].getDemands(roomName, resources);
@@ -90,8 +92,6 @@ module.exports =
 					else
 						motivations[motivation.name].setActive(roomName, false);
 
-					console.log('Active: ' + motivations[motivation.name].getActive(roomName));
-
 					// allocate spawn ---------------------------------------------
 					if (!isSpawnAllocated && motivation.active && demands[motivation.name].spawn > 0) {
 						motivation.spawnAllocated = true;
@@ -99,11 +99,12 @@ module.exports =
 					} else {
 						motivation.spawnAllocated = false;
 					}
-					console.log('Spawn: ' + motivation.spawnAllocated);
 
 					// allocate units ----------------------------------------------------------------------------------
-					if (motivation.active) {
-						// TODO: This needs to loop over unit types
+					// TODO: This needs to loop over unit types
+					if (motivation.active)
+					{
+						console.log('Pre: Worker Allocation: ' + resources.units["worker"].allocated + '/' + resources.units["worker"].total + ' Unallocated: ' + resources.units["worker"].unallocated);
 						// calculate diminishing number of workers on each iteration
 						var workersToAllocate = Math.ceil(resources.units["worker"].unallocated / (2 * x));
 
@@ -123,12 +124,10 @@ module.exports =
 					needManager.manageNeeds(roomName, motivations[motivation.name], motivation);
 
 					// spawn units if allocated spawn ------------------------------------------------------------------
-					console.log("Pre-Spawn:");
 					var unitName = motivations[motivation.name].desiredSpawnUnit();
 					if (motivation.spawnAllocated)
 					{
 						// TODO: assign the spawn dynamically
-						console.log("Attempting Spawn:");
 						if (unitName == "worker" && resourceManager.countRoomUnits(roomName, unitName) < 2)
 							Game.spawns.Spawn1.spawnUnit(unitName, false);
 						else

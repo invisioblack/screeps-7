@@ -90,7 +90,7 @@ module.exports = function ()
 
 	Motivation.prototype.getAllocatedUnits = function (roomName, unit)
 	{
-		var result = C.PRIORITY_5;
+		var result = {};
 		if (!lib.isNull(Game.rooms[roomName].memory.motivations[this.name])) 
 			result = Game.rooms[roomName].memory.motivations[this.name].allocatedUnits[unit];
 		

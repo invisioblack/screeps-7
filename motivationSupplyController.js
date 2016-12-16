@@ -30,7 +30,7 @@ MotivationSupplyController.prototype.constructor = MotivationSupplyController;
 
 MotivationSupplyController.prototype.getDemands = function (roomName, resources) {
 	var result = {};
-	result.energy = resources.collectorStatus.progressTotal - resources.collectorStatus.progress;
+	result.energy = resources.controllerStatus.progressTotal - resources.controllerStatus.progress;
 	result.workers = Math.floor(result.energy / 50); // this will need to ask the needs what units it wants, plus refactor to handy any unit demand
 	result.spawn = resources.units["worker"].total < result.workers;
 	console.log('Supply Controller Demands: e: ' + result.energy + ' Workers: ' + result.workers + ' Spawn: ' + result.spawn);
