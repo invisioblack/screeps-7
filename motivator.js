@@ -108,6 +108,10 @@ module.exports =
 						// calculate diminishing number of workers on each iteration
 						var workersToAllocate = Math.ceil(resources.units["worker"].unallocated / (2 * x));
 
+						// don't allocate more workers than demanded
+						if (workersToAllocate > demands[motivation.name].units["worker"])
+							workersToAllocate = demands[motivation.name].units["worker"];
+
 						// apply workers bounded by number available
 						if (workersToAllocate <= resources.units["worker"].unallocated)
 							motivation.allocatedUnits['worker'] = workersToAllocate;

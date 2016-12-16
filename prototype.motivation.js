@@ -97,5 +97,24 @@ module.exports = function ()
 		return result;
 	};
 
+	Motivation.prototype.getUnitDemands = function (roomName)
+	{
+		var result = {};
+		var room = Game.rooms[roomName];
+
+		for (var needName in room.memory.motivations[this.name].needs)
+		{
+			var need = room.memory.motivations[this.name].needs[needName];
+			for (var unitName in need.unitDemands)
+			{
+				if (lib.isNull(result[unitName]))
+					result[unitName] = 0;
+				result[unitName] += need.unitDemands[unitName];
+			}
+		}
+
+		return result;
+	};
+
 	return Motivation;
 };

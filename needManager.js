@@ -50,7 +50,14 @@ module.exports =
 
 		console.log("Assigned/Allocated workers: " + assignedUnits + "/" + allocatedUnits);
 		// if we have open allocations, we need to find if there is a creep to assign
-		// if there is a creep to assign, we need to assign it
+		if (assignedUnits < allocatedUnits)
+		{
+			// if there is a creep to assign, we need to assign it
+			var creep = resourceManager.findUnallocatedRoomUnit(room.name, "worker");
+			if (!lib.isNull(creep))
+			{
 
+			}
+		}
 	}
 };

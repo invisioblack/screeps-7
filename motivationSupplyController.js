@@ -31,9 +31,9 @@ MotivationSupplyController.prototype.constructor = MotivationSupplyController;
 MotivationSupplyController.prototype.getDemands = function (roomName, resources) {
 	var result = {};
 	result.energy = resources.controllerStatus.progressTotal - resources.controllerStatus.progress;
-	result.workers = Math.floor(result.energy / 50); // this will need to ask the needs what units it wants, plus refactor to handy any unit demand
-	result.spawn = resources.units["worker"].total < result.workers;
-	console.log('Supply Controller Demands: e: ' + result.energy + ' Workers: ' + result.workers + ' Spawn: ' + result.spawn);
+	result.units = this.getUnitDemands(roomName);
+	result.spawn = resources.units["worker"].total < result.units["worker"];
+	console.log('Supply Controller Demands: e: ' + result.energy + ' Workers: ' + result.units["worker"] + ' Spawn: ' + result.spawn);
 	return result;
 };
 
@@ -72,7 +72,6 @@ MotivationSupplyController.prototype.updateNeeds = function (roomName)
 			need.targetId = room.controller.id;
 			need.distance = room.findPath(s.pos, room.controller.pos).length;
 			need.unitDemands = {};
-			need.assignedCreeps = {};
 			need.priority = C.PRIORITY_5;
 		} else {
 			need = memory.needs[needName];
