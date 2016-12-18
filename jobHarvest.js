@@ -19,8 +19,9 @@ module.exports =
 
 	"work": function (creep)
 	{
-		var need = Memory.needs[creep.memory.need];
-		var target = Game.getObjectById(need.target);
+		var need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
+		var source = Game.getObjectById(need.sourceId);
+		var target = Game.getObjectById(need.targetId);
 		
 		//avoid hostiles
 		if (creep.avoidHostile(creep))
@@ -31,16 +32,15 @@ module.exports =
         if (creep.carryCapacity == 0 || _.sum(creep.carry) < creep.carryCapacity)
 		{
 		    console.log("harvest");
-    		creep.moveTo(target);
-	    	creep.harvest(target);
+    		creep.moveTo(source);
+	    	creep.harvest(source);
 		}
         else
 		{
 		    console.log("return");
-			var spawn = creep.pos.findClosestByPath(FIND_MY_SPAWNS);
 
-			creep.moveTo(spawn);
-			creep.transferEnergy(spawn);
+			creep.moveTo(target);
+			creep.transfer(target);
 		}
 	}
 };

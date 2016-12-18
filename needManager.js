@@ -15,7 +15,7 @@ var lib = require('lib');
 var resourceManager = require("resourceManager");
 
 // game modules
-
+var jobHarvest = require("jobHarvest");
 
 //------------------------------------------------------------------------------
 // Declarations
@@ -58,12 +58,29 @@ module.exports =
 				if (!lib.isNull(creep) && assignedUnits < allocatedUnits)
 				{
 					creep.memory.motive.motivation = motivation.name;
-					creep.memory.motive.need = need.name; // 000000000000000000000000000000000 This is null
+					creep.memory.motive.need = need.name;
 				}
-				creep = resourceManager.findUnallocatedRoomUnit(room.name, "worker");
 				allocatedUnits = resourceManager.countRoomMotivationUnits(roomName, motivation.name, "worker");
 			}, this);
 
+		}
+	},
+
+	"fulfillNeeds": function (roomName)
+	{
+		for (var creepName in Game.creeps)
+		{
+			var creep = Game.creeps[creepName];
+			if (creep.room.name == roomName && creep.memory.motive.need != "")
+			{
+				console.log("Creep executing need: " + creep.name + " : " + creep.memory.motive.motivation + " : " + creep.memory.motive.need);
+				var need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
+				if (need.type == "needHarvestEnergy")
+				{
+					console.log("Working needNarvestEnergy");
+					jobHarvest.work(creep);
+				}
+			}
 		}
 	}
 };

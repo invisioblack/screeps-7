@@ -138,6 +138,9 @@ module.exports =
 							Game.spawns.Spawn1.spawnUnit(unitName, true);
 					}
 					x++;
+
+					// fulfill needs -----------------------------------------------------------------------------------
+					needManager.fulfillNeeds(roomName);
 				}, this);
 			}
 		}
