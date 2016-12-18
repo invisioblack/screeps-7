@@ -50,14 +50,20 @@ module.exports =
 
 		console.log("Assigned/Allocated workers: " + assignedUnits + "/" + allocatedUnits);
 		// if we have open allocations, we need to find if there is a creep to assign
-		if (assignedUnits < allocatedUnits)
+		while (assignedUnits < allocatedUnits)
 		{
-			// if there is a creep to assign, we need to assign it
-			var creep = resourceManager.findUnallocatedRoomUnit(room.name, "worker");
-			if (!lib.isNull(creep))
-			{
+			needs.forEach( function (need) {
+				// if there is a creep to assign, we need to assign it
+				var creep = resourceManager.findUnallocatedRoomUnit(room.name, "worker");
+				if (!lib.isNull(creep) && assignedUnits < allocatedUnits)
+				{
+					creep.memory.motive.motivation = motivation.name;
+					creep.memory.motive.need = need.name; // 000000000000000000000000000000000 This is null
+				}
+				creep = resourceManager.findUnallocatedRoomUnit(room.name, "worker");
+				allocatedUnits = resourceManager.countRoomMotivationUnits(roomName, motivation.name, "worker");
+			}, this);
 
-			}
 		}
 	}
 };

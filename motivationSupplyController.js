@@ -67,6 +67,7 @@ MotivationSupplyController.prototype.updateNeeds = function (roomName)
 		{
 			memory.needs[needName] = {};
 			need = memory.needs[needName];
+			need.name = needName;
 			need.type = "needHarvestEnergy";
 			need.sourceId = s.id;
 			need.targetId = room.controller.id;
