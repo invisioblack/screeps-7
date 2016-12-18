@@ -106,7 +106,7 @@ module.exports =
 					{
 						console.log('Pre: Worker Allocation: ' + resources.units["worker"].allocated + '/' + resources.units["worker"].total + ' Unallocated: ' + resources.units["worker"].unallocated);
 						// calculate diminishing number of workers on each iteration
-						var workersToAllocate = Math.ceil(resources.units["worker"].unallocated / (2 * x));
+						var workersToAllocate = Math.ceil(resources.units["worker"].unallocated);
 
 						// don't allocate more workers than demanded
 						if (workersToAllocate > demands[motivation.name].units["worker"])
@@ -137,7 +137,7 @@ module.exports =
 						else
 							Game.spawns.Spawn1.spawnUnit(unitName, true);
 					}
-					x++;
+					x++
 
 					// fulfill needs -----------------------------------------------------------------------------------
 					needManager.fulfillNeeds(roomName);
@@ -162,9 +162,9 @@ module.exports =
 
 				// init each motivation for this room
 				motivationSupplySpawn.init(room.name);
-				motivationSupplySpawn.setPriority(room.name, C.PRIORITY_1);
+				motivationSupplySpawn.setPriority(room.name, C.PRIORITY_2);
 				motivationSupplyController.init(room.name);
-				motivationSupplyController.setPriority(room.name, C.PRIORITY_3);
+				motivationSupplyController.setPriority(room.name, C.PRIORITY_1);
 			}
 		}
 	}

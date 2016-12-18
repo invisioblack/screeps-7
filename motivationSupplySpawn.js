@@ -81,7 +81,11 @@ MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
 		}
 
 		// update unitDemands
-		need.unitDemands["worker"] = availableHarvesters;
+		var energyDemand = Game.spawns["Spawn1"].energyCapcity - Game.spawns["Spawn1"].energy;
+		if (energyDemand > 0)
+			need.unitDemands["worker"] = availableHarvesters;
+		else
+			need.unitDemands["worker"] = 0;
 
 		// remove allocated creeps from unit demands
 		for (var creepName in need.allocatedCreeps)
