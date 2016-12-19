@@ -17,6 +17,7 @@ var resourceManager = require("resourceManager");
 // game modules
 var jobHarvest = require("jobHarvest");
 var jobBuild = require("jobBuild");
+var jobRepair = require("jobRepair");
 
 //------------------------------------------------------------------------------
 // Declarations
@@ -44,7 +45,7 @@ module.exports =
 		motivation.updateNeeds(roomName);
 
 		// read up needs sorted by priority
-		needs = _.sortBy(room.memory.motivations[motivation.name].needs , ['priority'] , ['asc']);
+		needs = _.sortByOrder(room.memory.motivations[motivation.name].needs , ['priority'], ['desc']);
 
 		// first we need to figure out if we have any open allocations
 		// TODO: this needs to dynamically loop over unit types
@@ -85,15 +86,28 @@ module.exports =
 			{
 				//console.log("Creep executing need: " + creep.name + " : " + creep.memory.motive.motivation + " : " + creep.memory.motive.need);
 				var need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
-				if (need.type == "needHarvestEnergy")
+
+				//console.log("Creep: " + creep.name + " m: " + creep.memory.motive.motivation + " n: " + creep.memory.motive.need);
+
+				// deassign motive if we can't find the need
+				if (lib.isNull(need))
+					creep.deassignMotive();
+				else if (lib.isNull(need.type))
+					creep.deassignMotive();
+				else if (need.type == "needHarvestEnergy")
 				{
 					//console.log("Working needNarvestEnergy");
 					jobHarvest.work(creep);
 				}
-				if (need.type == "needBuild")
+				else if (need.type == "needBuild")
 				{
 					//console.log("Working needNarvestEnergy");
 					jobBuild.work(creep);
+				}
+				else if (need.type == "needRepair")
+				{
+					console.log("Creep: " + creep.name + " Working needRepair");
+					jobRepair.work(creep);
 				}
 			}
 		}

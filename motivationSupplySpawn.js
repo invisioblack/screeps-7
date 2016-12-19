@@ -40,6 +40,7 @@ MotivationSupplySpawn.prototype.getDemands = function (roomName, resources)
 	return result;
 };
 
+// TODO: This needs to be reworked to produce 1 need per spawn, and per extension
 MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
 {
 	var room = Game.rooms[roomName];
@@ -52,56 +53,86 @@ MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
 		memory.needs = {};
 	}
 
-	// Handle Harvest Energy Needs -------------------------------------------------------------------------------------
+	// spawns ----------------------------------------------------------------------------------------------------------
 	// look up sources and find out how many needs we should have for each one
-	var sources = room.find(FIND_SOURCES);
-	sources.forEach(function (s) {
-		var needName = "harvest." + s.id;
-		var need;
-
-		//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
-
-		// create new need if one doesn't exist
-		if (lib.isNull(memory.needs[needName]))
+	for (var spawnName in Game.spawns)
+	{
+		// loop over spawns in room
+		var spawn = Game.spawns[spawnName];
+		if (spawn.room.name == roomName)
 		{
-			memory.needs[needName] = {};
-			need = memory.needs[needName];
-			need.type = "needHarvestEnergy";
-			need.name = needName;
-			need.sourceId = s.id;
-			need.targetId = Game.spawns["Spawn1"].id; // TODO: this should be dynamic and explicit, and support extenders
-			need.distance = room.findPath(s.pos, room.controller.pos).length;
-			need.priority = C.PRIORITY_5;
-		} else {
-			need = memory.needs[needName];
+			// create a need for each source in the room
+			var sources = room.find(FIND_SOURCES);
+			sources.forEach(function (s)
+			{
+				var needName = "harvest." + s.id + "." + spawn.id;
+				var need;
+
+				//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
+
+				// create needs if we need energy, cull needs if not
+				if ((spawn.energyCapacity - spawn.energy) > 0)
+				{
+					// create new need if one doesn't exist
+					if (lib.isNull(memory.needs[needName]))
+					{
+						memory.needs[needName] = {};
+						need = memory.needs[needName];
+						need.type = "needHarvestEnergy";
+						need.name = needName;
+						need.sourceId = s.id;
+						need.targetId = spawn.id;
+						need.distance = room.findPath(s.pos , room.controller.pos).length;
+						need.priority = C.PRIORITY_2;
+					}
+					else
+					{
+						need = memory.needs[needName];
+					}
+				} else { // cull need if we don't need energy
+					delete memory.needs[needName];
+				}
+
+
+			} , this);
 		}
+	}
 
-	}, this);
-
-	// prioritize harvesting needs by distance
-	sortedNeedsByDistance = _.filter(memory.needs, { "type": "needHarvestEnergy" });
-	sortedNeedsByDistance = _.sortByOrder(sortedNeedsByDistance, ['distance'], ['asc']);
-	x = 0;
-	sortedNeedsByDistance.forEach(function(n) {
-		switch (x)
+	// extenders -------------------------------------------------------------------------------------------------------
+	// look up sources and find out how many needs we should have for each one
+	var extenders = room.find(FIND_MY_STRUCTURES, {filter: { structureType: STRUCTURE_EXTENSION }});
+	extenders.forEach(function (ex) {
+		// create a need for each source in the room
+		var sources = room.find(FIND_SOURCES);
+		sources.forEach(function (s)
 		{
-			case 0:
-				n.priority = C.PRIORITY_1;
-				break;
-			case 1:
-				n.priority = C.PRIORITY_2;
-				break;
-			case 2:
-				n.priority = C.PRIORITY_3;
-				break;
-			case 3:
-				n.priority = C.PRIORITY_4;
-				break;
-			default:
-				n.priority = C.PRIORITY_5;
-				break;
-		}
-		x++;
+			var needName = "harvest." + s.id + "." + ex.id;
+			var need;
+
+			//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
+
+			if ((ex.energyCapacity - ex.energy) > 0)
+			{
+				// create new need if one doesn't exist
+				if (lib.isNull(memory.needs[needName]))
+				{
+					memory.needs[needName] = {};
+					need = memory.needs[needName];
+					need.type = "needHarvestEnergy";
+					need.name = needName;
+					need.sourceId = s.id;
+					need.targetId = ex.id;
+					need.distance = room.findPath(s.pos , room.controller.pos).length;
+					need.priority = C.PRIORITY_5;
+				}
+				else
+				{
+					need = memory.needs[needName];
+				}
+			} else { // cull need if we don't need energy
+				delete memory.needs[needName];
+			}
+		}, this);
 	}, this);
 };
 

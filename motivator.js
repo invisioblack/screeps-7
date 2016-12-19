@@ -173,10 +173,11 @@ module.exports =
 					// processes needs for motivation ------------------------------------------------------------------
 					needManager.manageNeeds(roomName, motivations[motivationMemory.name], motivationMemory);
 
-					// fulfill needs -----------------------------------------------------------------------------------
-					needManager.fulfillNeeds(roomName);
 					iteration++;
 				}, this);
+
+				// fulfill needs -----------------------------------------------------------------------------------
+				needManager.fulfillNeeds(roomName);
 			}
 		}
 	},
@@ -197,13 +198,13 @@ module.exports =
 
 				// init each motivation for this room
 				motivationSupplySpawn.init(room.name);
-				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_2;
+				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_1;
 
 				motivationSupplyController.init(room.name);
-				room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_1;
+				room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_3;
 
 				motivationMaintainInfrastructure.init(room.name);
-				room.memory.motivations[motivationMaintainInfrastructure.name].priority = C.PRIORITY_3;
+				room.memory.motivations[motivationMaintainInfrastructure.name].priority = C.PRIORITY_2;
 			}
 		}
 	},

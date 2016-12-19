@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------
-// needHarvestEnergy
+// needRepair
 //-------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------
@@ -18,22 +18,22 @@ var Need = require('prototype.need')();
 //-------------------------------------------------------------------------
 // function
 //-------------------------------------------------------------------------
-var NeedBuild = function ()
+var NeedRepair = function ()
 {
 	Need.call(this);
-	this.name = "needBuild";
+	this.name = "needRepair";
 };
 
-NeedBuild.prototype = Object.create(Need.prototype);
-NeedBuild.prototype.constructor = NeedBuild;
+NeedRepair.prototype = Object.create(Need.prototype);
+NeedRepair.prototype.constructor = NeedRepair;
 
-NeedBuild.prototype.getUnitDemands = function(roomName, memory)
+NeedRepair.prototype.getUnitDemands = function(roomName, memory)
 {
 	var result = {};
-	result["worker"] = 2;
+	result["worker"] = 1;
 
 	return result;
 };
 
 
-module.exports = new NeedBuild();
+module.exports = new NeedRepair();
