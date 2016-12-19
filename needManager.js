@@ -16,6 +16,7 @@ var resourceManager = require("resourceManager");
 
 // game modules
 var jobHarvest = require("jobHarvest");
+var jobBuild = require("jobBuild");
 
 //------------------------------------------------------------------------------
 // Declarations
@@ -41,32 +42,35 @@ module.exports =
 		// create and update needs for motivation
 		//console.log("needManager.manageNeeds: motivation.name: " + motivation.name);
 		motivation.updateNeeds(roomName);
+
+		// read up needs sorted by priority
 		needs = _.sortBy(room.memory.motivations[motivation.name].needs , ['priority'] , ['asc']);
 
 		// first we need to figure out if we have any open allocations
 		// TODO: this needs to dynamically loop over unit types
 		var assignedUnits = resourceManager.countRoomMotivationUnits(roomName, motivation.name, "worker");
 		var allocatedUnits = motivationMemory.allocatedUnits["worker"];
+		console.log("Assigned/Allocated workers: " + assignedUnits + "/" + allocatedUnits);
 
-		//console.log("Assigned/Allocated workers: " + assignedUnits + "/" + allocatedUnits);
 		// if we have open allocations, we need to find if there is a creep to assign
 		var done = false;
 		while (!done && assignedUnits < allocatedUnits)
 		{
 			needs.forEach( function (need) {
 				// if there is a creep to assign, we need to assign it
+				var unitDemands = motivation.needs[need.type].getUnitDemands(roomName, need);
 				var creepsAssigned = resourceManager.countRoomMotivationNeedUnits(roomName, motivation.name, need.name, "worker");
-				var creepsDemanded = need.unitDemands["worker"];
+				var creepsDemanded = unitDemands["worker"];
 				var creep = resourceManager.findUnallocatedRoomUnit(room.name, "worker");
+				// TODO: This can leave creeps unassigned
+				// TODO: This needs to be more intelligent about how many creeps it assigns to each need
 				if (!lib.isNull(creep) && creepsAssigned < creepsDemanded)
 				{
-					//console.log(creep);
-					creep.memory.motive.motivation = motivation.name;
-					creep.memory.motive.need = need.name;
+					creep.assignMotive(roomName, motivation.name, need.name);
 				} else {
 					done = true;
 				}
-				allocatedUnits = resourceManager.countRoomMotivationUnits(roomName, motivation.name, "worker");
+				assignedUnits = resourceManager.countRoomMotivationUnits(roomName, motivation.name, "worker");
 			}, this);
 
 		}
@@ -85,6 +89,11 @@ module.exports =
 				{
 					//console.log("Working needNarvestEnergy");
 					jobHarvest.work(creep);
+				}
+				if (need.type == "needBuild")
+				{
+					//console.log("Working needNarvestEnergy");
+					jobBuild.work(creep);
 				}
 			}
 		}

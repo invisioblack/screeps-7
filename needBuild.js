@@ -18,25 +18,22 @@ var Need = require('prototype.need')();
 //-------------------------------------------------------------------------
 // function
 //-------------------------------------------------------------------------
-var NeedHarvestEnergy = function ()
+var NeedBuild = function ()
 {
 	Need.call(this);
-	this.name = "needHarvestEnergy";
+	this.name = "needBuild";
 };
 
-NeedHarvestEnergy.prototype = Object.create(Need.prototype);
-NeedHarvestEnergy.prototype.constructor = NeedHarvestEnergy;
+NeedBuild.prototype = Object.create(Need.prototype);
+NeedBuild.prototype.constructor = NeedBuild;
 
-NeedHarvestEnergy.prototype.getUnitDemands = function(roomName, memory)
+NeedBuild.prototype.getUnitDemands = function(roomName, memory)
 {
 	var result = {};
-	var source = Game.getObjectById(memory.sourceId);
-	var maxWorkers = source.getMaxHarvesters();
-	maxWorkers = maxWorkers + Math.ceil(maxWorkers * 0.5);
-	result["worker"] = maxWorkers;
+	result["worker"] = 1;
 
 	return result;
 };
 
 
-module.exports = new NeedHarvestEnergy();
+module.exports = new NeedBuild();

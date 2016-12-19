@@ -1,5 +1,5 @@
-//----------------------------------------------------------------------------------------------------------------------
-// motivationSupplyController
+//-------------------------------------------------------------------------
+// MotivationMaintainInfrastructure
 //-------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------
@@ -7,11 +7,11 @@
 //-------------------------------------------------------------------------
 var lib = require('lib');
 var C = require('C');
-var needHarvestEnergy = require("needHarvestEnergy");
+var needBuild = require("needBuild");
+//var needRepair = require("needRepair");
 
 // script prototypes
 var Motivation = require('prototype.motivation')();
-require('prototype.source')();
 
 //-------------------------------------------------------------------------
 // Declarations
@@ -20,27 +20,34 @@ require('prototype.source')();
 //-------------------------------------------------------------------------
 // function
 //-------------------------------------------------------------------------
-var MotivationSupplyController = function ()
+var MotivationMaintainInfrastructure = function ()
 {
 	Motivation.call(this);
-	this.name = "motivationSupplyController";
+	this.name = "motivationMaintainInfrastructure";
 	this.needs = {};
-	this.needs["needHarvestEnergy"] = needHarvestEnergy;
+	this.needs["needBuild"] = needBuild;
+	//this.needs["needRepair"] = needRepair;
 };
 
-MotivationSupplyController.prototype = Object.create(Motivation.prototype);
-MotivationSupplyController.prototype.constructor = MotivationSupplyController;
+MotivationMaintainInfrastructure.prototype = Object.create(Motivation.prototype);
+MotivationMaintainInfrastructure.prototype.constructor = MotivationMaintainInfrastructure;
 
-MotivationSupplyController.prototype.getDemands = function (roomName, resources) {
+MotivationMaintainInfrastructure.prototype.getDemands = function (roomName, resources)
+{
 	var result = {};
-	result.energy = resources.controllerStatus.progressTotal - resources.controllerStatus.progress;
+
+	var constructionSites = Game.rooms[roomName].find(FIND_CONSTRUCTION_SITES);
+	var progress = _.sum(constructionSites, "progress");
+	var progressTotal = _.sum(constructionSites, "progressTotal");
+
+	result.energy = progressTotal - progress;
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = resources.units["worker"].allocated < result.units["worker"];
-	console.log('Supply Controller Demands: e: ' + result.energy + ' Workers: ' + result.units["worker"] + ' Spawn: ' + result.spawn);
+	console.log('Maintain Infrastructure Demands: Workers: ' + result.units["worker"] + ' Spawn: ' + result.spawn);
 	return result;
 };
 
-MotivationSupplyController.prototype.updateNeeds = function (roomName)
+MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 {
 	var room = Game.rooms[roomName];
 	var memory = room.memory.motivations[this.name];
@@ -54,9 +61,9 @@ MotivationSupplyController.prototype.updateNeeds = function (roomName)
 
 	// Handle Harvest Energy Needs -------------------------------------------------------------------------------------
 	// look up sources and find out how many needs we should have for each one
-	var sources = room.find(FIND_SOURCES);
-	sources.forEach(function (s) {
-		var needName = "harvest." + s.id;
+	var constructionSites = room.find(FIND_CONSTRUCTION_SITES);
+	constructionSites.forEach(function (cs) {
+		var needName = "maintain." + cs.id;
 		var need;
 
 		//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
@@ -66,19 +73,23 @@ MotivationSupplyController.prototype.updateNeeds = function (roomName)
 		{
 			memory.needs[needName] = {};
 			need = memory.needs[needName];
+			need.type = "needBuild";
 			need.name = needName;
-			need.type = "needHarvestEnergy";
-			need.sourceId = s.id;
-			need.targetId = room.controller.id;
-			need.distance = room.findPath(s.pos, room.controller.pos).length;
+			need.sourceId = cs.pos.findClosestByPath(FIND_SOURCES).id; // get energy from closest source
+			need.targetId = cs.id;
+			need.distance = room.findPath(cs.pos, Game.getObjectById(need.sourceId).pos).length;
 			need.priority = C.PRIORITY_5;
 		} else {
 			need = memory.needs[needName];
 		}
+
 	}, this);
 
-	// prioritize harvesting needs by distance
-	sortedNeedsByDistance = _.filter(memory.needs, { "type": "needHarvestEnergy" });
+	// TODO: cull old needs
+
+	// prioritize needs by distance
+	// TODO: prioritize this by need
+	sortedNeedsByDistance = _.filter(memory.needs, { "type": "needBuild" });
 	sortedNeedsByDistance = _.sortByOrder(sortedNeedsByDistance, ['distance'], ['asc']);
 	x = 0;
 	sortedNeedsByDistance.forEach(function(n) {
@@ -104,9 +115,10 @@ MotivationSupplyController.prototype.updateNeeds = function (roomName)
 	}, this);
 };
 
-MotivationSupplyController.prototype.desiredSpawnUnit = function ()
+MotivationMaintainInfrastructure.prototype.desiredSpawnUnit = function ()
 {
 	return "worker";
 };
 
-module.exports = new MotivationSupplyController();
+
+module.exports = new MotivationMaintainInfrastructure();

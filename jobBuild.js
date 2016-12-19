@@ -5,65 +5,75 @@
 //-------------------------------------------------------------------------
 // modules
 //-------------------------------------------------------------------------
-
+var lib = require("lib");
 //-------------------------------------------------------------------------
 // Declarations
 //-------------------------------------------------------------------------
+var HARVEST_MODE_HARVEST = 0;
+var HARVEST_MODE_BUILD = 1;
 
 //-------------------------------------------------------------------------
-// object
+// function
 //-------------------------------------------------------------------------
 module.exports =
-{
-	"work": function (creep)
 	{
-		//avoid hostiles
-		if (creep.avoidHostile(creep))
-		{
-			return;
-		}
+		//-------------------------------------------------------------------------
 
-		//continue if no nearby hostiles
-		//TODO: This needs to be defined by the need.
-		var neartarget = creep.pos.findNearest(Game.CONSTRUCTION_SITES);
-
-		if (creep.energy === 0)
+		"work": function (creep)
 		{
-			creep.memory.building = false;
-		}
-		if (creep.energy == creep.energyCapacity)
-		{
-			creep.memory.building = true;
-		}
+			var need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
+			var source = Game.getObjectById(need.sourceId);
+			var target = Game.getObjectById(need.targetId);
+			var carry = _.sum(creep.carry);
 
-		// If I don't have full energy, and I'm not building right now, then go get energy
-		if (creep.energy < creep.energyCapacity && !creep.memory.building)
-		{
-			//this isn't null protected
-			var mySpawn = creep.getSpawn();
-			var spawnPath = creep.pos.findPathTo(mySpawn);
-			var nearSource = creep.pos.findNearest(Game.SOURCES);
-			var sourcePath = creep.pos.findPathTo(nearSource);
-
-			if (spawnPath.length <= sourcePath.length && mySpawn.energy > 100)
+			//avoid hostiles
+			if (creep.avoidHostile(creep))
 			{
-				creep.moveTo(mySpawn);
-				mySpawn.transferEnergy(creep);
+				return;
 			}
-			else
+
+			// set up mode memory
+			if (lib.isNull(creep.memory.job))
 			{
-				creep.moveTo(nearSource);
-				creep.harvest(nearSource);
+				creep.memory.job = {};
+			}
+			if (lib.isNull(creep.memory.job.mode))
+			{
+				creep.memory.job.mode = HARVEST_MODE_HARVEST;
+			}
+
+			// manage job
+			switch (creep.memory.job.mode)
+			{
+				case HARVEST_MODE_HARVEST:
+					if (carry == creep.carryCapacity)
+					{
+						creep.memory.job.mode = HARVEST_MODE_BUILD;
+					} else {
+						//console.log("harvest:" + source);
+						if (creep.harvest(source) == ERR_NOT_IN_RANGE)
+						{
+							creep.moveTo(source);
+						}
+					}
+					break;
+				case HARVEST_MODE_BUILD:
+					if (carry == 0)
+					{
+						creep.memory.job.mode = HARVEST_MODE_HARVEST;
+						creep.deassignMotive();
+					} else {
+						//console.log("return: " + target);
+						var result = creep.build(target);
+						if (result == ERR_NOT_IN_RANGE)
+						{
+							creep.moveTo(target);
+						} else if (result == ERR_INVALID_TARGET) {
+							//console.log("---- RESET");
+							creep.deassignMotive();
+						}
+					}
+					break;
 			}
 		}
-		// otherwise, go build!
-		else
-		{
-			if (neartarget)
-			{
-				creep.moveTo(neartarget);
-				creep.build(neartarget);
-			}
-		}
-	}
-};
+	};

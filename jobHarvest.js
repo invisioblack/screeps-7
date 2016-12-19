@@ -37,18 +37,18 @@ module.exports =
 		{
 			creep.memory.job = {};
 		}
-		if (lib.isNull(creep.memory.job.harvestMode))
+		if (lib.isNull(creep.memory.job.mode))
 		{
-			creep.memory.job.harvestMode = HARVEST_MODE_HARVEST;
+			creep.memory.job.mode = HARVEST_MODE_HARVEST;
 		}
 
 		// manage job
-		switch (creep.memory.job.harvestMode)
+		switch (creep.memory.job.mode)
 		{
 			case HARVEST_MODE_HARVEST:
 				if (carry == creep.carryCapacity)
 				{
-					creep.memory.job.harvestMode = HARVEST_MODE_RETURN;
+					creep.memory.job.mode = HARVEST_MODE_RETURN;
 				} else {
 					//console.log("harvest:" + source);
 					if (creep.harvest(source) == ERR_NOT_IN_RANGE)
@@ -60,7 +60,8 @@ module.exports =
 			case HARVEST_MODE_RETURN:
 				if (carry == 0)
 				{
-					creep.memory.job.harvestMode = HARVEST_MODE_HARVEST;
+					creep.memory.job.mode = HARVEST_MODE_HARVEST;
+					creep.deassignMotive();
 				} else {
 					//console.log("return: " + target);
 					var result = creep.transfer(target, RESOURCE_ENERGY);
@@ -69,8 +70,7 @@ module.exports =
 						creep.moveTo(target);
 					} else if (result == ERR_FULL) {
 						//console.log("---- RESET");
-						creep.memory.motive.motivation = "";
-						creep.memory.motive.need = "";
+						creep.deassignMotive();
 					}
 				}
 				break;

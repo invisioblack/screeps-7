@@ -33,6 +33,6 @@ module.exports = function()
 			}
 	    }, this);
 
-        return result;
+        return Math.ceil(result + result * 0.5);
     };
 };

@@ -16,6 +16,8 @@ var lib = require('lib');
 // game modules
 var motivationSupplySpawn = require('motivationSupplySpawn');
 var motivationSupplyController = require('motivationSupplyController');
+var motivationMaintainInfrastructure = require('motivationMaintainInfrastructure');
+
 var resourceManager = require('resourceManager');
 var needManager = require('needManager');
 var units = require("units");
@@ -41,6 +43,7 @@ module.exports =
 		var motivations = {};
 		motivations["motivationSupplySpawn"] = motivationSupplySpawn;
 		motivations["motivationSupplyController"] = motivationSupplyController;
+		motivations["motivationMaintainInfrastructure"] = motivationMaintainInfrastructure;
 
 		// motivate in each room we control
 		for (var roomName in Game.rooms)
@@ -130,6 +133,7 @@ module.exports =
 				console.log("-----: Active Motivations: " + countActiveMotivations);
 
 				// iterate over motivations ----------------------------------------------------------------------------
+				// TODO: This needs to loop over unit types
 				var iteration = 1;
 				var totalShares = countActiveMotivations * (countActiveMotivations + 1) / 2;
 				var totalUnits = resources.units["worker"].unallocated;
@@ -137,7 +141,6 @@ module.exports =
 				sortedMotivations.forEach(function(motivationMemory) {
 					console.log("+Motivating round 2: " + motivationMemory.name + " ----------------");
 					// allocate units ----------------------------------------------------------------------------------
-					// TODO: This needs to loop over unit types
 					if (motivationMemory.active)
 					{
 						var unitsAvailable = resources.units["worker"].unallocated;
@@ -198,6 +201,9 @@ module.exports =
 
 				motivationSupplyController.init(room.name);
 				room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_1;
+
+				motivationMaintainInfrastructure.init(room.name);
+				room.memory.motivations[motivationMaintainInfrastructure.name].priority = C.PRIORITY_3;
 			}
 		}
 	},
