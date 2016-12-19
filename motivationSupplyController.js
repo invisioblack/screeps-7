@@ -60,7 +60,7 @@ MotivationSupplyController.prototype.updateNeeds = function (roomName)
 		var needName = "harvest." + s.id;
 		var need;
 
-		console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
+		//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
 
 		// create new need if one doesn't exist
 		if (lib.isNull(memory.needs[needName]))

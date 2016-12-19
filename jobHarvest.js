@@ -50,7 +50,7 @@ module.exports =
 				{
 					creep.memory.job.harvestMode = HARVEST_MODE_RETURN;
 				} else {
-					console.log("harvest:" + source);
+					//console.log("harvest:" + source);
 					if (creep.harvest(source) == ERR_NOT_IN_RANGE)
 					{
 						creep.moveTo(source);
@@ -62,13 +62,13 @@ module.exports =
 				{
 					creep.memory.job.harvestMode = HARVEST_MODE_HARVEST;
 				} else {
-					console.log("return: " + target);
+					//console.log("return: " + target);
 					var result = creep.transfer(target, RESOURCE_ENERGY);
 					if (result == ERR_NOT_IN_RANGE)
 					{
 						creep.moveTo(target);
 					} else if (result == ERR_FULL) {
-						console.log("---- RESET");
+						//console.log("---- RESET");
 						creep.memory.motive.motivation = "";
 						creep.memory.motive.need = "";
 					}

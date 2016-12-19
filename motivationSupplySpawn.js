@@ -61,7 +61,7 @@ MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
 		var needName = "harvest." + s.id;
 		var need;
 
-		console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
+		//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
 
 		// create new need if one doesn't exist
 		if (lib.isNull(memory.needs[needName]))
@@ -81,9 +81,16 @@ MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
 		}
 
 		// update unitDemands
-		var energyDemand = Game.spawns["Spawn1"].energyCapcity - Game.spawns["Spawn1"].energy;
+		var energyDemand = Game.spawns["Spawn1"].energyCapacity - Game.spawns["Spawn1"].energy;
 		if (energyDemand > 0)
-			need.unitDemands["worker"] = availableHarvesters;
+		{
+			var max = availableHarvesters;
+			var wanted = Math.ceil(energyDemand / 50);
+			if (wanted <= max)
+				need.unitDemands["worker"] = wanted;
+			else
+				need.unitDemands["worker"] = max;
+		}
 		else
 			need.unitDemands["worker"] = 0;
 

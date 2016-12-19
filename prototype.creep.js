@@ -125,4 +125,14 @@ module.exports = function()
 			this.memory.motive.need = "";
 		}
 	};
+
+	Creep.prototype.assignMotive = function (roomName, motivationName, needName)
+	{
+
+	};
+
+	Creep.prototype.deassignMotive = function ()
+	{
+
+	};
 };

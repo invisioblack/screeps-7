@@ -18,6 +18,7 @@ var motivationSupplySpawn = require('motivationSupplySpawn');
 var motivationSupplyController = require('motivationSupplyController');
 var resourceManager = require('resourceManager');
 var needManager = require('needManager');
+var units = require("units");
 
 //-------------------------------------------------------------------------
 // Declarations
@@ -36,6 +37,10 @@ module.exports =
 	"motivate": function ()
 	{
 		var room;
+		// set up hack motivations reference -------------------------------------------------------------------
+		var motivations = {};
+		motivations["motivationSupplySpawn"] = motivationSupplySpawn;
+		motivations["motivationSupplyController"] = motivationSupplyController;
 
 		// motivate in each room we control
 		for (var roomName in Game.rooms)
@@ -52,84 +57,63 @@ module.exports =
 				var demands = {};
 				var sortedMotivations;
 				var isSpawnAllocated = false;
-				var x = 1;
+				var countActiveMotivations = 0;
 
-				// set up hack motivations reference -------------------------------------------------------------------
-				var motivations = {};
-				motivations["motivationSupplySpawn"] = motivationSupplySpawn;
-				motivations["motivationSupplyController"] = motivationSupplyController;
-				
 				// determine room resources ----------------------------------------------------------------------------
 				// energy
 				resources.spawnEnergy = resourceManager.getRoomSpawnEnergy(roomName);
-				// units
-				// TODO: dynamically loop over unit types
-				resources.units = [];
-				resources.units['worker'] = {};
-				resources.units['worker'].total = resourceManager.countRoomUnits(roomName, 'worker');
-				resources.units["worker"].allocated = 0; // reset worker allocation
-				resources.units["worker"].unallocated = resources.units["worker"].total;
 
 				// get room collector status
 				resources.controllerStatus = resourceManager.getControllerStatus(roomName);
-				console.log('Controller Level: ' + resources.controllerStatus.level + ' ' + resources.controllerStatus.progress + '/' + resources.controllerStatus.progressTotal + ' Downgrade: ' + resources.controllerStatus.ticksToDowngrade);
+				console.log('Resources: Spawn Energy: ' + resources.spawnEnergy.energy + '/' + resources.spawnEnergy.energyCapacity + ' Controller Level: ' + resources.controllerStatus.level + ' ' + resources.controllerStatus.progress + '/' + resources.controllerStatus.progressTotal + ' Downgrade: ' + resources.controllerStatus.ticksToDowngrade);
+
+				// units
+				resources.units = [];
+				for (var unitName in units)
+				{
+					resources.units[unitName] = {};
+					resources.units[unitName].total = resourceManager.countRoomUnits(roomName , unitName);
+					resources.units[unitName].allocated = 0; // reset worker allocation
+					resources.units[unitName].unallocated = resources.units[unitName].total;
+					resources.units[unitName].unassigned = resourceManager.countRoomUnassignedUnits(roomName , unitName);
+					resources.units[unitName].assigned = resourceManager.countRoomAssignedUnits(roomName , unitName);
+					console.log("Resources: " + unitName + " total: " + resources.units[unitName].total + " Allocated/Unallocated: " + resources.units[unitName].allocated + "/" + resources.units[unitName].unallocated + " Assigned/UnAssigned: " + resources.units[unitName].assigned + "/" + resources.units[unitName].unassigned);
+				}
 
 				// -----------------------------------------------------------------------------------------------------
 				// process motivations in order of priority ------------------------------------------------------------
 				// get sorted motivations
-				sortedMotivations = _.sortByOrder(Memory.rooms[roomName].motivations, ['priority'], ['desc']);
+				sortedMotivations = _.sortByOrder(room.memory.motivations, ['priority'], ['desc']);
 
-				// update each motivation in memory --------------------------------------------------------------------
-				sortedMotivations.forEach(function(motivation) {
-					console.log("+Motivating: " + motivation.name);
+				// first round motivation processing--------------------------------------------------------------------
+				// set up demands and spawning
+				sortedMotivations.forEach(function(motivationMemory)
+				{
+					console.log("+Motivating round 1: " + motivationMemory.name);
 
-					// set up demands
-					demands[motivation.name] = motivations[motivation.name].getDemands(roomName, resources);
+					// set up demands ----------------------------------------------------------------------------------
+					demands[motivationMemory.name] = motivations[motivationMemory.name].getDemands(roomName , resources);
 
-					// decide which motivations should be active
-					if (demands[motivation.name].energy > 0)
-						motivations[motivation.name].setActive(roomName, true);
+					// decide which motivations should be active -------------------------------------------------------
+					if (demands[motivationMemory.name].energy > 0)
+						motivationMemory.active = true;
 					else
-						motivations[motivation.name].setActive(roomName, false);
+						motivationMemory.active = false;
 
-					// allocate spawn ---------------------------------------------
-					if (!isSpawnAllocated && motivation.active && demands[motivation.name].spawn > 0) {
-						motivation.spawnAllocated = true;
-						isSpawnAllocated = true;
-					} else {
-						motivation.spawnAllocated = false;
-					}
-
-					// allocate units ----------------------------------------------------------------------------------
-					// TODO: This needs to loop over unit types
-					if (motivation.active)
+					// allocate spawn ----------------------------------------------------------------------------------
+					if (!isSpawnAllocated && motivationMemory.active && demands[motivationMemory.name].spawn > 0)
 					{
-						console.log('Pre: Worker Allocation: ' + resources.units["worker"].allocated + '/' + resources.units["worker"].total + ' Unallocated: ' + resources.units["worker"].unallocated);
-						// calculate diminishing number of workers on each iteration
-						var workersToAllocate = Math.ceil(resources.units["worker"].unallocated);
-
-						// don't allocate more workers than demanded
-						if (workersToAllocate > demands[motivation.name].units["worker"])
-							workersToAllocate = demands[motivation.name].units["worker"];
-
-						// apply workers bounded by number available
-						if (workersToAllocate <= resources.units["worker"].unallocated)
-							motivation.allocatedUnits['worker'] = workersToAllocate;
-						else
-							motivation.allocatedUnits['worker'] = resources.units["worker"].unallocated;
-
-						// update resources.units["worker"].unallocated
-						resources.units["worker"].allocated += motivation.allocatedUnits['worker'];
-						resources.units["worker"].unallocated -= motivation.allocatedUnits['worker'];
-						console.log('Worker Allocation: ' + resources.units["worker"].allocated + '/' + resources.units["worker"].total + ' Unallocated: ' + resources.units["worker"].unallocated);
+						motivationMemory.spawnAllocated = true;
+						isSpawnAllocated = true;
 					}
-
-					// processes needs for motivation ------------------------------------------------------------------
-					needManager.manageNeeds(roomName, motivations[motivation.name], motivation);
+					else
+					{
+						motivationMemory.spawnAllocated = false;
+					}
 
 					// spawn units if allocated spawn ------------------------------------------------------------------
-					var unitName = motivations[motivation.name].desiredSpawnUnit();
-					if (motivation.spawnAllocated)
+					var unitName = motivations[motivationMemory.name].desiredSpawnUnit();
+					if (motivationMemory.spawnAllocated)
 					{
 						// TODO: assign the spawn dynamically
 						if (unitName == "worker" && resourceManager.countRoomUnits(roomName, unitName) < 2)
@@ -137,10 +121,58 @@ module.exports =
 						else
 							Game.spawns.Spawn1.spawnUnit(unitName, true);
 					}
-					x++
+				}, this);
+
+				// second round motivation processing ------------------------------------------------------------------
+				// unit allocation and need processing
+				countActiveMotivations = this.countActiveMotivations(roomName);
+
+				console.log("-----: Active Motivations: " + countActiveMotivations);
+
+				// iterate over motivations ----------------------------------------------------------------------------
+				var iteration = 1;
+				var totalShares = countActiveMotivations * (countActiveMotivations + 1) / 2;
+				var totalUnits = resources.units["worker"].unallocated;
+
+				sortedMotivations.forEach(function(motivationMemory) {
+					console.log("+Motivating round 2: " + motivationMemory.name + " ----------------");
+					// allocate units ----------------------------------------------------------------------------------
+					// TODO: This needs to loop over unit types
+					if (motivationMemory.active)
+					{
+						var unitsAvailable = resources.units["worker"].unallocated;
+						var unitsDemanded = demands[motivationMemory.name].units["worker"];
+						var unitsToAllocate;
+						var sharesThisIteration = countActiveMotivations - (iteration - 1);
+						var unitsPerShare = Math.ceil(totalUnits / totalShares);
+
+						// Determine how many units to allocate to this motivation
+						unitsToAllocate = unitsPerShare * sharesThisIteration;
+						if (unitsDemanded < unitsToAllocate)
+							unitsToAllocate = unitsDemanded;
+						if (unitsAvailable < unitsToAllocate)
+							unitsToAllocate = unitsAvailable;
+
+						// allocate units
+						motivationMemory.allocatedUnits["worker"] = unitsToAllocate;
+
+						// output status -------------------------------------------------------------------------------
+						console.log('Pre: Worker Allocation: ' + resources.units["worker"].allocated + '/' + resources.units["worker"].total + ' Unallocated: ' + resources.units["worker"].unallocated);
+						console.log("Units Available: " + unitsAvailable + " Units Demanded: " + unitsDemanded + " Units To Allocate: " + unitsToAllocate);
+						console.log("Iteration: " + iteration + " Shares this iteration " + sharesThisIteration + " Units/Share: " + unitsPerShare);
+
+						// update resources.units["worker"].unallocated
+						resources.units["worker"].allocated += motivationMemory.allocatedUnits['worker'];
+						resources.units["worker"].unallocated -= motivationMemory.allocatedUnits['worker'];
+						console.log('Worker Allocation: ' + resources.units["worker"].allocated + '/' + resources.units["worker"].total + ' Unallocated: ' + resources.units["worker"].unallocated);
+					}
+
+					// processes needs for motivation ------------------------------------------------------------------
+					needManager.manageNeeds(roomName, motivations[motivationMemory.name], motivationMemory);
 
 					// fulfill needs -----------------------------------------------------------------------------------
 					needManager.fulfillNeeds(roomName);
+					iteration++;
 				}, this);
 			}
 		}
@@ -162,10 +194,25 @@ module.exports =
 
 				// init each motivation for this room
 				motivationSupplySpawn.init(room.name);
-				motivationSupplySpawn.setPriority(room.name, C.PRIORITY_2);
+				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_2;
+
 				motivationSupplyController.init(room.name);
-				motivationSupplyController.setPriority(room.name, C.PRIORITY_1);
+				room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_1;
 			}
 		}
+	},
+
+	"countActiveMotivations": function (roomName)
+	{
+		var result = 0;
+		for (var motivationName in Game.rooms[roomName].memory.motivations)
+		{
+			if (Game.rooms[roomName].memory.motivations[motivationName].active)
+			{
+				result++;
+			}
+		}
+
+		return result;
 	}
 };

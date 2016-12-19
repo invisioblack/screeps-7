@@ -159,6 +159,42 @@ module.exports =
 		return result;
 	},
 
+	"countRoomAssignedUnits": function (roomName, unitName)
+	{
+		var result = 0;
+		for (var creepName in Game.creeps)
+		{
+			var creep = Game.creeps[creepName];
+			if (creep.room.name == roomName
+				&& creep.memory.motive.motivation != ""
+				&& creep.memory.motive.need != ""
+				&& creep.memory.unit == unitName)
+			{
+				result++;
+			}
+		}
+
+		return result;
+	},
+
+	"countRoomUnassignedUnits": function (roomName, unitName)
+	{
+		var result = 0;
+		for (var creepName in Game.creeps)
+		{
+			var creep = Game.creeps[creepName];
+			if (creep.room.name == roomName
+				&& creep.memory.motive.motivation == ""
+				&& creep.memory.motive.need == ""
+				&& creep.memory.unit == unitName)
+			{
+				result++;
+			}
+		}
+
+		return result;
+	},
+
 	"findUnallocatedRoomUnit": function (roomName, unitName)
 	{
 		for (var creepName in Game.creeps)

@@ -39,7 +39,7 @@ module.exports =
 		var needs;
 
 		// create and update needs for motivation
-		console.log("needManager.manageNeeds: motivation.name: " + motivation.name);
+		//console.log("needManager.manageNeeds: motivation.name: " + motivation.name);
 		motivation.updateNeeds(roomName);
 		needs = _.sortBy(room.memory.motivations[motivation.name].needs , ['priority'] , ['asc']);
 
@@ -48,7 +48,7 @@ module.exports =
 		var assignedUnits = resourceManager.countRoomMotivationUnits(roomName, motivation.name, "worker");
 		var allocatedUnits = motivationMemory.allocatedUnits["worker"];
 
-		console.log("Assigned/Allocated workers: " + assignedUnits + "/" + allocatedUnits);
+		//console.log("Assigned/Allocated workers: " + assignedUnits + "/" + allocatedUnits);
 		// if we have open allocations, we need to find if there is a creep to assign
 		var done = false;
 		while (!done && assignedUnits < allocatedUnits)
@@ -60,7 +60,7 @@ module.exports =
 				var creep = resourceManager.findUnallocatedRoomUnit(room.name, "worker");
 				if (!lib.isNull(creep) && creepsAssigned < creepsDemanded)
 				{
-					console.log(creep);
+					//console.log(creep);
 					creep.memory.motive.motivation = motivation.name;
 					creep.memory.motive.need = need.name;
 				} else {
@@ -79,11 +79,11 @@ module.exports =
 			var creep = Game.creeps[creepName];
 			if (creep.room.name == roomName && creep.memory.motive.need != "")
 			{
-				console.log("Creep executing need: " + creep.name + " : " + creep.memory.motive.motivation + " : " + creep.memory.motive.need);
+				//console.log("Creep executing need: " + creep.name + " : " + creep.memory.motive.motivation + " : " + creep.memory.motive.need);
 				var need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
 				if (need.type == "needHarvestEnergy")
 				{
-					console.log("Working needNarvestEnergy");
+					//console.log("Working needNarvestEnergy");
 					jobHarvest.work(creep);
 				}
 			}
