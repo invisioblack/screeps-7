@@ -9,12 +9,12 @@ module.exports =
 			},
 			{
 				"part" : CARRY,
-				"weight" : 0.3,
+				"weight" : 0.4,
 				"minimum" : 1
 			},
 			{
 				"part" : MOVE,
-				"weight" : 0.2,
+				"weight" : 0.1,
 				"minimum" : 1
 			}
 		],

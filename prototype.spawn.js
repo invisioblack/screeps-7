@@ -95,7 +95,7 @@ module.exports = function()
 		var parts = [];
 		var name = this.generateName(unitName);
 		var result;
-
+		var energyLeft = energy;
 		units[unitName].parts.forEach(function(part) {
 			var partEnergy = energy * part.weight;
 			var numberParts = Math.floor(partEnergy/this.costs[part.part]);
@@ -105,18 +105,26 @@ module.exports = function()
 			for (x = 0; x < numberParts; x++)
 			{
 				parts.push(part.part);
+				energyLeft -= this.costs[part.part];
 			}
 		}, this);
+
+		// fill up any remaining energy with move
+		while (energyLeft >= this.costs[MOVE])
+		{
+			parts.push(MOVE);
+			energyLeft -= this.costs[MOVE];
+		}
 
 		result = this.createCreep(parts, name, units[unitName].memory);
 		if (_.isString(result))
 		{
-			console.log('+++++++++++++++++++Creating creep ' + unitName + ' : ' + name + " result: " + result);
+			console.log('+++++++++++++++++++Creating creep ' + unitName + ' : ' + name + " energy: " + energy + " result: " + result);
 			var creep = Game.creeps[name];
 			creep.initMotive();
 
 		} else {
-			console.log('-------------------Failed creating creep ' + unitName + ' : ' + name + " result: " + result);
+			console.log('-------------------Failed creating creep ' + unitName + ' : ' + name + " energy: " + energy + " result: " + result);
 		}
 	};
 };
