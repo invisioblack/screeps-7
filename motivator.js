@@ -139,7 +139,7 @@ module.exports =
 				var totalUnits = resources.units["worker"].unallocated;
 
 				sortedMotivations.forEach(function(motivationMemory) {
-					console.log("+Motivating round 2: " + motivationMemory.name + " ----------------");
+					console.log("+Motivating round 2 - regular allocation: " + motivationMemory.name + " ----------------");
 					// allocate units ----------------------------------------------------------------------------------
 					if (motivationMemory.active)
 					{
@@ -170,10 +170,53 @@ module.exports =
 						console.log('Worker Allocation: ' + resources.units["worker"].allocated + '/' + resources.units["worker"].total + ' Unallocated: ' + resources.units["worker"].unallocated);
 					}
 
-					// processes needs for motivation ------------------------------------------------------------------
-					needManager.manageNeeds(roomName, motivations[motivationMemory.name], motivationMemory);
+
 
 					iteration++;
+				}, this);
+
+				// motivation round 3 ----------------------------------------------------------------------------------
+				var totalUnitsAvailable = resources.units["worker"].unallocated;
+				var totalUnitsDemanded = 0;
+
+				sortedMotivations.forEach(function(motivationMemory) {
+					totalUnitsDemanded += demands[motivationMemory.name].units["worker"];
+				}, this);
+
+				while (totalUnitsAvailable > 0 && totalUnitsDemanded > 0)
+				{
+					sortedMotivations.forEach(function (motivationMemory)
+					{
+						console.log("+Motivating round 3 - surplus allocation: " + motivationMemory.name + " ----------------");
+						var unitsAvailable = resources.units["worker"].unallocated;
+						var unitsDemanded = demands[motivationMemory.name].units["worker"];
+						console.log("Available/Demanded units: " + unitsAvailable + "/" + unitsDemanded);
+
+						// allocate an additional unit if it is needed
+						if (unitsAvailable >= 1)
+						{
+							console.log("Allocating additional unit");
+							motivationMemory.allocatedUnits["worker"] += 1;
+							resources.units["worker"].allocated += 1;
+							resources.units["worker"].unallocated -= 1;
+						}
+					} , this);
+
+					// update values for iteration
+					totalUnitsAvailable = resources.units["worker"].unallocated;
+					sortedMotivations.forEach(function(motivationMemory) {
+						totalUnitsDemanded += demands[motivationMemory.name].units["worker"];
+					}, this);
+				}
+
+
+				console.log('Final Worker Allocation: ' + resources.units["worker"].allocated + '/' + resources.units["worker"].total + ' Unallocated: ' + resources.units["worker"].unallocated);
+
+				// motivation round 4 ----------------------------------------------------------------------------------
+				sortedMotivations.forEach(function(motivationMemory) {
+					console.log("+Motivating round 4 - manage needs: " + motivationMemory.name + " ----------------");
+					// processes needs for motivation ------------------------------------------------------------------
+					needManager.manageNeeds(roomName, motivations[motivationMemory.name], motivationMemory);
 				}, this);
 
 				// fulfill needs -----------------------------------------------------------------------------------
