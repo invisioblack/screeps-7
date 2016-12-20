@@ -56,32 +56,11 @@ module.exports =
 				console.log('-------- motivator.motivate: ' + roomName + " --------");
 
 				// declarations ----------------------------------------------------------------------------------------
-				var resources = {};
+				var resources = resourceManager.getRoomResources(roomName);
 				var demands = {};
 				var sortedMotivations;
 				var isSpawnAllocated = false;
 				var countActiveMotivations = 0;
-
-				// determine room resources ----------------------------------------------------------------------------
-				// energy
-				resources.spawnEnergy = resourceManager.getRoomSpawnEnergy(roomName);
-
-				// get room collector status
-				resources.controllerStatus = resourceManager.getControllerStatus(roomName);
-				console.log('  Spawn Energy: ' + resources.spawnEnergy.energy + '/' + resources.spawnEnergy.energyCapacity + ' Controller Level: ' + resources.controllerStatus.level + ' ' + resources.controllerStatus.progress + '/' + resources.controllerStatus.progressTotal + ' Downgrade: ' + resources.controllerStatus.ticksToDowngrade);
-
-				// get unit resources
-				resources.units = [];
-				for (var unitName in units)
-				{
-					resources.units[unitName] = {};
-					resources.units[unitName].total = resourceManager.countRoomUnits(roomName , unitName);
-					resources.units[unitName].allocated = 0; // reset worker allocation
-					resources.units[unitName].unallocated = resources.units[unitName].total;
-					resources.units[unitName].unassigned = resourceManager.countRoomUnassignedUnits(roomName , unitName);
-					resources.units[unitName].assigned = resourceManager.countRoomAssignedUnits(roomName , unitName);
-					console.log("  " + unitName + " total: " + resources.units[unitName].total + " Assigned/UnAssigned: " + resources.units[unitName].assigned + "/" + resources.units[unitName].unassigned);
-				}
 
 				// -----------------------------------------------------------------------------------------------------
 				// process motivations in order of priority ------------------------------------------------------------

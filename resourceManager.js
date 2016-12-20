@@ -10,6 +10,8 @@
 var C = require('C');
 var lib = require("lib");
 
+var units = require("units");
+
 //------------------------------------------------------------------------------
 // Declarations
 //------------------------------------------------------------------------------
@@ -26,7 +28,37 @@ module.exports =
 	//--------------------------------------------------------------------------
 	// top level functions
 	//--------------------------------------------------------------------------
-    "getRoomSpawnEnergy": function (roomName)
+    "getRoomResources": function (roomName)
+    {
+	    var resources = {};
+    	// determine room resources ----------------------------------------------------------------------------
+	    // energy
+	    resources.spawnEnergy = this.getRoomSpawnEnergy(roomName);
+
+	    // get room collector status
+	    resources.controllerStatus = this.getControllerStatus(roomName);
+
+	    // output info
+	    console.log("---- Room Resources: " + roomName);
+	    console.log('  Spawn Energy: ' + resources.spawnEnergy.energy + '/' + resources.spawnEnergy.energyCapacity + ' Controller Level: ' + resources.controllerStatus.level + ' ' + resources.controllerStatus.progress + '/' + resources.controllerStatus.progressTotal + ' Downgrade: ' + resources.controllerStatus.ticksToDowngrade);
+
+	    // get unit resources
+	    resources.units = [];
+	    for (var unitName in units)
+	    {
+		    resources.units[unitName] = {};
+		    resources.units[unitName].total = this.countRoomUnits(roomName , unitName);
+		    resources.units[unitName].allocated = 0; // reset worker allocation
+		    resources.units[unitName].unallocated = resources.units[unitName].total;
+		    resources.units[unitName].unassigned = this.countRoomUnassignedUnits(roomName , unitName);
+		    resources.units[unitName].assigned = this.countRoomAssignedUnits(roomName , unitName);
+		    console.log("  " + unitName + " total: " + resources.units[unitName].total + " Assigned/UnAssigned: " + resources.units[unitName].assigned + "/" + resources.units[unitName].unassigned);
+	    }
+
+	    return resources;
+    },
+
+	"getRoomSpawnEnergy": function (roomName)
     {
     	var room = Game.rooms[roomName];
     	var result = {};
