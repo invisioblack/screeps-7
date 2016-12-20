@@ -43,7 +43,7 @@ MotivationMaintainInfrastructure.prototype.getDemands = function (roomName, reso
 	result.energy = progressTotal - progress;
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = resources.units["worker"].allocated < result.units["worker"];
-	console.log('Maintain Infrastructure Demands: Workers: ' + result.units["worker"] + ' Spawn: ' + result.spawn);
+	console.log('  Maintain Infrastructure Demands: Workers: ' + result.units["worker"] + ' Spawn: ' + result.spawn);
 	return result;
 };
 
@@ -109,7 +109,7 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 			need = memory.needs[needName];
 			need.type = "needRepair";
 			need.name = needName;
-			need.sourceId = rs.pos.findClosestByPath(FIND_SOURCES).id; // get energy from closest source
+			need.sourceId = rs.pos.findClosestByRange(FIND_SOURCES).id; // get energy from closest source
 			need.targetId = rs.id;
 			need.distance = room.findPath(rs.pos, Game.getObjectById(need.sourceId).pos).length;
 			need.priority = C.PRIORITY_1;
@@ -119,7 +119,6 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 
 	}, this);
 
-	// TODO: cull old needs
 	for (var needName in memory.needs)
 	{
 		if (lib.isNull(memory.needs[needName]))
@@ -175,32 +174,23 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 		}
 	}
 
-	// prioritize needs by distance
-	// TODO: prioritize this by need
-	sortedNeedsByDistance = _.filter(memory.needs, { "type": "needBuild" });
-	sortedNeedsByDistance = _.sortByOrder(sortedNeedsByDistance, ['distance'], ['asc']);
-	x = 0;
-	sortedNeedsByDistance.forEach(function(n) {
-		switch (x)
+	// prioritize needs
+	for (var needName in memory.needs)
+	{
+		var need = memory.needs[needName];
+		var site = Game.getObjectById(need.targetId);
+
+		switch (site.structureType)
 		{
-			case 0:
-				n.priority = C.PRIORITY_2;
-				break;
-			case 1:
-				n.priority = C.PRIORITY_3;
-				break;
-			case 2:
-				n.priority = C.PRIORITY_4;
-				break;
-			case 3:
-				n.priority = C.PRIORITY_5;
+			case STRUCTURE_EXTENSION:
+				need.priority = C.PRIORITY_1;
 				break;
 			default:
-				n.priority = C.PRIORITY_5;
+				need.priority = C.PRIORITY_2;
 				break;
 		}
-		x++;
-	}, this);
+
+	}
 };
 
 MotivationMaintainInfrastructure.prototype.desiredSpawnUnit = function ()

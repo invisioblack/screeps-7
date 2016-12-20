@@ -36,7 +36,7 @@ MotivationSupplyController.prototype.getDemands = function (roomName, resources)
 	result.energy = resources.controllerStatus.progressTotal - resources.controllerStatus.progress;
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = resources.units["worker"].allocated < result.units["worker"];
-	console.log('Supply Controller Demands: e: ' + result.energy + ' Workers: ' + result.units["worker"] + ' Spawn: ' + result.spawn);
+	console.log('  Supply Controller Demands: e: ' + result.energy + ' Workers: ' + result.units["worker"] + ' Spawn: ' + result.spawn);
 	return result;
 };
 

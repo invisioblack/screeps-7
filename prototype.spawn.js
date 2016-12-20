@@ -74,7 +74,7 @@ module.exports = function()
 	{
 		var energy = resourceManager.getRoomSpawnEnergy(this.room.name);
 
-		console.log("Spawn Status: " + energy.energy + "/" + energy.energyCapacity);
+		console.log("  Spawn Status: " + energy.energy + "/" + energy.energyCapacity);
 
 		if (fullEnergy)
 		{

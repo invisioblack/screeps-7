@@ -81,10 +81,5 @@ module.exports =
 			creep.memory.collect = null;
 			jobCollect.returnEnergy(creep);
 		}
-	},
-
-	"idle": function (creep)
-	{
-		// TODO: handle idle behavior
 	}
 };
