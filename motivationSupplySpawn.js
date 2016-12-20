@@ -48,6 +48,17 @@ MotivationSupplySpawn.prototype.getDesiredSpawnUnit = function ()
 	return "worker";
 };
 
+MotivationSupplySpawn.prototype.updateActive = function (roomName, demands)
+{
+	var memory = Game.rooms[roomName].memory.motivations[this.name];
+	if (demands.energy > 0)
+	{
+		memory.active = true;
+	} else {
+		memory.active = false;
+	}
+};
+
 MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
 {
 	var room = Game.rooms[roomName];

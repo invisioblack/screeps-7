@@ -60,6 +60,17 @@ MotivationMaintainInfrastructure.prototype.getDesiredSpawnUnit = function ()
 	return "worker";
 };
 
+MotivationMaintainInfrastructure.prototype.updateActive = function (roomName, demands)
+{
+	var memory = Game.rooms[roomName].memory.motivations[this.name];
+	if (Object.keys(demands.units).length > 0)
+	{
+		memory.active = true;
+	} else {
+		memory.active = false;
+	}
+};
+
 MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 {
 	var room = Game.rooms[roomName];

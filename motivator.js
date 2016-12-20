@@ -1,14 +1,14 @@
-//-------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 // Motivator
 // The motivator is responsible for managing the highest level decision 
 // making. The motivator is the part in which the player interacts with.
 // It makes decisions on how resources many resources are allocated to 
 // each active motivation.
-//-------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 
-//-------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 // modules
-//-------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 // library modules
 var C = require('C');
 var lib = require('lib');
@@ -22,30 +22,30 @@ var resourceManager = require('resourceManager');
 var needManager = require('needManager');
 var units = require("units");
 
-//-------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 // Declarations
-//-------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 
-//-------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 // function
-//-------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 module.exports =
 {
 
 	"mode": C.MOTIVATOR_MODE_SINGLE_MINDED,
 
-	//-------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------
 	// Main motivator function, should be called first from main
 	"motivate": function ()
 	{
 		var room;
-		// set up hack motivations reference -------------------------------------------------------------------
+		// set up hack motivations reference ---------------------------------------------------------------------------
 		var motivations = {};
 		motivations["motivationSupplySpawn"] = motivationSupplySpawn;
 		motivations["motivationSupplyController"] = motivationSupplyController;
 		motivations["motivationMaintainInfrastructure"] = motivationMaintainInfrastructure;
 
-		// motivate in each room we control
+		// motivate in each room we control ----------------------------------------------------------------------------
 		for (var roomName in Game.rooms)
 		{
 			room = Game.rooms[roomName];
@@ -70,7 +70,7 @@ module.exports =
 				resources.controllerStatus = resourceManager.getControllerStatus(roomName);
 				console.log('  Spawn Energy: ' + resources.spawnEnergy.energy + '/' + resources.spawnEnergy.energyCapacity + ' Controller Level: ' + resources.controllerStatus.level + ' ' + resources.controllerStatus.progress + '/' + resources.controllerStatus.progressTotal + ' Downgrade: ' + resources.controllerStatus.ticksToDowngrade);
 
-				// units
+				// get unit resources
 				resources.units = [];
 				for (var unitName in units)
 				{
@@ -98,10 +98,7 @@ module.exports =
 					demands[motivationMemory.name] = motivations[motivationMemory.name].getDemands(roomName , resources);
 
 					// decide which motivations should be active -------------------------------------------------------
-					if (demands[motivationMemory.name].energy > 0)
-						motivationMemory.active = true;
-					else
-						motivationMemory.active = false;
+					motivations[motivationMemory.name].updateActive(roomName, demands[motivationMemory.name]);
 
 					// allocate spawn ----------------------------------------------------------------------------------
 					if (!isSpawnAllocated && motivationMemory.active && demands[motivationMemory.name].spawn > 0)
@@ -142,7 +139,7 @@ module.exports =
 				// process round 2 and 3 for each unit type ------------------------------------------------------------
 				for (var unitName in units)
 				{
-					// iterate over motivations ----------------------------------------------------------------------------
+					// iterate over motivations ------------------------------------------------------------------------
 					var iteration = 1;
 					var totalShares = countActiveMotivations * (countActiveMotivations + 1) / 2;
 					var totalUnits = resources.units[unitName].unallocated;
@@ -150,7 +147,7 @@ module.exports =
 					sortedMotivations.forEach(function (motivationMemory)
 					{
 						console.log("----Motivating round 2 - regular allocation: " + unitName + " : " + motivationMemory.name + " ----------------");
-						// allocate units ----------------------------------------------------------------------------------
+						// allocate units ------------------------------------------------------------------------------
 						if (motivationMemory.active)
 						{
 							var unitsAvailable = resources.units[unitName].unallocated;
@@ -170,7 +167,7 @@ module.exports =
 							// allocate units
 							motivationMemory.allocatedUnits[unitName] = unitsToAllocate;
 
-							// output status -------------------------------------------------------------------------------
+							// output status ---------------------------------------------------------------------------
 							//console.log("Pre: " + unitName + " Allocation: " + resources.units[unitName].allocated + '/' + resources.units[unitName].total + ' Unallocated: ' + resources.units[unitName].unallocated);
 							console.log("  " + unitName + ": Units Available: " + unitsAvailable + " Units Demanded: " + unitsDemanded + " Units To Allocate: " + unitsToAllocate);
 							console.log("  " + unitName + ": Iteration: " + iteration + " Shares this iteration " + sharesThisIteration + " Units/Share: " + unitsPerShare);
@@ -187,7 +184,7 @@ module.exports =
 						iteration++;
 					} , this);
 
-					// motivation round 3 ----------------------------------------------------------------------------------
+					// motivation round 3 ------------------------------------------------------------------------------
 					var totalUnitsAvailable = resources.units[unitName].unallocated;
 					var totalUnitsDemanded = 0;
 
@@ -239,7 +236,7 @@ module.exports =
 					needManager.manageNeeds(roomName, motivations[motivationMemory.name], motivationMemory);
 				}, this);
 
-				// fulfill needs -----------------------------------------------------------------------------------
+				// fulfill needs ---------------------------------------------------------------------------------------
 				needManager.fulfillNeeds(roomName);
 			}
 		}
