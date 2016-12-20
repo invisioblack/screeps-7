@@ -18,7 +18,7 @@ var Motivation = require('prototype.motivation')();
 //-------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------
-// function
+// constructor
 //-------------------------------------------------------------------------
 var MotivationMaintainInfrastructure = function ()
 {
@@ -32,6 +32,9 @@ var MotivationMaintainInfrastructure = function ()
 MotivationMaintainInfrastructure.prototype = Object.create(Motivation.prototype);
 MotivationMaintainInfrastructure.prototype.constructor = MotivationMaintainInfrastructure;
 
+//-------------------------------------------------------------------------
+// implementation
+//-------------------------------------------------------------------------
 MotivationMaintainInfrastructure.prototype.getDemands = function (roomName, resources)
 {
 	var result = {};
@@ -50,6 +53,11 @@ MotivationMaintainInfrastructure.prototype.getDemands = function (roomName, reso
 	result.spawn = resources.units["worker"].allocated < result.units["worker"];
 	console.log('  Maintain Infrastructure Demands: Workers: ' + result.units["worker"] + ' Spawn: ' + result.spawn);
 	return result;
+};
+
+MotivationMaintainInfrastructure.prototype.getDesiredSpawnUnit = function ()
+{
+	return "worker";
 };
 
 MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
@@ -196,10 +204,7 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 	}
 };
 
-MotivationMaintainInfrastructure.prototype.desiredSpawnUnit = function ()
-{
-	return "worker";
-};
-
-
+//-------------------------------------------------------------------------
+// export
+//-------------------------------------------------------------------------
 module.exports = new MotivationMaintainInfrastructure();

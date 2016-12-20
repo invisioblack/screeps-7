@@ -115,7 +115,7 @@ module.exports =
 					}
 
 					// spawn units if allocated spawn ------------------------------------------------------------------
-					var unitName = motivations[motivationMemory.name].desiredSpawnUnit();
+					var unitName = motivations[motivationMemory.name].getDesiredSpawnUnit();
 					if (motivationMemory.spawnAllocated)
 					{
 						for (var spawnName in Game.spawns)

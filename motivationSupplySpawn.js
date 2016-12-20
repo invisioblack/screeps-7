@@ -17,7 +17,7 @@ var Motivation = require('prototype.motivation')();
 //-------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------
-// function
+// constructor
 //-------------------------------------------------------------------------
 var MotivationSupplySpawn = function ()
 {
@@ -30,6 +30,9 @@ var MotivationSupplySpawn = function ()
 MotivationSupplySpawn.prototype = Object.create(Motivation.prototype);
 MotivationSupplySpawn.prototype.constructor = MotivationSupplySpawn;
 
+//-------------------------------------------------------------------------
+// implementation
+//-------------------------------------------------------------------------
 MotivationSupplySpawn.prototype.getDemands = function (roomName, resources)
 {
 	var result = {};
@@ -38,6 +41,11 @@ MotivationSupplySpawn.prototype.getDemands = function (roomName, resources)
 	result.spawn = resources.units["worker"].allocated < result.units["worker"];
 	console.log('  Supply Spawn Demands: e: ' + result.energy + ' Workers: ' + result.units["worker"] + ' Spawn: ' + result.spawn);
 	return result;
+};
+
+MotivationSupplySpawn.prototype.getDesiredSpawnUnit = function ()
+{
+	return "worker";
 };
 
 MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
@@ -135,10 +143,7 @@ MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
 	}, this);
 };
 
-MotivationSupplySpawn.prototype.desiredSpawnUnit = function ()
-{
-	return "worker";
-};
-
-
+//-------------------------------------------------------------------------
+// export
+//-------------------------------------------------------------------------
 module.exports = new MotivationSupplySpawn();

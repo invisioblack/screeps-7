@@ -18,7 +18,7 @@ require('prototype.source')();
 //-------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------
-// function
+// constructor
 //-------------------------------------------------------------------------
 var MotivationSupplyController = function ()
 {
@@ -31,6 +31,9 @@ var MotivationSupplyController = function ()
 MotivationSupplyController.prototype = Object.create(Motivation.prototype);
 MotivationSupplyController.prototype.constructor = MotivationSupplyController;
 
+//-------------------------------------------------------------------------
+// implementation
+//-------------------------------------------------------------------------
 MotivationSupplyController.prototype.getDemands = function (roomName, resources) {
 	var result = {};
 	result.energy = resources.controllerStatus.progressTotal - resources.controllerStatus.progress;
@@ -38,6 +41,11 @@ MotivationSupplyController.prototype.getDemands = function (roomName, resources)
 	result.spawn = resources.units["worker"].allocated < result.units["worker"];
 	console.log('  Supply Controller Demands: e: ' + result.energy + ' Workers: ' + result.units["worker"] + ' Spawn: ' + result.spawn);
 	return result;
+};
+
+MotivationSupplyController.prototype.getDesiredSpawnUnit = function ()
+{
+	return "worker";
 };
 
 MotivationSupplyController.prototype.updateNeeds = function (roomName)
@@ -104,9 +112,7 @@ MotivationSupplyController.prototype.updateNeeds = function (roomName)
 	}, this);
 };
 
-MotivationSupplyController.prototype.desiredSpawnUnit = function ()
-{
-	return "worker";
-};
-
+//-------------------------------------------------------------------------
+// export
+//-------------------------------------------------------------------------
 module.exports = new MotivationSupplyController();
