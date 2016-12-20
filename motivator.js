@@ -154,10 +154,11 @@ module.exports =
 						if (motivationMemory.active)
 						{
 							var unitsAvailable = resources.units[unitName].unallocated;
-							var unitsDemanded = demands[motivationMemory.name].units[unitName];
+							var unitsAllocated = motivationMemory.allocatedUnits[unitName];
+							var unitsDemanded = demands[motivationMemory.name].units[unitName] - unitsAllocated;
 							var unitsToAllocate;
 							var sharesThisIteration = countActiveMotivations - (iteration - 1);
-							var unitsPerShare = Math.ceil(totalUnits / totalShares);
+							var unitsPerShare = Math.floor(totalUnits / totalShares);
 
 							// Determine how many units to allocate to this motivation
 							unitsToAllocate = unitsPerShare * sharesThisIteration;
@@ -178,7 +179,10 @@ module.exports =
 							resources.units[unitName].allocated += motivationMemory.allocatedUnits[unitName];
 							resources.units[unitName].unallocated -= motivationMemory.allocatedUnits[unitName];
 							console.log("  " + unitName + ': Allocation: ' + resources.units[unitName].allocated + '/' + resources.units[unitName].total + ' Unallocated: ' + resources.units[unitName].unallocated);
+						} else {
+							motivationMemory.allocatedUnits[unitName] = 0;
 						}
+
 
 						iteration++;
 					} , this);
@@ -197,17 +201,23 @@ module.exports =
 						sortedMotivations.forEach(function (motivationMemory)
 						{
 							console.log("----Motivating round 3 - surplus allocation: " + unitName + " : " + motivationMemory.name + " ----------------");
-							var unitsAvailable = resources.units[unitName].unallocated;
-							var unitsDemanded = demands[motivationMemory.name].units[unitName];
-							console.log("  " + unitName + "Available/Demanded units: " + unitsAvailable + "/" + unitsDemanded);
-
-							// allocate an additional unit if it is needed
-							if (unitsAvailable >= 1)
+							if (motivationMemory.active)
 							{
-								console.log("  +Allocating additional unit:" + unitName);
-								motivationMemory.allocatedUnits[unitName] += 1;
-								resources.units[unitName].allocated += 1;
-								resources.units[unitName].unallocated -= 1;
+
+								var unitsAvailable = resources.units[unitName].unallocated;
+								var unitsAllocated = motivationMemory.allocatedUnits[unitName];
+								var unitsDemanded = demands[motivationMemory.name].units[unitName] - unitsAllocated;
+
+								console.log("  " + unitName + "Available/Demanded/Allocated units: " + unitsAvailable + "/" + unitsDemanded + "/" + unitsAllocated);
+
+								// allocate an additional unit if it is needed
+								if (unitsAvailable > 0 && unitsDemanded > 0)
+								{
+									console.log("  +Allocating additional unit:" + unitName);
+									motivationMemory.allocatedUnits[unitName] += 1;
+									resources.units[unitName].allocated += 1;
+									resources.units[unitName].unallocated -= 1;
+								}
 							}
 						} , this);
 
@@ -251,13 +261,19 @@ module.exports =
 
 				// init each motivation for this room
 				motivationSupplySpawn.init(room.name);
-				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_2;
-
-				motivationSupplyController.init(room.name);
-				room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_1;
+				var numCreeps = Object.keys(Game.creeps).length;
+				if (numCreeps <= 2)
+					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_1;
+				else if (numCreeps <= 8)
+					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
+				else
+					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_5;
 
 				motivationMaintainInfrastructure.init(room.name);
-				room.memory.motivations[motivationMaintainInfrastructure.name].priority = C.PRIORITY_3;
+				room.memory.motivations[motivationMaintainInfrastructure.name].priority = C.PRIORITY_2;
+
+				motivationSupplyController.init(room.name);
+				room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_4;
 			}
 		}
 	},

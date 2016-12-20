@@ -61,6 +61,8 @@ module.exports =
 			{
 				needs.forEach(function (need)
 				{
+					//console.log(need.name);
+
 					// if there is a creep to assign, we need to assign it
 					var unitDemands = motivation.needs[need.type].getUnitDemands(roomName , need);
 					var creepsAssigned = resourceManager.countRoomMotivationNeedUnits(roomName , motivation.name , need.name , unitName);

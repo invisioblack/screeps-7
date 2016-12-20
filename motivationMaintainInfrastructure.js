@@ -37,10 +37,15 @@ MotivationMaintainInfrastructure.prototype.getDemands = function (roomName, reso
 	var result = {};
 
 	var constructionSites = Game.rooms[roomName].find(FIND_CONSTRUCTION_SITES);
+	var repairSites = Game.rooms[roomName].find(FIND_STRUCTURES, {
+		filter: function (s) {
+			return s.hits < s.hitsMax;
+		}
+	});
 	var progress = _.sum(constructionSites, "progress");
 	var progressTotal = _.sum(constructionSites, "progressTotal");
 
-	result.energy = progressTotal - progress;
+	result.energy = progressTotal - progress + Object.keys(repairSites).length;
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = resources.units["worker"].allocated < result.units["worker"];
 	console.log('  Maintain Infrastructure Demands: Workers: ' + result.units["worker"] + ' Spawn: ' + result.spawn);
@@ -66,7 +71,6 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 		if (!lib.isNull(cs))
 		{
 			var needName = "build." + cs.id;
-			var need;
 
 			//console.log('Site: ' + cs.id);
 
@@ -74,17 +78,12 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 			if (lib.isNull(memory.needs[needName]))
 			{
 				memory.needs[needName] = {};
-				need = memory.needs[needName];
-				need.type = "needBuild";
-				need.name = needName;
-				need.sourceId = cs.pos.findClosestByPath(FIND_SOURCES).id; // get energy from closest source
-				need.targetId = cs.id;
-				need.distance = room.findPath(cs.pos , Game.getObjectById(need.sourceId).pos).length;
-				need.priority = C.PRIORITY_5;
-			}
-			else
-			{
-				need = memory.needs[needName];
+				memory.needs[needName].type = "needBuild";
+				memory.needs[needName].name = needName;
+				memory.needs[needName].sourceId = cs.pos.findClosestByRange(FIND_SOURCES).id; // get energy from closest source
+				memory.needs[needName].targetId = cs.id;
+				memory.needs[needName].distance = room.findPath(cs.pos , Game.getObjectById(memory.needs[needName].sourceId).pos).length;
+				memory.needs[needName].priority = C.PRIORITY_5;
 			}
 		}
 	}, this);
@@ -98,7 +97,6 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 	});
 	repairSites.forEach(function (rs) {
 		var needName = "repair." + rs.id;
-		var need;
 
 		//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
 
@@ -106,30 +104,34 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 		if (lib.isNull(memory.needs[needName]))
 		{
 			memory.needs[needName] = {};
-			need = memory.needs[needName];
-			need.type = "needRepair";
-			need.name = needName;
-			need.sourceId = rs.pos.findClosestByRange(FIND_SOURCES).id; // get energy from closest source
-			need.targetId = rs.id;
-			need.distance = room.findPath(rs.pos, Game.getObjectById(need.sourceId).pos).length;
-			need.priority = C.PRIORITY_1;
-		} else {
-			need = memory.needs[needName];
+			memory.needs[needName].type = "needRepair";
+			memory.needs[needName].name = needName;
+			memory.needs[needName].sourceId = rs.pos.findClosestByRange(FIND_SOURCES).id; // get energy from closest source
+			memory.needs[needName].targetId = rs.id;
+			memory.needs[needName].distance = room.findPath(rs.pos, Game.getObjectById(memory.needs[needName].sourceId).pos).length;
+			memory.needs[needName].priority = C.PRIORITY_1;
 		}
-
 	}, this);
 
 	for (var needName in memory.needs)
 	{
+		//console.log("Need: " + needName);
+
 		if (lib.isNull(memory.needs[needName]))
+		{
+			console.log("-------------- CULLING NULL maintain infrastructure need -------------");
 			delete memory.needs[needName];
+		}
 		else
 		{
+			//console.log("Need.type: " + memory.needs[needName].type);
 			if (lib.isNull(memory.needs[needName].type))
-				delete memory.needs[needName];
-			// cull build needs
-			else if (memory.needs[needName].type == "needBuild")
 			{
+				console.log("-------------- CULLING untyped maintain infrastructure need -------------");
+				delete memory.needs[needName];
+
+			} else if (memory.needs[needName].type == "needBuild") {
+				// cull build needs
 				if (lib.isNull(memory.needs[needName].targetId))
 				{
 					console.log("-------------- CULLING INCOMPLETE CONSTRUCTION SITE -------------");
@@ -147,11 +149,9 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 						delete memory.needs[needName];
 					}
 				}
-			}
 
-			// cull repair needs
-			else if (memory.needs[needName].type == "needRepair")
-			{
+			} else if (memory.needs[needName].type == "needRepair") {
+				// cull repair needs
 				if (lib.isNull(memory.needs[needName].targetId))
 				{
 					console.log("-------------- CULLING INCOMPLETE REPAIR SITE -------------");
@@ -166,7 +166,7 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 					// if there are no sites, then cull it
 					if (result.length == 0)
 					{
-						console.log("-------------- CULLING REPAIR SITE -------------");
+						console.log("-------------- CULLING REPAIR SITE: " + siteId);
 						delete memory.needs[needName];
 					}
 				}
@@ -183,12 +183,15 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 		switch (site.structureType)
 		{
 			case STRUCTURE_EXTENSION:
-				need.priority = C.PRIORITY_1;
-				break;
-			default:
 				need.priority = C.PRIORITY_2;
 				break;
+			default:
+				need.priority = C.PRIORITY_5;
+				break;
 		}
+
+		if (need.type == "needRepair")
+			need.priority = C.PRIORITY_1;
 
 	}
 };
