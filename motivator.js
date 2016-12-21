@@ -100,7 +100,7 @@ module.exports =
 				sortedMotivations = _.sortByOrder(room.memory.motivations, ['priority'], ['desc']);
 
 				// first round motivation processing--------------------------------------------------------------------
-				// set up demands and spawning
+				// set up demands, active and spawning
 				sortedMotivations.forEach(function(motivationMemory)
 				{
 					console.log("---- Motivating round 1 - demands/spawn/active: " + motivationMemory.name);
@@ -141,23 +141,22 @@ module.exports =
 					}
 				}, this);
 
-				// second round motivation processing ------------------------------------------------------------------
+				// second and 3rd round motivation processing ----------------------------------------------------------
 				// unit allocation and need processing
 				countActiveMotivations = this.countActiveMotivations(roomName);
-
 				console.log("--: Active Motivations: " + countActiveMotivations);
 
 				// process round 2 and 3 for each unit type ------------------------------------------------------------
 				for (var unitName in units)
 				{
-					// iterate over motivations ------------------------------------------------------------------------
+					// round 2, regular allocation ---------------------------------------------------------------------
 					var iteration = 1;
 					var totalShares = countActiveMotivations * (countActiveMotivations + 1) / 2;
 					var totalUnits = resources.units[unitName].unallocated;
 
 					sortedMotivations.forEach(function (motivationMemory)
 					{
-						console.log("----Motivating round 2 - regular allocation: " + unitName + " : " + motivationMemory.name + " ----------------");
+						console.log("---- Motivating round 2 - regular allocation: " + unitName + " : " + motivationMemory.name + " ----------------");
 						// allocate units ------------------------------------------------------------------------------
 						if (motivationMemory.active)
 						{
@@ -208,7 +207,7 @@ module.exports =
 					{
 						sortedMotivations.forEach(function (motivationMemory)
 						{
-							console.log("----Motivating round 3 - surplus allocation: " + unitName + " : " + motivationMemory.name + " ----------------");
+							console.log("---- Motivating round 3 - surplus allocation: " + unitName + " : " + motivationMemory.name + " ----------------");
 							if (motivationMemory.active)
 							{
 
@@ -242,7 +241,7 @@ module.exports =
 
 				// motivation round 4 ----------------------------------------------------------------------------------
 				sortedMotivations.forEach(function(motivationMemory) {
-					console.log("----Motivating round 4 - manage needs: " + motivationMemory.name + " ----------------");
+					console.log("---- Motivating round 4 - manage needs: " + motivationMemory.name);
 					// processes needs for motivation ------------------------------------------------------------------
 					needManager.manageNeeds(roomName, motivations[motivationMemory.name], motivationMemory);
 				}, this);
