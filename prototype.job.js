@@ -1,11 +1,10 @@
 //-------------------------------------------------------------------------
-// jobGuard
+// prototype.job
 //-------------------------------------------------------------------------
-
 //-------------------------------------------------------------------------
 // modules
 //-------------------------------------------------------------------------
-
+var lib = require("lib");
 //-------------------------------------------------------------------------
 // Declarations
 //-------------------------------------------------------------------------
@@ -13,26 +12,31 @@
 //-------------------------------------------------------------------------
 // function
 //-------------------------------------------------------------------------
-module.exports = 
+module.exports = function()
 {
-	//-------------------------------------------------------------------------
 
-	"work": function (creep)
+	var Job = function () {};
+
+	Job.prototype.JOB_MODE_GETENERGY = 0;
+	Job.prototype.JOB_MODE_WORK = 1;
+
+	Job.prototype.moveToRange = function (creep, target, range)
 	{
-		var targets = creep.room.find(Game.HOSTILE_CREEPS);
-
-		if (targets.length)
+		if (target.pos.inRangeTo(creep.pos, range - 1))
 		{
-			var target = creep.pos.findNearest(Game.HOSTILE_CREEPS);
-			if (target)
-			{
-				creep.moveTo(target);
-				creep.attack(target);
-			}
+			creep.moveTo(creep.pos.x + creep.pos.x - target.pos.x, creep.pos.y + creep.pos.y - target.pos.y);
+			return true;
+		}
+		else if (target.pos.inRangeTo(creep.pos, range))
+		{
+			return true;
 		}
 		else
 		{
-			creep.rendezvous(creep, 5);
+			creep.moveTo(target);
+			return true;
 		}
-	}
+	};
+
+	return Job;
 };

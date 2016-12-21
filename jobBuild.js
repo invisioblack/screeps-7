@@ -9,8 +9,8 @@ var lib = require("lib");
 //-------------------------------------------------------------------------
 // Declarations
 //-------------------------------------------------------------------------
-var HARVEST_MODE_HARVEST = 0;
-var HARVEST_MODE_BUILD = 1;
+var JOB_MODE_GETENERGY = 0;
+var JOB_MODE_WORK = 1;
 
 //-------------------------------------------------------------------------
 // function
@@ -39,16 +39,16 @@ module.exports =
 			}
 			if (lib.isNull(creep.memory.job.mode))
 			{
-				creep.memory.job.mode = HARVEST_MODE_HARVEST;
+				creep.memory.job.mode = JOB_MODE_GETENERGY;
 			}
 
 			// manage job
 			switch (creep.memory.job.mode)
 			{
-				case HARVEST_MODE_HARVEST:
+				case JOB_MODE_GETENERGY:
 					if (carry == creep.carryCapacity)
 					{
-						creep.memory.job.mode = HARVEST_MODE_BUILD;
+						creep.memory.job.mode = JOB_MODE_WORK;
 					} else {
 						//console.log("harvest:" + source);
 						if (creep.harvest(source) == ERR_NOT_IN_RANGE)
@@ -57,10 +57,10 @@ module.exports =
 						}
 					}
 					break;
-				case HARVEST_MODE_BUILD:
+				case JOB_MODE_WORK:
 					if (carry == 0)
 					{
-						creep.memory.job.mode = HARVEST_MODE_HARVEST;
+						creep.memory.job.mode = JOB_MODE_GETENERGY;
 						creep.deassignMotive();
 					} else {
 						//console.log("return: " + target);
