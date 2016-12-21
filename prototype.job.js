@@ -26,7 +26,7 @@ module.exports = function()
 
 	Job.prototype.getEnergy = function (creep)
 	{
-		console.log("***getEnergy()");
+		//console.log("***getEnergy()");
 		// declarations
 		var carry, source;
 

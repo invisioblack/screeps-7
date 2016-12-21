@@ -246,8 +246,11 @@ module.exports =
 						totalUnitsAllocated = 0;
 						sortedMotivations.forEach(function (motivationMemory)
 						{
-							totalUnitsDemanded += demands[motivationMemory.name].units[unitName];
-							totalUnitsAllocated += motivationMemory.allocatedUnits[unitName];
+							if (motivationMemory.active)
+							{
+								totalUnitsDemanded += demands[motivationMemory.name].units[unitName];
+								totalUnitsAllocated += motivationMemory.allocatedUnits[unitName];
+							}
 						} , this);
 					}
 
