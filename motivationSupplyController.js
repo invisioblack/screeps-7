@@ -5,9 +5,13 @@
 //-------------------------------------------------------------------------
 // modules
 //-------------------------------------------------------------------------
-var lib = require('lib');
 var C = require('C');
+var lib = require('lib');
+var resourceManager = require("resourceManager");
+
 var needHarvestEnergy = require("needHarvestEnergy");
+
+var units = require("units");
 
 // script prototypes
 var Motivation = require('prototype.motivation')();
@@ -46,6 +50,26 @@ MotivationSupplyController.prototype.getDemands = function (roomName, resources)
 MotivationSupplyController.prototype.getDesiredSpawnUnit = function ()
 {
 	return "worker";
+};
+
+MotivationSupplyController.prototype.getDesireSpawn = function (roomName, demands)
+{
+	var result = true;
+	var memory = Game.rooms[roomName].memory.motivations[this.name];
+	if (memory.active)
+	{
+		for (var unitName in units)
+		{
+			if (!lib.isNull(demands.units[unitName]) && demands.units[unitName] < resourceManager.countRoomUnits(roomName , unitName))
+			{
+				result = false;
+			}
+		}
+	} else {
+		result = false;
+	}
+
+	return result;
 };
 
 MotivationSupplyController.prototype.updateActive = function (roomName, demands)

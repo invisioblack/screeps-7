@@ -43,6 +43,26 @@ MotivationSupplySpawn.prototype.getDemands = function (roomName, resources)
 	return result;
 };
 
+MotivationSupplySpawn.prototype.getDesireSpawn = function (roomName, demands)
+{
+	var result = true;
+	var memory = Game.rooms[roomName].memory.motivations[this.name];
+	if (memory.active)
+	{
+		for (var unitName in units)
+		{
+			if (!lib.isNull(demands.units[unitName]) && demands.units[unitName] < resourceManager.countRoomUnits(roomName , unitName))
+			{
+				result = false;
+			}
+		}
+	} else {
+		result = false;
+	}
+
+	return result;
+};
+
 MotivationSupplySpawn.prototype.getDesiredSpawnUnit = function ()
 {
 	return "worker";

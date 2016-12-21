@@ -31,8 +31,40 @@ var units = require("units");
 //----------------------------------------------------------------------------------------------------------------------
 module.exports =
 {
+	//------------------------------------------------------------------------------------------------------------------
+	// init, should be called before motivate
+	"init": function ()
+	{
+		// init motivations in each room we control
+		for (var roomName in Game.rooms)
+		{
+			var room = Game.rooms[roomName];
+			if (room.controller.my)
+			{
+				// init motivations in memory
+				if (lib.isNull(room.memory.motivations))
+				{
+					room.memory.motivations = {};
+				}
 
-	"mode": C.MOTIVATOR_MODE_SINGLE_MINDED,
+				// init each motivation for this room
+				motivationSupplySpawn.init(room.name);
+				var numCreeps = Object.keys(Game.creeps).length;
+				if (numCreeps <= 2)
+					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_1;
+				else if (numCreeps <= 8)
+					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
+				else
+					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_5;
+
+				motivationMaintainInfrastructure.init(room.name);
+				room.memory.motivations[motivationMaintainInfrastructure.name].priority = C.PRIORITY_2;
+
+				motivationSupplyController.init(room.name);
+				room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_4;
+			}
+		}
+	},
 
 	//------------------------------------------------------------------------------------------------------------------
 	// Main motivator function, should be called first from main
@@ -53,10 +85,10 @@ module.exports =
 			{
 				//------------------------------------------------------------------------------------------------------
 				// motivate
-				console.log('-------- motivator.motivate: ' + roomName + " --------");
+				console.log('-------- motivator.motivate: ' + roomName);
 
 				// declarations ----------------------------------------------------------------------------------------
-				var resources = resourceManager.getRoomResources(roomName);
+				var resources = resourceManager.getRoomResources(roomName); // get room resources
 				var demands = {};
 				var sortedMotivations;
 				var isSpawnAllocated = false;
@@ -71,7 +103,7 @@ module.exports =
 				// set up demands and spawning
 				sortedMotivations.forEach(function(motivationMemory)
 				{
-					console.log("----Motivating round 1 - demands/spawn/active: " + motivationMemory.name);
+					console.log("---- Motivating round 1 - demands/spawn/active: " + motivationMemory.name);
 
 					// set up demands ----------------------------------------------------------------------------------
 					demands[motivationMemory.name] = motivations[motivationMemory.name].getDemands(roomName , resources);
@@ -80,7 +112,7 @@ module.exports =
 					motivations[motivationMemory.name].updateActive(roomName, demands[motivationMemory.name]);
 
 					// allocate spawn ----------------------------------------------------------------------------------
-					if (!isSpawnAllocated && motivationMemory.active && demands[motivationMemory.name].spawn > 0)
+					if (!isSpawnAllocated && motivations[motivationMemory.name].getDesireSpawn(roomName, demands[motivationMemory.name]))
 					{
 						motivationMemory.spawnAllocated = true;
 						isSpawnAllocated = true;
@@ -221,39 +253,7 @@ module.exports =
 		}
 	},
 
-	"init": function ()
-	{
-		// init motivations in each room we control
-		for (var roomName in Game.rooms)
-		{
-			var room = Game.rooms[roomName];
-			if (room.controller.my)
-			{
-				// init motivations in memory
-				if (lib.isNull(room.memory.motivations))
-				{
-					room.memory.motivations = {};
-				}
-
-				// init each motivation for this room
-				motivationSupplySpawn.init(room.name);
-				var numCreeps = Object.keys(Game.creeps).length;
-				if (numCreeps <= 2)
-					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_1;
-				else if (numCreeps <= 8)
-					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
-				else
-					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_5;
-
-				motivationMaintainInfrastructure.init(room.name);
-				room.memory.motivations[motivationMaintainInfrastructure.name].priority = C.PRIORITY_2;
-
-				motivationSupplyController.init(room.name);
-				room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_4;
-			}
-		}
-	},
-
+	// helper functions ------------------------------------------------------------------------------------------------
 	"countActiveMotivations": function (roomName)
 	{
 		var result = 0;

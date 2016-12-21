@@ -7,6 +7,7 @@
 //-------------------------------------------------------------------------
 var lib = require('lib');
 var C = require('C');
+var resourceManager = require("resourceManager");
 var needBuild = require("needBuild");
 var needRepair = require("needRepair");
 
@@ -57,7 +58,23 @@ MotivationMaintainInfrastructure.prototype.getDemands = function (roomName, reso
 
 MotivationMaintainInfrastructure.prototype.getDesiredSpawnUnit = function ()
 {
+	// repairing and building require WORK and CARRY, so always workers
 	return "worker";
+};
+
+MotivationMaintainInfrastructure.prototype.getDesireSpawn = function (roomName, demands)
+{
+	var result = true;
+	var memory = Game.rooms[roomName].memory.motivations[this.name];
+	if (memory.active)
+	{
+		if (!lib.isNull(demands.units["worker"]) && demands.units["worker"] < resourceManager.countRoomUnits(roomName, "worker"))
+			result = false;
+	} else {
+		result = false;
+	}
+
+	return result;
 };
 
 MotivationMaintainInfrastructure.prototype.updateActive = function (roomName, demands)
