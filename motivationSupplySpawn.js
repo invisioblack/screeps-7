@@ -8,6 +8,8 @@
 var lib = require('lib');
 var C = require('C');
 var needHarvestEnergy = require("needHarvestEnergy");
+var resourceManager = require("resourceManager");
+var units = require("units");
 
 // script prototypes
 var Motivation = require('prototype.motivation')();
