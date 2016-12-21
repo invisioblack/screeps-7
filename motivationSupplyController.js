@@ -8,9 +8,7 @@
 var C = require('C');
 var lib = require('lib');
 var resourceManager = require("resourceManager");
-
 var needHarvestEnergy = require("needHarvestEnergy");
-
 var units = require("units");
 
 // script prototypes
