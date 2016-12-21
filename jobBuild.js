@@ -6,6 +6,8 @@
 // modules
 //-------------------------------------------------------------------------
 var lib = require("lib");
+var Job = require("prototype.job");
+
 //-------------------------------------------------------------------------
 // Declarations
 //-------------------------------------------------------------------------
@@ -13,67 +15,79 @@ var JOB_MODE_GETENERGY = 0;
 var JOB_MODE_WORK = 1;
 
 //-------------------------------------------------------------------------
-// function
+// constructor
 //-------------------------------------------------------------------------
-module.exports =
+var JobBuild = function ()
+{
+	Job.call(this);
+	this.name = "jobBuild";
+};
+
+JobBuild.prototype = Object.create(Job.prototype);
+JobBuild.prototype.constructor = JobBuild;
+
+//-------------------------------------------------------------------------
+// implementation
+//-------------------------------------------------------------------------
+JobBuild.prototype.work = function (creep)
+{
+	var need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
+	var source = Game.getObjectById(need.sourceId);
+	var target = Game.getObjectById(need.targetId);
+	var carry = _.sum(creep.carry);
+
+	//avoid hostiles
+	if (creep.avoidHostile(creep))
 	{
-		//-------------------------------------------------------------------------
+		return;
+	}
 
-		"work": function (creep)
-		{
-			var need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
-			var source = Game.getObjectById(need.sourceId);
-			var target = Game.getObjectById(need.targetId);
-			var carry = _.sum(creep.carry);
+	// set up mode memory
+	if (lib.isNull(creep.memory.job))
+	{
+		creep.memory.job = {};
+	}
+	if (lib.isNull(creep.memory.job.mode))
+	{
+		creep.memory.job.mode = JOB_MODE_GETENERGY;
+	}
 
-			//avoid hostiles
-			if (creep.avoidHostile(creep))
+	// manage job
+	switch (creep.memory.job.mode)
+	{
+		case JOB_MODE_GETENERGY:
+			if (carry == creep.carryCapacity)
 			{
-				return;
+				creep.memory.job.mode = JOB_MODE_WORK;
+			} else {
+				//console.log("harvest:" + source);
+				if (creep.harvest(source) == ERR_NOT_IN_RANGE)
+				{
+					creep.moveTo(source);
+				}
 			}
-
-			// set up mode memory
-			if (lib.isNull(creep.memory.job))
-			{
-				creep.memory.job = {};
-			}
-			if (lib.isNull(creep.memory.job.mode))
+			break;
+		case JOB_MODE_WORK:
+			if (carry == 0)
 			{
 				creep.memory.job.mode = JOB_MODE_GETENERGY;
+				creep.deassignMotive();
+			} else {
+				//console.log("return: " + target);
+				var result = creep.build(target);
+				if (result == ERR_NOT_IN_RANGE)
+				{
+					creep.moveTo(target);
+				} else if (result == ERR_INVALID_TARGET) {
+					//console.log("---- RESET");
+					creep.deassignMotive();
+				}
 			}
+			break;
+	}
+};
 
-			// manage job
-			switch (creep.memory.job.mode)
-			{
-				case JOB_MODE_GETENERGY:
-					if (carry == creep.carryCapacity)
-					{
-						creep.memory.job.mode = JOB_MODE_WORK;
-					} else {
-						//console.log("harvest:" + source);
-						if (creep.harvest(source) == ERR_NOT_IN_RANGE)
-						{
-							creep.moveTo(source);
-						}
-					}
-					break;
-				case JOB_MODE_WORK:
-					if (carry == 0)
-					{
-						creep.memory.job.mode = JOB_MODE_GETENERGY;
-						creep.deassignMotive();
-					} else {
-						//console.log("return: " + target);
-						var result = creep.build(target);
-						if (result == ERR_NOT_IN_RANGE)
-						{
-							creep.moveTo(target);
-						} else if (result == ERR_INVALID_TARGET) {
-							//console.log("---- RESET");
-							creep.deassignMotive();
-						}
-					}
-					break;
-			}
-		}
-	};
+//-------------------------------------------------------------------------
+// export
+//-------------------------------------------------------------------------
+module.exports = new JobBuild();
