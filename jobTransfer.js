@@ -62,6 +62,7 @@ JobTransfer.prototype.work = function (creep)
 				creep.deassignMotive();
 			} else {
 				//console.log("return: " + target);
+				this.resetSource(creep);
 				var result = creep.transfer(target, RESOURCE_ENERGY);
 				if (result == ERR_NOT_IN_RANGE)
 				{

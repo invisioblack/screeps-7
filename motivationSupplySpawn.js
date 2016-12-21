@@ -7,7 +7,7 @@
 //-------------------------------------------------------------------------
 var lib = require('lib');
 var C = require('C');
-var needHarvestEnergy = require("needHarvestEnergy");
+var needTransferEnergy = require("needTransferEnergy");
 var resourceManager = require("resourceManager");
 var units = require("units");
 
@@ -26,7 +26,7 @@ var MotivationSupplySpawn = function ()
 	Motivation.call(this);
 	this.name = "motivationSupplySpawn";
 	this.needs = {};
-	this.needs["needHarvestEnergy"] = needHarvestEnergy;
+	this.needs["needTransferEnergy"] = needTransferEnergy;
 };
 
 MotivationSupplySpawn.prototype = Object.create(Motivation.prototype);
@@ -101,40 +101,27 @@ MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
 		var spawn = Game.spawns[spawnName];
 		if (spawn.room.name == roomName)
 		{
-			// create a need for each source in the room
-			var sources = room.find(FIND_SOURCES);
-			sources.forEach(function (s)
+			var needName = "energy." + spawn.id;
+			var need;
+
+			//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
+
+			// create needs if we need energy, cull needs if not
+			if ((spawn.energyCapacity - spawn.energy) > 0)
 			{
-				var needName = "harvest." + s.id + "." + spawn.id;
-				var need;
-
-				//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
-
-				// create needs if we need energy, cull needs if not
-				if ((spawn.energyCapacity - spawn.energy) > 0)
+				// create new need if one doesn't exist
+				if (lib.isNull(memory.needs[needName]))
 				{
-					// create new need if one doesn't exist
-					if (lib.isNull(memory.needs[needName]))
-					{
-						memory.needs[needName] = {};
-						need = memory.needs[needName];
-						need.type = "needHarvestEnergy";
-						need.name = needName;
-						need.sourceId = s.id;
-						need.targetId = spawn.id;
-						need.distance = room.findPath(s.pos , room.controller.pos).length;
-						need.priority = C.PRIORITY_2;
-					}
-					else
-					{
-						need = memory.needs[needName];
-					}
-				} else { // cull need if we don't need energy
-					delete memory.needs[needName];
+					memory.needs[needName] = {};
+					need = memory.needs[needName];
+					need.type = "needTransferEnergy";
+					need.name = needName;
+					need.targetId = spawn.id;
+					need.priority = C.PRIORITY_2;
 				}
-
-
-			} , this);
+			} else { // cull need if we don't need energy
+				delete memory.needs[needName];
+			}
 		}
 	}
 
@@ -142,38 +129,30 @@ MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
 	// look up sources and find out how many needs we should have for each one
 	var extenders = room.find(FIND_MY_STRUCTURES, {filter: { structureType: STRUCTURE_EXTENSION }});
 	extenders.forEach(function (ex) {
-		// create a need for each source in the room
-		var sources = room.find(FIND_SOURCES);
-		sources.forEach(function (s)
+		var needName = "energy." + ex.id;
+		var need;
+
+		//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
+
+		if ((ex.energyCapacity - ex.energy) > 0)
 		{
-			var needName = "harvest." + s.id + "." + ex.id;
-			var need;
-
-			//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
-
-			if ((ex.energyCapacity - ex.energy) > 0)
+			// create new need if one doesn't exist
+			if (lib.isNull(memory.needs[needName]))
 			{
-				// create new need if one doesn't exist
-				if (lib.isNull(memory.needs[needName]))
-				{
-					memory.needs[needName] = {};
-					need = memory.needs[needName];
-					need.type = "needHarvestEnergy";
-					need.name = needName;
-					need.sourceId = s.id;
-					need.targetId = ex.id;
-					need.distance = room.findPath(s.pos , room.controller.pos).length;
-					need.priority = C.PRIORITY_5;
-				}
-				else
-				{
-					need = memory.needs[needName];
-				}
-			} else { // cull need if we don't need energy
-				delete memory.needs[needName];
+				memory.needs[needName] = {};
+				need = memory.needs[needName];
+				need.type = "needTransferEnergy";
+				need.name = needName;
+				need.targetId = ex.id;
+				need.priority = C.PRIORITY_1;
 			}
-		}, this);
+		} else { // cull need if we don't need energy
+			delete memory.needs[needName];
+		}
 	}, this);
+
+	delete memory.needs["harvest.5836b7268b8b9619519efeba.5859ec4ea7dab3591e5a0ed3"];
+
 };
 
 //-------------------------------------------------------------------------

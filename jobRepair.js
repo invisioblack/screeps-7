@@ -59,6 +59,7 @@ JobRepair.prototype.work = function (creep)
 			this.getEnergy(creep);
 			break;
 		case this.JOB_MODE_WORK:
+			this.resetSource(creep);
 			if (carry == 0)
 			{
 				creep.memory.job.mode = this.JOB_MODE_GETENERGY;

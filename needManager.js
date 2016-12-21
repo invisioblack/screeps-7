@@ -102,9 +102,9 @@ module.exports =
 					creep.deassignMotive();
 				else if (lib.isNull(need.type))
 					creep.deassignMotive();
-				else if (need.type == "needHarvestEnergy")
+				else if (need.type == "needTransferEnergy")
 				{
-					//console.log("Creep: " + creep.name + " Working needHarvestEnergy");
+					//console.log("Creep: " + creep.name + " Working needTransferEnergy");
 					jobTransfer.work(creep);
 				}
 				else if (need.type == "needBuild")

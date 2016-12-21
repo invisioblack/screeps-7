@@ -52,7 +52,7 @@ module.exports =
 				var numCreeps = Object.keys(Game.creeps).length;
 				if (numCreeps <= 2)
 					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_1;
-				else if (numCreeps <= 8)
+				else if (numCreeps <= 6)
 					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
 				else
 					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_5;
@@ -183,7 +183,7 @@ module.exports =
 
 							// output status ---------------------------------------------------------------------------
 							//console.log("Pre: " + unitName + " Allocation: " + resources.units[unitName].allocated + '/' + resources.units[unitName].total + ' Unallocated: ' + resources.units[unitName].unallocated);
-							console.log("  " + unitName + ": Units Available: " + unitsAvailable + " Units Demanded: " + unitsDemanded + " Units To Allocate: " + unitsToAllocate);
+							console.log("  " + unitName + ": Units Available: " + unitsAvailable + " Units Allocated/Demanded-Allocated: " + unitsToAllocate + "/" + unitsDemanded);
 							console.log("  " + unitName + ": Iteration: " + iteration + " Shares this iteration " + sharesThisIteration + " Units/Share: " + unitsPerShare);
 
 							// update resources.units["worker"].unallocated

@@ -72,20 +72,18 @@ module.exports = function()
 		}
 
 		// if we're not assigned a source, then look for energy on the ground
-		if (creep.memory.sourceId == "")
-		{
-			var droppedEnergy;
+		var droppedEnergy;
 
-			// look for energy laying on the ground
-			droppedEnergy = creep.room.find(FIND_DROPPED_ENERGY);
-			droppedEnergy.forEach(function (drop) {
-				if (creep.memory.sourceId == "" && this.countCreepsOnSource(drop.id) == 0)
-				{
-					creep.memory.sourceId = drop.id;
-					creep.memory.sourceType = this.JOB_SOURCETYPE_DROP;
-				}
-			}, this);
-		}
+		// look for energy laying on the ground
+		droppedEnergy = creep.room.find(FIND_DROPPED_ENERGY);
+		droppedEnergy.forEach(function (drop) {
+			if (creep.memory.sourceType != this.JOB_SOURCETYPE_DROP && this.countCreepsOnSource(drop.id) == 0)
+			{
+				creep.memory.sourceId = drop.id;
+				creep.memory.sourceType = this.JOB_SOURCETYPE_DROP;
+			}
+		}, this);
+
 
 		// look for energy in containers
 		if (creep.memory.sourceId == "")
@@ -107,9 +105,10 @@ module.exports = function()
 			sources.forEach(function (s) {
 				var max = s.getMaxHarvesters();
 				var on = this.countCreepsOnSource(s.id);
-				//console.log("source/max/on: " + s.id + "/" + max + "/" + on);
+				var energy = s.energy;
+				//console.log("source/max/on/e: " + s.id + "/" + max + "/" + on + "/" + energy);
 
-				if(max > on && creep.memory.sourceId == "")
+				if(max > on && energy > 0 && creep.memory.sourceId == "")
 				{
 					creep.memory.sourceId = s.id;
 					creep.memory.sourceType = this.JOB_SOURCETYPE_SOURCE;
@@ -121,26 +120,40 @@ module.exports = function()
 		if (creep.memory.sourceId == "") // I'm screwed, I cannot get energy
 		{
 			creep.say("No Energy!");
+			if (carry > 0)
+			{
+				creep.memory.job.mode = this.JOB_MODE_WORK;
+				this.resetSource(creep);
+			}
 		} else { // move to and pick up the goods
+			var result;
 			switch (creep.memory.sourceType)
 			{
 				case this.JOB_SOURCETYPE_DROP:
 					var drop = Game.getObjectById(creep.memory.sourceId);
-					if (creep.pickup(drop) == ERR_NOT_IN_RANGE)
+					result = creep.pickup(drop);
+					if (result == ERR_NOT_IN_RANGE)
 					{
 						creep.moveTo(drop);
 					}
 					break;
 				case this.JOB_SOURCETYPE_CONTAINER:
 					var container = Game.getObjectById(creep.memory.sourceId);
-					if (creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE)
+					result = creep.withdraw(container, RESOURCE_ENERGY);
+					if (result == ERR_NOT_IN_RANGE)
 					{
 						creep.moveTo(container);
 					}
 					break;
 				case this.JOB_SOURCETYPE_SOURCE:
 					var source = Game.getObjectById(creep.memory.sourceId);
-					if (creep.harvest(source) == ERR_NOT_IN_RANGE)
+					result = creep.harvest(source);
+					//console.log("harvest: " + result);
+					if (result == ERR_NOT_ENOUGH_ENERGY)
+					{
+						this.resetSource(creep);
+					}
+					if (result == ERR_NOT_IN_RANGE)
 					{
 						creep.moveTo(source);
 					}

@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------
-// needHarvestEnergy
+// needTransferEnergy
 //-------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------
@@ -19,36 +19,38 @@ var Need = require('prototype.need')();
 //-------------------------------------------------------------------------
 // function
 //-------------------------------------------------------------------------
-var NeedHarvestEnergy = function ()
+var NeedTransferEnergy = function ()
 {
 	Need.call(this);
-	this.name = "needHarvestEnergy";
+	this.name = "needTransferEnergy";
 };
 
-NeedHarvestEnergy.prototype = Object.create(Need.prototype);
-NeedHarvestEnergy.prototype.constructor = NeedHarvestEnergy;
+NeedTransferEnergy.prototype = Object.create(Need.prototype);
+NeedTransferEnergy.prototype.constructor = NeedTransferEnergy;
 
-NeedHarvestEnergy.prototype.getUnitDemands = function(roomName, memory)
+NeedTransferEnergy.prototype.getUnitDemands = function(roomName, memory)
 {
 	var result = {};
-	var source = Game.getObjectById(memory.sourceId);
-	var maxWorkers = 0;
-	var creepsOnSource = resourceManager.countCreepsOnSource(roomName, memory.sourceId);
-	var preResult = 0;
+	var target = Game.getObjectById(memory.targetId);
+	var energy, energyCapacity, neededEnergy;
 
-	if (lib.isNull(source.getMaxHarvesters))
-		maxWorkers = 1;
-	else
-		maxWorkers = source.getMaxHarvesters();
+	if (!lib.isNull(target.energy))
+	{
+		energyCapacity = target.energyCapacity;
+		energy = target.energy;
+	} else {
+		energyCapacity = target.progressTotal;
+		energy = target.progress;
+	}
 
-	preResult = maxWorkers - creepsOnSource;
-	if (preResult < 0)
-		result["worker"] = 0;
-	else
-		result["worker"] = preResult;
+	neededEnergy = energyCapacity - energy;
+
+
+	//console.log("getUnitDemands: " + energy + "/" + energyCapacity + "/" + neededEnergy);
+	result["worker"] = Math.floor(neededEnergy / 50);
 
 	return result;
 };
 
 
-module.exports = new NeedHarvestEnergy();
+module.exports = new NeedTransferEnergy();
