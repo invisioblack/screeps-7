@@ -112,7 +112,7 @@ module.exports =
 					motivations[motivationMemory.name].updateActive(roomName, demands[motivationMemory.name]);
 
 					// allocate spawn ----------------------------------------------------------------------------------
-					if (!isSpawnAllocated && motivations[motivationMemory.name].getDesireSpawn(roomName, demands[motivationMemory.name]))
+					if (!isSpawnAllocated && demands[motivationMemory.name].spawn)
 					{
 						motivationMemory.spawnAllocated = true;
 						isSpawnAllocated = true;
@@ -121,6 +121,8 @@ module.exports =
 					{
 						motivationMemory.spawnAllocated = false;
 					}
+
+					console.log("  Spawn allocated: " + motivationMemory.spawnAllocated);
 
 					// spawn units if allocated spawn ------------------------------------------------------------------
 					var unitName = motivations[motivationMemory.name].getDesiredSpawnUnit();
@@ -156,7 +158,7 @@ module.exports =
 
 					sortedMotivations.forEach(function (motivationMemory)
 					{
-						console.log("---- Motivating round 2 - regular allocation: " + unitName + " : " + motivationMemory.name + " ----------------");
+						console.log("---- Motivating round 2 - regular allocation: " + unitName + " : " + motivationMemory.name);
 						// allocate units ------------------------------------------------------------------------------
 						if (motivationMemory.active)
 						{
@@ -172,6 +174,8 @@ module.exports =
 							if (unitsDemanded < unitsToAllocate)
 								unitsToAllocate = unitsDemanded;
 							if (unitsAvailable < unitsToAllocate)
+								unitsToAllocate = unitsAvailable;
+							if (unitsToAllocate > unitsAvailable)
 								unitsToAllocate = unitsAvailable;
 
 							// allocate units
@@ -197,17 +201,22 @@ module.exports =
 					// motivation round 3 ------------------------------------------------------------------------------
 					var totalUnitsAvailable = resources.units[unitName].unallocated;
 					var totalUnitsDemanded = 0;
+					var totalUnitsAllocated = 0;
 
 					sortedMotivations.forEach(function (motivationMemory)
 					{
-						totalUnitsDemanded += demands[motivationMemory.name].units[unitName];
+						if (motivationMemory.active)
+						{
+							totalUnitsDemanded += demands[motivationMemory.name].units[unitName];
+							totalUnitsAllocated += motivationMemory.allocatedUnits[unitName];
+						}
 					} , this);
 
-					while (totalUnitsAvailable > 0 && totalUnitsDemanded > 0)
+					while (totalUnitsAvailable > 0 && (totalUnitsDemanded - totalUnitsAllocated) > 0)
 					{
 						sortedMotivations.forEach(function (motivationMemory)
 						{
-							console.log("---- Motivating round 3 - surplus allocation: " + unitName + " : " + motivationMemory.name + " ----------------");
+							console.log("---- Motivating round 3 - surplus allocation: " + unitName + " : " + motivationMemory.name);
 							if (motivationMemory.active)
 							{
 
@@ -215,7 +224,10 @@ module.exports =
 								var unitsAllocated = motivationMemory.allocatedUnits[unitName];
 								var unitsDemanded = demands[motivationMemory.name].units[unitName] - unitsAllocated;
 
-								console.log("  " + unitName + "Available/Demanded/Allocated units: " + unitsAvailable + "/" + unitsDemanded + "/" + unitsAllocated);
+								if (unitsDemanded < 0)
+									unitsDemanded = 0;
+
+								console.log("  " + unitName + "Available/Demanded-Allocated/Allocated units: " + unitsAvailable + "/" + unitsDemanded + "/" + unitsAllocated);
 
 								// allocate an additional unit if it is needed
 								if (unitsAvailable > 0 && unitsDemanded > 0)
@@ -230,13 +242,16 @@ module.exports =
 
 						// update values for iteration
 						totalUnitsAvailable = resources.units[unitName].unallocated;
+						totalUnitsDemanded = 0;
+						totalUnitsAllocated = 0;
 						sortedMotivations.forEach(function (motivationMemory)
 						{
 							totalUnitsDemanded += demands[motivationMemory.name].units[unitName];
+							totalUnitsAllocated += motivationMemory.allocatedUnits[unitName];
 						} , this);
 					}
 
-					console.log('>>>>Final " + unitName + " Allocation: ' + resources.units[unitName].allocated + '/' + resources.units[unitName].total + ' Unallocated: ' + resources.units[unitName].unallocated);
+					console.log(">>>>Final " + unitName + " Allocation: " + resources.units[unitName].allocated + "/" + resources.units[unitName].total + " Unallocated: " + resources.units[unitName].unallocated);
 				}
 
 				// motivation round 4 ----------------------------------------------------------------------------------

@@ -51,7 +51,7 @@ MotivationMaintainInfrastructure.prototype.getDemands = function (roomName, reso
 
 	result.energy = progressTotal - progress + Object.keys(repairSites).length;
 	result.units = this.getUnitDemands(roomName);
-	result.spawn = resources.units["worker"].allocated < result.units["worker"];
+	result.spawn = this.getDesireSpawn(roomName, result);
 	console.log('  Maintain Infrastructure Demands: Workers: ' + result.units["worker"] + ' Spawn: ' + result.spawn);
 	return result;
 };

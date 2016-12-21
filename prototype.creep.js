@@ -115,6 +115,18 @@ module.exports = function()
 		return creepSpawn;		
 	};
 
+	Creep.prototype.getHasPart = function (part)
+	{
+		var result = false;
+		this.body.forEach(function (i) {
+			if (i.type == part)
+			{
+				result = true;
+			}
+		}, this);
+		return result;
+	};
+
 	Creep.prototype.initMotive = function()
 	{
 		if (lib.isNull(this.memory.motive))
@@ -128,12 +140,14 @@ module.exports = function()
 
 	Creep.prototype.assignMotive = function (roomName, motivationName, needName)
 	{
+		this.say("Assigned to: " + motivationName + ":" + needName);
 		this.memory.motive.motivation = motivationName;
 		this.memory.motive.need = needName;
 	};
 
 	Creep.prototype.deassignMotive = function ()
 	{
+		this.say("Unassigned from: " + this.memory.motive.motivation + ":" + this.memory.motive.need);
 		this.memory.motive.motivation = "";
 		this.memory.motive.need = "";
 	};

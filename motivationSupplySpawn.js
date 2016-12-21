@@ -40,7 +40,7 @@ MotivationSupplySpawn.prototype.getDemands = function (roomName, resources)
 	var result = {};
 	result.energy = resources.spawnEnergy.energyCapacity - resources.spawnEnergy.energy;
 	result.units = this.getUnitDemands(roomName);
-	result.spawn = resources.units["worker"].allocated < result.units["worker"];
+	result.spawn = this.getDesireSpawn(roomName, result);
 	console.log('  Supply Spawn Demands: e: ' + result.energy + ' Workers: ' + result.units["worker"] + ' Spawn: ' + result.spawn);
 	return result;
 };
