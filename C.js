@@ -20,6 +20,8 @@ module.exports =
 	'JOB_RANGED_INVALID': 9999 ,
 
 	// priority
+	'PRIORITY_7': 2,
+	'PRIORITY_6': 4,
 	'PRIORITY_5': 8,
 	'PRIORITY_4': 16,
 	'PRIORITY_3': 24,
