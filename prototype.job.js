@@ -71,19 +71,16 @@ module.exports = function()
 			}
 		}
 
-		// if we're not assigned a source, then look for energy on the ground
-		var droppedEnergy;
-
 		// look for energy laying on the ground
-		droppedEnergy = creep.room.find(FIND_DROPPED_ENERGY);
+		var droppedEnergy = creep.room.find(FIND_DROPPED_ENERGY);
 		droppedEnergy.forEach(function (drop) {
+			console.log("dropID: " + drop.id);
 			if (creep.memory.sourceType != this.JOB_SOURCETYPE_DROP && this.countCreepsOnSource(drop.id) == 0)
 			{
 				creep.memory.sourceId = drop.id;
 				creep.memory.sourceType = this.JOB_SOURCETYPE_DROP;
 			}
 		}, this);
-
 
 		// look for energy in containers
 		if (creep.memory.sourceId == "")
@@ -160,15 +157,6 @@ module.exports = function()
 					break;
 			}
 		}
-
-/*
-		} else {
-			//console.log("harvest:" + source);
-
-		}
-*/
-		// can't find energy!
-
 	};
 
 	Job.prototype.countCreepsOnSource = function (sourceId)

@@ -33,6 +33,9 @@ if (active)
 	motivator.motivate();
 }
 
+// TODO: Remove this
+//Game.rooms["W62N73"].memory.motivations["motivationMaintainInfrastructure"].needs["build.585b7f9fbadd41083414b7d2"].priority = 99999;
+
 //-------------------------------------------------------------------------
 // END
 //-------------------------------------------------------------------------

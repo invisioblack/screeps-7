@@ -19,6 +19,7 @@ var units = require("units");
 var jobTransfer = require("jobTransfer");
 var jobBuild = require("jobBuild");
 var jobRepair = require("jobRepair");
+var jobHarvestSource = require("jobHarvestSource");
 
 
 //------------------------------------------------------------------------------
@@ -116,6 +117,11 @@ module.exports =
 				{
 					//console.log("Creep: " + creep.name + " Working needRepair");
 					jobRepair.work(creep);
+				}
+				else if (need.type == "needHarvestSource")
+				{
+					//console.log("Creep: " + creep.name + " Working needHarvestSource");
+					jobHarvestSource.work(creep);
 				}
 			}
 		}

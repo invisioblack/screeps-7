@@ -1,41 +1,39 @@
 //-------------------------------------------------------------------------
-// lib
+// needHarvestSource
 //-------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------
 // modules
 //-------------------------------------------------------------------------
+var lib = require('lib');
+var C = require('C');
+
+// script prototypes
+var Need = require('prototype.need')();
 
 //-------------------------------------------------------------------------
 // Declarations
 //-------------------------------------------------------------------------
 
-
 //-------------------------------------------------------------------------
 // function
 //-------------------------------------------------------------------------
-module.exports = 
+var NeedHarvestSource = function ()
 {
-	"isNull": function (value)
-	{
-        if (typeof value == "undefined" || value == null)
-            return true;
-        else
-            return false;
-	},
-
-	"clamp": function (value, min, max)
-	{
-		return Math.min(Math.max(value, min), max);
-	},
-
-	"nullProtect": function (value, defaultValue)
-	{
-		if (this.isNull(value))
-		{
-			value = defaultValue;
-		}
-
-		return value;
-	}
+	Need.call(this);
+	this.name = "needHarvestSource";
 };
+
+NeedHarvestSource.prototype = Object.create(Need.prototype);
+NeedHarvestSource.prototype.constructor = NeedHarvestSource;
+
+NeedHarvestSource.prototype.getUnitDemands = function(roomName, memory)
+{
+	var result = {};
+	result["harvester"] = 1;
+
+	return result;
+};
+
+
+module.exports = new NeedHarvestSource();

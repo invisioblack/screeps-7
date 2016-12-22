@@ -221,13 +221,40 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 			case STRUCTURE_EXTENSION:
 				need.priority = C.PRIORITY_2;
 				break;
+			case STRUCTURE_CONTAINER:
+				need.priority = C.PRIORITY_2;
+				break;
 			default:
-				need.priority = C.PRIORITY_5;
+				need.priority = C.PRIORITY_4;
 				break;
 		}
 
 		if (need.type == "needRepair")
-			need.priority = C.PRIORITY_1;
+		{
+			var percent = (site.hits / site.hitsMax) * 10000 / 100;
+
+			if (percent < 25)
+			{
+				need.priority = C.PRIORITY_1;
+			}
+			else if (percent < 50)
+			{
+				need.priority = C.PRIORITY_2;
+			}
+			else if (percent < 75)
+			{
+				need.priority = C.PRIORITY_3;
+			}
+			else if (percent < 90)
+			{
+				need.priority = C.PRIORITY_4;
+			}
+			else
+			{
+				need.priority = C.PRIORITY_5;
+			}
+
+		}
 
 	}
 };

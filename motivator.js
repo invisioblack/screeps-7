@@ -17,6 +17,7 @@ var lib = require('lib');
 var motivationSupplySpawn = require('motivationSupplySpawn');
 var motivationSupplyController = require('motivationSupplyController');
 var motivationMaintainInfrastructure = require('motivationMaintainInfrastructure');
+var motivationHarvestSource = require("motivationHarvestSource");
 
 var resourceManager = require('resourceManager');
 var needManager = require('needManager');
@@ -48,17 +49,20 @@ module.exports =
 				}
 
 				// init each motivation for this room
+				motivationHarvestSource.init(room.name);
+				room.memory.motivations[motivationHarvestSource.name].priority = C.PRIORITY_1;
+
 				motivationSupplySpawn.init(room.name);
 				var numCreeps = Object.keys(Game.creeps).length;
-				if (numCreeps <= 2)
-					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_1;
-				else if (numCreeps <= 6)
-					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
+				if (numCreeps <= 4)
+					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_2;
+				else if (numCreeps <= 10)
+					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_4;
 				else
 					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_5;
 
 				motivationMaintainInfrastructure.init(room.name);
-				room.memory.motivations[motivationMaintainInfrastructure.name].priority = C.PRIORITY_2;
+				room.memory.motivations[motivationMaintainInfrastructure.name].priority = C.PRIORITY_3;
 
 				motivationSupplyController.init(room.name);
 				room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_4;
@@ -76,6 +80,7 @@ module.exports =
 		motivations["motivationSupplySpawn"] = motivationSupplySpawn;
 		motivations["motivationSupplyController"] = motivationSupplyController;
 		motivations["motivationMaintainInfrastructure"] = motivationMaintainInfrastructure;
+		motivations["motivationHarvestSource"] = motivationHarvestSource;
 
 		// motivate in each room we control ----------------------------------------------------------------------------
 		for (var roomName in Game.rooms)
@@ -151,6 +156,7 @@ module.exports =
 				// process round 2 and 3 for each unit type ------------------------------------------------------------
 				for (var unitName in units)
 				{
+					console.log("Motivating unit: " + unitName);
 					// round 2, regular allocation ---------------------------------------------------------------------
 					var iteration = 1;
 					var totalShares = countActiveMotivations * (countActiveMotivations + 1) / 2;
@@ -162,12 +168,22 @@ module.exports =
 						// allocate units ------------------------------------------------------------------------------
 						if (motivationMemory.active)
 						{
-							var unitsAvailable = resources.units[unitName].unallocated;
-							var unitsAllocated = motivationMemory.allocatedUnits[unitName];
-							var unitsDemanded = demands[motivationMemory.name].units[unitName] - unitsAllocated;
+							var unitsAvailable;
+							var unitsAllocated;
+							var rawUnitsDemanded;
+							var unitsDemanded;
 							var unitsToAllocate;
-							var sharesThisIteration = countActiveMotivations - (iteration - 1);
-							var unitsPerShare = Math.floor(totalUnits / totalShares);
+							var sharesThisIteration;
+							var unitsPerShare;
+
+							unitsAvailable = lib.nullProtect(resources.units[unitName].unallocated, 0);
+							unitsAllocated = lib.nullProtect(motivationMemory.allocatedUnits[unitName], 0);
+							rawUnitsDemanded = lib.nullProtect(demands[motivationMemory.name].units[unitName], 0);
+							unitsDemanded = rawUnitsDemanded - unitsAllocated;
+							sharesThisIteration = countActiveMotivations - (iteration - 1);
+							unitsPerShare = Math.floor(totalUnits / totalShares);
+							if (unitsPerShare == 0)
+								unitsPerShare = 1;
 
 							// Determine how many units to allocate to this motivation
 							unitsToAllocate = unitsPerShare * sharesThisIteration;
@@ -258,8 +274,9 @@ module.exports =
 				}
 
 				// motivation round 4 ----------------------------------------------------------------------------------
+				console.log(">>>> Final Motivation Round <<<<");
 				sortedMotivations.forEach(function(motivationMemory) {
-					console.log("---- Motivating round 4 - manage needs: " + motivationMemory.name);
+					console.log("---- Motivating round 4 - manage needs: " + motivationMemory.name + " Active: " + motivationMemory.active);
 					// processes needs for motivation ------------------------------------------------------------------
 					needManager.manageNeeds(roomName, motivations[motivationMemory.name], motivationMemory);
 				}, this);

@@ -47,7 +47,7 @@ NeedTransferEnergy.prototype.getUnitDemands = function(roomName, memory)
 
 
 	//console.log("getUnitDemands: " + energy + "/" + energyCapacity + "/" + neededEnergy);
-	result["worker"] = Math.floor(neededEnergy / 50);
+	result["worker"] = Math.ceil(neededEnergy / 50);
 
 	return result;
 };

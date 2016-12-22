@@ -1,6 +1,7 @@
 module.exports =
 {
 	"worker": {
+		"mode": 1,
 		"parts": [
 			{
 				"part" : WORK,
@@ -21,5 +22,21 @@ module.exports =
 		"memory": {
 			"unit": "worker"
 		}
+	},
+
+	"harvester": {
+		"mode": 2,
+		"parts": [
+			WORK,
+			WORK,
+			WORK,
+			WORK,
+			WORK,
+			MOVE
+		],
+		"memory": {
+			"unit": "harvester"
+		}
 	}
+
 };

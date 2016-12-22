@@ -96,24 +96,31 @@ module.exports = function()
 		var name = this.generateName(unitName);
 		var result;
 		var energyLeft = energy;
-		units[unitName].parts.forEach(function(part) {
-			var partEnergy = energy * part.weight;
-			var numberParts = Math.floor(partEnergy/this.costs[part.part]);
-
-			if (numberParts < part.minimum)
-				numberParts = part.minimum;
-			for (x = 0; x < numberParts; x++)
-			{
-				parts.push(part.part);
-				energyLeft -= this.costs[part.part];
-			}
-		}, this);
-
-		// fill up any remaining energy with move
-		while (energyLeft >= this.costs[MOVE])
+		if (units[unitName].mode == 1)
 		{
-			parts.push(MOVE);
-			energyLeft -= this.costs[MOVE];
+			units[unitName].parts.forEach(function (part)
+			{
+				var partEnergy = energy * part.weight;
+				var numberParts = Math.floor(partEnergy / this.costs[part.part]);
+
+				if (numberParts < part.minimum)
+					numberParts = part.minimum;
+				for (x = 0; x < numberParts; x++)
+				{
+					parts.push(part.part);
+					energyLeft -= this.costs[part.part];
+				}
+			} , this);
+
+			// fill up any remaining energy with move
+			while (energyLeft >= this.costs[MOVE])
+			{
+				parts.push(MOVE);
+				energyLeft -= this.costs[MOVE];
+			}
+		} else if (units[unitName].mode == 2)
+		{
+			parts = units[unitName].parts;
 		}
 
 		result = this.createCreep(parts, name, units[unitName].memory);
