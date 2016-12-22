@@ -53,7 +53,7 @@ module.exports =
 				room.memory.motivations[motivationHarvestSource.name].priority = C.PRIORITY_1;
 
 				motivationSupplySpawn.init(room.name);
-				var numCreeps = Object.keys(Game.creeps).length;
+				var numCreeps = resourceManager.countRoomUnits(roomName, "worker");
 				if (numCreeps <= 4)
 					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_2;
 				else if (numCreeps <= 10)

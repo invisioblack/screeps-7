@@ -142,6 +142,12 @@ module.exports = function()
 					{
 						creep.moveTo(container);
 					}
+					if (container.store[RESOURCE_ENERGY] <= 10 && creep.carry[RESOURCE_ENERGY] > 0)
+					{
+						creep.say("Its Empty!");
+						creep.memory.job.mode = this.JOB_MODE_WORK;
+						this.resetSource(creep);
+					}
 					break;
 				case this.JOB_SOURCETYPE_SOURCE:
 					var source = Game.getObjectById(creep.memory.sourceId);
