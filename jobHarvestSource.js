@@ -49,17 +49,23 @@ JobHarvestSource.prototype.work = function (creep)
 	creep.memory.sourceId = target.id;
 	creep.memory.sourceType = this.JOB_SOURCETYPE_SOURCE;
 
-	result = creep.harvest(target);
+	if (_.sum(container.store) < container.storeCapacity)
+	{
+		result = creep.harvest(target);
 
-	//console.log("harvest: " + result);
-	if (result == ERR_NOT_ENOUGH_ENERGY)
-	{
-		creep.say("Source Empty!");
+		//console.log("harvest: " + container.storeCapacity);
+		if (result == ERR_NOT_ENOUGH_ENERGY)
+		{
+			creep.say("Source Empty!");
+		}
+		if (result == ERR_NOT_IN_RANGE)
+		{
+			creep.moveTo(container);
+		}
+	} else {
+		creep.say("Full!");
 	}
-	if (result == ERR_NOT_IN_RANGE)
-	{
-		creep.moveTo(container);
-	}
+
 };
 
 //-------------------------------------------------------------------------

@@ -181,12 +181,12 @@ module.exports =
 							rawUnitsDemanded = lib.nullProtect(demands[motivationMemory.name].units[unitName], 0);
 							unitsDemanded = rawUnitsDemanded - unitsAllocated;
 							sharesThisIteration = countActiveMotivations - (iteration - 1);
-							unitsPerShare = Math.floor(totalUnits / totalShares);
-							if (unitsPerShare == 0)
-								unitsPerShare = 1;
+							unitsPerShare = totalUnits / totalShares;
 
 							// Determine how many units to allocate to this motivation
-							unitsToAllocate = unitsPerShare * sharesThisIteration;
+							unitsToAllocate = Math.floor(unitsPerShare * sharesThisIteration);
+							if (unitsToAllocate == 0)
+								unitsToAllocate = 1;
 							if (unitsDemanded < unitsToAllocate)
 								unitsToAllocate = unitsDemanded;
 							if (unitsAvailable < unitsToAllocate)
@@ -206,6 +206,10 @@ module.exports =
 							resources.units[unitName].allocated += motivationMemory.allocatedUnits[unitName];
 							resources.units[unitName].unallocated -= motivationMemory.allocatedUnits[unitName];
 							console.log("  " + unitName + ': Allocation: ' + resources.units[unitName].allocated + '/' + resources.units[unitName].total + ' Unallocated: ' + resources.units[unitName].unallocated);
+
+							// hack
+							if (rawUnitsDemanded == 0)
+								iteration--;
 						} else {
 							motivationMemory.allocatedUnits[unitName] = 0;
 						}
