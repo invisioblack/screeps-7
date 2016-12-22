@@ -56,16 +56,16 @@ module.exports =
 				var numCreeps = resourceManager.countRoomUnits(roomName, "worker");
 				if (numCreeps <= 4)
 					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_2;
-				else if (numCreeps <= 10)
+				else if (numCreeps < 10)
 					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_4;
 				else
-					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_5;
+					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_6;
 
 				motivationMaintainInfrastructure.init(room.name);
 				room.memory.motivations[motivationMaintainInfrastructure.name].priority = C.PRIORITY_3;
 
 				motivationSupplyController.init(room.name);
-				room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_4;
+				room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_5;
 			}
 		}
 	},
@@ -232,6 +232,7 @@ module.exports =
 						}
 					} , this);
 
+					//console.log("-------PREALLOCATION: totalUnitsAvailable: " + totalUnitsAvailable + " totalUnitsDemanded: " + totalUnitsDemanded + " totalUnitsAllocated: " + totalUnitsAllocated);
 					while (totalUnitsAvailable > 0 && (totalUnitsDemanded - totalUnitsAllocated) > 0)
 					{
 						sortedMotivations.forEach(function (motivationMemory)
@@ -268,10 +269,11 @@ module.exports =
 						{
 							if (motivationMemory.active)
 							{
-								totalUnitsDemanded += demands[motivationMemory.name].units[unitName];
-								totalUnitsAllocated += motivationMemory.allocatedUnits[unitName];
+								totalUnitsDemanded += lib.nullProtect(demands[motivationMemory.name].units[unitName], 0);
+								totalUnitsAllocated += lib.nullProtect(motivationMemory.allocatedUnits[unitName], 0);
 							}
 						} , this);
+						//console.log("-------POSTALLOCATION: totalUnitsAvailable: " + totalUnitsAvailable + " totalUnitsDemanded: " + totalUnitsDemanded + " totalUnitsAllocated: " + totalUnitsAllocated);
 					}
 
 					console.log(">>>>Final " + unitName + " Allocation: " + resources.units[unitName].allocated + "/" + resources.units[unitName].total + " Unallocated: " + resources.units[unitName].unallocated);
