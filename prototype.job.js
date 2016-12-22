@@ -74,9 +74,10 @@ module.exports = function()
 		// look for energy laying on the ground
 		var droppedEnergy = creep.room.find(FIND_DROPPED_ENERGY);
 		droppedEnergy.forEach(function (drop) {
-			console.log("dropID: " + drop.id);
+			//console.log("dropID: " + drop.id);
 			if (creep.memory.sourceType != this.JOB_SOURCETYPE_DROP && this.countCreepsOnSource(drop.id) == 0)
 			{
+				//console.log("I'll get it! dropID: " + drop.id);
 				creep.memory.sourceId = drop.id;
 				creep.memory.sourceType = this.JOB_SOURCETYPE_DROP;
 			}
@@ -86,7 +87,7 @@ module.exports = function()
 		if (creep.memory.sourceId == "")
 		{
 			var container = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 0; }});
-			if (!lib.isNull(container))
+			if (!lib.isNull(container) && container.store[RESOURCE_ENERGY] > 0)
 			{
 				creep.memory.sourceId = container.id;
 				creep.memory.sourceType = this.JOB_SOURCETYPE_CONTAINER;

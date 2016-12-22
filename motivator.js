@@ -215,7 +215,7 @@ module.exports =
 					} , this);
 
 					// motivation round 3 ------------------------------------------------------------------------------
-					var totalUnitsAvailable = resources.units[unitName].unallocated;
+					var totalUnitsAvailable = lib.nullProtect(resources.units[unitName].unallocated, 0);
 					var totalUnitsDemanded = 0;
 					var totalUnitsAllocated = 0;
 
@@ -223,8 +223,8 @@ module.exports =
 					{
 						if (motivationMemory.active)
 						{
-							totalUnitsDemanded += demands[motivationMemory.name].units[unitName];
-							totalUnitsAllocated += motivationMemory.allocatedUnits[unitName];
+							totalUnitsDemanded += lib.nullProtect(demands[motivationMemory.name].units[unitName], 0);
+							totalUnitsAllocated += lib.nullProtect(motivationMemory.allocatedUnits[unitName], 0);
 						}
 					} , this);
 
@@ -236,9 +236,9 @@ module.exports =
 							if (motivationMemory.active)
 							{
 
-								var unitsAvailable = resources.units[unitName].unallocated;
-								var unitsAllocated = motivationMemory.allocatedUnits[unitName];
-								var unitsDemanded = demands[motivationMemory.name].units[unitName] - unitsAllocated;
+								var unitsAvailable = lib.nullProtect(resources.units[unitName].unallocated, 0);
+								var unitsAllocated = lib.nullProtect(motivationMemory.allocatedUnits[unitName], 0);
+								var unitsDemanded = lib.nullProtect(demands[motivationMemory.name].units[unitName], 0) - unitsAllocated;
 
 								if (unitsDemanded < 0)
 									unitsDemanded = 0;

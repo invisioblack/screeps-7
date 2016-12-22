@@ -31,7 +31,7 @@ JobHarvestSource.prototype.work = function (creep)
 {
 	var need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
 	var target = Game.getObjectById(need.targetId);
-	var container = target.pos.findInRange(FIND_STRUCTURES, 1,{ filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }});
+	var container = target.pos.findInRange(FIND_STRUCTURES, 1,{ filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }})[0];
 
 	//avoid hostiles
 	if (creep.avoidHostile(creep))
@@ -58,7 +58,7 @@ JobHarvestSource.prototype.work = function (creep)
 	}
 	if (result == ERR_NOT_IN_RANGE)
 	{
-		creep.moveTo(container.pos);
+		creep.moveTo(container);
 	}
 };
 
