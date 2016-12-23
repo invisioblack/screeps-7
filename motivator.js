@@ -19,6 +19,7 @@ var motivationSupplyController = require('motivationSupplyController');
 var motivationMaintainInfrastructure = require('motivationMaintainInfrastructure');
 var motivationHarvestSource = require("motivationHarvestSource");
 
+var defenseManager = require("defenseManager");
 var resourceManager = require('resourceManager');
 var needManager = require('needManager');
 var units = require("units");
@@ -91,6 +92,9 @@ module.exports =
 				//------------------------------------------------------------------------------------------------------
 				// motivate
 				console.log('-------- motivator.motivate: ' + roomName);
+
+				// safeMode failsafe
+				defenseManager.safeModeFailsafe(roomName);
 
 				// declarations ----------------------------------------------------------------------------------------
 				var resources = resourceManager.getRoomResources(roomName); // get room resources
