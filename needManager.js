@@ -57,8 +57,8 @@ module.exports =
 			var allocatedUnits = motivationMemory.allocatedUnits[unitName];
 
 			// if we have open allocations, we need to find if there is a creep to assign
-			var done = false;
-			while (!done && assignedUnits < allocatedUnits)
+			var outOfCreeps = false;
+			while (!outOfCreeps && assignedUnits < allocatedUnits)
 			{
 				needs.forEach(function (need)
 				{
@@ -66,23 +66,28 @@ module.exports =
 
 					// if there is a creep to assign, we need to assign it
 					var unitDemands = motivation.needs[need.type].getUnitDemands(roomName , need);
-					var creepsAssigned = resourceManager.countRoomMotivationNeedUnits(roomName , motivation.name , need.name , unitName);
 					var creepsDemanded = unitDemands[unitName];
+					var creepsAssigned = resourceManager.countRoomMotivationNeedUnits(roomName , motivation.name , need.name , unitName);
 					var creep = resourceManager.findUnallocatedRoomUnit(room.name , unitName);
 
-					if (!lib.isNull(creep) && creepsAssigned < creepsDemanded)
+					while (!lib.isNull(creep) && creepsAssigned < creepsDemanded && assignedUnits < allocatedUnits)
 					{
 						creep.assignMotive(roomName , motivation.name , need.name);
+
+						// update for iteration
+						creep = resourceManager.findUnallocatedRoomUnit(room.name , unitName);
+						creepsAssigned = resourceManager.countRoomMotivationNeedUnits(roomName , motivation.name , need.name , unitName);
+						assignedUnits = resourceManager.countRoomMotivationUnits(roomName , motivation.name , unitName);
+						allocatedUnits = motivationMemory.allocatedUnits[unitName];
 					}
-					else
-					{
-						done = true;
-					}
-					assignedUnits = resourceManager.countRoomMotivationUnits(roomName , motivation.name , unitName);
+
+					// you think you can move this up into the while above, but don't it causes problems on rare iterations
+					if (lib.isNull(creep))
+						outOfCreeps = true;
 				} , this);
 			}
 
-			console.log("  Assigned/Allocated " + unitName + ": " + assignedUnits + "/" + allocatedUnits);
+			console.log("    Assigned/Allocated " + unitName + ": " + assignedUnits + "/" + allocatedUnits);
 		}
 	},
 

@@ -170,7 +170,7 @@ module.exports =
 							activeDemandingMotivations++;
 					}, this);
 
-					console.log("Motivating unit: " + unitName + " for " + activeDemandingMotivations + " motivation(s)");
+					console.log("++++Motivating unit: " + unitName + " for " + activeDemandingMotivations + " motivation(s)");
 
 					totalShares = activeDemandingMotivations * (activeDemandingMotivations + 1) / 2;
 					totalUnits = resources.units[unitName].unallocated;
@@ -188,46 +188,51 @@ module.exports =
 							var sharesThisIteration;
 							var unitsPerShare;
 
-							unitsAvailable = lib.nullProtect(resources.units[unitName].unallocated, 0);
-							unitsTotalAllocated = lib.nullProtect(resources.units[unitName].allocated , 0);
 							unitsDemanded = lib.nullProtect(demands[motivationMemory.name].units[unitName], 0);
-							if (unitsDemanded < 0)
-								unitsDemanded = 0;
-							sharesThisIteration = activeDemandingMotivations - (iteration - 1);
-							unitsPerShare = totalUnits / totalShares;
 
-							// Determine how many units to allocate to this motivation
-							unitsToAllocate = Math.floor(unitsPerShare * sharesThisIteration);
-							if (unitsToAllocate <= 0)
-								unitsToAllocate = 1;
-							if (unitsDemanded < unitsToAllocate)
-								unitsToAllocate = unitsDemanded;
-							if (unitsAvailable < unitsToAllocate)
-								unitsToAllocate = unitsAvailable;
-							if (unitsToAllocate > unitsAvailable)
-								unitsToAllocate = unitsAvailable;
+							if (unitsDemanded > 0)
+							{
+								unitsAvailable = lib.nullProtect(resources.units[unitName].unallocated , 0);
+								unitsTotalAllocated = lib.nullProtect(resources.units[unitName].allocated , 0);
 
-							// allocate units
-							motivationMemory.allocatedUnits[unitName] = unitsToAllocate;
+								if (unitsDemanded < 0)
+									unitsDemanded = 0;
+								sharesThisIteration = activeDemandingMotivations - (iteration - 1);
+								unitsPerShare = totalUnits / totalShares;
 
-							// output status ---------------------------------------------------------------------------
-							console.log("Total Allocated/Total: " + unitsTotalAllocated + '/' + resources.units[unitName].total
-								+ ' Unallocated: ' + resources.units[unitName].unallocated);
-							console.log("  Units Available: " + unitsAvailable
-								+ " Units Allocated/Demanded: " + unitsToAllocate + "/" + unitsDemanded);
-							console.log("  Iteration: " + iteration
-								+ " Shares this iteration " + sharesThisIteration
-								+ " Units/Share: " + unitsPerShare);
+								// Determine how many units to allocate to this motivation
+								unitsToAllocate = Math.floor(unitsPerShare * sharesThisIteration);
+								if (unitsToAllocate <= 0)
+									unitsToAllocate = 1;
+								if (unitsDemanded < unitsToAllocate)
+									unitsToAllocate = unitsDemanded;
+								if (unitsAvailable < unitsToAllocate)
+									unitsToAllocate = unitsAvailable;
+								if (unitsToAllocate > unitsAvailable)
+									unitsToAllocate = unitsAvailable;
 
-							// update resources.units["worker"].unallocated
-							resources.units[unitName].allocated += motivationMemory.allocatedUnits[unitName];
-							resources.units[unitName].unallocated -= motivationMemory.allocatedUnits[unitName];
-							console.log('  Allocation/Total: ' + resources.units[unitName].allocated + '/' + resources.units[unitName].total + ' Unallocated: ' + resources.units[unitName].unallocated);
+								// allocate units
+								motivationMemory.allocatedUnits[unitName] = unitsToAllocate;
 
-							// hack
-							if (unitsDemanded == 0)
+								// output status ---------------------------------------------------------------------------
+								console.log("    Total Allocated/Total: " + unitsTotalAllocated + '/' + resources.units[unitName].total
+									+ ' Unallocated: ' + resources.units[unitName].unallocated);
+								console.log("    Units Available: " + unitsAvailable
+									+ " Units Allocated/Demanded: " + unitsToAllocate + "/" + unitsDemanded);
+								console.log("    Iteration: " + iteration
+									+ " Shares this iteration " + sharesThisIteration
+									+ " Units/Share: " + unitsPerShare);
+
+								// update resources.units["worker"].unallocated
+								resources.units[unitName].allocated += motivationMemory.allocatedUnits[unitName];
+								resources.units[unitName].unallocated -= motivationMemory.allocatedUnits[unitName];
+								console.log('    Allocation/Total: ' + resources.units[unitName].allocated + '/' + resources.units[unitName].total + ' Unallocated: ' + resources.units[unitName].unallocated);
+							} else { // handle no demands
 								iteration--;
+								motivationMemory.allocatedUnits[unitName] = 0;
+							}
 						} else {
+							iteration--;
 							motivationMemory.allocatedUnits[unitName] = 0;
 						}
 
@@ -265,12 +270,12 @@ module.exports =
 								if (unitsDemanded < 0)
 									unitsDemanded = 0;
 
-								console.log("  " + unitName + "Available/Demanded-Allocated/Allocated units: " + unitsAvailable + "/" + unitsDemanded + "/" + unitsAllocated);
+								console.log("    " + unitName + "Available/Demanded-Allocated/Allocated units: " + unitsAvailable + "/" + unitsDemanded + "/" + unitsAllocated);
 
 								// allocate an additional unit if it is needed
 								if (unitsAvailable > 0 && unitsDemanded > 0)
 								{
-									console.log("  +Allocating additional unit:" + unitName);
+									console.log("    +Allocating additional unit:" + unitName);
 									motivationMemory.allocatedUnits[unitName] += 1;
 									resources.units[unitName].allocated += 1;
 									resources.units[unitName].unallocated -= 1;
