@@ -190,15 +190,17 @@ module.exports =
 							var unitsPerShare;
 
 							unitsAvailable = lib.nullProtect(resources.units[unitName].unallocated, 0);
-							unitsAllocated = lib.nullProtect(motivationMemory.allocatedUnits[unitName], 0);
+							unitsAllocated = lib.nullProtect(resources.units[unitName].allocated , 0);
 							rawUnitsDemanded = lib.nullProtect(demands[motivationMemory.name].units[unitName], 0);
 							unitsDemanded = rawUnitsDemanded - unitsAllocated;
+							if (unitsDemanded < 0)
+								unitsDemanded = 0;
 							sharesThisIteration = activeDemandingMotivations - (iteration - 1);
 							unitsPerShare = totalUnits / totalShares;
 
 							// Determine how many units to allocate to this motivation
 							unitsToAllocate = Math.floor(unitsPerShare * sharesThisIteration);
-							if (unitsToAllocate == 0)
+							if (unitsToAllocate <= 0)
 								unitsToAllocate = 1;
 							if (unitsDemanded < unitsToAllocate)
 								unitsToAllocate = unitsDemanded;
@@ -211,14 +213,14 @@ module.exports =
 							motivationMemory.allocatedUnits[unitName] = unitsToAllocate;
 
 							// output status ---------------------------------------------------------------------------
-							//console.log("Pre: " + unitName + " Allocation: " + resources.units[unitName].allocated + '/' + resources.units[unitName].total + ' Unallocated: ' + resources.units[unitName].unallocated);
+							//console.log("Pre: " + unitName + " Allocated/Total: " + unitsAllocated + '/' + resources.units[unitName].total + ' Unallocated: ' + resources.units[unitName].unallocated + " Raw Demanded: " + rawUnitsDemanded);
 							console.log("  " + unitName + ": Units Available: " + unitsAvailable + " Units Allocated/Demanded-Allocated: " + unitsToAllocate + "/" + unitsDemanded);
 							console.log("  " + unitName + ": Iteration: " + iteration + " Shares this iteration " + sharesThisIteration + " Units/Share: " + unitsPerShare);
 
 							// update resources.units["worker"].unallocated
 							resources.units[unitName].allocated += motivationMemory.allocatedUnits[unitName];
 							resources.units[unitName].unallocated -= motivationMemory.allocatedUnits[unitName];
-							console.log("  " + unitName + ': Allocation: ' + resources.units[unitName].allocated + '/' + resources.units[unitName].total + ' Unallocated: ' + resources.units[unitName].unallocated);
+							console.log("  " + unitName + ': Allocation/Total: ' + resources.units[unitName].allocated + '/' + resources.units[unitName].total + ' Unallocated: ' + resources.units[unitName].unallocated);
 
 							// hack
 							if (rawUnitsDemanded == 0)

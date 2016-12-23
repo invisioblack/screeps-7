@@ -52,7 +52,6 @@ MotivationHarvestSource.prototype.getDesiredSpawnUnit = function ()
 MotivationHarvestSource.prototype.getDesireSpawn = function (roomName, demands)
 {
 	var result = true;
-	var memory = Game.rooms[roomName].memory.motivations[this.name];
 	var numContainers = Game.rooms[roomName].find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }}).length;
 	var numHarvesters = resourceManager.countRoomUnits(roomName, "harvester");
 	var numWorkers = resourceManager.countRoomUnits(roomName, "worker");
