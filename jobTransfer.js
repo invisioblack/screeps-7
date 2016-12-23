@@ -66,7 +66,7 @@ JobTransfer.prototype.work = function (creep)
 				var result = creep.transfer(target, RESOURCE_ENERGY);
 				if (result == ERR_NOT_IN_RANGE)
 				{
-					creep.moveTo(target);
+					creep.moveTo(target, {"maxRooms": 1});
 				} else if (result == ERR_FULL) {
 					//console.log("---- RESET");
 					creep.deassignMotive();

@@ -140,7 +140,7 @@ module.exports = function()
 					result = creep.pickup(drop);
 					if (result == ERR_NOT_IN_RANGE)
 					{
-						creep.moveTo(drop);
+						creep.moveTo(drop, {"maxRooms": 1});
 					}
 					break;
 				case this.JOB_SOURCETYPE_CONTAINER:
@@ -148,7 +148,7 @@ module.exports = function()
 					result = creep.withdraw(container, RESOURCE_ENERGY);
 					if (result == ERR_NOT_IN_RANGE)
 					{
-						creep.moveTo(container);
+						creep.moveTo(container, {"maxRooms": 1});
 					}
 					if (container.store[RESOURCE_ENERGY] <= 10)
 					{
@@ -167,7 +167,7 @@ module.exports = function()
 					}
 					if (result == ERR_NOT_IN_RANGE)
 					{
-						creep.moveTo(source);
+						creep.moveTo(source, {"maxRooms": 1});
 					}
 					break;
 			}
