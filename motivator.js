@@ -156,11 +156,24 @@ module.exports =
 				// process round 2 and 3 for each unit type ------------------------------------------------------------
 				for (var unitName in units)
 				{
-					console.log("Motivating unit: " + unitName);
+
 					// round 2, regular allocation ---------------------------------------------------------------------
 					var iteration = 1;
-					var totalShares = countActiveMotivations * (countActiveMotivations + 1) / 2;
-					var totalUnits = resources.units[unitName].unallocated;
+					var totalShares;
+					var totalUnits;
+					var activeDemandingMotivations = 0;
+
+					// count how many motivations are active, and demanding units of this type
+					sortedMotivations.forEach(function (motivationMemory)
+					{
+						if (motivationMemory.active && lib.nullProtect(demands[motivationMemory.name].units[unitName], 0) > 0)
+							activeDemandingMotivations++;
+					}, this);
+
+					console.log("Motivating unit: " + unitName + " for " + activeDemandingMotivations + " motivation(s)");
+
+					totalShares = activeDemandingMotivations * (activeDemandingMotivations + 1) / 2;
+					totalUnits = resources.units[unitName].unallocated;
 
 					sortedMotivations.forEach(function (motivationMemory)
 					{
@@ -180,7 +193,7 @@ module.exports =
 							unitsAllocated = lib.nullProtect(motivationMemory.allocatedUnits[unitName], 0);
 							rawUnitsDemanded = lib.nullProtect(demands[motivationMemory.name].units[unitName], 0);
 							unitsDemanded = rawUnitsDemanded - unitsAllocated;
-							sharesThisIteration = countActiveMotivations - (iteration - 1);
+							sharesThisIteration = activeDemandingMotivations - (iteration - 1);
 							unitsPerShare = totalUnits / totalShares;
 
 							// Determine how many units to allocate to this motivation

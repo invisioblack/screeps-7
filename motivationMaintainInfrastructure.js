@@ -29,7 +29,7 @@ var MotivationMaintainInfrastructure = function ()
 	this.needs["needBuild"] = needBuild;
 	this.needs["needRepair"] = needRepair;
 
-	this.wallHP = [0, 100000, 300000, 500000, 2000000, 10000000, 50000000, 100000000, 3000000];
+	this.wallHP = [0, 50000, 100000, 300000, 500000, 1000000, 5000000, 10000000, 10000000];
 };
 
 MotivationMaintainInfrastructure.prototype = Object.create(Motivation.prototype);
@@ -242,13 +242,13 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 		switch (site.structureType)
 		{
 			case STRUCTURE_EXTENSION:
-				need.priority = C.PRIORITY_2;
+				need.priority = C.PRIORITY_3;
 				break;
 			case STRUCTURE_CONTAINER:
 				need.priority = C.PRIORITY_2;
 				break;
 			default:
-				need.priority = C.PRIORITY_4;
+				need.priority = C.PRIORITY_5;
 				break;
 		}
 
@@ -262,19 +262,19 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 			}
 			else if (percent < 50)
 			{
-				need.priority = C.PRIORITY_2;
+				need.priority = C.PRIORITY_3;
 			}
 			else if (percent < 75)
 			{
-				need.priority = C.PRIORITY_3;
+				need.priority = C.PRIORITY_4;
 			}
 			else if (percent < 90)
 			{
-				need.priority = C.PRIORITY_4;
+				need.priority = C.PRIORITY_6;
 			}
 			else
 			{
-				need.priority = C.PRIORITY_5;
+				need.priority = C.PRIORITY_7;
 			}
 
 		} else if (need.type == "needRepair" && site.structureType == STRUCTURE_WALL)
