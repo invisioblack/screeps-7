@@ -101,7 +101,7 @@ MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
 		var spawn = Game.spawns[spawnName];
 		if (spawn.room.name == roomName)
 		{
-			var needName = "energy." + spawn.id;
+			var needName = "supplySpawn." + spawn.id;
 			var need;
 
 			//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
@@ -129,7 +129,7 @@ MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
 	// look up sources and find out how many needs we should have for each one
 	var extenders = room.find(FIND_MY_STRUCTURES, {filter: { structureType: STRUCTURE_EXTENSION }});
 	extenders.forEach(function (ex) {
-		var needName = "energy." + ex.id;
+		var needName = "supplyExtender." + ex.id;
 		var need;
 
 		//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);

@@ -140,14 +140,14 @@ module.exports = function()
 
 	Creep.prototype.assignMotive = function (roomName, motivationName, needName)
 	{
-		this.say("Assigned to: " + motivationName + ":" + needName);
+		this.say(needName);
 		this.memory.motive.motivation = motivationName;
 		this.memory.motive.need = needName;
 	};
 
 	Creep.prototype.deassignMotive = function ()
 	{
-		this.say("Unassigned from: " + this.memory.motive.motivation + ":" + this.memory.motive.need);
+		this.say("Done!");
 		this.memory.motive.motivation = "";
 		this.memory.motive.need = "";
 	};

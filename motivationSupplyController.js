@@ -94,7 +94,7 @@ MotivationSupplyController.prototype.updateNeeds = function (roomName)
 
 	// Handle Harvest Energy Needs -------------------------------------------------------------------------------------
 	// look up sources and find out how many needs we should have for each one
-	var needName = "harvest." + room.controller.id;
+	var needName = "supplyController." + room.controller.id;
 	var need;
 
 	//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);

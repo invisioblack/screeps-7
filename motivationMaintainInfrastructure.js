@@ -28,6 +28,8 @@ var MotivationMaintainInfrastructure = function ()
 	this.needs = {};
 	this.needs["needBuild"] = needBuild;
 	this.needs["needRepair"] = needRepair;
+
+	this.wallHP = [0, 100000, 300000, 500000, 2000000, 10000000, 50000000, 100000000, 3000000];
 };
 
 MotivationMaintainInfrastructure.prototype = Object.create(Motivation.prototype);
@@ -116,9 +118,7 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 				memory.needs[needName] = {};
 				memory.needs[needName].type = "needBuild";
 				memory.needs[needName].name = needName;
-				memory.needs[needName].sourceId = cs.pos.findClosestByRange(FIND_SOURCES).id; // get energy from closest source
 				memory.needs[needName].targetId = cs.id;
-				memory.needs[needName].distance = room.findPath(cs.pos , Game.getObjectById(memory.needs[needName].sourceId).pos).length;
 				memory.needs[needName].priority = C.PRIORITY_5;
 			}
 		}
@@ -128,7 +128,7 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 	// look up sources and find out how many needs we should have for each one
 	var repairSites = room.find(FIND_STRUCTURES, {
 		filter: function (s) {
-			return s.hits < s.hitsMax;
+			return s.hits < s.hitsMax && s.structureType != STRUCTURE_WALL;
 		}
 	});
 	repairSites.forEach(function (rs) {
@@ -142,9 +142,31 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 			memory.needs[needName] = {};
 			memory.needs[needName].type = "needRepair";
 			memory.needs[needName].name = needName;
-			memory.needs[needName].sourceId = rs.pos.findClosestByRange(FIND_SOURCES).id; // get energy from closest source
 			memory.needs[needName].targetId = rs.id;
-			memory.needs[needName].distance = room.findPath(rs.pos, Game.getObjectById(memory.needs[needName].sourceId).pos).length;
+			memory.needs[needName].priority = C.PRIORITY_1;
+		}
+	}, this);
+
+	// Handle WALLRepair Needs -------------------------------------------------------------------------------------
+	// look up sources and find out how many needs we should have for each one
+	var wallHP = this.wallHP[room.controller.level];
+	var wallRepairSites = room.find(FIND_STRUCTURES, {
+		filter: function (s) {
+			return s.hits < wallHP && s.structureType == STRUCTURE_WALL;
+		}
+	});
+	wallRepairSites.forEach(function (rs) {
+		var needName = "repairWall." + rs.id;
+
+		//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
+
+		// create new need if one doesn't exist
+		if (lib.isNull(memory.needs[needName]))
+		{
+			memory.needs[needName] = {};
+			memory.needs[needName].type = "needRepair";
+			memory.needs[needName].name = needName;
+			memory.needs[needName].targetId = rs.id;
 			memory.needs[needName].priority = C.PRIORITY_1;
 		}
 	}, this);
@@ -198,9 +220,10 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 
 					var siteId = memory.needs[needName].targetId;
 					var result = _.filter(repairSites , {"id": siteId});
+					var resultWall = _.filter(wallRepairSites , {"id": siteId});
 
 					// if there are no sites, then cull it
-					if (result.length == 0)
+					if (result.length == 0 && resultWall.length == 0)
 					{
 						console.log("-------------- CULLING REPAIR SITE: " + siteId);
 						delete memory.needs[needName];

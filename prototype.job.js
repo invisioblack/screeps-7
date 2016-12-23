@@ -86,7 +86,13 @@ module.exports = function()
 		// look for energy in containers
 		if (creep.memory.sourceId == "")
 		{
-			var container = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 0; }});
+			var container = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] >= creep.carryCapacity; }});
+			if (lib.isNull(container))
+			{
+				container = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] >= 0; }});
+			}
+
+			// second pass check and assign
 			if (!lib.isNull(container) && container.store[RESOURCE_ENERGY] > 0)
 			{
 				creep.memory.sourceId = container.id;
@@ -142,7 +148,7 @@ module.exports = function()
 					{
 						creep.moveTo(container);
 					}
-					if (container.store[RESOURCE_ENERGY] <= 10 && creep.carry[RESOURCE_ENERGY] > 0)
+					if (container.store[RESOURCE_ENERGY] <= 10)
 					{
 						creep.say("Its Empty!");
 						creep.memory.job.mode = this.JOB_MODE_WORK;
