@@ -35,4 +35,21 @@ module.exports = function()
 
         return result;
     };
+
+	Source.prototype.countCreepsOnSource = function ()
+	{
+		var result = 0;
+
+		for (var creepName in Game.creeps)
+		{
+			var creep = Game.creeps[creepName];
+			if (!lib.isNull(creep.memory.sourceId))
+			{
+				if (creep.memory.sourceId == this.id)
+					result++;
+			}
+		}
+
+		return result;
+	};
 };

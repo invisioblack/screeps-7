@@ -102,25 +102,25 @@ module.exports = function()
 			}
 		}
 
-		//console.log("harvest: " + creep.memory.sourceId);
+
 
 		// harvest my own energy
 		if (creep.memory.sourceId == "" && creep.getHasPart(WORK))
 		{
-			var sources = creep.room.find(FIND_SOURCES);
-			sources.forEach(function (s) {
+			var source = creep.pos.findClosestByRange(FIND_SOURCES, { filter: function (s)
+			{
 				var max = s.getMaxHarvesters();
-				var on = this.countCreepsOnSource(s.id);
-				var energy = s.energy;
-				//console.log("source/max/on/e: " + s.id + "/" + max + "/" + on + "/" + energy);
+				var on = s.countCreepsOnSource();
+				return max > on && s.energy > 0;
+			}});
 
-				if(max > on && energy > 0 && creep.memory.sourceId == "")
-				{
-					creep.memory.sourceId = s.id;
-					creep.memory.sourceType = this.JOB_SOURCETYPE_SOURCE;
-				}
-			}, this);
+			if (!lib.isNull(source))
+			{
+				creep.memory.sourceId = source.id;
+				creep.memory.sourceType = this.JOB_SOURCETYPE_SOURCE;
+			}
 		}
+		//console.log("harvest: " + creep.memory.sourceId);
 
 		// check to see if I can get energy, if so get it, if not, complain
 		if (creep.memory.sourceId == "") // I'm screwed, I cannot get energy
