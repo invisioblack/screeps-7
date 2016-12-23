@@ -86,11 +86,13 @@ module.exports = function()
 		// look for energy in containers
 		if (creep.memory.sourceId == "")
 		{
-			var container = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] >= creep.carryCapacity; }});
+			var container = creep.pos.findClosestByRange(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] >= creep.carryCapacity; }});
 			if (lib.isNull(container))
 			{
-				container = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] >= 0; }});
+				container = creep.pos.findClosestByRange(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] >= 0; }});
 			}
+
+			//console.log(container.store[RESOURCE_ENERGY]);
 
 			// second pass check and assign
 			if (!lib.isNull(container) && container.store[RESOURCE_ENERGY] > 0)

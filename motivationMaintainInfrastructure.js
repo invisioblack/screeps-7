@@ -152,7 +152,7 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 	var wallHP = this.wallHP[room.controller.level];
 	var wallRepairSites = room.find(FIND_STRUCTURES, {
 		filter: function (s) {
-			return s.hits < wallHP && s.structureType == STRUCTURE_WALL;
+			return s.structureType == STRUCTURE_WALL && s.hits < wallHP;
 		}
 	});
 	wallRepairSites.forEach(function (rs) {
@@ -252,23 +252,28 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 				break;
 		}
 
-		if (need.type == "needRepair" && site.structureType != STRUCTURE_WALL)
+		if (need.type == "needRepair")
 		{
-			var percent = (site.hits / site.hitsMax) * 10000 / 100;
+			var percent;
+			var max = site.hitsMax;
 
-			if (percent < 25)
+			if (site.structureType == STRUCTURE_WALL)
+				max =  this.wallHP[room.controller.level];
+			percent = (site.hits / max) * 10000 / 100;
+			//console.log(needName + " PERCENT: " + percent);
+			if (percent < 10)
 			{
 				need.priority = C.PRIORITY_1;
 			}
-			else if (percent < 50)
+			else if (percent < 25)
 			{
-				need.priority = C.PRIORITY_3;
+				need.priority = C.PRIORITY_2;
 			}
-			else if (percent < 75)
+			else if (percent < 50)
 			{
 				need.priority = C.PRIORITY_4;
 			}
-			else if (percent < 90)
+			else if (percent < 75)
 			{
 				need.priority = C.PRIORITY_6;
 			}
@@ -276,35 +281,7 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 			{
 				need.priority = C.PRIORITY_7;
 			}
-
-		} else if (need.type == "needRepair" && site.structureType == STRUCTURE_WALL)
-		{
-			var wallHP = this.wallHP[room.controller.level];
-			var percent = (site.hits / wallHP) * 10000 / 100;
-
-			if (percent < 25)
-			{
-				need.priority = C.PRIORITY_1;
-			}
-			else if (percent < 50)
-			{
-				need.priority = C.PRIORITY_2;
-			}
-			else if (percent < 75)
-			{
-				need.priority = C.PRIORITY_3;
-			}
-			else if (percent < 90)
-			{
-				need.priority = C.PRIORITY_4;
-			}
-			else
-			{
-				need.priority = C.PRIORITY_5;
-			}
-
 		}
-
 	}
 };
 

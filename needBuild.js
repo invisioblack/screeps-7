@@ -30,7 +30,7 @@ NeedBuild.prototype.constructor = NeedBuild;
 NeedBuild.prototype.getUnitDemands = function(roomName, memory)
 {
 	var result = {};
-	result["worker"] = 2;
+	result["worker"] = 1;
 
 	return result;
 };
