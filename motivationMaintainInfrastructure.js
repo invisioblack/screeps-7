@@ -252,9 +252,35 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 				break;
 		}
 
-		if (need.type == "needRepair")
+		if (need.type == "needRepair" && site.structureType != STRUCTURE_WALL)
 		{
 			var percent = (site.hits / site.hitsMax) * 10000 / 100;
+
+			if (percent < 25)
+			{
+				need.priority = C.PRIORITY_1;
+			}
+			else if (percent < 50)
+			{
+				need.priority = C.PRIORITY_2;
+			}
+			else if (percent < 75)
+			{
+				need.priority = C.PRIORITY_3;
+			}
+			else if (percent < 90)
+			{
+				need.priority = C.PRIORITY_4;
+			}
+			else
+			{
+				need.priority = C.PRIORITY_5;
+			}
+
+		} else if (need.type == "needRepair" && site.structureType == STRUCTURE_WALL)
+		{
+			var wallHP = this.wallHP[room.controller.level];
+			var percent = (site.hits / wallHP) * 10000 / 100;
 
 			if (percent < 25)
 			{
