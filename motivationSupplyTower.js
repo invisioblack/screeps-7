@@ -42,7 +42,7 @@ MotivationSupplyTower.prototype.getDemands = function (roomName, resources)
 
 	var energy = _.sum(towers, "energy");
 	var energyTotal = _.sum(towers, "energyCapacity");
-	console.log("e: " + energy + " et: " + energyTotal);
+	//console.log("e: " + energy + " et: " + energyTotal);
 	result.energy = energyTotal - energy;
 	result.units = this.getUnitDemands(roomName);
 	if (lib.isNull(result.units["worker"]))

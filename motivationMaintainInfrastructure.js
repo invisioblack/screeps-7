@@ -152,11 +152,15 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 	var wallHP = this.wallHP[room.controller.level];
 	var wallRepairSites = room.find(FIND_STRUCTURES, {
 		filter: function (s) {
-			return s.structureType == STRUCTURE_WALL && s.hits < wallHP;
+			return (s.structureType == STRUCTURE_WALL || s.structureType == STRUCTURE_TOWER) && s.hits < wallHP;
 		}
 	});
 	wallRepairSites.forEach(function (rs) {
-		var needName = "repairWall." + rs.id;
+		var needName;
+		if (rs.structureType == STRUCTURE_WALL)
+			needName = "repairWall." + rs.id;
+		else if (rs.structureType == STRUCTURE_TOWER)
+			needName = "repairRampart." + rs.id;
 
 		//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
 
@@ -260,7 +264,7 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 			var percent;
 			var max = site.hitsMax;
 
-			if (site.structureType == STRUCTURE_WALL)
+			if (site.structureType == STRUCTURE_WALL || site.structureType == STRUCTURE_RAMPART)
 				max =  this.wallHP[room.controller.level];
 			percent = (site.hits / max) * 10000 / 100;
 			//console.log(needName + " PERCENT: " + percent);
