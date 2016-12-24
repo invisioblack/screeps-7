@@ -33,10 +33,11 @@ NeedBuild.prototype.getUnitDemands = function(roomName, memory)
 	var site = Game.getObjectById(memory.targetId);
 	if (!lib.isNull(site))
 	{
-		var workers = Math.ceil(site.progress / 50);
+		var workers = Math.ceil((site.progressTotal - site.progress) / 50);
 		result["worker"] = workers;
 	}
 
+	//console.log(" Build: " + JSON.stringify(site));
 	return result;
 };
 
