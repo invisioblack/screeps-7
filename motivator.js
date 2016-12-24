@@ -323,6 +323,9 @@ module.exports =
 
 				// fulfill needs ---------------------------------------------------------------------------------------
 				needManager.fulfillNeeds(roomName);
+
+				// motivate defense towers -----------------------------------------------------------------------------
+				defenseManager.motivateTowers(roomName);
 			}
 		}
 	},

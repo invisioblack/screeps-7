@@ -9,6 +9,7 @@
 require('prototype.creep')();
 require('prototype.source')();
 require('prototype.spawn')();
+require('prototype.structureTower')();
 
 // library modules
 var C = require('C');

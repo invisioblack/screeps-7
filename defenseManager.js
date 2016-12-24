@@ -66,5 +66,21 @@ module.exports =
 			} );
 
 			return hostileCreeps;
+		},
+
+		"motivateTowers": function (roomName)
+		{
+			var room = Game.rooms[roomName];
+			if (room.controller.my)
+			{
+				// find all towers
+				var towers = room.find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_TOWER}});
+				// for each tower
+				for (var towerName in towers)
+				{
+					var tower = Game.structures[towerName];
+					tower.autoAttack();
+				}
+			}
 		}
 	};

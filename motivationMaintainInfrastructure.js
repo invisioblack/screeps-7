@@ -241,11 +241,14 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 
 		switch (site.structureType)
 		{
+			case STRUCTURE_TOWER:
+				need.priority = C.PRIORITY_2;
+				break;
 			case STRUCTURE_EXTENSION:
 				need.priority = C.PRIORITY_3;
 				break;
 			case STRUCTURE_CONTAINER:
-				need.priority = C.PRIORITY_2;
+				need.priority = C.PRIORITY_4;
 				break;
 			default:
 				need.priority = C.PRIORITY_5;
@@ -261,13 +264,17 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 				max =  this.wallHP[room.controller.level];
 			percent = (site.hits / max) * 10000 / 100;
 			//console.log(needName + " PERCENT: " + percent);
-			if (percent < 10)
+			if (percent < 5)
 			{
 				need.priority = C.PRIORITY_1;
 			}
-			else if (percent < 25)
+			else if (percent < 10)
 			{
 				need.priority = C.PRIORITY_2;
+			}
+			else if (percent < 25)
+			{
+				need.priority = C.PRIORITY_3;
 			}
 			else if (percent < 50)
 			{
