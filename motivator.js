@@ -18,6 +18,7 @@ var motivationSupplySpawn = require('motivationSupplySpawn');
 var motivationSupplyController = require('motivationSupplyController');
 var motivationMaintainInfrastructure = require('motivationMaintainInfrastructure');
 var motivationHarvestSource = require("motivationHarvestSource");
+var motivationSupplyTower = require("motivationSupplyTower");
 
 var defenseManager = require("defenseManager");
 var resourceManager = require('resourceManager');
@@ -53,20 +54,26 @@ module.exports =
 				motivationHarvestSource.init(room.name);
 				room.memory.motivations[motivationHarvestSource.name].priority = C.PRIORITY_1;
 
+				motivationSupplyTower.init(room.name);
+				room.memory.motivations[motivationSupplyTower.name].priority = C.PRIORITY_2;
+
 				motivationSupplySpawn.init(room.name);
 				var numCreeps = resourceManager.countRoomUnits(roomName, "worker");
 				if (numCreeps <= 4)
-					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_2;
+					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
 				else if (numCreeps < 9)
-					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_4;
+					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_5;
 				else
-					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_6;
+					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_7;
 
 				motivationMaintainInfrastructure.init(room.name);
-				room.memory.motivations[motivationMaintainInfrastructure.name].priority = C.PRIORITY_3;
+				room.memory.motivations[motivationMaintainInfrastructure.name].priority = C.PRIORITY_4;
 
 				motivationSupplyController.init(room.name);
-				room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_5;
+				if (room.controller.ticksToDowngrade > 1000)
+					room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_6;
+				else
+					room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_2;
 			}
 		}
 	},
@@ -82,6 +89,7 @@ module.exports =
 		motivations["motivationSupplyController"] = motivationSupplyController;
 		motivations["motivationMaintainInfrastructure"] = motivationMaintainInfrastructure;
 		motivations["motivationHarvestSource"] = motivationHarvestSource;
+		motivations["motivationSupplyTower"] = motivationSupplyTower;
 
 		// motivate in each room we control ----------------------------------------------------------------------------
 		for (var roomName in Game.rooms)

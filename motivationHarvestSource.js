@@ -40,7 +40,7 @@ MotivationHarvestSource.prototype.getDemands = function (roomName, resources) {
 	var result = {};
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
-	console.log(JSON.stringify(result));
+	//console.log(JSON.stringify(result));
 	console.log('  Harvest Source Demands : Harvesters: ' + result.units["harvester"] + ' Spawn: ' + result.spawn);
 	return result;
 };
@@ -57,7 +57,7 @@ MotivationHarvestSource.prototype.getDesireSpawn = function (roomName, demands)
 	var numHarvesters = resourceManager.countRoomUnits(roomName, "harvester");
 	var numWorkers = resourceManager.countRoomUnits(roomName, "worker");
 
-	if (numHarvesters >= demands.units["harveser"] || numWorkers < 2)
+	if (numHarvesters >= demands.units["harvester"] || numWorkers < 2)
 	{
 		result = false;
 	}
