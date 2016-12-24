@@ -30,7 +30,16 @@ NeedHarvestSource.prototype.constructor = NeedHarvestSource;
 NeedHarvestSource.prototype.getUnitDemands = function(roomName, memory)
 {
 	var result = {};
-	result["harvester"] = 1;
+	var creep = _.filter(Game.creeps, function (c){
+			return c.room.name == roomName
+				&& c.memory.motive.need == memory.name;
+	});
+	//console.log(" harvest: " + creep);
+
+	if (!lib.isNull(creep[0]) && creep[0].ticksToLive < 200)
+		result["harvester"] = 2;
+	else
+		result["harvester"] = 1;
 
 	return result;
 };

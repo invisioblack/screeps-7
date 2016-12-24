@@ -52,11 +52,11 @@ MotivationHarvestSource.prototype.getDesiredSpawnUnit = function ()
 MotivationHarvestSource.prototype.getDesireSpawn = function (roomName, demands)
 {
 	var result = true;
-	var numContainers = Game.rooms[roomName].find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }}).length;
+	//var numContainers = Game.rooms[roomName].find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }}).length;
 	var numHarvesters = resourceManager.countRoomUnits(roomName, "harvester");
 	var numWorkers = resourceManager.countRoomUnits(roomName, "worker");
 
-	if (numContainers <= numHarvesters || numWorkers < 2)
+	if (numHarvesters >= demands.units["harveser"] || numWorkers < 2)
 	{
 		result = false;
 	}
@@ -94,11 +94,12 @@ MotivationHarvestSource.prototype.updateNeeds = function (roomName)
 	sources.forEach(function (s) {
 		var needName = "harvest." + s.id;
 		var need;
+		var container = s.pos.findInRange(FIND_STRUCTURES, 1,{ filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }})[0];
 
-		//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
+		//console.log('Need Name: ' + needName);
 
 		// create new need if one doesn't exist
-		if (lib.isNull(memory.needs[needName]))
+		if (lib.isNull(memory.needs[needName]) && !lib.isNull(container))
 		{
 			memory.needs[needName] = {};
 			need = memory.needs[needName];
@@ -106,6 +107,11 @@ MotivationHarvestSource.prototype.updateNeeds = function (roomName)
 			need.type = "needHarvestSource";
 			need.targetId = s.id;
 			need.priority = C.PRIORITY_1;
+		}
+
+		if (!lib.isNull(container))
+		{
+			delete memory.needs[needName];
 		}
 	}, this);
 };
