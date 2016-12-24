@@ -76,11 +76,10 @@ module.exports =
 				// find all towers
 				var towers = room.find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_TOWER}});
 				// for each tower
-				for (var towerName in towers)
+				towers.forEach(function (tower)
 				{
-					var tower = Game.structures[towerName];
 					tower.autoAttack();
-				}
+				}, this);
 			}
 		}
 	};

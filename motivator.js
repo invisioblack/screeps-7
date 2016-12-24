@@ -59,12 +59,19 @@ module.exports =
 
 				motivationSupplySpawn.init(room.name);
 				var numCreeps = resourceManager.countRoomUnits(roomName, "worker");
+				var numHarvesters = resourceManager.countRoomUnits(roomName, "harvester");
+				var numContainers = Game.rooms[roomName].find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }}).length;
+
+				// normal priority
 				if (numCreeps <= 4)
 					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
 				else if (numCreeps < 9)
 					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_5;
 				else
-					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_7;
+					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
+
+				// harvester override
+				if (numCreeps >= 2 && numContainers >= 1 && numHarvesters < numContainers)
 
 				motivationMaintainInfrastructure.init(room.name);
 				room.memory.motivations[motivationMaintainInfrastructure.name].priority = C.PRIORITY_4;
