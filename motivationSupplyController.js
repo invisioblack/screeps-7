@@ -107,7 +107,7 @@ MotivationSupplyController.prototype.updateNeeds = function (roomName)
 		need.name = needName;
 		need.type = "needTransferEnergy";
 		need.targetId = room.controller.id;
-		need.priority = C.PRIORITY_5;
+		need.priority = C.PRIORITY_1;
 	}
 };
 

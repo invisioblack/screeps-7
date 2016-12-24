@@ -40,6 +40,7 @@ MotivationHarvestSource.prototype.getDemands = function (roomName, resources) {
 	var result = {};
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
+	console.log(JSON.stringify(result));
 	console.log('  Harvest Source Demands : Harvesters: ' + result.units["harvester"] + ' Spawn: ' + result.spawn);
 	return result;
 };
@@ -109,7 +110,7 @@ MotivationHarvestSource.prototype.updateNeeds = function (roomName)
 			need.priority = C.PRIORITY_1;
 		}
 
-		if (!lib.isNull(container))
+		if (lib.isNull(container))
 		{
 			delete memory.needs[needName];
 		}
