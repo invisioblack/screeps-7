@@ -64,6 +64,8 @@ JobHarvestSource.prototype.work = function (creep)
 		}
 	} else {
 		creep.say("Full!");
+		if(creep.pos.getRangeTo(container) != 0)
+			creep.moveTo(container, {"maxRooms": 1});
 	}
 
 };
