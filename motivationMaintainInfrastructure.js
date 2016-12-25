@@ -29,7 +29,7 @@ var MotivationMaintainInfrastructure = function ()
 	this.needs["needBuild"] = needBuild;
 	this.needs["needRepair"] = needRepair;
 
-	this.wallHP = [0, 50000, 100000, 300000, 500000, 1000000, 5000000, 10000000, 10000000];
+	this.wallHP = [0, 25000, 50000, 100000, 300000, 500000, 1000000, 5000000, 10000000];
 };
 
 MotivationMaintainInfrastructure.prototype = Object.create(Motivation.prototype);

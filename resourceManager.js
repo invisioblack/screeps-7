@@ -101,138 +101,132 @@ module.exports =
 
     "countRoomCreeps": function (roomName)
     {
-	    var result = 0;
-	    for (var creepName in Game.creeps)
-	    {
-		    var creep = Game.creeps[creepName];
-		    if (creep.room.name == roomName)
-		    {
-			    result++;
-		    }
-	    }
+	    var result = this.getRoomCreeps(roomName).length;
 
 	    return result;
     },
 
+	"getRoomCreeps": function (roomName)
+	{
+		var result = _.filter(Game.creeps, function (creep) {
+			return creep.room.name == roomName;
+		});
+		return result;
+	},
+
 	"countRoomUnits": function (roomName, unitName)
 	{
-		var result = 0;
-		for (var creepName in Game.creeps)
-		{
-			var creep = Game.creeps[creepName];
-			if (creep.room.name == roomName
-				&& creep.memory.unit == unitName)
-			{
-				result++;
-			}
-		}
+		var result = this.getRoomUnits(roomName, unitName).length;
+		return result;
+	},
 
+	"getRoomUnits": function (roomName, unitName)
+	{
+		var result = _.filter(Game.creeps, function (creep) {
+			return creep.room.name == roomName
+				&& creep.memory.unit == unitName;
+		});
 		return result;
 	},
 
 	"countRoomMotivationCreeps": function (roomName, motivationName)
 	{
-		var result = 0;
-		for (var creepName in Game.creeps)
-		{
-			var creep = Game.creeps[creepName];
-			if (creep.room.name == roomName
-				&& creep.memory.motive.motivation == motivationName)
-			{
-				result++;
-			}
-		}
+		var result = this.getRoomMotivationCreeps(roomName, motivationName).length;
+		return result;
+	},
 
+	"getRoomMotivationCreeps": function (roomName, motivationName)
+	{
+		var result = _.filter(Game.creeps, function (creep) {
+			return creep.room.name == roomName
+				&& creep.memory.motive.motivation == motivationName;
+		});
 		return result;
 	},
 
 	"countRoomMotivationUnits": function (roomName, motivationName, unitName)
 	{
-		var result = 0;
-		for (var creepName in Game.creeps)
-		{
-			var creep = Game.creeps[creepName];
-			if (creep.room.name == roomName
-				&& creep.memory.motive.motivation == motivationName
-				&& creep.memory.unit == unitName)
-			{
-				result++;
-			}
-		}
+		var result = this.getRoomMotivationUnits(roomName, motivationName, unitName).length;
+		return result;
+	},
 
+	"getRoomMotivationUnits": function (roomName, motivationName, unitName)
+	{
+		var result = _.filter(Game.creeps, function (creep) {
+			return creep.room.name == roomName
+				&& creep.memory.motive.motivation == motivationName
+				&& creep.memory.unit == unitName;
+		});
 		return result;
 	},
 
 	"countRoomMotivationNeedCreeps": function (roomName, motivationName, needName)
 	{
-		var result = 0;
-		for (var creepName in Game.creeps)
-		{
-			var creep = Game.creeps[creepName];
-			if (creep.room.name == roomName
-				&& creep.memory.motive.motivation == motivationName
-				&& creep.memory.motive.need == needName)
-			{
-				result++;
-			}
-		}
+		var result = this.getRoomMotivationNeedCreeps(roomName, motivationName, needName).length;
+		return result;
+	},
 
+	"getRoomMotivationNeedCreeps": function (roomName, motivationName, needName)
+	{
+		var result = _.filter(Game.creeps, function (creep) {
+			return creep.room.name == roomName
+				&& creep.memory.motive.motivation == motivationName
+				&& creep.memory.motive.need == needName;
+		});
 		return result;
 	},
 
 	"countRoomMotivationNeedUnits": function (roomName, motivationName, needName, unitName)
 	{
-		var result = 0;
-		for (var creepName in Game.creeps)
-		{
-			var creep = Game.creeps[creepName];
-			if (creep.room.name == roomName
+		var result = this.getRoomMotivationNeedUnits(roomName, motivationName, needName, unitName).length;
+		return result;
+	},
+
+	"getRoomMotivationNeedUnits": function (roomName, motivationName, needName, unitName)
+	{
+		var result = _.filter(Game.creeps, function (creep) {
+			return creep.room.name == roomName
 				&& creep.memory.motive.motivation == motivationName
 				&& creep.memory.motive.need == needName
-				&& creep.memory.unit == unitName)
-			{
-				result++;
-			}
-		}
-
+				&& creep.memory.unit == unitName;
+		});
 		return result;
 	},
 
 	"countRoomAssignedUnits": function (roomName, unitName)
 	{
-		var result = 0;
-		for (var creepName in Game.creeps)
-		{
-			var creep = Game.creeps[creepName];
-			if (creep.room.name == roomName
+		var result = this.getRoomAssignedUnits(roomName, unitName).length;
+		return result;
+	},
+
+	"getRoomAssignedUnits": function (roomName, unitName)
+	{
+		var result = _.filter(Game.creeps, function (creep) {
+			return creep.room.name == roomName
 				&& creep.memory.motive.motivation != ""
 				&& creep.memory.motive.need != ""
-				&& creep.memory.unit == unitName)
-			{
-				result++;
-			}
-		}
-
+				&& creep.memory.unit == unitName;
+		});
 		return result;
 	},
 
 	"countRoomUnassignedUnits": function (roomName, unitName)
 	{
-		var result = 0;
-		for (var creepName in Game.creeps)
-		{
-			var creep = Game.creeps[creepName];
-			if (creep.room.name == roomName
-				&& creep.memory.motive.motivation == ""
-				&& creep.memory.motive.need == ""
-				&& creep.memory.unit == unitName)
-			{
-				result++;
-			}
-		}
-
+		var result = this.getRoomUnassignedUnits(roomName, unitName).length;
 		return result;
 	},
+
+	"getRoomUnassignedUnits": function (roomName, unitName)
+	{
+		var result = _.filter(Game.creeps, function (creep) {
+			return creep.room.name == roomName
+				&& creep.memory.motive.motivation == ""
+				&& creep.memory.motive.need == ""
+				&& creep.memory.unit == unitName;
+		});
+		return result;
+	},
+
 
 	"countCreepsOnSource": function (roomName, sourceId)
 	{
@@ -258,19 +252,19 @@ module.exports =
 
 	"findUnallocatedRoomUnit": function (roomName, unitName)
 	{
-		for (var creepName in Game.creeps)
-		{
-			var creep = Game.creeps[creepName];
-			if (creep.room.name == roomName
+		return this.findUnallocatedRoomUnits(roomName, unitName)[0];
+	},
+
+	"findUnallocatedRoomUnits": function (roomName, unitName)
+	{
+		var result = _.filter(Game.creeps, function (creep) {
+			return creep.room.name == roomName
 				&& creep.memory.motive.motivation == ""
 				&& creep.memory.motive.need == ""
-				&& creep.memory.unit == unitName)
-			{
-				return creep;
-			}
-		}
-
-		return null;
+				&& creep.memory.unit == unitName;
+		});
+		return result;
 	}
+
 
 };
