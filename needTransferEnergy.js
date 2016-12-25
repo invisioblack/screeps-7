@@ -28,11 +28,13 @@ var NeedTransferEnergy = function ()
 NeedTransferEnergy.prototype = Object.create(Need.prototype);
 NeedTransferEnergy.prototype.constructor = NeedTransferEnergy;
 
-NeedTransferEnergy.prototype.getUnitDemands = function(roomName, memory)
+NeedTransferEnergy.prototype.getUnitDemands = function(roomName, memory, motivationName)
 {
 	var result = {};
 	var target = Game.getObjectById(memory.targetId);
 	var energy, energyCapacity, neededEnergy;
+	var worker = lib.nullProtect(resourceManager.getRoomUnits(roomName, "worker")[0], {});
+	var workerCapacity = lib.nullProtect(worker.carryCapacity, 50);
 
 	if (!lib.isNull(target.energy))
 	{
@@ -44,10 +46,11 @@ NeedTransferEnergy.prototype.getUnitDemands = function(roomName, memory)
 	}
 
 	neededEnergy = energyCapacity - energy;
+	result["worker"] = Math.ceil(neededEnergy / workerCapacity);
 
-
+	//console.log(JSON.stringify(memory));
 	//console.log("getUnitDemands: " + energy + "/" + energyCapacity + "/" + neededEnergy);
-	result["worker"] = Math.ceil(neededEnergy / 50);
+	//console.log("   workers: carry: " + workerCapacity + " demanded workers: " + result["worker"]);
 
 	return result;
 };

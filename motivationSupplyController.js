@@ -38,15 +38,17 @@ MotivationSupplyController.prototype.constructor = MotivationSupplyController;
 //-------------------------------------------------------------------------
 MotivationSupplyController.prototype.getDemands = function (roomName, resources) {
 	var result = {};
+	var unitName = this.getDesiredSpawnUnit(roomName);
 	result.energy = resources.controllerStatus.progressTotal - resources.controllerStatus.progress;
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
-	console.log('  Supply Controller Demands: e: ' + result.energy + ' Workers: ' + result.units["worker"] + ' Spawn: ' + result.spawn);
+	console.log('  Supply Controller Demands: e: ' + result.energy + " " + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn);
 	return result;
 };
 
-MotivationSupplyController.prototype.getDesiredSpawnUnit = function ()
+MotivationSupplyController.prototype.getDesiredSpawnUnit = function (roomName)
 {
+	var room = Game.rooms[roomName];
 	return "worker";
 };
 

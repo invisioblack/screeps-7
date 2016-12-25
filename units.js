@@ -1,23 +1,5 @@
 module.exports =
 {
-	"teamster": {
-		"mode": 1,
-		"parts": [
-			{
-				"part" : CARRY,
-				"weight" : 0.7,
-				"minimum" : 1
-			},
-			{
-				"part" : MOVE,
-				"weight" : 0.3,
-				"minimum" : 1
-			}
-		],
-		"memory": {
-			"unit": "teamster"
-		}
-	},
 	"worker": {
 		"mode": 1,
 		"parts": [
@@ -28,12 +10,12 @@ module.exports =
 			},
 			{
 				"part" : CARRY,
-				"weight" : 0.4,
+				"weight" : 0.3,
 				"minimum" : 1
 			},
 			{
 				"part" : MOVE,
-				"weight" : 0.2,
+				"weight" : 0.3,
 				"minimum" : 1
 			}
 		],

@@ -58,17 +58,27 @@ module.exports =
 
 			// if we have open allocations, we need to find if there is a creep to assign
 			var outOfCreeps = false;
+			//console.log("Preloop");
 			while (!outOfCreeps && assignedUnits < allocatedUnits)
 			{
+
 				needs.forEach(function (need)
 				{
 					//console.log(need.name);
 
+
 					// if there is a creep to assign, we need to assign it
-					var unitDemands = motivation.needs[need.type].getUnitDemands(roomName , need);
+					var unitDemands = motivation.needs[need.type].getUnitDemands(roomName , need, motivation.name);
 					var creepsDemanded = unitDemands[unitName];
 					var creepsAssigned = resourceManager.countRoomMotivationNeedUnits(roomName , motivation.name , need.name , unitName);
 					var creep = resourceManager.findUnallocatedRoomUnit(room.name , unitName);
+
+					if (creepsDemanded == 0)
+						outOfCreeps = true;
+
+					//console.log("unit: " + unitName + " outOfCreeps: " + outOfCreeps + " assignedUnits: " + assignedUnits + " allocatedUnits " + allocatedUnits);
+					//console.log("creepsAssigned: " + creepsAssigned + " creepsDemanded: " + creepsDemanded);
+
 
 					while (!lib.isNull(creep) && creepsAssigned < creepsDemanded && assignedUnits < allocatedUnits)
 					{
@@ -87,7 +97,8 @@ module.exports =
 				} , this);
 			}
 
-			console.log("    Assigned/Allocated " + unitName + ": " + assignedUnits + "/" + allocatedUnits);
+			if (assignedUnits || allocatedUnits)
+				console.log("    Assigned/Allocated " + unitName + ": " + assignedUnits + "/" + allocatedUnits);
 		}
 	},
 

@@ -38,10 +38,11 @@ MotivationHarvestSource.prototype.constructor = MotivationHarvestSource;
 //-------------------------------------------------------------------------
 MotivationHarvestSource.prototype.getDemands = function (roomName, resources) {
 	var result = {};
+	var unitName = this.getDesiredSpawnUnit(roomName);
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
 	//console.log(JSON.stringify(result));
-	console.log('  Harvest Source Demands : Harvesters: ' + result.units["harvester"] + ' Spawn: ' + result.spawn);
+	console.log("  Harvest Source Demands : " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn);
 	return result;
 };
 

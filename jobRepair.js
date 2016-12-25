@@ -65,13 +65,19 @@ JobRepair.prototype.work = function (creep)
 				creep.memory.job.mode = this.JOB_MODE_GETENERGY;
 				creep.deassignMotive();
 			} else {
-				//console.log("return: " + target);
+
 				var result = creep.repair(target);
+				//console.log("return: " + target);
+				//console.log("creep: " + creep.name);
 				if (result == ERR_NOT_IN_RANGE)
 				{
 					creep.moveTo(target, {"maxRooms": 1});
 				} else if (result == ERR_FULL) {
 					//console.log("---- RESET");
+					creep.deassignMotive();
+				}
+				if (target.hits == target.hitsMax)
+				{
 					creep.deassignMotive();
 				}
 			}

@@ -38,10 +38,11 @@ MotivationSupplySpawn.prototype.constructor = MotivationSupplySpawn;
 MotivationSupplySpawn.prototype.getDemands = function (roomName, resources)
 {
 	var result = {};
+	var unitName = this.getDesiredSpawnUnit(roomName);
 	result.energy = resources.spawnEnergy.energyCapacity - resources.spawnEnergy.energy;
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
-	console.log('  Supply Spawn Demands: e: ' + result.energy + ' Workers: ' + result.units["worker"] + ' Spawn: ' + result.spawn);
+	console.log('  Supply Spawn Demands: e: ' + result.energy + ' ' + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn);
 	return result;
 };
 
@@ -65,7 +66,7 @@ MotivationSupplySpawn.prototype.getDesireSpawn = function (roomName, demands)
 	return result;
 };
 
-MotivationSupplySpawn.prototype.getDesiredSpawnUnit = function ()
+MotivationSupplySpawn.prototype.getDesiredSpawnUnit = function (roomName)
 {
 	return "worker";
 };

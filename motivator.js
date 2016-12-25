@@ -63,15 +63,16 @@ module.exports =
 				var numContainers = Game.rooms[roomName].find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }}).length;
 
 				// normal priority
-				if (numCreeps <= 4)
+				if (numCreeps < 10)
 					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
-				else if (numCreeps < 9)
+				else if (numCreeps < 14)
 					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_5;
 				else
-					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
+					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_7;
 
 				// harvester override
 				if (numCreeps >= 2 && numContainers >= 1 && numHarvesters < numContainers)
+					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
 
 				motivationMaintainInfrastructure.init(room.name);
 				room.memory.motivations[motivationMaintainInfrastructure.name].priority = C.PRIORITY_4;
@@ -127,7 +128,7 @@ module.exports =
 				// set up demands, active and spawning
 				sortedMotivations.forEach(function(motivationMemory)
 				{
-					console.log("---- Motivating round 1 - demands/spawn/active: " + motivationMemory.name);
+
 
 					// set up demands ----------------------------------------------------------------------------------
 					demands[motivationMemory.name] = motivations[motivationMemory.name].getDemands(roomName , resources);
@@ -146,10 +147,10 @@ module.exports =
 						motivationMemory.spawnAllocated = false;
 					}
 
-					console.log("  Spawn allocated: " + motivationMemory.spawnAllocated);
+					console.log("---- Motivating round 1 - demands/spawn/active: " + motivationMemory.name + " Spawn allocated: " + motivationMemory.spawnAllocated);
 
 					// spawn units if allocated spawn ------------------------------------------------------------------
-					var unitName = motivations[motivationMemory.name].getDesiredSpawnUnit();
+					var unitName = motivations[motivationMemory.name].getDesiredSpawnUnit(roomName);
 					if (motivationMemory.spawnAllocated)
 					{
 						for (var spawnName in Game.spawns)
@@ -175,7 +176,7 @@ module.exports =
 				// process round 2 and 3 for each unit type ------------------------------------------------------------
 				for (var unitName in units)
 				{
-
+					// -------------------------------------------------------------------------------------------------
 					// round 2, regular allocation ---------------------------------------------------------------------
 					var iteration = 1;
 					var totalShares;
@@ -196,10 +197,10 @@ module.exports =
 
 					sortedMotivations.forEach(function (motivationMemory)
 					{
-						console.log("---- Motivating round 2 - regular allocation: " + unitName + " : " + motivationMemory.name);
 						// allocate units ------------------------------------------------------------------------------
 						if (motivationMemory.active)
 						{
+
 							var unitsAvailable;
 							var unitsTotalAllocated;
 							var unitsDemanded;
@@ -211,6 +212,7 @@ module.exports =
 
 							if (unitsDemanded > 0)
 							{
+								console.log("---- Motivating round 2 - regular allocation: " + unitName + " : " + motivationMemory.name);
 								unitsAvailable = lib.nullProtect(resources.units[unitName].unallocated , 0);
 								unitsTotalAllocated = lib.nullProtect(resources.units[unitName].allocated , 0);
 
@@ -278,10 +280,9 @@ module.exports =
 					{
 						sortedMotivations.forEach(function (motivationMemory)
 						{
-							console.log("---- Motivating round 3 - surplus allocation: " + unitName + " : " + motivationMemory.name);
 							if (motivationMemory.active)
 							{
-
+								console.log("---- Motivating round 3 - surplus allocation: " + unitName + " : " + motivationMemory.name);
 								var unitsAvailable = lib.nullProtect(resources.units[unitName].unallocated, 0);
 								var unitsAllocated = lib.nullProtect(motivationMemory.allocatedUnits[unitName], 0);
 								var unitsDemanded = lib.nullProtect(demands[motivationMemory.name].units[unitName], 0) - unitsAllocated;

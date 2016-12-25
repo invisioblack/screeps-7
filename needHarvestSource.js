@@ -27,7 +27,7 @@ var NeedHarvestSource = function ()
 NeedHarvestSource.prototype = Object.create(Need.prototype);
 NeedHarvestSource.prototype.constructor = NeedHarvestSource;
 
-NeedHarvestSource.prototype.getUnitDemands = function(roomName, memory)
+NeedHarvestSource.prototype.getUnitDemands = function(roomName, memory, motivationName)
 {
 	var result = {};
 	result["harvester"] = 1;

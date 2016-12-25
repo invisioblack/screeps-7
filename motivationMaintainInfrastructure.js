@@ -41,7 +41,7 @@ MotivationMaintainInfrastructure.prototype.constructor = MotivationMaintainInfra
 MotivationMaintainInfrastructure.prototype.getDemands = function (roomName, resources)
 {
 	var result = {};
-
+	var unitName = this.getDesiredSpawnUnit(roomName);
 	var constructionSites = Game.rooms[roomName].find(FIND_CONSTRUCTION_SITES);
 	var repairSites = Game.rooms[roomName].find(FIND_STRUCTURES, {
 		filter: function (s) {
@@ -54,7 +54,7 @@ MotivationMaintainInfrastructure.prototype.getDemands = function (roomName, reso
 	result.energy = progressTotal - progress + Object.keys(repairSites).length;
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
-	console.log('  Maintain Infrastructure Demands: Workers: ' + result.units["worker"] + ' Spawn: ' + result.spawn);
+	console.log('  Maintain Infrastructure Demands: ' + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn);
 	return result;
 };
 
@@ -68,9 +68,11 @@ MotivationMaintainInfrastructure.prototype.getDesireSpawn = function (roomName, 
 {
 	var result = true;
 	var memory = Game.rooms[roomName].memory.motivations[this.name];
+
 	if (memory.active)
 	{
-		if (!lib.isNull(demands.units["worker"]) && demands.units["worker"] < resourceManager.countRoomUnits(roomName, "worker"))
+		var workers = resourceManager.countRoomUnits(roomName, "worker");
+		if (!lib.isNull(demands.units["worker"]) && demands.units["worker"] < workers)
 			result = false;
 	} else {
 		result = false;
@@ -128,7 +130,7 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 	// look up sources and find out how many needs we should have for each one
 	var repairSites = room.find(FIND_STRUCTURES, {
 		filter: function (s) {
-			return s.hits < s.hitsMax && s.structureType != STRUCTURE_WALL;
+			return s.hits < s.hitsMax && s.structureType != STRUCTURE_WALL && s.structureType != STRUCTURE_RAMPART;
 		}
 	});
 	repairSites.forEach(function (rs) {
@@ -152,7 +154,7 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 	var wallHP = this.wallHP[room.controller.level];
 	var wallRepairSites = room.find(FIND_STRUCTURES, {
 		filter: function (s) {
-			return (s.structureType == STRUCTURE_WALL || s.structureType == STRUCTURE_TOWER) && s.hits < wallHP;
+			return (s.structureType == STRUCTURE_WALL || s.structureType == STRUCTURE_RAMPART) && s.hits < wallHP;
 		}
 	});
 	wallRepairSites.forEach(function (rs) {

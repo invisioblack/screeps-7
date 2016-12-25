@@ -38,6 +38,7 @@ MotivationSupplyTower.prototype.constructor = MotivationSupplyTower;
 MotivationSupplyTower.prototype.getDemands = function (roomName, resources)
 {
 	var result = {};
+	var unitName = this.getDesiredSpawnUnit(roomName);
 	var towers = Game.rooms[roomName].find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_TOWER}});
 
 	var energy = _.sum(towers, "energy");
@@ -48,7 +49,7 @@ MotivationSupplyTower.prototype.getDemands = function (roomName, resources)
 	if (lib.isNull(result.units["worker"]))
 		result.units["worker"] = 0;
 	result.spawn = this.getDesireSpawn(roomName, result);
-	console.log('  Supply Tower Demands: e: ' + result.energy + ' Workers: ' + result.units["worker"] + ' Spawn: ' + result.spawn);
+	console.log('  Supply Tower Demands: e: ' + result.energy + ' ' + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn);
 	return result;
 };
 
@@ -72,7 +73,7 @@ MotivationSupplyTower.prototype.getDesireSpawn = function (roomName, demands)
 	return result;
 };
 
-MotivationSupplyTower.prototype.getDesiredSpawnUnit = function ()
+MotivationSupplyTower.prototype.getDesiredSpawnUnit = function (roomName)
 {
 	return "worker";
 };

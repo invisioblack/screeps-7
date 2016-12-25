@@ -27,7 +27,7 @@ var NeedBuild = function ()
 NeedBuild.prototype = Object.create(Need.prototype);
 NeedBuild.prototype.constructor = NeedBuild;
 
-NeedBuild.prototype.getUnitDemands = function(roomName, memory)
+NeedBuild.prototype.getUnitDemands = function(roomName, memory, motivationName)
 {
 	var result = {};
 	var site = Game.getObjectById(memory.targetId);

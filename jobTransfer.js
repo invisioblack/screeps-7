@@ -49,6 +49,8 @@ JobTransfer.prototype.work = function (creep)
 		creep.memory.job.mode = this.JOB_MODE_GETENERGY;
 	}
 
+
+
 	// manage job
 	switch (creep.memory.job.mode)
 	{
@@ -61,11 +63,14 @@ JobTransfer.prototype.work = function (creep)
 				creep.memory.job.mode = this.JOB_MODE_GETENERGY;
 				creep.deassignMotive();
 			} else {
+
 				//console.log("return: " + target);
 				this.resetSource(creep);
 				var result = creep.transfer(target, RESOURCE_ENERGY);
+				//console.log(creep.name + " transfer result: " + result);
 				if (result == ERR_NOT_IN_RANGE)
 				{
+
 					creep.moveTo(target, {"maxRooms": 1});
 				} else if (result == ERR_FULL) {
 					//console.log("---- RESET");

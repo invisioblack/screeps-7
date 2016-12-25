@@ -27,7 +27,7 @@ var NeedRepair = function ()
 NeedRepair.prototype = Object.create(Need.prototype);
 NeedRepair.prototype.constructor = NeedRepair;
 
-NeedRepair.prototype.getUnitDemands = function(roomName, memory)
+NeedRepair.prototype.getUnitDemands = function(roomName, memory, motivationName)
 {
 	var result = {};
 	result["worker"] = 1;

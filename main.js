@@ -28,18 +28,19 @@ module.exports.loop = function ()
 	//-------------------------------------------------------------------------
 	// Do stuffs
 	//-------------------------------------------------------------------------
-		console.log("++++++ new tick ++++++");
-		if (active)
-		{
-			cleanupMemory();
-			motivator.init();
-			motivator.motivate();
-		}
+	console.log("++++++ new tick ++++++");
+	if (active)
+	{
+		cleanupMemory();
+		motivator.init();
+		motivator.motivate();
+	}
 
 	//-------------------------------------------------------------------------
 	// END
 	//-------------------------------------------------------------------------
 	console.log("------ end tick ------");
+
 };
 
 function cleanupMemory ()
