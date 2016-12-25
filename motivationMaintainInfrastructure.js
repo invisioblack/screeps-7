@@ -17,7 +17,7 @@ var Motivation = require('prototype.motivation')();
 //-------------------------------------------------------------------------
 // Declarations
 //-------------------------------------------------------------------------
-
+var REPAIR_FACTOR = 0.8;
 //-------------------------------------------------------------------------
 // constructor
 //-------------------------------------------------------------------------
@@ -139,7 +139,7 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 		//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
 
 		// create new need if one doesn't exist
-		if (lib.isNull(memory.needs[needName]))
+		if (lib.isNull(memory.needs[needName]) && rs.hits < (rs.hitsMax * REPAIR_FACTOR))
 		{
 			memory.needs[needName] = {};
 			memory.needs[needName].type = "needRepair";
@@ -167,7 +167,7 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 		//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
 
 		// create new need if one doesn't exist
-		if (lib.isNull(memory.needs[needName]))
+		if (lib.isNull(memory.needs[needName]) && rs.hits < (rs.wallHP * REPAIR_FACTOR))
 		{
 			memory.needs[needName] = {};
 			memory.needs[needName].type = "needRepair";

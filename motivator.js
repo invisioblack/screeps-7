@@ -150,6 +150,7 @@ module.exports =
 					console.log("---- Motivating round 1 - demands/spawn/active: " + motivationMemory.name + " Spawn allocated: " + motivationMemory.spawnAllocated);
 
 					// spawn units if allocated spawn ------------------------------------------------------------------
+					// TODO: This needs to support spawning as soon as there is enough energy for harvesters
 					var unitName = motivations[motivationMemory.name].getDesiredSpawnUnit(roomName);
 					if (motivationMemory.spawnAllocated)
 					{
