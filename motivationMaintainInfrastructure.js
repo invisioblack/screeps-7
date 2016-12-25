@@ -161,7 +161,7 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 		var needName;
 		if (rs.structureType == STRUCTURE_WALL)
 			needName = "repairWall." + rs.id;
-		else if (rs.structureType == STRUCTURE_TOWER)
+		else if (rs.structureType == STRUCTURE_RAMPART)
 			needName = "repairRampart." + rs.id;
 
 		//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
