@@ -230,23 +230,23 @@ module.exports =
 
 	"countCreepsOnSource": function (roomName, sourceId)
 	{
-		var result = 0;
-		for (var creepName in Game.creeps)
-		{
-			var creep = Game.creeps[creepName];
-			if (creep.room.name == roomName
-				&& creep.memory.motive.motivation != ""
-				&& creep.memory.motive.need != "")
-			{
-				var need = Game.rooms[creep.room.name].memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
-				if (!lib.isNull(need) && !lib.isNull(need.sourceId))
-				{
-					if (!lib.isNull(creep.memory.job) && need.sourceId == sourceId && creep.memory.job.mode == 0)
-						result++;
-				}
-			}
-		}
+		var result = this.getCreepsOnSource(roomName, sourceId).length;
+		return result;
+	},
 
+	"getCreepsOnSource": function (roomName, sourceId)
+	{
+		var result = _.filter(Game.creeps, function (creep) {
+			var need = Game.rooms[creep.room.name].memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
+			return (creep.room.name == roomName
+					&& creep.memory.motive.motivation != ""
+					&& creep.memory.motive.need != ""
+				) && (
+					(!lib.isNull(need) && !lib.isNull(need.sourceId))
+					&&
+					(!lib.isNull(creep.memory.job) && need.sourceId == sourceId && creep.memory.job.mode == 0)
+				);
+		});
 		return result;
 	},
 
