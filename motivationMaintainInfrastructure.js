@@ -137,7 +137,7 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 		var needName = "repair." + rs.id;
 
 		//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
-
+		//console.log(rs.id + " HP/Threshold: " + rs.hits + "/" + (rs.hitsMax * REPAIR_FACTOR));
 		// create new need if one doesn't exist
 		if (lib.isNull(memory.needs[needName]) && rs.hits < (rs.hitsMax * REPAIR_FACTOR))
 		{
@@ -165,9 +165,9 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 			needName = "repairRampart." + rs.id;
 
 		//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
-
+		//console.log(rs.id + " HP/Threshold: " + rs.hits + "/" + (wallHP * REPAIR_FACTOR));
 		// create new need if one doesn't exist
-		if (lib.isNull(memory.needs[needName]) && rs.hits < (rs.wallHP * REPAIR_FACTOR))
+		if (lib.isNull(memory.needs[needName]) && rs.hits < (wallHP * REPAIR_FACTOR))
 		{
 			memory.needs[needName] = {};
 			memory.needs[needName].type = "needRepair";

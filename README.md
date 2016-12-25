@@ -5,7 +5,12 @@ My humble screeps scripts.
 
 Feel free to use and abuse.
 
-More stuff.
+Current Status: 
+    
+    Harvests resrouces direct, or into containers.
+    Builds construction sites.
+    Repairs infrastructure.
+    Simple tower defense.
 
 Behavior model
 ===============================================================================
@@ -18,7 +23,7 @@ Motivator:
     Responsibilities
         Activate/Deactivate motivations
         Decide motivation priority
-        Allocate resources to each active motivation
+        Allocate units to motivations
 
 Motivations:
 
@@ -29,29 +34,14 @@ Motivations:
     
     Motivations (by default priority):
         Supply Spawn Energy
-            Demand Labor
-            Demand Energy
-        Defend
-            Demand Military
-            Demand Medical
-        Upgrade Controller
-            Demand Labor
-            Demand Energy
-        Attack
-            Demand Military
-            Demand Medical
+        Supply Tower Energy
         Maintain Infrastructure (build and repair)
-            Demand Labor
-            Demand Energy
-
-        In addition player interactions are modeled as motivations.
+        Supply Controller Energy
 
 Need Manager:
 
-    The need manager is responsible for assigning and reassigning needs to the
-    resources they need to be fulfilled. In most cases this means assigning a
-    creep to fulfill the task, but in some cases it will be things like asking 
-    the spawn to build another unit.
+    The need manager is responsible for assigning needs the units they need to 
+    be fulfilled.
 
 Needs:
 
@@ -68,15 +58,3 @@ Jobs:
 Resource Manager:
 
     Is responsible for providing information about resources.
-
-    Resources
-        Energy (units)
-            Demands labor
-        Labor (1 x highest number of either WORK or CARRY / creep)
-            Demands spawning
-        Military
-            Demands spawning
-        Medical
-            Demands spawning
-        Spawning
-            Demands Energy

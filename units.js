@@ -1,3 +1,4 @@
+// TODO: implement max property
 module.exports =
 {
 	"worker": {
