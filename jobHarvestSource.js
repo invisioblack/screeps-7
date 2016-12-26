@@ -60,7 +60,9 @@ JobHarvestSource.prototype.work = function (creep)
 		}
 		if (result == ERR_NOT_IN_RANGE)
 		{
-			creep.moveTo(container, {"maxRooms": 1});
+			var moveResult = creep.moveTo(container, {"maxRooms": 1});
+			if (moveResult < 0 && moveResult != ERR_TIRED)
+				console.log(creep.name + " Can't move to container: " + moveResult);
 		}
 	} else {
 		creep.say("Full!");

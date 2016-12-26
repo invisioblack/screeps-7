@@ -78,13 +78,7 @@ module.exports = function()
 
 		if (fullEnergy)
 		{
-			if (energy.energy == energy.energyCapacity)
-			{
-				return this.spawnUnitByEnergy(unitName, energy.energy);
-			} else {
-				return false;
-			}
-
+			return this.spawnUnitByEnergy(unitName , energy.energyCapacity);
 		} else {
 			return this.spawnUnitByEnergy(unitName, energy.energy);
 		}
@@ -96,10 +90,13 @@ module.exports = function()
 		var name = this.generateName(unitName);
 		var result;
 		var energyLeft = energy;
+
 		if (units[unitName].mode == 1)
 		{
+
 			units[unitName].parts.forEach(function (part)
 			{
+
 				var partEnergy = energy * part.weight;
 				var numberParts = Math.floor(partEnergy / this.costs[part.part]);
 
@@ -107,22 +104,29 @@ module.exports = function()
 					numberParts = part.minimum;
 				for (x = 0; x < numberParts; x++)
 				{
-					parts.push(part.part);
-					energyLeft -= this.costs[part.part];
+					console.log(energyLeft + "/" + this.costs[part.part]);
+				    if (energyLeft >= this.costs[part.part])
+				    {
+					    parts.push(part.part);
+					    energyLeft -= this.costs[part.part];
+				    }
 				}
 			} , this);
 
 			// fill up any remaining energy with move
+			/*
 			while (energyLeft >= this.costs[MOVE])
 			{
 				parts.push(MOVE);
 				energyLeft -= this.costs[MOVE];
 			}
+			*/
 		} else if (units[unitName].mode == 2)
 		{
 			parts = units[unitName].parts;
 		}
 
+        JSON.stringify(parts);
 		result = this.createCreep(parts, name, units[unitName].memory);
 		if (_.isString(result))
 		{

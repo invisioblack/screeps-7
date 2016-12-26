@@ -71,7 +71,9 @@ JobRepair.prototype.work = function (creep)
 				//console.log("creep: " + creep.name);
 				if (result == ERR_NOT_IN_RANGE)
 				{
-					creep.moveTo(target, {"maxRooms": 1});
+					var moveResult = creep.moveTo(target, {"maxRooms": 1});
+					if (moveResult < 0 && moveResult != ERR_TIRED)
+						console.log(creep.name + " Can't move while repairing: " + moveResult);
 				} else if (result == ERR_FULL) {
 					//console.log("---- RESET");
 					creep.deassignMotive();

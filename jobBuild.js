@@ -64,15 +64,20 @@ JobBuild.prototype.work = function (creep)
 				creep.memory.job.mode = this.JOB_MODE_GETENERGY;
 				creep.deassignMotive();
 			} else {
-				//console.log("return: " + target);
+
 				var result = creep.build(target);
+				// /console.log("build: " + target + " Result: " + result);
 				if (result == ERR_NOT_IN_RANGE)
 				{
-					creep.moveTo(target, {"maxRooms": 1});
+					var moveResult = creep.moveTo(target, {"maxRooms": 1});
+					if (moveResult < 0 && moveResult != ERR_TIRED)
+						console.log(creep.name + " Can't move while building: " + moveResult);
 				} else if (result == ERR_FULL) {
 					//console.log("---- RESET");
 					creep.deassignMotive();
 				}
+				else
+					console.log(creep.name + " Can't build: " + target + " result: " + moveResult);
 			}
 			break;
 	}

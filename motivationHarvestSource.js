@@ -54,11 +54,11 @@ MotivationHarvestSource.prototype.getDesiredSpawnUnit = function ()
 MotivationHarvestSource.prototype.getDesireSpawn = function (roomName, demands)
 {
 	var result = true;
-	//var numContainers = Game.rooms[roomName].find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }}).length;
+	var numContainers = Game.rooms[roomName].find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }}).length;
 	var numHarvesters = resourceManager.countRoomUnits(roomName, "harvester");
 	var numWorkers = resourceManager.countRoomUnits(roomName, "worker");
 
-	if (numHarvesters >= demands.units["harvester"] || numWorkers < 2)
+	if (numContainers == 0 || numHarvesters >= demands.units["harvester"] || numWorkers < 2)
 	{
 		result = false;
 	}

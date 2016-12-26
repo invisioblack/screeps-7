@@ -140,7 +140,9 @@ module.exports = function()
 					result = creep.pickup(drop);
 					if (result == ERR_NOT_IN_RANGE)
 					{
-						creep.moveTo(drop, {"maxRooms": 1});
+						var moveResult = creep.moveTo(drop, {"maxRooms": 1});
+						if (moveResult < 0 && moveResult != ERR_TIRED)
+							console.log(creep.name + " Can't move while getting from container: " + moveResult);
 					}
 					break;
 				case this.JOB_SOURCETYPE_CONTAINER:
@@ -148,7 +150,9 @@ module.exports = function()
 					result = creep.withdraw(container, RESOURCE_ENERGY);
 					if (result == ERR_NOT_IN_RANGE)
 					{
-						creep.moveTo(container, {"maxRooms": 1});
+						var moveResult = creep.moveTo(container, {"maxRooms": 1});
+						if (moveResult < 0 && moveResult != ERR_TIRED)
+							console.log(creep.name + " Can't move while getting from container: " + moveResult);
 					}
 					if (container.store[RESOURCE_ENERGY] <= 10)
 					{
@@ -167,7 +171,9 @@ module.exports = function()
 					}
 					if (result == ERR_NOT_IN_RANGE)
 					{
-						creep.moveTo(source, {"maxRooms": 1});
+						var moveResult = creep.moveTo(source, {"maxRooms": 1});
+						if (moveResult < 0 && moveResult != ERR_TIRED)
+							console.log(creep.name + " Can't move while harvesting: " + moveResult);
 					}
 					break;
 			}
