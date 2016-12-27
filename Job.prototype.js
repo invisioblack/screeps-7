@@ -26,15 +26,15 @@ module.exports = function()
 
 	Job.prototype.getEnergy = function (creep)
 	{
-		//console.log("***getEnergy()");
+		//console.log(creep.name + " ***getEnergy()");
 		// declarations
 		var carry, source;
 
 		// confirm that creep can attempt this job
 		if (creep.carryCapacity == 0)
 		{
-			creep.say("Can't Carry!");
 			creep.deassignMotive();
+			creep.say("Can't Carry!");
 			delete creep.memory.sourceId;
 			delete creep.memory.sourceType;
 
@@ -44,9 +44,12 @@ module.exports = function()
 		// get information
 		carry = _.sum(creep.carry);
 
+
+
 		// if I am full, then reset into work mode ---------------------------------------------------------------------
 		if (carry == creep.carryCapacity)
 		{
+
 			creep.say("Full!");
 			creep.memory.job.mode = this.JOB_MODE_WORK;
 			this.resetSource(creep);
@@ -120,7 +123,7 @@ module.exports = function()
 				creep.memory.sourceType = this.JOB_SOURCETYPE_SOURCE;
 			}
 		}
-		//console.log("harvest: " + creep.memory.sourceId);
+		//console.log("harvest: " + creep.name + " :" + creep.memory.sourceId);
 
 		// check to see if I can get energy, if so get it, if not, complain
 		if (creep.memory.sourceId == "") // I'm screwed, I cannot get energy
@@ -164,7 +167,7 @@ module.exports = function()
 				case this.JOB_SOURCETYPE_SOURCE:
 					var source = Game.getObjectById(creep.memory.sourceId);
 					result = creep.harvest(source);
-					//console.log("harvest: " + result);
+					//console.log("harvest: " + creep.name + " :" + result);
 					if (result == ERR_NOT_ENOUGH_ENERGY)
 					{
 						this.resetSource(creep);

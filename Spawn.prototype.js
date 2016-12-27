@@ -5,6 +5,7 @@
 //-------------------------------------------------------------------------
 // modules
 //-------------------------------------------------------------------------
+var lib = require("lib");
 var resourceManager = require("resourceManager");
 var units = require("units");
 //-------------------------------------------------------------------------
@@ -112,30 +113,28 @@ module.exports = function()
 				    }
 				}
 			} , this);
-
-			// fill up any remaining energy with move
-			/*
-			while (energyLeft >= this.costs[MOVE])
-			{
-				parts.push(MOVE);
-				energyLeft -= this.costs[MOVE];
-			}
-			*/
 		} else if (units[unitName].mode == 2)
 		{
 			parts = units[unitName].parts;
 		}
 
-        JSON.stringify(parts);
-		result = this.createCreep(parts, name, units[unitName].memory);
-		if (_.isString(result))
+		//console.log(WORK + " " + JSON.stringify(_.findIndex(parts, WORK)));
+		if (!_.findIndex(parts, WORK))
+			console.log('-------------------Failed creating creep ' + unitName + ' : ' + name + " energy: " + energy + " result: too few move parts");
+		else
 		{
-			console.log('+++++++++++++++++++Creating creep ' + unitName + ' : ' + name + " energy: " + energy + " result: " + result);
-			var creep = Game.creeps[name];
-			creep.initMotive();
+			result = this.createCreep(parts , name , units[unitName].memory);
+			if (_.isString(result))
+			{
+				console.log('+++++++++++++++++++Creating creep ' + unitName + ' : ' + name + " energy: " + energy + " result: " + result);
+				var creep = Game.creeps[name];
+				creep.initMotive();
 
-		} else {
-			console.log('-------------------Failed creating creep ' + unitName + ' : ' + name + " energy: " + energy + " result: " + result);
+			}
+			else
+			{
+				console.log('-------------------Failed creating creep ' + unitName + ' : ' + name + " energy: " + energy + " result: " + result);
+			}
 		}
 	};
 };
