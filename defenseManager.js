@@ -58,13 +58,7 @@ module.exports =
 		"getAgressivesPresent": function (roomName)
 		{
 			var room = Game.rooms[roomName];
-			var hostileCreeps = room.find(Game.HOSTILE_CREEPS, { filter: function (creep){
-					return _.some(creep.body, ATTACK)
-						|| _.some(creep.body, RANGED_ATTACK)
-						|| _.some(creep.body, CLAIM);
-				}
-			} );
-
+			var hostileCreeps = room.find(FIND_HOSTILE_CREEPS);
 			return hostileCreeps;
 		},
 

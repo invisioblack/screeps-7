@@ -76,8 +76,8 @@ JobBuild.prototype.work = function (creep)
 					//console.log("---- RESET");
 					creep.deassignMotive();
 				}
-				else
-					console.log(creep.name + " Can't build: " + target + " result: " + moveResult);
+				else if (result < 0)
+					console.log(creep.name + " Can't build: " + target + " result: " + result);
 			}
 			break;
 	}

@@ -104,7 +104,7 @@ module.exports = function()
 					numberParts = part.minimum;
 				for (x = 0; x < numberParts; x++)
 				{
-					console.log(energyLeft + "/" + this.costs[part.part]);
+					//console.log(energyLeft + "/" + this.costs[part.part]);
 				    if (energyLeft >= this.costs[part.part])
 				    {
 					    parts.push(part.part);
