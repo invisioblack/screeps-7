@@ -6,32 +6,6 @@
 // each active motivation.
 //----------------------------------------------------------------------------------------------------------------------
 
-//----------------------------------------------------------------------------------------------------------------------
-// modules
-//----------------------------------------------------------------------------------------------------------------------
-// library modules
-var C = require('C');
-var lib = require('lib');
-
-// game modules
-var motivationSupplySpawn = require('motivationSupplySpawn');
-var motivationSupplyController = require('motivationSupplyController');
-var motivationMaintainInfrastructure = require('motivationMaintainInfrastructure');
-var motivationHarvestSource = require("motivationHarvestSource");
-var motivationSupplyTower = require("motivationSupplyTower");
-
-var defenseManager = require("defenseManager");
-var resourceManager = require('resourceManager');
-var needManager = require('needManager');
-var units = require("units");
-
-//----------------------------------------------------------------------------------------------------------------------
-// Declarations
-//----------------------------------------------------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------------------------------------------------
-// function
-//----------------------------------------------------------------------------------------------------------------------
 module.exports =
 {
 	//------------------------------------------------------------------------------------------------------------------

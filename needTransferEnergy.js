@@ -5,12 +5,8 @@
 //-------------------------------------------------------------------------
 // modules
 //-------------------------------------------------------------------------
-var lib = require('lib');
-var C = require('C');
-var resourceManager = require("resourceManager");
-
 // script prototypes
-var Need = require('prototype.need')();
+var Need = require('Need.prototype')();
 
 //-------------------------------------------------------------------------
 // Declarations
@@ -35,6 +31,7 @@ NeedTransferEnergy.prototype.getUnitDemands = function(roomName, memory, motivat
 	var energy, energyCapacity, neededEnergy;
 	var worker = lib.nullProtect(resourceManager.getRoomUnits(roomName, "worker")[0], {});
 	var workerCapacity = lib.nullProtect(worker.carryCapacity, 50);
+	//console.log(JSON.stringify(memory));
 
 	if (!lib.isNull(target.energy))
 	{

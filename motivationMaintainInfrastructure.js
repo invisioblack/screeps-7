@@ -5,14 +5,8 @@
 //-------------------------------------------------------------------------
 // modules
 //-------------------------------------------------------------------------
-var lib = require('lib');
-var C = require('C');
-var resourceManager = require("resourceManager");
-var needBuild = require("needBuild");
-var needRepair = require("needRepair");
-
 // script prototypes
-var Motivation = require('prototype.motivation')();
+var Motivation = require("Motivation.prototype")();
 
 //-------------------------------------------------------------------------
 // Declarations
@@ -25,10 +19,6 @@ var MotivationMaintainInfrastructure = function ()
 {
 	Motivation.call(this);
 	this.name = "motivationMaintainInfrastructure";
-	this.needs = {};
-	this.needs["needBuild"] = needBuild;
-	this.needs["needRepair"] = needRepair;
-
 	this.wallHP = [0, 25000, 50000, 100000, 300000, 500000, 1000000, 5000000, 10000000];
 };
 

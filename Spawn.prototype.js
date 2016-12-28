@@ -2,19 +2,6 @@
 // prototype.spawn
 //-------------------------------------------------------------------------
 
-//-------------------------------------------------------------------------
-// modules
-//-------------------------------------------------------------------------
-var lib = require("lib");
-var resourceManager = require("resourceManager");
-var units = require("units");
-//-------------------------------------------------------------------------
-// Declarations
-//-------------------------------------------------------------------------
-
-//-------------------------------------------------------------------------
-// function
-//-------------------------------------------------------------------------
 module.exports = function() 
 {
 	// game costs for spawning parts
@@ -119,8 +106,8 @@ module.exports = function()
 		}
 
 		//console.log(WORK + " " + JSON.stringify(_.findIndex(parts, WORK)));
-		if (!_.findIndex(parts, WORK))
-			console.log('-------------------Failed creating creep ' + unitName + ' : ' + name + " energy: " + energy + " result: too few move parts");
+		if (energy < 300)
+			console.log('-------------------Failed creating creep ' + unitName + ' : ' + name + " energy: " + energy + " result: too little energy");
 		else
 		{
 			result = this.createCreep(parts , name , units[unitName].memory);

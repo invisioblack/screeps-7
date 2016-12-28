@@ -5,8 +5,7 @@
 //-------------------------------------------------------------------------
 // modules
 //-------------------------------------------------------------------------
-var lib = require("lib");
-var Job = require("prototype.job")();
+var Job = require("Job.prototype")();
 
 //-------------------------------------------------------------------------
 // Declarations
@@ -49,12 +48,13 @@ JobTransfer.prototype.work = function (creep)
 		creep.memory.job.mode = this.JOB_MODE_GETENERGY;
 	}
 
-
+	//console.log(creep.name + " job/mode: " + creep.memory.job.mode);
 
 	// manage job
 	switch (creep.memory.job.mode)
 	{
 		case this.JOB_MODE_GETENERGY:
+
 			this.getEnergy(creep);
 			break;
 		case this.JOB_MODE_WORK:

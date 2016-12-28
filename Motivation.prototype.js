@@ -8,15 +8,6 @@
 // room.memory.motivations[this.name].spawnAllocated
 // room.memory.motivations[this.name].needs
 
-//----------------------------------------------------------------------------------------------------------------------
-// modules
-//----------------------------------------------------------------------------------------------------------------------
-var lib = require('lib');
-var C = require('C');
-
-//----------------------------------------------------------------------------------------------------------------------
-// object
-//----------------------------------------------------------------------------------------------------------------------
 module.exports = function ()
 {
     var Motivation = function () {};
@@ -54,7 +45,7 @@ module.exports = function ()
 		for (var needName in room.memory.motivations[this.name].needs)
 		{
 			var need = room.memory.motivations[this.name].needs[needName];
-			var demands = this.needs[need.type].getUnitDemands(roomName, need);
+			var demands = global[need.type].getUnitDemands(roomName, need);
 			for (var unitName in demands)
 			{
 				if (lib.isNull(result[unitName]))

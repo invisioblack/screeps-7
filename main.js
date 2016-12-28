@@ -2,45 +2,71 @@
 // Main
 //-------------------------------------------------------------------------
 
-//-------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 // Modules
-//-------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------
 // game prototypes
-require('prototype.creep')();
-require('prototype.source')();
-require('prototype.spawn')();
-require('prototype.structureTower')();
+require('Creep.prototype')();
+require('Source.prototype')();
+require('Spawn.prototype')();
+require('StructureTower.prototype')();
 
-// library modules
-var C = require('C');
-var lib = require("lib");
+const profiler = require('screepsProfiler');
+profiler.enable();
 
-// game modules
-var motivator = require('motivator');
+// global -------------------------------------------------------------------------------------------------------------
+// modules
+	global.C = require("C");
+	global.lib = require("lib");
+	global.defenseManager = require("defenseManager");
+	global.jobBuild = require("jobBuild");
+	global.jobHarvestSource = require("jobHarvestSource");
+	global.jobRepair = require("jobRepair");
+	global.jobTransfer = require("jobTransfer");
+	global.motivator = require("motivator");
+	global.motivationSupplySpawn = require('motivationSupplySpawn');
+	global.motivationSupplyController = require('motivationSupplyController');
+	global.motivationMaintainInfrastructure = require('motivationMaintainInfrastructure');
+	global.motivationHarvestSource = require("motivationHarvestSource");
+	global.motivationSupplyTower = require("motivationSupplyTower");
+	global.needManager = require("needManager");
+	global.needBuild = require("needBuild");
+	global.needHarvestSource = require("needHarvestSource");
+	global.needRepair = require("needRepair");
+	global.needTransferEnergy = require("needTransferEnergy");
+	global.resourceManager = require("resourceManager");
+	global.units = require("units");
 
+// settings
+global.settings = {};
+	global.config = require("config");
+
+// main loop -----------------------------------------------------------------------------------------------------------
 module.exports.loop = function ()
 {
-	//-------------------------------------------------------------------------
-	// Declarations
-	//-------------------------------------------------------------------------
+	profiler.wrap(function()
+	{
+		//------------------------------------------------------------------------------------------------------------------
+		// Declarations
+		//------------------------------------------------------------------------------------------------------------------
 		var active = true;
 
-	//-------------------------------------------------------------------------
-	// Do stuffs
-	//-------------------------------------------------------------------------
-	console.log("+++++++++++++++++++++++ new tick +++++++++++++++++++++++");
-	if (active)
-	{
-		cleanupMemory();
-		motivator.init();
-		motivator.motivate();
-	}
+		//------------------------------------------------------------------------------------------------------------------
+		// Do stuffs
+		//------------------------------------------------------------------------------------------------------------------
+		console.log("<b>+++++++++++++++++++++++ new tick +++++++++++++++++++++++</b>");
+		if (active)
+		{
+			cleanupMemory();
+			global.motivator.init();
+			global.motivator.motivate();
+		}
 
-	//-------------------------------------------------------------------------
-	// END
-	//-------------------------------------------------------------------------
-	console.log("------ end tick ------");
-
+		//------------------------------------------------------------------------------------------------------------------
+		// END
+		//------------------------------------------------------------------------------------------------------------------
+		console.log("<b>+++++++++++++++++++++++ end tick +++++++++++++++++++++++</b>");
+	});
 };
 
 function cleanupMemory ()

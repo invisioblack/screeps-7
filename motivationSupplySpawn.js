@@ -5,14 +5,8 @@
 //-------------------------------------------------------------------------
 // modules
 //-------------------------------------------------------------------------
-var lib = require('lib');
-var C = require('C');
-var needTransferEnergy = require("needTransferEnergy");
-var resourceManager = require("resourceManager");
-var units = require("units");
-
 // script prototypes
-var Motivation = require('prototype.motivation')();
+var Motivation = require("Motivation.prototype")();
 
 //-------------------------------------------------------------------------
 // Declarations
@@ -25,8 +19,6 @@ var MotivationSupplySpawn = function ()
 {
 	Motivation.call(this);
 	this.name = "motivationSupplySpawn";
-	this.needs = {};
-	this.needs["needTransferEnergy"] = needTransferEnergy;
 };
 
 MotivationSupplySpawn.prototype = Object.create(Motivation.prototype);

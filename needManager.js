@@ -6,30 +6,7 @@
 // the spawn to build another unit.
 //------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-// modules
-//------------------------------------------------------------------------------
-// library modules
-var C = require('C');
-var lib = require('lib');
-var resourceManager = require("resourceManager");
-
-// game modules
-var units = require("units");
-var jobTransfer = require("jobTransfer");
-var jobBuild = require("jobBuild");
-var jobRepair = require("jobRepair");
-var jobHarvestSource = require("jobHarvestSource");
-
-
-//------------------------------------------------------------------------------
-// Declarations
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-// function
-//------------------------------------------------------------------------------
-module.exports = 
+module.exports =
 {
 	//--------------------------------------------------------------------------
 	// Declarations
@@ -68,7 +45,7 @@ module.exports =
 
 
 					// if there is a creep to assign, we need to assign it
-					var unitDemands = motivation.needs[need.type].getUnitDemands(roomName , need, motivation.name);
+					var unitDemands = global[need.type].getUnitDemands(roomName , need, motivation.name);
 					var creepsDemanded = unitDemands[unitName];
 					var creepsAssigned = resourceManager.countRoomMotivationNeedUnits(roomName , motivation.name , need.name , unitName);
 					var creep = resourceManager.findUnallocatedRoomUnit(room.name , unitName);

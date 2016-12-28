@@ -1,19 +1,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 // motivationSupplyController
 //-------------------------------------------------------------------------
-
-//-------------------------------------------------------------------------
-// modules
-//-------------------------------------------------------------------------
-var C = require('C');
-var lib = require('lib');
-var resourceManager = require("resourceManager");
-var needHarvestSource = require("needHarvestSource");
-var units = require("units");
-
-// script prototypes
-var Motivation = require('prototype.motivation')();
-require('prototype.source')();
+var Motivation = require('Motivation.prototype')();
 
 //-------------------------------------------------------------------------
 // Declarations
@@ -26,8 +14,6 @@ var MotivationHarvestSource = function ()
 {
 	Motivation.call(this);
 	this.name = "motivationHarvestSource";
-	this.needs = {};
-	this.needs["needHarvestSource"] = needHarvestSource;
 };
 
 MotivationHarvestSource.prototype = Object.create(Motivation.prototype);
