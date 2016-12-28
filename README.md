@@ -54,7 +54,3 @@ Jobs:
 
     Jobs model specific creep behavior to fulfill needs. Examples include build, 
     collect, harvest, heal.
-
-Resource Manager:
-
-    Is responsible for providing information about resources.

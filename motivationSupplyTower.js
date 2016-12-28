@@ -48,12 +48,13 @@ MotivationSupplyTower.prototype.getDemands = function (roomName, resources)
 MotivationSupplyTower.prototype.getDesireSpawn = function (roomName, demands)
 {
 	var result = true;
-	var memory = Game.rooms[roomName].memory.motivations[this.name];
+	var room = Game.rooms[roomName];
+	var memory = room.memory.motivations[this.name];
 	if (memory.active)
 	{
 		for (var unitName in units)
 		{
-			if (!lib.isNull(demands.units[unitName]) && demands.units[unitName] < resourceManager.countRoomUnits(roomName , unitName))
+			if (!lib.isNull(demands.units[unitName]) && demands.units[unitName] < room.countUnits(unitName))
 			{
 				result = false;
 			}

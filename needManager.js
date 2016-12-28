@@ -30,7 +30,7 @@ module.exports =
 		// first we need to figure out if we have any open allocations
 		for (var unitName in units)
 		{
-			var assignedUnits = resourceManager.countRoomMotivationUnits(roomName , motivation.name , unitName);
+			var assignedUnits = room.countMotivationUnits(motivation.name , unitName);
 			var allocatedUnits = motivationMemory.allocatedUnits[unitName];
 
 			// if we have open allocations, we need to find if there is a creep to assign
@@ -47,8 +47,8 @@ module.exports =
 					// if there is a creep to assign, we need to assign it
 					var unitDemands = global[need.type].getUnitDemands(roomName , need, motivation.name);
 					var creepsDemanded = unitDemands[unitName];
-					var creepsAssigned = resourceManager.countRoomMotivationNeedUnits(roomName , motivation.name , need.name , unitName);
-					var creep = resourceManager.findUnallocatedRoomUnit(room.name , unitName);
+					var creepsAssigned = room.countMotivationNeedUnits(motivation.name , need.name , unitName);
+					var creep = room.findUnallocatedUnit(unitName);
 
 					if (creepsDemanded == 0)
 						outOfCreeps = true;
@@ -62,9 +62,9 @@ module.exports =
 						creep.assignMotive(roomName , motivation.name , need.name);
 
 						// update for iteration
-						creep = resourceManager.findUnallocatedRoomUnit(room.name , unitName);
-						creepsAssigned = resourceManager.countRoomMotivationNeedUnits(roomName , motivation.name , need.name , unitName);
-						assignedUnits = resourceManager.countRoomMotivationUnits(roomName , motivation.name , unitName);
+						creep = room.findUnallocatedUnit(unitName);
+						creepsAssigned = room.countMotivationNeedUnits(motivation.name , need.name , unitName);
+						assignedUnits = room.countMotivationUnits(motivation.name , unitName);
 						allocatedUnits = motivationMemory.allocatedUnits[unitName];
 					}
 

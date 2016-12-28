@@ -8,6 +8,7 @@
 // game prototypes
 require('Creep.prototype')();
 require('Source.prototype')();
+require('Room.prototype')();
 require('Spawn.prototype')();
 require('StructureTower.prototype')();
 
@@ -34,7 +35,6 @@ profiler.enable();
 	global.needHarvestSource = require("needHarvestSource");
 	global.needRepair = require("needRepair");
 	global.needTransferEnergy = require("needTransferEnergy");
-	global.resourceManager = require("resourceManager");
 	global.units = require("units");
 
 // settings

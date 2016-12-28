@@ -60,9 +60,9 @@ module.exports = function()
 
 	Spawn.prototype.spawnUnit = function (unitName, fullEnergy)
 	{
-		var energy = resourceManager.getRoomSpawnEnergy(this.room.name);
+		var energy = this.room.getSpawnEnergy();
 
-		console.log("  Spawn Status: " + energy.energy + "/" + energy.energyCapacity);
+		console.log("  Spawn Status: " + energy.energy + "/" + energy.energyCapacity + " full energy: " + fullEnergy);
 
 		if (fullEnergy)
 		{
@@ -105,7 +105,7 @@ module.exports = function()
 			parts = units[unitName].parts;
 		}
 
-		//console.log(WORK + " " + JSON.stringify(_.findIndex(parts, WORK)));
+		console.log(JSON.stringify(parts));
 		if (energy < 300)
 			console.log('-------------------Failed creating creep ' + unitName + ' : ' + name + " energy: " + energy + " result: too little energy");
 		else

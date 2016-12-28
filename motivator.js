@@ -32,9 +32,9 @@ module.exports =
 				room.memory.motivations[motivationSupplyTower.name].priority = C.PRIORITY_2;
 
 				motivationSupplySpawn.init(room.name);
-				var numCreeps = resourceManager.countRoomUnits(roomName, "worker");
-				var numHarvesters = resourceManager.countRoomUnits(roomName, "harvester");
-				var numContainers = Game.rooms[roomName].find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }}).length;
+				var numCreeps = room.countUnits("worker");
+				var numHarvesters = room.countUnits("harvester");
+				var numContainers = room.find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }}).length;
 
 				// normal priority
 				if (numCreeps < 10)
@@ -87,7 +87,7 @@ module.exports =
 				defenseManager.safeModeFailsafe(roomName);
 
 				// declarations ----------------------------------------------------------------------------------------
-				var resources = resourceManager.getRoomResources(roomName); // get room resources
+				var resources = room.getResources(); // get room resources
 				var demands = {};
 				var sortedMotivations;
 				var isSpawnAllocated = false;
@@ -124,7 +124,6 @@ module.exports =
 					console.log("---- Motivating round 1 - demands/spawn/active: " + motivationMemory.name + " Spawn allocated: " + motivationMemory.spawnAllocated);
 
 					// spawn units if allocated spawn ------------------------------------------------------------------
-					// TODO: This needs to support spawning as soon as there is enough energy for harvesters
 					var unitName = motivations[motivationMemory.name].getDesiredSpawnUnit(roomName);
 					if (motivationMemory.spawnAllocated)
 					{
@@ -134,7 +133,10 @@ module.exports =
 							// this probably isn't handling multiple spawns well
 							if (spawn.room.name == roomName)
 							{
-								if (unitName == "worker" && resourceManager.countRoomUnits(roomName , unitName) < 2)
+								var r = Game.rooms[roomName];
+								var countUnits = r.countUnits(unitName);
+								//console.log(unitName + " " + countUnits);
+								if (unitName == "worker" && countUnits < 2)
 									spawn.spawnUnit(unitName , false);
 								else
 									spawn.spawnUnit(unitName , true);

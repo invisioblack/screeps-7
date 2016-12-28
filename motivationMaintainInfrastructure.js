@@ -57,11 +57,12 @@ MotivationMaintainInfrastructure.prototype.getDesiredSpawnUnit = function ()
 MotivationMaintainInfrastructure.prototype.getDesireSpawn = function (roomName, demands)
 {
 	var result = true;
-	var memory = Game.rooms[roomName].memory.motivations[this.name];
+	var room = Game.rooms[roomName];
+	var memory = room.memory.motivations[this.name];
 
 	if (memory.active)
 	{
-		var workers = resourceManager.countRoomUnits(roomName, "worker");
+		var workers = room.countUnits("worker");
 		if (!lib.isNull(demands.units["worker"]) && demands.units["worker"] < workers)
 			result = false;
 	} else {

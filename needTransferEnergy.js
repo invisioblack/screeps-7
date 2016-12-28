@@ -27,9 +27,10 @@ NeedTransferEnergy.prototype.constructor = NeedTransferEnergy;
 NeedTransferEnergy.prototype.getUnitDemands = function(roomName, memory, motivationName)
 {
 	var result = {};
+	var room = Game.rooms[roomName];
 	var target = Game.getObjectById(memory.targetId);
 	var energy, energyCapacity, neededEnergy;
-	var worker = lib.nullProtect(resourceManager.getRoomUnits(roomName, "worker")[0], {});
+	var worker = lib.nullProtect(room.getUnits("worker")[0], {});
 	var workerCapacity = lib.nullProtect(worker.carryCapacity, 50);
 	//console.log(JSON.stringify(memory));
 

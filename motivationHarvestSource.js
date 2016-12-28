@@ -27,7 +27,7 @@ MotivationHarvestSource.prototype.getDemands = function (roomName, resources) {
 	var unitName = this.getDesiredSpawnUnit(roomName);
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
-	//console.log(JSON.stringify(result));
+	//console.log(JSON.stringify(result.units));
 	console.log("  Harvest Source Demands : " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn);
 	return result;
 };
@@ -40,9 +40,10 @@ MotivationHarvestSource.prototype.getDesiredSpawnUnit = function ()
 MotivationHarvestSource.prototype.getDesireSpawn = function (roomName, demands)
 {
 	var result = true;
-	var numContainers = Game.rooms[roomName].find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }}).length;
-	var numHarvesters = resourceManager.countRoomUnits(roomName, "harvester");
-	var numWorkers = resourceManager.countRoomUnits(roomName, "worker");
+	var room = Game.rooms[roomName];
+	var numContainers = room.find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }}).length;
+	var numHarvesters = room.countUnits("harvester");
+	var numWorkers = room.countUnits("worker");
 
 	if (numContainers == 0 || numHarvesters >= demands.units["harvester"] || numWorkers < 2)
 	{
@@ -54,9 +55,10 @@ MotivationHarvestSource.prototype.getDesireSpawn = function (roomName, demands)
 
 MotivationHarvestSource.prototype.updateActive = function (roomName, demands)
 {
-	var memory = Game.rooms[roomName].memory.motivations[this.name];
-	var numContainers = Game.rooms[roomName].find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }}).length;
-	var numHarvesters = resourceManager.countRoomUnits(roomName, "harvester");
+	var room = Game.rooms[roomName];
+	var memory = room.memory.motivations[this.name];
+	var numContainers = room.find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }}).length;
+	var numHarvesters = room.countUnits("harvester");
 	if (numContainers > 0 && numHarvesters > 0)
 	{
 		memory.active = true;
