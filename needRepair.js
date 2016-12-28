@@ -28,9 +28,11 @@ NeedRepair.prototype.getUnitDemands = function(roomName, memory, motivationName)
 {
 	var result = {};
 	var target = Game.getObjectById(memory.targetId);
-
-	result["worker"] = Math.ceil((target.hitsMax - target.hits)/1000);
-	//console.log(target + " " + result["worker"]);
+	if (!lib.isNull(target))
+		result["worker"] = Math.ceil((target.hitsMax - target.hits)/1000);
+	else
+		result["worker"] = 0;
+	//console.log(memory.targetId);
 	return result;
 };
 
