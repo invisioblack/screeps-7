@@ -105,7 +105,7 @@ module.exports = function()
 			parts = units[unitName].parts;
 		}
 
-		console.log(JSON.stringify(parts));
+		//console.log(JSON.stringify(parts));
 		if (energy < 300)
 			console.log('-------------------Failed creating creep ' + unitName + ' : ' + name + " energy: " + energy + " result: too little energy");
 		else

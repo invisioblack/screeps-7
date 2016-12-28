@@ -58,8 +58,8 @@ module.exports.loop = function ()
 		if (active)
 		{
 			cleanupMemory();
-			global.motivator.init();
-			global.motivator.motivate();
+			motivator.init();
+			motivator.motivate();
 		}
 
 		//------------------------------------------------------------------------------------------------------------------
