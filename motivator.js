@@ -64,6 +64,7 @@ module.exports =
 	// Main motivator function, should be called first from main
 	"motivate": function ()
 	{
+		var debug = false;
 		var room;
 		// set up hack motivations reference ---------------------------------------------------------------------------
 		var motivations = {};
@@ -81,7 +82,7 @@ module.exports =
 			{
 				//------------------------------------------------------------------------------------------------------
 				// motivate
-				console.log('-------- motivator.motivate: ' + roomName);
+				lib.log('-------- motivator.motivate: ' + roomName, debug);
 
 				// safeMode failsafe
 				defenseManager.safeModeFailsafe(roomName);
@@ -121,7 +122,7 @@ module.exports =
 						motivationMemory.spawnAllocated = false;
 					}
 
-					console.log("---- Motivating round 1 - demands/spawn/active: " + motivationMemory.name + " Spawn allocated: " + motivationMemory.spawnAllocated);
+					lib.log("---- Motivating round 1 - demands/spawn/active: " + motivationMemory.name + " Spawn allocated: " + motivationMemory.spawnAllocated, debug);
 
 					// spawn units if allocated spawn ------------------------------------------------------------------
 					var unitName = motivations[motivationMemory.name].getDesiredSpawnUnit(roomName);
@@ -148,7 +149,7 @@ module.exports =
 				// second and 3rd round motivation processing ----------------------------------------------------------
 				// unit allocation and need processing
 				countActiveMotivations = this.countActiveMotivations(roomName);
-				console.log("--: Active Motivations: " + countActiveMotivations);
+				lib.log("--: Active Motivations: " + countActiveMotivations, debug);
 
 				// process round 2 and 3 for each unit type ------------------------------------------------------------
 				for (var unitName in units)
@@ -167,7 +168,7 @@ module.exports =
 							activeDemandingMotivations++;
 					}, this);
 
-					console.log("++++Motivating unit: " + unitName + " for " + activeDemandingMotivations + " motivation(s)");
+					lib.log("++++Motivating unit: " + unitName + " for " + activeDemandingMotivations + " motivation(s)", debug);
 
 					totalShares = activeDemandingMotivations * (activeDemandingMotivations + 1) / 2;
 					totalUnits = resources.units[unitName].unallocated;
@@ -189,7 +190,7 @@ module.exports =
 
 							if (unitsDemanded > 0)
 							{
-								console.log("---- Motivating round 2 - regular allocation: " + unitName + " : " + motivationMemory.name);
+								lib.log("---- Motivating round 2 - regular allocation: " + unitName + " : " + motivationMemory.name, debug);
 								unitsAvailable = lib.nullProtect(resources.units[unitName].unallocated , 0);
 								unitsTotalAllocated = lib.nullProtect(resources.units[unitName].allocated , 0);
 
@@ -213,18 +214,18 @@ module.exports =
 								motivationMemory.allocatedUnits[unitName] = unitsToAllocate;
 
 								// output status ---------------------------------------------------------------------------
-								console.log("    Total Allocated/Total: " + unitsTotalAllocated + '/' + resources.units[unitName].total
-									+ ' Unallocated: ' + resources.units[unitName].unallocated);
-								console.log("    Units Available: " + unitsAvailable
-									+ " Units Allocated/Demanded: " + unitsToAllocate + "/" + unitsDemanded);
-								console.log("    Iteration: " + iteration
+								lib.log("    Total Allocated/Total: " + unitsTotalAllocated + '/' + resources.units[unitName].total
+									+ ' Unallocated: ' + resources.units[unitName].unallocated, debug);
+								lib.log("    Units Available: " + unitsAvailable
+									+ " Units Allocated/Demanded: " + unitsToAllocate + "/" + unitsDemanded, debug);
+								lib.log("    Iteration: " + iteration
 									+ " Shares this iteration " + sharesThisIteration
-									+ " Units/Share: " + unitsPerShare);
+									+ " Units/Share: " + unitsPerShare, debug);
 
 								// update resources.units["worker"].unallocated
 								resources.units[unitName].allocated += motivationMemory.allocatedUnits[unitName];
 								resources.units[unitName].unallocated -= motivationMemory.allocatedUnits[unitName];
-								console.log('    Allocation/Total: ' + resources.units[unitName].allocated + '/' + resources.units[unitName].total + ' Unallocated: ' + resources.units[unitName].unallocated);
+								lib.log('    Allocation/Total: ' + resources.units[unitName].allocated + '/' + resources.units[unitName].total + ' Unallocated: ' + resources.units[unitName].unallocated, debug);
 							} else { // handle no demands
 								iteration--;
 								motivationMemory.allocatedUnits[unitName] = 0;
@@ -259,7 +260,7 @@ module.exports =
 						{
 							if (motivationMemory.active)
 							{
-								console.log("---- Motivating round 3 - surplus allocation: " + unitName + " : " + motivationMemory.name);
+								lib.log("---- Motivating round 3 - surplus allocation: " + unitName + " : " + motivationMemory.name, debug);
 								var unitsAvailable = lib.nullProtect(resources.units[unitName].unallocated, 0);
 								var unitsAllocated = lib.nullProtect(motivationMemory.allocatedUnits[unitName], 0);
 								var unitsDemanded = lib.nullProtect(demands[motivationMemory.name].units[unitName], 0) - unitsAllocated;
@@ -267,12 +268,12 @@ module.exports =
 								if (unitsDemanded < 0)
 									unitsDemanded = 0;
 
-								console.log("    " + unitName + "Available/Demanded-Allocated/Allocated units: " + unitsAvailable + "/" + unitsDemanded + "/" + unitsAllocated);
+								lib.log("    " + unitName + "Available/Demanded-Allocated/Allocated units: " + unitsAvailable + "/" + unitsDemanded + "/" + unitsAllocated, debug);
 
 								// allocate an additional unit if it is needed
 								if (unitsAvailable > 0 && unitsDemanded > 0)
 								{
-									console.log("    +Allocating additional unit:" + unitName);
+									lib.log("    +Allocating additional unit:" + unitName, debug);
 									motivationMemory.allocatedUnits[unitName] += 1;
 									resources.units[unitName].allocated += 1;
 									resources.units[unitName].unallocated -= 1;
@@ -295,13 +296,13 @@ module.exports =
 						//console.log("-------POSTALLOCATION: totalUnitsAvailable: " + totalUnitsAvailable + " totalUnitsDemanded: " + totalUnitsDemanded + " totalUnitsAllocated: " + totalUnitsAllocated);
 					}
 
-					console.log(">>>>Final " + unitName + " Allocation: " + resources.units[unitName].allocated + "/" + resources.units[unitName].total + " Unallocated: " + resources.units[unitName].unallocated);
+					lib.log(">>>>Final " + unitName + " Allocation: " + resources.units[unitName].allocated + "/" + resources.units[unitName].total + " Unallocated: " + resources.units[unitName].unallocated, debug);
 				}
 
 				// motivation round 4 ----------------------------------------------------------------------------------
-				console.log(">>>> Final Motivation Round <<<<");
+				lib.log(">>>> Final Motivation Round <<<<", debug);
 				sortedMotivations.forEach(function(motivationMemory) {
-					console.log("---- Motivating round 4 - manage needs: " + motivationMemory.name + " Active: " + motivationMemory.active);
+					lib.log("---- Motivating round 4 - manage needs: " + motivationMemory.name + " Active: " + motivationMemory.active, debug);
 					// processes needs for motivation ------------------------------------------------------------------
 					needManager.manageNeeds(roomName, motivations[motivationMemory.name], motivationMemory);
 				}, this);

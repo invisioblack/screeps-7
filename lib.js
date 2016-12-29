@@ -24,5 +24,11 @@ module.exports =
 		}
 
 		return value;
+	},
+
+	"log": function (message, output)
+	{
+		if (output)
+			console.log(message);
 	}
 };

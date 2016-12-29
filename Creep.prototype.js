@@ -4,10 +4,11 @@
 // memory
 // ------------------------------------------------------------------------
 // motive: {}
-//      room: string room name, the room the creep is assigned to
+//      room: string room name, the home room of the creep
 //      motivation: string motivation name, the motivation the creep is assigned to
 //      need:  string need name, the need the creep is assigned to
 // unit: string - unit type
+// destinationRoom: string roomName of room this creep should be going to
 //-------------------------------------------------------------------------
 // modules
 //-------------------------------------------------------------------------
