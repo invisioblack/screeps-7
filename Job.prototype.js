@@ -78,10 +78,10 @@ module.exports = function()
 		// look for energy in containers
 		if (creep.memory.sourceId == "")
 		{
-			var container = creep.pos.findClosestByRange(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] >= creep.carryCapacity; }});
+			var container = creep.pos.findClosestByPath(FIND_STRUCTURES, { ignoreCreeps: true, filter: function (s) { return s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] >= creep.carryCapacity; }});
 			if (lib.isNull(container))
 			{
-				container = creep.pos.findClosestByRange(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] >= 0; }});
+				container = creep.pos.findClosestByPath(FIND_STRUCTURES, { ignoreCreeps: true, filter: function (s) { return s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] >= 0; }});
 			}
 
 			//console.log(container.store[RESOURCE_ENERGY]);
@@ -99,7 +99,7 @@ module.exports = function()
 		// harvest my own energy
 		if (creep.memory.sourceId == "" && creep.getHasPart(WORK))
 		{
-			var source = creep.pos.findClosestByRange(FIND_SOURCES, { filter: function (s)
+			var source = creep.pos.findClosestByPath(FIND_SOURCES, { ignoreCreeps: true, filter: function (s)
 			{
 				var max = s.getMaxHarvesters();
 				var on = s.countCreepsOnSource();
