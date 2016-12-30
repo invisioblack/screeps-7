@@ -26,6 +26,9 @@ module.exports =
 			motivationHarvestSource.init(room.name);
 			room.memory.motivations[motivationHarvestSource.name].priority = C.PRIORITY_1;
 
+			motivationHaulToStorage.init(room.name);
+			room.memory.motivations[motivationHaulToStorage.name].priority = C.PRIORITY_2;
+
 			motivationSupplyTower.init(room.name);
 			room.memory.motivations[motivationSupplyTower.name].priority = C.PRIORITY_2;
 
@@ -78,7 +81,7 @@ module.exports =
 		for (var roomName in Game.rooms)
 		{
 			room = Game.rooms[roomName];
-			//debug = room.name == "W8N3";
+			debug = room.name == "W8N3";
 
 			// update defenses -----------------------------------------------------------------------------------------
 			room.updateThreat();

@@ -137,6 +137,11 @@ module.exports =
 					}
 
 				}
+				else if (need.type == "needHaulToStorage")
+				{
+					//console.log("Creep: " + creep.name + " Working needHarvestSource");
+					jobTransfer.work(creep);
+				}
 			}
 		}
 	}

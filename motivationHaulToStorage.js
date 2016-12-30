@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------------------------------------------------------
-// motivationSupplyController
+// motivationHaulToStorage
 //-------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------
@@ -15,34 +15,33 @@ var Motivation = require("Motivation.prototype")();
 //-------------------------------------------------------------------------
 // constructor
 //-------------------------------------------------------------------------
-var MotivationSupplyController = function ()
+var MotivationHaulToStorage = function ()
 {
 	Motivation.call(this);
-	this.name = "motivationSupplyController";
+	this.name = "motivationHaulToStorage";
 };
 
-MotivationSupplyController.prototype = Object.create(Motivation.prototype);
-MotivationSupplyController.prototype.constructor = MotivationSupplyController;
+MotivationHaulToStorage.prototype = Object.create(Motivation.prototype);
+MotivationHaulToStorage.prototype.constructor = MotivationHaulToStorage;
 
 //-------------------------------------------------------------------------
 // implementation
 //-------------------------------------------------------------------------
-MotivationSupplyController.prototype.getDemands = function (roomName, resources) {
+MotivationHaulToStorage.prototype.getDemands = function (roomName, resources) {
 	var result = {};
 	var unitName = this.getDesiredSpawnUnit(roomName);
-	result.energy = resources.controllerStatus.progressTotal - resources.controllerStatus.progress;
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
-	console.log('  Supply Controller Demands: e: ' + result.energy + " " + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn);
+	console.log("  Haul to Storage Demands: " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn);
 	return result;
 };
 
-MotivationSupplyController.prototype.getDesiredSpawnUnit = function (roomName)
+MotivationHaulToStorage.prototype.getDesiredSpawnUnit = function (roomName)
 {
-	return "worker";
+	return "hauler";
 };
 
-MotivationSupplyController.prototype.getDesireSpawn = function (roomName, demands)
+MotivationHaulToStorage.prototype.getDesireSpawn = function (roomName, demands)
 {
 	var result = true;
 	var room = Game.rooms[roomName];
@@ -63,11 +62,14 @@ MotivationSupplyController.prototype.getDesireSpawn = function (roomName, demand
 	return result;
 };
 
-MotivationSupplyController.prototype.updateActive = function (roomName, demands)
+MotivationHaulToStorage.prototype.updateActive = function (roomName, demands)
 {
 	var room = Game.rooms[roomName];
 	var memory = room.memory.motivations[this.name];
-	if (room.controller.my && demands.energy > 0)
+	var storages = room.find(FIND_STRUCTURES, { filter: function (s) {
+		return s.structureType == STRUCTURE_STORAGE;
+	}});
+	if (room.controller.my && room.controller.level >= 4 && storages.length > 0)
 	{
 		memory.active = true;
 	} else {
@@ -75,7 +77,7 @@ MotivationSupplyController.prototype.updateActive = function (roomName, demands)
 	}
 };
 
-MotivationSupplyController.prototype.updateNeeds = function (roomName)
+MotivationHaulToStorage.prototype.updateNeeds = function (roomName)
 {
 	var room = Game.rooms[roomName];
 	var memory = room.memory.motivations[this.name];
@@ -88,19 +90,20 @@ MotivationSupplyController.prototype.updateNeeds = function (roomName)
 
 	// Handle Harvest Energy Needs -------------------------------------------------------------------------------------
 	// look up sources and find out how many needs we should have for each one
-	var needName = "supplyController." + room.controller.id;
+	var needName = "haulStorage." + room.controller.id;
 	var need;
-
-	//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
+	var storages = room.find(FIND_STRUCTURES, { filter: function (s) {
+		return s.structureType == STRUCTURE_STORAGE;
+	}});
 
 	// create new need if one doesn't exist
-	if (lib.isNull(memory.needs[needName]))
+	if (lib.isNull(memory.needs[needName]) && storages.length)
 	{
 		memory.needs[needName] = {};
 		need = memory.needs[needName];
 		need.name = needName;
-		need.type = "needTransferEnergy";
-		need.targetId = room.controller.id;
+		need.type = "needHaulToStorage";
+		need.targetId = storages[0].id;
 		need.priority = C.PRIORITY_1;
 	}
 };
@@ -108,4 +111,4 @@ MotivationSupplyController.prototype.updateNeeds = function (roomName)
 //-------------------------------------------------------------------------
 // export
 //-------------------------------------------------------------------------
-module.exports = new MotivationSupplyController();
+module.exports = new MotivationHaulToStorage();

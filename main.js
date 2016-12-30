@@ -6,11 +6,11 @@
 // Modules
 //----------------------------------------------------------------------------------------------------------------------
 // game prototypes
-require('Creep.prototype')();
-require('Source.prototype')();
-require('Room.prototype')();
-require('Spawn.prototype')();
-require('StructureTower.prototype')();
+require('Creep.prototype');
+require('Source.prototype');
+require('Room.prototype');
+require('Spawn.prototype');
+require('StructureTower.prototype');
 
 const profiler = require('screepsProfiler');
 profiler.enable();
@@ -30,6 +30,7 @@ global.jobTransfer = require("jobTransfer");
 global.motivator = require("motivator");
 global.motivationGarrison = require("motivationGarrison");
 global.motivationHarvestSource = require("motivationHarvestSource");
+global.motivationHaulToStorage = require("motivationHaulToStorage");
 global.motivationLongDistanceHarvest = require("motivationLongDistanceHarvest");
 global.motivationMaintainInfrastructure = require('motivationMaintainInfrastructure');
 global.motivationSupplyController = require('motivationSupplyController');
@@ -39,6 +40,7 @@ global.needManager = require("needManager");
 global.needBuild = require("needBuild");
 global.needGarrison = require("needGarrison");
 global.needHarvestSource = require("needHarvestSource");
+global.needHaulToStorage = require("needHaulToStorage");
 global.needLongDistanceHarvest = require("needLongDistanceHarvest");
 global.needRepair = require("needRepair");
 global.needTransferEnergy = require("needTransferEnergy");

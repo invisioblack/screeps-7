@@ -39,6 +39,24 @@ module.exports =
 			"unit": "harvester"
 		}
 	},
+	"hauler": {
+		"mode": 1,
+		"parts": [
+			{
+				"part" : CARRY,
+				"weight" : 0.75,
+				"minimum" : 1
+			},
+			{
+				"part" : MOVE,
+				"weight" : 0.25,
+				"minimum" : 1
+			}
+		],
+		"memory": {
+			"unit": "hauler"
+		}
+	},
 	"guard": {
 		"mode": 1,
 		"parts": [

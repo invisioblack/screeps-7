@@ -11,8 +11,7 @@
 //-------------------------------------------------------------------------
 // modules
 //-------------------------------------------------------------------------
-module.exports = function()
-{
+
     Creep.prototype.moveToRange = function (target, range)
 	{
 		if (target.pos.inRangeTo(this.pos, range - 1))
@@ -156,4 +155,4 @@ module.exports = function()
 		}
 	};
 
-};
+module.exports = function() {};

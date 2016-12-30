@@ -75,6 +75,19 @@ module.exports = function()
 			}
 		}, this);
 
+		// look for energy in storages
+		if (creep.memory.unit != "hauler" && creep.memory.sourceId == "")
+		{
+			var storage = creep.pos.findClosestByPath(FIND_STRUCTURES, { ignoreCreeps: true, filter: function (s) { return s.structureType == STRUCTURE_STORAGE && s.store[RESOURCE_ENERGY] > 0; }});
+
+			// second pass check and assign
+			if (!lib.isNull(storage) && storage.store[RESOURCE_ENERGY] > 0)
+			{
+				creep.memory.sourceId = storage.id;
+				creep.memory.sourceType = this.JOB_SOURCETYPE_CONTAINER;
+			}
+		}
+
 		// look for energy in containers
 		if (creep.memory.sourceId == "")
 		{
