@@ -150,8 +150,10 @@ module.exports = function()
 		if (!lib.isNull(room))
 		{
 			this.memory.motive.room = room;
-				this.memory.motive.motivation = "";
+			this.memory.motive.motivation = "";
 			this.memory.motive.need = "";
+			this.memory.sourceId = "";
+			this.memory.sourceType = 0;
 		}
 	};
 
