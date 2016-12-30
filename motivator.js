@@ -367,7 +367,7 @@ module.exports =
 		{
 			var unallocatedWorker = room.findUnallocatedUnit("worker");
 			lib.log(" Creep: " + JSON.stringify(unallocatedWorker), debug);
-			if (!lib.isNull(unallocatedWorker))
+			if (!lib.isNull(unallocatedWorker) && unallocatedWorker.carry == 0)
 				unallocatedWorker.assignToLongDistanceHarvest();
 
 		}
