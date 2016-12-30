@@ -80,6 +80,9 @@ module.exports =
 			room = Game.rooms[roomName];
 			//debug = room.name == "W8N3";
 
+			// update defenses -----------------------------------------------------------------------------------------
+			room.updateThreat();
+
 			//------------------------------------------------------------------------------------------------------
 			// motivate
 			lib.log('-------- motivator.motivate: ' + roomName, true);
@@ -313,9 +316,6 @@ module.exports =
 
 			// fulfill needs ---------------------------------------------------------------------------------------
 			needManager.fulfillNeeds(roomName);
-
-			// update defenses -----------------------------------------------------------------------------------------
-			room.updateThreat();
 
 			// motivate defense towers -----------------------------------------------------------------------------
 			if (room.controller.my)
