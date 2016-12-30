@@ -13,66 +13,66 @@
 //-------------------------------------------------------------------------
 module.exports = function()
 {
-    Creep.prototype.moveToRange = function (creep, target, range)
+    Creep.prototype.moveToRange = function (target, range)
 	{
-		if (target.pos.inRangeTo(creep.pos, range - 1))
+		if (target.pos.inRangeTo(this.pos, range - 1))
 		{
-			creep.moveTo(creep.pos.x + creep.pos.x - target.pos.x, creep.pos.y + creep.pos.y - target.pos.y);
+			this.moveTo(this.pos.x + this.pos.x - target.pos.x, creep.pos.y + creep.pos.y - target.pos.y);
 			return true;
 		}
-		else if (target.pos.inRangeTo(creep.pos, range))
+		else if (target.pos.inRangeTo(this.pos, range))
 		{
 			return true;
 		}
 		else
 		{
-			creep.moveTo(target);
+			this.moveTo(target);
 			return true;
 		}
 	};
 
-	Creep.prototype.avoidHostile = function (creep, range)
+	Creep.prototype.avoidHostile = function (range)
 	{
 		if (typeof(range) === 'undefined')
 		{
 			range = 3;
 		}
-		var inRange = creep.pos.findInRange(Game.HOSTILE_CREEPS, range);
+		var inRange = this.pos.findInRange(Game.HOSTILE_CREEPS, range);
 		if (inRange && inRange.length)
 		{
-			var target = creep.pos.findNearest(Game.HOSTILE_CREEPS);
+			var target = this.pos.findNearest(Game.HOSTILE_CREEPS);
 			if (target)
 			{
-				creep.moveAwayFromTarget(creep, target);
+				this.moveAwayFromTarget(target);
 				return true;
 			}
 		}
 		return false;
 	};
 
-	Creep.prototype.moveAwayFromTarget = function (creep, target)
+	Creep.prototype.moveAwayFromTarget = function (target)
 	{
-		var avoid = creep.pos.getDirectionTo(target);
-		creep.move((avoid + 4) % 8);
+		var avoid = this.pos.getDirectionTo(target);
+		this.move((avoid + 4) % 8);
 	};
 
-	Creep.prototype.rendezvous = function (creep, range)
+	Creep.prototype.rendezvous = function (range)
 	{
-		var flags = creep.room.find(Game.FLAGS, {'name': 'Flag1'});
+		var flags = this.room.find(FIND_FLAGS, {'name': 'Flag1'});
 
-		if (creep.memory.rendezvous)
+		//console.log(JSON.stringify(flags));
+		if (this.memory.rendezvous)
 		{
-			creep.moveToRange(creep, creep.memory.rendezvous, range);
+			this.moveToRange(this.memory.rendezvous, range);
 		}
 		else if (flags && flags.length)
 		{
 			var flag = flags[0];
-			creep.moveToRange(creep, flag, range);
+			this.moveToRange(flag, range);
 		}
 		else
 		{
-			var creepSpawn = Game.spawns[creep.memory.spawn];
-			creep.moveToRange(creep, creep.getSpawn(), range);
+			this.moveToRange(this.getSpawn(), range);
 		}
 	};
     
@@ -102,8 +102,7 @@ module.exports = function()
 
 	Creep.prototype.getSpawn = function()
 	{
-		// This needs to be null protected.
-		var creepSpawn = Game.spawns[creep.memory.spawn];
+		var creepSpawn = lib.nullProtect(Game.spawns[this.memory.spawn], this.pos.findClosestByPath(FIND_MY_SPAWNS, { ignoreCreeps: true }));
 		return creepSpawn;		
 	};
 

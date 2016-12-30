@@ -327,4 +327,93 @@ module.exports = function()
 			creep.say("Leave!");
 		}, this);
 	};
+
+	Room.prototype.safeModeFailsafe = function ()
+	{
+		var room = Game.rooms[this.name];
+		if (room.controller.my)
+		{
+			var controller = room.controller;
+			var hostiles = this.getAgressivesPresent(this.name);
+			//safeMode	number	How many ticks of safe mode remaining, or undefined.
+			var safeMode = lib.nullProtect(controller.safeMode , 0);
+			//safeModeAvailable	number	Safe mode activations available to use.
+			var safeModeAvailable = lib.nullProtect(controller.safeModeAvailable , 0);
+			//safeModeCooldown	number	During this period in ticks new safe mode activations will be blocked, undefined if cooldown is inactive.
+			var safeModeCooldown = lib.nullProtect(controller.safeModeCooldown , 0);
+
+			if (hostiles.length && !safeMode && safeModeAvailable && !safeModeCooldown)
+			{
+				console.log("!!!!!!!!!!!!!!! ACTIVATING SAFE MODE !!!!!!!!!!!!!!!");
+				controller.activateSafeMode();
+			}
+			console.log(">>>> Safe Mode Status: Hostiles: " + hostiles.length
+				+ " SafeMode: " + safeMode
+				+ " SafeModeAvailable: " + safeModeAvailable
+				+ " SafeModeCooldown: " + safeModeCooldown);
+		}
+	};
+
+	Room.prototype.getAgressivesPresent = function ()
+	{
+		var room = Game.rooms[this.name];
+		var hostileCreeps = room.find(FIND_HOSTILE_CREEPS , {
+			filter: function (creep)
+			{
+				//console.log(JSON.stringify(creep.body));
+				return _.find(creep.body , function (p)
+				{
+					return p.type == ATTACK || p.type == RANGED_ATTACK || p.type == CLAIM;
+				});
+			}
+		});
+		return hostileCreeps;
+	};
+
+	Room.prototype.motivateTowers = function ()
+	{
+		if (this.controller.my)
+		{
+			// find all towers
+			var towers = this.find(FIND_STRUCTURES , {
+				filter: function (s)
+				{
+					return s.structureType == STRUCTURE_TOWER
+				}
+			});
+			// for each tower
+			towers.forEach(function (tower)
+			{
+				tower.autoAttack();
+			} , this);
+		}
+	};
+
+	Room.prototype.updateThreat = function ()
+	{
+		var numAggressives = this.getAgressivesPresent().length;
+		var timeSinceSeen;
+
+		if (lib.isNull(this.memory.threat))
+		{
+			this.memory.threat = {};
+			this.memory.threat.lastSeen = 0;
+			this.memory.threat.count
+		}
+
+		timeSinceSeen = Game.time - this.memory.threat.lastSeen;
+
+		// update enemy count
+		if (numAggressives > this.memory.threat.count)
+			this.memory.threat.count = numAggressives;
+
+		// update based on time
+		if (numAggressives > 0)
+			this.memory.threat.lastSeen = Game.time;
+		else if (timeSinceSeen > config.garrisonTime)
+		{
+			this.memory.threat.count = 0;
+		}
+
+	};
 };

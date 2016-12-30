@@ -38,6 +38,75 @@ module.exports =
 		"memory": {
 			"unit": "harvester"
 		}
+	},
+	"guard": {
+		"mode": 1,
+		"parts": [
+			{
+				"part" : TOUGH,
+				"weight" : 0.1,
+				"minimum" : 0
+			},
+			{
+				"part" : ATTACK,
+				"weight" : 0.5,
+				"minimum" : 1
+			},
+			{
+				"part" : MOVE,
+				"weight" : 0.4,
+				"minimum" : 1
+			}
+		],
+		"memory": {
+			"unit": "guard"
+		}
+	},
+	"rangedGuard": {
+		"mode": 1,
+		"parts": [
+			{
+				"part" : TOUGH,
+				"weight" : 0.1,
+				"minimum" : 0
+			},
+			{
+				"part" : ATTACK,
+				"weight" : 0.6,
+				"minimum" : 1
+			},
+			{
+				"part" : MOVE,
+				"weight" : 0.3,
+				"minimum" : 1
+			}
+		],
+		"memory": {
+			"unit": "rangedGuard"
+		}
+	},
+	"heal": {
+		"mode": 1,
+		"parts": [
+			{
+				"part" : TOUGH,
+				"weight" : 0.1,
+				"minimum" : 0
+			},
+			{
+				"part" : HEAL,
+				"weight" : 0.6,
+				"minimum" : 1
+			},
+			{
+				"part" : MOVE,
+				"weight" : 0.3,
+				"minimum" : 1
+			}
+		],
+		"memory": {
+			"unit": "heal"
+		}
 	}
 
 };

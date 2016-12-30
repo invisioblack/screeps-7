@@ -121,6 +121,22 @@ module.exports =
 					//console.log("Creep: " + creep.name + " Working needHarvestSource");
 					jobLongDistanceHarvest.work(creep);
 				}
+				else if (need.type == "needGarrison")
+				{
+					switch (creep.memory.unit)
+					{
+						case "guard":
+							jobGuard.work(creep);
+							break;
+						case "rangedGuard":
+							jobRangedGuard.work(creep);
+							break;
+						case "heal":
+							jobHeal.work(creep);
+							break;
+					}
+
+				}
 			}
 		}
 	}

@@ -29,24 +29,31 @@ module.exports =
 			motivationSupplyTower.init(room.name);
 			room.memory.motivations[motivationSupplyTower.name].priority = C.PRIORITY_2;
 
+			motivationGarrison.init(room.name);
+			room.memory.motivations[motivationGarrison.name].priority = C.PRIORITY_2;
+
 			motivationLongDistanceHarvest.init(room.name);
 			room.memory.motivations[motivationLongDistanceHarvest.name].priority = C.PRIORITY_3;
 
 			motivationSupplySpawn.init(room.name);
-			var numCreeps = room.countUnits("worker");
+			var numWorkers = room.countUnits("worker");
 			var numHarvesters = room.countUnits("harvester");
 			var numContainers = room.find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }}).length;
 
 			// normal priority
-			if (numCreeps < 10)
+			if (numWorkers < 10)
 				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
-			else if (numCreeps < 14)
+			else if (numWorkers < 14)
 				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_5;
 			else
 				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_7;
 
 			// harvester override
-			if (numCreeps >= 2 && numContainers >= 1 && numHarvesters < numContainers)
+			if (numWorkers >= 2 && numContainers >= 1 && numHarvesters < numContainers)
+				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
+
+			// defense override
+			if (numWorkers >= 2 && room.memory.threat.count > 0)
 				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
 
 			motivationMaintainInfrastructure.init(room.name);
@@ -71,7 +78,7 @@ module.exports =
 		for (var roomName in Game.rooms)
 		{
 			room = Game.rooms[roomName];
-			//debug = room.name == "W8N2";
+			//debug = room.name == "W8N3";
 
 			//------------------------------------------------------------------------------------------------------
 			// motivate
@@ -80,7 +87,7 @@ module.exports =
 			// safeMode failsafe
 			if (room.controller.my)
 			{
-				defenseManager.safeModeFailsafe(roomName);
+				room.safeModeFailsafe(roomName);
 			}
 
 			// handle lost creeps
@@ -307,13 +314,15 @@ module.exports =
 			// fulfill needs ---------------------------------------------------------------------------------------
 			needManager.fulfillNeeds(roomName);
 
-			// handle out of room creeps
+			// update defenses -----------------------------------------------------------------------------------------
+			room.updateThreat();
 
 			// motivate defense towers -----------------------------------------------------------------------------
 			if (room.controller.my)
 			{
-				defenseManager.motivateTowers(roomName);
+				room.motivateTowers(roomName);
 			}
+
 		}
 	},
 
