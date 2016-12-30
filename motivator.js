@@ -53,7 +53,7 @@ module.exports =
 				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
 
 			// defense override
-			if (numWorkers >= 2 && room.memory.threat.count > 0)
+			if (numWorkers >= 2 && !lib.isNull(room.memory.threat) && room.memory.threat.count > 0)
 				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
 
 			motivationMaintainInfrastructure.init(room.name);
