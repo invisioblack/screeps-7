@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------------------------------------------------------
-// motivationSupplyController
+// motivationLongDistanceHarvest
 //-------------------------------------------------------------------------
 var Motivation = require('Motivation.prototype')();
 
@@ -10,77 +10,50 @@ var Motivation = require('Motivation.prototype')();
 //-------------------------------------------------------------------------
 // constructor
 //-------------------------------------------------------------------------
-var MotivationHarvestSource = function ()
+var MotivationLongDistanceHarvest = function ()
 {
 	Motivation.call(this);
-	this.name = "motivationHarvestSource";
+	this.name = "motivationLongDistanceHarvest";
 };
 
-MotivationHarvestSource.prototype = Object.create(Motivation.prototype);
-MotivationHarvestSource.prototype.constructor = MotivationHarvestSource;
+MotivationLongDistanceHarvest.prototype = Object.create(Motivation.prototype);
+MotivationLongDistanceHarvest.prototype.constructor = MotivationLongDistanceHarvest;
 
 //-------------------------------------------------------------------------
 // implementation
 //-------------------------------------------------------------------------
-MotivationHarvestSource.prototype.getDemands = function (roomName, resources) {
+MotivationLongDistanceHarvest.prototype.getDemands = function (roomName, resources) {
 	var result = {};
 	var unitName = this.getDesiredSpawnUnit(roomName);
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
 	//console.log(JSON.stringify(result.units));
-	console.log("  Harvest Source Demands : " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn);
+	lib.log("  Long Distance Harvest Demands : " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn, true);
 	return result;
 };
 
-MotivationHarvestSource.prototype.getDesiredSpawnUnit = function ()
+MotivationLongDistanceHarvest.prototype.getDesiredSpawnUnit = function ()
 {
-	return "harvester";
+	return "worker";
 };
 
-MotivationHarvestSource.prototype.getDesireSpawn = function (roomName, demands)
+MotivationLongDistanceHarvest.prototype.getDesireSpawn = function (roomName, demands)
 {
-	var result = true;
-	var room = Game.rooms[roomName];
-	var numContainers = room.find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }}).length;
-	var numHarvesters = room.countUnits("harvester");
-	var numWorkers = room.countUnits("worker");
-
-	if (numContainers == 0 || numHarvesters >= demands.units["harvester"] || numWorkers < 2)
-	{
-		result = false;
-	}
-
-	return result;
+	return false;
 };
 
-MotivationHarvestSource.prototype.updateActive = function (roomName, demands)
+MotivationLongDistanceHarvest.prototype.updateActive = function (roomName, demands)
 {
-
 	var room = Game.rooms[roomName];
 	var memory = room.memory.motivations[this.name];
-	var numContainers;
-	var numHarvesters;
 
 	if (room.controller.my)
-	{
-		numContainers = room.find(FIND_STRUCTURES , {
-			filter: function (s)
-			{
-				return s.structureType == STRUCTURE_CONTAINER;
-			}
-		}).length;
-		numHarvesters = room.countUnits("harvester");
-	}
-
-	if (room.controller.my && numContainers > 0 && numHarvesters > 0)
-	{
-		memory.active = true;
-	} else {
 		memory.active = false;
-	}
+	else
+		memory.active = true;
 };
 
-MotivationHarvestSource.prototype.updateNeeds = function (roomName)
+MotivationLongDistanceHarvest.prototype.updateNeeds = function (roomName)
 {
 	var room = Game.rooms[roomName];
 	var memory = room.memory.motivations[this.name];
@@ -95,31 +68,26 @@ MotivationHarvestSource.prototype.updateNeeds = function (roomName)
 	// look up sources and find out how many needs we should have for each one
 	var sources = room.find(FIND_SOURCES);
 	sources.forEach(function (s) {
-		var needName = "harvest." + s.id;
+		var needName = "ldharvest." + s.id;
 		var need;
-		var container = s.pos.findInRange(FIND_STRUCTURES, 1,{ filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }})[0];
 
 		//console.log('Need Name: ' + needName);
 
 		// create new need if one doesn't exist
-		if (lib.isNull(memory.needs[needName]) && !lib.isNull(container))
+		if (lib.isNull(memory.needs[needName]))
 		{
 			memory.needs[needName] = {};
 			need = memory.needs[needName];
 			need.name = needName;
-			need.type = "needHarvestSource";
+			need.type = "needLongDistanceHarvest";
 			need.targetId = s.id;
 			need.priority = C.PRIORITY_1;
 		}
 
-		if (lib.isNull(container))
-		{
-			delete memory.needs[needName];
-		}
 	}, this);
 };
 
 //-------------------------------------------------------------------------
 // export
 //-------------------------------------------------------------------------
-module.exports = new MotivationHarvestSource();
+module.exports = new MotivationLongDistanceHarvest();

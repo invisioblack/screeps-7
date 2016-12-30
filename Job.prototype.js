@@ -122,6 +122,8 @@ module.exports = function()
 			{
 				creep.memory.job.mode = this.JOB_MODE_WORK;
 				this.resetSource(creep);
+			} else if (creep.memory.unit == "worker" && Memory.longDistanceHarvestTargets.length > 0) {
+				creep.assignToLongDistanceHarvest();
 			}
 		} else { // move to and pick up the goods
 			var result;

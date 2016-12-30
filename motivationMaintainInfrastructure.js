@@ -74,7 +74,8 @@ MotivationMaintainInfrastructure.prototype.getDesireSpawn = function (roomName, 
 
 MotivationMaintainInfrastructure.prototype.updateActive = function (roomName, demands)
 {
-	var memory = Game.rooms[roomName].memory.motivations[this.name];
+	var room = Game.rooms[roomName];
+	var memory = room.memory.motivations[this.name];
 	if (Object.keys(demands.units).length > 0)
 	{
 		memory.active = true;

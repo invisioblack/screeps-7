@@ -116,7 +116,7 @@ module.exports = function()
 				console.log('+++++++++++++++++++Creating creep ' + unitName + ' : ' + name + " energy: " + energy + " result: " + result);
 				var creep = Game.creeps[name];
 				creep.initMotive();
-
+				creep.memory.homeRoom = this.room.name;
 			}
 			else
 			{

@@ -39,13 +39,18 @@ module.exports = function ()
 
 	Motivation.prototype.getUnitDemands = function (roomName)
 	{
+		var debug = false; //roomName == "W8N2";
 		var result = {};
 		var room = Game.rooms[roomName];
 
+		lib.log(room.name, debug);
 		for (var needName in room.memory.motivations[this.name].needs)
 		{
 			var need = room.memory.motivations[this.name].needs[needName];
 			var demands = global[need.type].getUnitDemands(roomName, need);
+
+
+			lib.log("----------- Motivation: " + JSON.stringify(demands), room.name == "W8N2", debug);
 			for (var unitName in demands)
 			{
 				if (lib.isNull(result[unitName]))

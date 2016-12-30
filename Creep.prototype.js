@@ -8,7 +8,6 @@
 //      motivation: string motivation name, the motivation the creep is assigned to
 //      need:  string need name, the need the creep is assigned to
 // unit: string - unit type
-// destinationRoom: string roomName of room this creep should be going to
 //-------------------------------------------------------------------------
 // modules
 //-------------------------------------------------------------------------
@@ -144,4 +143,16 @@ module.exports = function()
 		this.memory.motive.motivation = "";
 		this.memory.motive.need = "";
 	};
+
+	Creep.prototype.assignToLongDistanceHarvest = function ()
+	{
+		var room = roomManager.getLongDistanceHarvestTarget();
+		if (!lib.isNull(room))
+		{
+			this.memory.motive.room = room;
+				this.memory.motive.motivation = "";
+			this.memory.motive.need = "";
+		}
+	};
+
 };

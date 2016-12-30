@@ -73,8 +73,9 @@ MotivationSupplyTower.prototype.getDesiredSpawnUnit = function (roomName)
 
 MotivationSupplyTower.prototype.updateActive = function (roomName, demands)
 {
-	var memory = Game.rooms[roomName].memory.motivations[this.name];
-	if (demands.energy > 0)
+	var room = Game.rooms[roomName];
+	var memory = room.memory.motivations[this.name];
+	if (room.controller.my && demands.energy > 0)
 	{
 		memory.active = true;
 	} else {

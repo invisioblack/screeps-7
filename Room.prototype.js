@@ -83,10 +83,19 @@ module.exports = function()
 
 		// Enumerate over spawns
 		var controller = this.controller;
-		result.progress = controller.progress;
-		result.progressTotal = controller.progressTotal;
-		result.ticksToDowngrade = controller.ticksToDowngrade;
-		result.level = controller.level;
+
+		if (controller.my)
+		{
+			result.progress = controller.progress;
+			result.progressTotal = controller.progressTotal;
+			result.ticksToDowngrade = controller.ticksToDowngrade;
+			result.level = controller.level;
+		} else {
+			result.progress = 0;
+			result.progressTotal = 0;
+			result.ticksToDowngrade = 0;
+			result.level = 0;
+		}
 
 		return result;
 	};
@@ -120,6 +129,7 @@ module.exports = function()
 		var result = _.filter(Game.creeps , function (creep)
 		{
 			return creep.room.name == roomName
+				&& creep.memory.motive.room == roomName
 				&& creep.memory.unit == unitName;
 		});
 		return result;
@@ -137,6 +147,7 @@ module.exports = function()
 		var result = _.filter(Game.creeps , function (creep)
 		{
 			return creep.room.name == roomName
+				&& creep.memory.motive.room == roomName
 				&& creep.memory.motive.motivation == motivationName;
 		});
 		return result;
@@ -154,6 +165,7 @@ module.exports = function()
 		var result = _.filter(Game.creeps , function (creep)
 		{
 			return creep.room.name == roomName
+				&& creep.memory.motive.room == roomName
 				&& creep.memory.motive.motivation == motivationName
 				&& creep.memory.unit == unitName;
 		});
@@ -172,6 +184,7 @@ module.exports = function()
 		var result = _.filter(Game.creeps , function (creep)
 		{
 			return creep.room.name == roomName
+				&& creep.memory.motive.room == roomName
 				&& creep.memory.motive.motivation == motivationName
 				&& creep.memory.motive.need == needName;
 		});
@@ -190,6 +203,7 @@ module.exports = function()
 		var result = _.filter(Game.creeps , function (creep)
 		{
 			return creep.room.name == roomName
+				&& creep.memory.motive.room == roomName
 				&& creep.memory.motive.motivation == motivationName
 				&& creep.memory.motive.need == needName
 				&& creep.memory.unit == unitName;
@@ -209,6 +223,7 @@ module.exports = function()
 		var result = _.filter(Game.creeps , function (creep)
 		{
 			return creep.room.name == roomName
+				&& creep.memory.motive.room == roomName
 				&& creep.memory.motive.motivation != ""
 				&& creep.memory.motive.need != ""
 				&& creep.memory.unit == unitName;
@@ -227,10 +242,31 @@ module.exports = function()
 		var roomName = this.name;
 		var result = _.filter(Game.creeps , function (creep)
 		{
-			return creep.memory.motive.room == roomName
+			return creep.room.name == roomName
+				&& creep.memory.motive.room == roomName
 				&& creep.memory.motive.motivation == ""
 				&& creep.memory.motive.need == ""
 				&& creep.memory.unit == unitName;
+		});
+
+		return result;
+	};
+
+	Room.prototype.countLostCreeps = function ()
+	{
+		var result = this.getLostCreeps().length;
+		return result;
+	};
+
+	Room.prototype.getLostCreeps = function ()
+	{
+		var debug = true;
+		var roomName = this.name;
+
+		var result = _.filter(Game.creeps , function (creep)
+		{
+			return creep.room.name == roomName
+				&& creep.memory.motive.room != roomName;
 		});
 
 		return result;
@@ -249,6 +285,7 @@ module.exports = function()
 		{
 			var need = Game.rooms[creep.room.name].memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
 			return (creep.room.name == roomName
+					&& creep.memory.motive.room == roomName
 					&& creep.memory.motive.motivation != ""
 					&& creep.memory.motive.need != ""
 				) && (
@@ -271,10 +308,23 @@ module.exports = function()
 		var result = _.filter(Game.creeps , function (creep)
 		{
 			return creep.room.name == roomName
+				&& creep.memory.motive.room == roomName
 				&& creep.memory.motive.motivation == ""
 				&& creep.memory.motive.need == ""
 				&& creep.memory.unit == unitName;
 		});
 		return result;
+	};
+
+	Room.prototype.handleLostCreeps = function()
+	{
+		var lostCreeps = this.getLostCreeps();
+		lostCreeps.forEach(function (creep)
+		{
+			var exit = creep.room.findExitTo(creep.memory.motive.room);
+			// and move to exit
+			creep.moveTo(creep.pos.findClosestByPath(exit, { ignoreCreeps: true }));
+			creep.say("Leave!");
+		}, this);
 	};
 };

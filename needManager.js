@@ -75,7 +75,7 @@ module.exports =
 			}
 
 			if (assignedUnits || allocatedUnits)
-				console.log("    Assigned/Allocated " + unitName + ": " + assignedUnits + "/" + allocatedUnits);
+				console.log("    " + motivation.name + ": Assigned/Allocated " + unitName + ": " + assignedUnits + "/" + allocatedUnits);
 		}
 	},
 
@@ -84,7 +84,7 @@ module.exports =
 		for (var creepName in Game.creeps)
 		{
 			var creep = Game.creeps[creepName];
-			if (creep.room.name == roomName && creep.memory.motive.need != "")
+			if (creep.room.name == roomName && creep.memory.motive.room == roomName && creep.memory.motive.need != "")
 			{
 				//console.log("Creep executing need: " + creep.name + " : " + creep.memory.motive.motivation + " : " + creep.memory.motive.need);
 				var need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
@@ -115,6 +115,11 @@ module.exports =
 				{
 					//console.log("Creep: " + creep.name + " Working needHarvestSource");
 					jobHarvestSource.work(creep);
+				}
+				else if (need.type == "needLongDistanceHarvest")
+				{
+					//console.log("Creep: " + creep.name + " Working needHarvestSource");
+					jobLongDistanceHarvest.work(creep);
 				}
 			}
 		}
