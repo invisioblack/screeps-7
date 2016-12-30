@@ -81,10 +81,13 @@ module.exports =
 		for (var roomName in Game.rooms)
 		{
 			room = Game.rooms[roomName];
-			debug = room.name == "W8N3";
+			//debug = room.name == "W8N3";
 
 			// update defenses -----------------------------------------------------------------------------------------
 			room.updateThreat();
+
+			// long distance harvesters --------------------------------------------------------------------------------
+			this.sendOffLongDistanceHarvesters(roomName);
 
 			//------------------------------------------------------------------------------------------------------
 			// motivate
@@ -342,5 +345,31 @@ module.exports =
 		}
 
 		return result;
+	},
+
+	"sendOffLongDistanceHarvesters": function (roomName)
+	{
+		var debug = false;
+		var room = Game.rooms[roomName];
+		var numWorkers = room.countUnits("worker");
+		var storages = room.find(FIND_STRUCTURES, { filter: function (s) {
+			return s.structureType == STRUCTURE_STORAGE;
+		}});
+
+		lib.log(roomName + " Sending off long range harvesters", debug);
+		lib.log(JSON.stringify(numWorkers), debug);
+
+		// if we have some workers to send off, do it
+		if (room.controller.my
+			&& room.controller.level >= 4
+			&& storages.length > 0
+			&& config.longRangeHarvestMinWorkers < numWorkers)
+		{
+			var unallocatedWorker = room.findUnallocatedUnit("worker");
+			lib.log(" Creep: " + JSON.stringify(unallocatedWorker), debug);
+			if (!lib.isNull(unallocatedWorker))
+				unallocatedWorker.assignToLongDistanceHarvest();
+
+		}
 	}
 };

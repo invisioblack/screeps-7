@@ -48,7 +48,6 @@ global.roomManager = require("roomManager");
 global.units = require("units");
 
 // settings
-global.settings = {};
 global.config = require("config");
 
 // main loop -----------------------------------------------------------------------------------------------------------
