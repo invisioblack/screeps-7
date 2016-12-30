@@ -349,15 +349,18 @@ module.exports =
 
 	"sendOffLongDistanceHarvesters": function (roomName)
 	{
-		var debug = false;
+		var debug = true;
 		var room = Game.rooms[roomName];
 		var numWorkers = room.countUnits("worker");
 		var storages = room.find(FIND_STRUCTURES, { filter: function (s) {
 			return s.structureType == STRUCTURE_STORAGE;
 		}});
 
-		lib.log(roomName + " Sending off long range harvesters", debug);
-		lib.log(JSON.stringify(numWorkers), debug);
+		lib.log("LR Harvest: " + roomName
+			+ " workers/min: " + numWorkers + "/" + config.longRangeHarvestMinWorkers
+			+ " storages: " + storages.length
+			+ " RCL: " + room.controller.level
+			, debug);
 
 		// if we have some workers to send off, do it
 		if (room.controller.my
@@ -366,9 +369,12 @@ module.exports =
 			&& config.longRangeHarvestMinWorkers < numWorkers)
 		{
 			var unallocatedWorker = room.findUnallocatedUnit("worker");
-			lib.log(" Creep: " + JSON.stringify(unallocatedWorker), debug);
-			if (!lib.isNull(unallocatedWorker) && unallocatedWorker.carry == 0)
+
+			if (!lib.isNull(unallocatedWorker) && _.sum(unallocatedWorker.carry) == 0)
+			{
+				lib.log(" Creep: " + JSON.stringify(unallocatedWorker) , debug);
 				unallocatedWorker.assignToLongDistanceHarvest();
+			}
 
 		}
 	}
