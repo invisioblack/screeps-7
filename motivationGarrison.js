@@ -61,10 +61,10 @@ MotivationGarrison.prototype.getDesiredSpawnUnit = function (roomName)
 	var numRangedGuard = room.countUnits("rangedGuard");
 	var numHeal = room.countUnits("heal");
 
-	if (numGuard <= numRangedGuard || numGuard <= numHeal)
-		return "guard";
-	else if (numRangedGuard < numGuard)
+	if (numRangedGuard < numGuard)
 		return "rangedGuard";
+	else if (numGuard <= numRangedGuard || numGuard <= numHeal)
+		return "guard";
 	else if (numHeal < numRangedGuard)
 		return "rangedGuard";
 };
