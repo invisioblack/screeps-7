@@ -121,7 +121,7 @@ module.exports = function()
 				var sortedContainers = _.sortByOrder(containers, ['store["energy"]'], ['desc']);
 				container = sortedContainers[0];
 
-				console.log("containers: " + JSON.stringify(sortedContainers));
+				//console.log("containers: " + JSON.stringify(sortedContainers));
 			}
 
 

@@ -11,6 +11,8 @@ Current Status:
     Builds construction sites.
     Repairs infrastructure.
     Simple tower defense.
+    Long range harvesting.
+    Haulers.
 
 Behavior model
 ===============================================================================
@@ -32,11 +34,15 @@ Motivations:
     and the resources allocated to them. Motivations are scoped to a single 
     room.
     
-    Motivations (by default priority):
-        Supply Spawn Energy
-        Supply Tower Energy
-        Maintain Infrastructure (build and repair)
-        Supply Controller Energy
+    Motivations:
+        Garrison
+        Harvest Source
+        Haul to Storage
+        Long Distance Harvesting
+        Maintain Infrastructure
+        Supply Controller
+        Supply Spawn
+        Supply Tower
 
 Need Manager:
 
