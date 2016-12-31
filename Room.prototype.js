@@ -422,7 +422,11 @@ Room.prototype.getMaxHarvesters = function ()
 	let result = 0;
 	_.forEach(sources, function (s) {
 		result += s.getMaxHarvesters();
-	})
+	});
+
+	console.log("MAX: " + result);
+	return result;
 };
+
 
 module.exports = function() {};

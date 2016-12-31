@@ -83,7 +83,7 @@ module.exports =
 			else
 				ticksToDowngrade = 0;
 
-			if (ticksToDowngrade > 1000)
+			if (ticksToDowngrade > config.claimTicks)
 				room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_7;
 			else
 				room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_2;
