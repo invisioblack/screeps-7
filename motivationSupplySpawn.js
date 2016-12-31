@@ -6,7 +6,7 @@
 // modules
 //-------------------------------------------------------------------------
 // script prototypes
-var Motivation = require("Motivation.prototype")();
+let Motivation = require("Motivation.prototype")();
 
 //-------------------------------------------------------------------------
 // Declarations
@@ -15,7 +15,7 @@ var Motivation = require("Motivation.prototype")();
 //-------------------------------------------------------------------------
 // constructor
 //-------------------------------------------------------------------------
-var MotivationSupplySpawn = function ()
+let MotivationSupplySpawn = function ()
 {
 	Motivation.call(this);
 	this.name = "motivationSupplySpawn";
@@ -29,8 +29,8 @@ MotivationSupplySpawn.prototype.constructor = MotivationSupplySpawn;
 //-------------------------------------------------------------------------
 MotivationSupplySpawn.prototype.getDemands = function (roomName, resources)
 {
-	var result = {};
-	var unitName = this.getDesiredSpawnUnit(roomName);
+	let result = {};
+	let unitName = this.getDesiredSpawnUnit(roomName);
 	result.energy = resources.spawnEnergy.energyCapacity - resources.spawnEnergy.energy;
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
@@ -40,12 +40,12 @@ MotivationSupplySpawn.prototype.getDemands = function (roomName, resources)
 
 MotivationSupplySpawn.prototype.getDesireSpawn = function (roomName, demands)
 {
-	var result = true;
-	var room = Game.rooms[roomName];
-	var memory = room.memory.motivations[this.name];
+	let result = true;
+	let room = Game.rooms[roomName];
+	let memory = room.memory.motivations[this.name];
 	if (memory.active)
 	{
-		for (var unitName in units)
+		for (let unitName in units)
 		{
 			if (!lib.isNull(demands.units[unitName]) && demands.units[unitName] <= room.countUnits(unitName))
 			{
@@ -66,8 +66,8 @@ MotivationSupplySpawn.prototype.getDesiredSpawnUnit = function (roomName)
 
 MotivationSupplySpawn.prototype.updateActive = function (roomName, demands)
 {
-	var room = Game.rooms[roomName];
-	var memory = room.memory.motivations[this.name];
+	let room = Game.rooms[roomName];
+	let memory = room.memory.motivations[this.name];
 	if (room.controller.my && demands.energy > 0)
 	{
 		memory.active = true;
@@ -78,9 +78,9 @@ MotivationSupplySpawn.prototype.updateActive = function (roomName, demands)
 
 MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
 {
-	var room = Game.rooms[roomName];
-	var memory = room.memory.motivations[this.name];
-	var sortedNeedsByDistance, x;
+	let room = Game.rooms[roomName];
+	let memory = room.memory.motivations[this.name];
+	let sortedNeedsByDistance, x;
 
 	// insure memory is initialized for needs
 	if (lib.isNull(memory.needs))
@@ -90,14 +90,14 @@ MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
 
 	// spawns ----------------------------------------------------------------------------------------------------------
 	// look up sources and find out how many needs we should have for each one
-	for (var spawnName in Game.spawns)
+	for (let spawnName in Game.spawns)
 	{
 		// loop over spawns in room
-		var spawn = Game.spawns[spawnName];
+		let spawn = Game.spawns[spawnName];
 		if (spawn.room.name == roomName)
 		{
-			var needName = "supplySpawn." + spawn.id;
-			var need;
+			let needName = "supplySpawn." + spawn.id;
+			let need;
 
 			//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
 
@@ -122,10 +122,10 @@ MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
 
 	// extenders -------------------------------------------------------------------------------------------------------
 	// look up sources and find out how many needs we should have for each one
-	var extenders = room.find(FIND_MY_STRUCTURES, {filter: { structureType: STRUCTURE_EXTENSION }});
+	let extenders = room.find(FIND_MY_STRUCTURES, {filter: { structureType: STRUCTURE_EXTENSION }});
 	extenders.forEach(function (ex) {
-		var needName = "supplyExtender." + ex.id;
-		var need;
+		let needName = "supplyExtender." + ex.id;
+		let need;
 
 		//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
 

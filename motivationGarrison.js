@@ -6,7 +6,7 @@
 // modules
 //-------------------------------------------------------------------------
 // script prototypes
-var Motivation = require("Motivation.prototype")();
+let Motivation = require("Motivation.prototype")();
 
 //-------------------------------------------------------------------------
 // Declarations
@@ -15,7 +15,7 @@ var Motivation = require("Motivation.prototype")();
 //-------------------------------------------------------------------------
 // constructor
 //-------------------------------------------------------------------------
-var MotivationGarrison = function ()
+let MotivationGarrison = function ()
 {
 	Motivation.call(this);
 	this.name = "motivationGarrison";
@@ -29,12 +29,12 @@ MotivationGarrison.prototype.constructor = MotivationGarrison;
 //-------------------------------------------------------------------------
 MotivationGarrison.prototype.getDemands = function (roomName, resources)
 {
-	var result = {};
-	var unitName = this.getDesiredSpawnUnit(roomName);
-	var towers = Game.rooms[roomName].find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_TOWER}});
+	let result = {};
+	let unitName = this.getDesiredSpawnUnit(roomName);
+	let towers = Game.rooms[roomName].find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_TOWER}});
 
-	var energy = 0;
-	var energyTotal = 0;
+	let energy = 0;
+	let energyTotal = 0;
 	//console.log("e: " + energy + " et: " + energyTotal);
 	result.energy = energyTotal - energy;
 	result.units = this.getUnitDemands(roomName);
@@ -45,9 +45,9 @@ MotivationGarrison.prototype.getDemands = function (roomName, resources)
 
 MotivationGarrison.prototype.getDesireSpawn = function (roomName, demands)
 {
-	var result = true;
-	var room = Game.rooms[roomName];
-	var memory = room.memory.motivations[this.name];
+	let result = true;
+	let room = Game.rooms[roomName];
+	let memory = room.memory.motivations[this.name];
 	if (!memory.active)
 		result = false;
 
@@ -56,10 +56,10 @@ MotivationGarrison.prototype.getDesireSpawn = function (roomName, demands)
 
 MotivationGarrison.prototype.getDesiredSpawnUnit = function (roomName)
 {
-	var room = Game.rooms[roomName];
-	var numGuard = room.countUnits("guard");
-	var numRangedGuard = room.countUnits("rangedGuard");
-	var numHeal = room.countUnits("heal");
+	let room = Game.rooms[roomName];
+	let numGuard = room.countUnits("guard");
+	let numRangedGuard = room.countUnits("rangedGuard");
+	let numHeal = room.countUnits("heal");
 
 	if (numRangedGuard < numGuard)
 		return "rangedGuard";
@@ -71,8 +71,8 @@ MotivationGarrison.prototype.getDesiredSpawnUnit = function (roomName)
 
 MotivationGarrison.prototype.updateActive = function (roomName, demands)
 {
-	var room = Game.rooms[roomName];
-	var memory = room.memory.motivations[this.name];
+	let room = Game.rooms[roomName];
+	let memory = room.memory.motivations[this.name];
 	if (room.controller.my && room.memory.threat.count > 0)
 	{
 		memory.active = true;
@@ -83,8 +83,8 @@ MotivationGarrison.prototype.updateActive = function (roomName, demands)
 
 MotivationGarrison.prototype.updateNeeds = function (roomName)
 {
-	var room = Game.rooms[roomName];
-	var memory = room.memory.motivations[this.name];
+	let room = Game.rooms[roomName];
+	let memory = room.memory.motivations[this.name];
 
 	// insure memory is initialized for needs
 	if (lib.isNull(memory.needs))
@@ -94,8 +94,8 @@ MotivationGarrison.prototype.updateNeeds = function (roomName)
 
 	// Handle Harvest Energy Needs -------------------------------------------------------------------------------------
 	// look up sources and find out how many needs we should have for each one
-	var needName = "garrison." + room.name;
-	var need;
+	let needName = "garrison." + room.name;
+	let need;
 
 	//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
 

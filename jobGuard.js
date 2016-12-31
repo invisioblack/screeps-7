@@ -1,7 +1,7 @@
 //-------------------------------------------------------------------------
 // modules
 //-------------------------------------------------------------------------
-var Job = require("Job.prototype")();
+let Job = require("Job.prototype")();
 
 //-------------------------------------------------------------------------
 // Declarations
@@ -10,7 +10,7 @@ var Job = require("Job.prototype")();
 //-------------------------------------------------------------------------
 // constructor
 //-------------------------------------------------------------------------
-var JobGuard = function ()
+let JobGuard = function ()
 {
 	Job.call(this);
 	this.name = "jobGuard";
@@ -24,11 +24,11 @@ JobGuard.prototype.constructor = JobGuard;
 //-------------------------------------------------------------------------
 JobGuard.prototype.work = function (creep)
 {
-	var targets = creep.room.find(FIND_HOSTILE_CREEPS);
+	let targets = creep.room.find(FIND_HOSTILE_CREEPS);
 	//console.log(JSON.stringify(targets));
 	if (targets.length)
 	{
-		var target = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS, { ignoreCreeps: true});
+		let target = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS, { ignoreCreeps: true});
 		if (target)
 		{
 			creep.moveTo(target);

@@ -22,7 +22,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 module.exports = function ()
 {
-	var Need = function () {};
+	let Need = function () {};
 
 	Need.prototype.name = "Need";
 

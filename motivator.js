@@ -13,9 +13,9 @@ module.exports =
 	"init": function ()
 	{
 		// init motivations in each room we control
-		for (var roomName in Game.rooms)
+		for (let roomName in Game.rooms)
 		{
-			var room = Game.rooms[roomName];
+			let room = Game.rooms[roomName];
 			// init motivations in memory
 			if (lib.isNull(room.memory.motivations))
 			{
@@ -38,10 +38,13 @@ module.exports =
 			motivationLongDistanceHarvest.init(room.name);
 			room.memory.motivations[motivationLongDistanceHarvest.name].priority = C.PRIORITY_3;
 
+			motivationClaimRoom.init(room.name);
+			room.memory.motivations[motivationClaimRoom.name].priority = C.PRIORITY_3;
+
 			motivationSupplySpawn.init(room.name);
-			var numWorkers = room.countUnits("worker");
-			var numHarvesters = room.countUnits("harvester");
-			var numContainers = room.find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }}).length;
+			let numWorkers = room.countUnits("worker");
+			let numHarvesters = room.countUnits("harvester");
+			let numContainers = room.find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }}).length;
 
 			// normal priority
 			if (numWorkers < 10)
@@ -74,11 +77,11 @@ module.exports =
 	// Main motivator function, should be called first from main
 	"motivate": function ()
 	{
-		var debug = false;
-		var room;
+		let debug = false;
+		let room;
 
 		// motivate in each room we control ----------------------------------------------------------------------------
-		for (var roomName in Game.rooms)
+		for (let roomName in Game.rooms)
 		{
 			room = Game.rooms[roomName];
 			//debug = room.name == "W8N3";
@@ -103,11 +106,11 @@ module.exports =
 			room.handleLostCreeps();
 
 			// declarations ----------------------------------------------------------------------------------------
-			var resources = room.getResources(); // get room resources
-			var demands = {};
-			var sortedMotivations;
-			var isSpawnAllocated = false;
-			var countActiveMotivations = 0;
+			let resources = room.getResources(); // get room resources
+			let demands = {};
+			let sortedMotivations;
+			let isSpawnAllocated = false;
+			let countActiveMotivations = 0;
 
 			// -----------------------------------------------------------------------------------------------------
 			// process motivations in order of priority ------------------------------------------------------------
@@ -138,17 +141,17 @@ module.exports =
 				lib.log("---- Motivating round 1 - demands/spawn/active: " + motivationMemory.name + " Spawn allocated: " + motivationMemory.spawnAllocated, debug);
 
 				// spawn units if allocated spawn ------------------------------------------------------------------
-				var unitName = global[motivationMemory.name].getDesiredSpawnUnit(roomName);
+				let unitName = global[motivationMemory.name].getDesiredSpawnUnit(roomName);
 				if (motivationMemory.spawnAllocated)
 				{
-					for (var spawnName in Game.spawns)
+					for (let spawnName in Game.spawns)
 					{
-						var spawn = Game.spawns[spawnName];
+						let spawn = Game.spawns[spawnName];
 						// this probably isn't handling multiple spawns well
 						if (spawn.room.name == roomName)
 						{
-							var r = Game.rooms[roomName];
-							var countUnits = r.countUnits(unitName);
+							let r = Game.rooms[roomName];
+							let countUnits = r.countUnits(unitName);
 							//console.log(unitName + " " + countUnits);
 							if (unitName == "worker" && countUnits < 2)
 								spawn.spawnUnit(unitName , false);
@@ -165,14 +168,14 @@ module.exports =
 			lib.log("--: Active Motivations: " + countActiveMotivations, debug);
 
 			// process round 2 and 3 for each unit type ------------------------------------------------------------
-			for (var unitName in units)
+			for (let unitName in units)
 			{
 				// -------------------------------------------------------------------------------------------------
 				// round 2, regular allocation ---------------------------------------------------------------------
-				var iteration = 1;
-				var totalShares;
-				var totalUnits;
-				var activeDemandingMotivations = 0;
+				let iteration = 1;
+				let totalShares;
+				let totalUnits;
+				let activeDemandingMotivations = 0;
 
 				// count how many motivations are active, and demanding units of this type
 				sortedMotivations.forEach(function (motivationMemory)
@@ -192,12 +195,12 @@ module.exports =
 					if (motivationMemory.active)
 					{
 
-						var unitsAvailable;
-						var unitsTotalAllocated;
-						var unitsDemanded;
-						var unitsToAllocate;
-						var sharesThisIteration;
-						var unitsPerShare;
+						let unitsAvailable;
+						let unitsTotalAllocated;
+						let unitsDemanded;
+						let unitsToAllocate;
+						let sharesThisIteration;
+						let unitsPerShare;
 
 						unitsDemanded = lib.nullProtect(demands[motivationMemory.name].units[unitName], 0);
 
@@ -253,9 +256,9 @@ module.exports =
 				} , this);
 
 				// motivation round 3 ------------------------------------------------------------------------------
-				var totalUnitsAvailable = lib.nullProtect(resources.units[unitName].unallocated, 0);
-				var totalUnitsDemanded = 0;
-				var totalUnitsAllocated = 0;
+				let totalUnitsAvailable = lib.nullProtect(resources.units[unitName].unallocated, 0);
+				let totalUnitsDemanded = 0;
+				let totalUnitsAllocated = 0;
 
 				sortedMotivations.forEach(function (motivationMemory)
 				{
@@ -274,9 +277,9 @@ module.exports =
 						if (motivationMemory.active)
 						{
 							lib.log("---- Motivating round 3 - surplus allocation: " + unitName + " : " + motivationMemory.name, debug);
-							var unitsAvailable = lib.nullProtect(resources.units[unitName].unallocated, 0);
-							var unitsAllocated = lib.nullProtect(motivationMemory.allocatedUnits[unitName], 0);
-							var unitsDemanded = lib.nullProtect(demands[motivationMemory.name].units[unitName], 0) - unitsAllocated;
+							let unitsAvailable = lib.nullProtect(resources.units[unitName].unallocated, 0);
+							let unitsAllocated = lib.nullProtect(motivationMemory.allocatedUnits[unitName], 0);
+							let unitsDemanded = lib.nullProtect(demands[motivationMemory.name].units[unitName], 0) - unitsAllocated;
 
 							if (unitsDemanded < 0)
 								unitsDemanded = 0;
@@ -335,8 +338,8 @@ module.exports =
 	// helper functions ------------------------------------------------------------------------------------------------
 	"countActiveMotivations": function (roomName)
 	{
-		var result = 0;
-		for (var motivationName in Game.rooms[roomName].memory.motivations)
+		let result = 0;
+		for (let motivationName in Game.rooms[roomName].memory.motivations)
 		{
 			if (Game.rooms[roomName].memory.motivations[motivationName].active)
 			{
@@ -349,10 +352,10 @@ module.exports =
 
 	"sendOffLongDistanceHarvesters": function (roomName)
 	{
-		var debug = true;
-		var room = Game.rooms[roomName];
-		var numWorkers = room.countUnits("worker");
-		var storages = room.find(FIND_STRUCTURES, { filter: function (s) {
+		let debug = true;
+		let room = Game.rooms[roomName];
+		let numWorkers = room.countUnits("worker");
+		let storages = room.find(FIND_STRUCTURES, { filter: function (s) {
 			return s.structureType == STRUCTURE_STORAGE;
 		}});
 
@@ -368,7 +371,7 @@ module.exports =
 			&& storages.length > 0
 			&& config.longRangeHarvestMinWorkers < numWorkers)
 		{
-			var unallocatedWorker = room.findUnallocatedUnit("worker");
+			let unallocatedWorker = room.findUnallocatedUnit("worker");
 
 			if (!lib.isNull(unallocatedWorker) && _.sum(unallocatedWorker.carry) == 0)
 			{

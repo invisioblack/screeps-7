@@ -10,7 +10,7 @@
 
 module.exports = function ()
 {
-    var Motivation = function () {};
+    let Motivation = function () {};
 
     Motivation.prototype.name = "Motivation";
 
@@ -23,7 +23,7 @@ module.exports = function ()
 		// if init has not been completed, then init
 		if (!Game.rooms[roomName].memory.motivations[this.name].init)
 		{
-			var room = Game.rooms[roomName];
+			let room = Game.rooms[roomName];
 
 			// init default memory
 			room.memory.motivations[this.name].name = this.name;
@@ -39,19 +39,19 @@ module.exports = function ()
 
 	Motivation.prototype.getUnitDemands = function (roomName)
 	{
-		var debug = false; //roomName == "W8N2";
-		var result = {};
-		var room = Game.rooms[roomName];
+		let debug = false; //roomName == "W8N2";
+		let result = {};
+		let room = Game.rooms[roomName];
 
 		lib.log(room.name, debug);
-		for (var needName in room.memory.motivations[this.name].needs)
+		for (let needName in room.memory.motivations[this.name].needs)
 		{
-			var need = room.memory.motivations[this.name].needs[needName];
-			var demands = global[need.type].getUnitDemands(roomName, need);
+			let need = room.memory.motivations[this.name].needs[needName];
+			let demands = global[need.type].getUnitDemands(roomName, need);
 
 
-			lib.log("----------- Motivation: " + JSON.stringify(demands), room.name == "W8N2", debug);
-			for (var unitName in demands)
+			lib.log("----------- demands: " + JSON.stringify(demands), room.name == "W8N2", debug);
+			for (let unitName in demands)
 			{
 				if (lib.isNull(result[unitName]))
 					result[unitName] = 0;

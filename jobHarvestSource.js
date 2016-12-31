@@ -5,7 +5,7 @@
 //-------------------------------------------------------------------------
 // modules
 //-------------------------------------------------------------------------
-var Job = require("Job.prototype")();
+let Job = require("Job.prototype")();
 
 //-------------------------------------------------------------------------
 // Declarations
@@ -14,7 +14,7 @@ var Job = require("Job.prototype")();
 //-------------------------------------------------------------------------
 // constructor
 //-------------------------------------------------------------------------
-var JobHarvestSource = function ()
+let JobHarvestSource = function ()
 {
 	Job.call(this);
 	this.name = "jobHarvestSource";
@@ -28,9 +28,9 @@ JobHarvestSource.prototype.constructor = JobHarvestSource;
 //-------------------------------------------------------------------------
 JobHarvestSource.prototype.work = function (creep)
 {
-	var need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
-	var target = Game.getObjectById(need.targetId);
-	var container = target.pos.findInRange(FIND_STRUCTURES, 1,{ filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }})[0];
+	let need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
+	let target = Game.getObjectById(need.targetId);
+	let container = target.pos.findInRange(FIND_STRUCTURES, 1,{ filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }})[0];
 
 	//avoid hostiles
 	if (creep.avoidHostile(creep))
@@ -59,7 +59,7 @@ JobHarvestSource.prototype.work = function (creep)
 		}
 		if (result == ERR_NOT_IN_RANGE)
 		{
-			var moveResult = creep.moveTo(container, {"maxRooms": 1});
+			let moveResult = creep.moveTo(container, {"maxRooms": 1});
 			if (moveResult < 0 && moveResult != ERR_TIRED)
 				console.log(creep.name + " Can't move to container: " + moveResult);
 		}

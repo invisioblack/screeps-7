@@ -20,6 +20,7 @@ profiler.enable();
 global.C = require("C");
 global.lib = require("lib");
 global.jobBuild = require("jobBuild");
+global.jobClaim = require("jobClaim");
 global.jobGuard = require("jobGuard");
 global.jobHarvestSource = require("jobHarvestSource");
 global.jobHeal = require("jobHeal");
@@ -28,6 +29,7 @@ global.jobRangedGuard = require("jobRangedGuard");
 global.jobRepair = require("jobRepair");
 global.jobTransfer = require("jobTransfer");
 global.motivator = require("motivator");
+global.motivationClaimRoom = require("motivationClaimRoom");
 global.motivationGarrison = require("motivationGarrison");
 global.motivationHarvestSource = require("motivationHarvestSource");
 global.motivationHaulToStorage = require("motivationHaulToStorage");
@@ -38,6 +40,7 @@ global.motivationSupplySpawn = require('motivationSupplySpawn');
 global.motivationSupplyTower = require("motivationSupplyTower");
 global.needManager = require("needManager");
 global.needBuild = require("needBuild");
+global.needClaim = require("needClaim");
 global.needGarrison = require("needGarrison");
 global.needHarvestSource = require("needHarvestSource");
 global.needHaulToStorage = require("needHaulToStorage");
@@ -45,6 +48,7 @@ global.needLongDistanceHarvest = require("needLongDistanceHarvest");
 global.needRepair = require("needRepair");
 global.needTransferEnergy = require("needTransferEnergy");
 global.roomManager = require("roomManager");
+global.strategyManager = require("strategyManager");
 global.units = require("units");
 
 // settings
@@ -58,7 +62,7 @@ module.exports.loop = function ()
 		//------------------------------------------------------------------------------------------------------------------
 		// Declarations
 		//------------------------------------------------------------------------------------------------------------------
-		var active = true;
+		let active = true;
 
 		//------------------------------------------------------------------------------------------------------------------
 		// Do stuffs
@@ -80,12 +84,12 @@ module.exports.loop = function ()
 
 function cleanupMemory ()
 {
-    for(var i in Memory.creeps) {
+    for(let i in Memory.creeps) {
         if(!Game.creeps[i])
             delete Memory.creeps[i];
     }
 /*
-    for(var i in Memory.rooms) {
+    for(let i in Memory.rooms) {
         if(!Game.rooms[i])
             delete Memory.rooms[i];
     }

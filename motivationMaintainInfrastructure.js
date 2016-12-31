@@ -6,20 +6,19 @@
 // modules
 //-------------------------------------------------------------------------
 // script prototypes
-var Motivation = require("Motivation.prototype")();
+let Motivation = require("Motivation.prototype")();
 
 //-------------------------------------------------------------------------
 // Declarations
 //-------------------------------------------------------------------------
-var REPAIR_FACTOR = 0.8;
+let REPAIR_FACTOR = 0.8;
 //-------------------------------------------------------------------------
 // constructor
 //-------------------------------------------------------------------------
-var MotivationMaintainInfrastructure = function ()
+let MotivationMaintainInfrastructure = function ()
 {
 	Motivation.call(this);
 	this.name = "motivationMaintainInfrastructure";
-	this.wallHP = [0, 25000, 50000, 100000, 300000, 500000, 1000000, 5000000, 10000000];
 };
 
 MotivationMaintainInfrastructure.prototype = Object.create(Motivation.prototype);
@@ -30,16 +29,16 @@ MotivationMaintainInfrastructure.prototype.constructor = MotivationMaintainInfra
 //-------------------------------------------------------------------------
 MotivationMaintainInfrastructure.prototype.getDemands = function (roomName, resources)
 {
-	var result = {};
-	var unitName = this.getDesiredSpawnUnit(roomName);
-	var constructionSites = Game.rooms[roomName].find(FIND_CONSTRUCTION_SITES);
-	var repairSites = Game.rooms[roomName].find(FIND_STRUCTURES, {
+	let result = {};
+	let unitName = this.getDesiredSpawnUnit(roomName);
+	let constructionSites = Game.rooms[roomName].find(FIND_CONSTRUCTION_SITES);
+	let repairSites = Game.rooms[roomName].find(FIND_STRUCTURES, {
 		filter: function (s) {
 			return s.hits < s.hitsMax;
 		}
 	});
-	var progress = _.sum(constructionSites, "progress");
-	var progressTotal = _.sum(constructionSites, "progressTotal");
+	let progress = _.sum(constructionSites, "progress");
+	let progressTotal = _.sum(constructionSites, "progressTotal");
 
 	result.energy = progressTotal - progress + Object.keys(repairSites).length;
 	result.units = this.getUnitDemands(roomName);
@@ -56,13 +55,13 @@ MotivationMaintainInfrastructure.prototype.getDesiredSpawnUnit = function ()
 
 MotivationMaintainInfrastructure.prototype.getDesireSpawn = function (roomName, demands)
 {
-	var result = true;
-	var room = Game.rooms[roomName];
-	var memory = room.memory.motivations[this.name];
+	let result = true;
+	let room = Game.rooms[roomName];
+	let memory = room.memory.motivations[this.name];
 
 	if (memory.active)
 	{
-		var workers = room.countUnits("worker");
+		let workers = room.countUnits("worker");
 		if (!lib.isNull(demands.units["worker"]) && demands.units["worker"] <= workers)
 			result = false;
 	} else {
@@ -74,8 +73,8 @@ MotivationMaintainInfrastructure.prototype.getDesireSpawn = function (roomName, 
 
 MotivationMaintainInfrastructure.prototype.updateActive = function (roomName, demands)
 {
-	var room = Game.rooms[roomName];
-	var memory = room.memory.motivations[this.name];
+	let room = Game.rooms[roomName];
+	let memory = room.memory.motivations[this.name];
 	if (Object.keys(demands.units).length > 0)
 	{
 		memory.active = true;
@@ -86,9 +85,9 @@ MotivationMaintainInfrastructure.prototype.updateActive = function (roomName, de
 
 MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 {
-	var room = Game.rooms[roomName];
-	var memory = room.memory.motivations[this.name];
-	var sortedNeedsByDistance, x;
+	let room = Game.rooms[roomName];
+	let memory = room.memory.motivations[this.name];
+	let sortedNeedsByDistance, x;
 
 	// insure memory is initialized for needs
 	if (lib.isNull(memory.needs))
@@ -98,11 +97,11 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 
 	// Handle Build Needs -------------------------------------------------------------------------------------
 	// look up sources and find out how many needs we should have for each one
-	var constructionSites = room.find(FIND_CONSTRUCTION_SITES);
+	let constructionSites = room.find(FIND_CONSTRUCTION_SITES);
 	constructionSites.forEach(function (cs) {
 		if (!lib.isNull(cs))
 		{
-			var needName = "build." + cs.id;
+			let needName = "build." + cs.id;
 
 			//console.log('Site: ' + cs.id);
 
@@ -120,13 +119,13 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 
 	// Handle Repair Needs -------------------------------------------------------------------------------------
 	// look up sources and find out how many needs we should have for each one
-	var repairSites = room.find(FIND_STRUCTURES, {
+	let repairSites = room.find(FIND_STRUCTURES, {
 		filter: function (s) {
 			return s.hits < s.hitsMax && s.structureType != STRUCTURE_WALL && s.structureType != STRUCTURE_RAMPART;
 		}
 	});
 	repairSites.forEach(function (rs) {
-		var needName = "repair." + rs.id;
+		let needName = "repair." + rs.id;
 
 		//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
 		//console.log(rs.id + " HP/Threshold: " + rs.hits + "/" + (rs.hitsMax * REPAIR_FACTOR));
@@ -143,14 +142,14 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 
 	// Handle WALLRepair Needs -------------------------------------------------------------------------------------
 	// look up sources and find out how many needs we should have for each one
-	var wallHP = this.wallHP[room.controller.level];
-	var wallRepairSites = room.find(FIND_STRUCTURES, {
+	let wallHP = config.wallHP[room.controller.level];
+	let wallRepairSites = room.find(FIND_STRUCTURES, {
 		filter: function (s) {
 			return (s.structureType == STRUCTURE_WALL || s.structureType == STRUCTURE_RAMPART) && s.hits < wallHP;
 		}
 	});
 	wallRepairSites.forEach(function (rs) {
-		var needName;
+		let needName;
 		if (rs.structureType == STRUCTURE_WALL)
 			needName = "repairWall." + rs.id;
 		else if (rs.structureType == STRUCTURE_RAMPART)
@@ -169,7 +168,7 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 		}
 	}, this);
 
-	for (var needName in memory.needs)
+	for (let needName in memory.needs)
 	{
 		//console.log("Need: " + needName);
 
@@ -195,8 +194,8 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 				}
 				else
 				{
-					var siteId = memory.needs[needName].targetId;
-					var result = _.filter(constructionSites , {"id": siteId});
+					let siteId = memory.needs[needName].targetId;
+					let result = _.filter(constructionSites , {"id": siteId});
 
 					// if there are no sites, then cull it
 					if (result.length == 0)
@@ -216,9 +215,9 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 				else
 				{
 
-					var siteId = memory.needs[needName].targetId;
-					var result = _.filter(repairSites , {"id": siteId});
-					var resultWall = _.filter(wallRepairSites , {"id": siteId});
+					let siteId = memory.needs[needName].targetId;
+					let result = _.filter(repairSites , {"id": siteId});
+					let resultWall = _.filter(wallRepairSites , {"id": siteId});
 
 					// if there are no sites, then cull it
 					if (result.length == 0 && resultWall.length == 0)
@@ -232,10 +231,10 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 	}
 
 	// prioritize needs
-	for (var needName in memory.needs)
+	for (let needName in memory.needs)
 	{
-		var need = memory.needs[needName];
-		var site = Game.getObjectById(need.targetId);
+		let need = memory.needs[needName];
+		let site = Game.getObjectById(need.targetId);
 
 		switch (site.structureType)
 		{
@@ -255,11 +254,11 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 
 		if (need.type == "needRepair")
 		{
-			var percent;
-			var max = site.hitsMax;
+			let percent;
+			let max = site.hitsMax;
 
 			if (site.structureType == STRUCTURE_WALL || site.structureType == STRUCTURE_RAMPART)
-				max =  this.wallHP[room.controller.level];
+				max =  config.wallHP[room.controller.level];
 			percent = (site.hits / max) * 10000 / 100;
 			//console.log(needName + " PERCENT: " + percent);
 			if (percent < 5)

@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 // motivationSupplyController
 //-------------------------------------------------------------------------
-var Motivation = require('Motivation.prototype')();
+let Motivation = require('Motivation.prototype')();
 
 //-------------------------------------------------------------------------
 // Declarations
@@ -10,7 +10,7 @@ var Motivation = require('Motivation.prototype')();
 //-------------------------------------------------------------------------
 // constructor
 //-------------------------------------------------------------------------
-var MotivationHarvestSource = function ()
+let MotivationHarvestSource = function ()
 {
 	Motivation.call(this);
 	this.name = "motivationHarvestSource";
@@ -23,8 +23,8 @@ MotivationHarvestSource.prototype.constructor = MotivationHarvestSource;
 // implementation
 //-------------------------------------------------------------------------
 MotivationHarvestSource.prototype.getDemands = function (roomName, resources) {
-	var result = {};
-	var unitName = this.getDesiredSpawnUnit(roomName);
+	let result = {};
+	let unitName = this.getDesiredSpawnUnit(roomName);
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
 	//console.log(JSON.stringify(result.units));
@@ -39,13 +39,13 @@ MotivationHarvestSource.prototype.getDesiredSpawnUnit = function ()
 
 MotivationHarvestSource.prototype.getDesireSpawn = function (roomName, demands)
 {
-	var result = true;
-	var room = Game.rooms[roomName];
-	var numContainers = room.find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }}).length;
-	var numHarvesters = room.countUnits("harvester");
-	var numWorkers = room.countUnits("worker");
+	let result = true;
+	let room = Game.rooms[roomName];
+	let numContainers = room.find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }}).length;
+	let numHarvesters = room.countUnits("harvester");
+	let numWorkers = room.countUnits("worker");
 
-	if (numContainers == 0 || numHarvesters >= demands.units["harvester"] || numWorkers < 2)
+	if (numContainers == 0 || numHarvesters >= demands.units["harvester"] || numWorkers < config.minWorkers)
 	{
 		result = false;
 	}
@@ -56,10 +56,10 @@ MotivationHarvestSource.prototype.getDesireSpawn = function (roomName, demands)
 MotivationHarvestSource.prototype.updateActive = function (roomName, demands)
 {
 
-	var room = Game.rooms[roomName];
-	var memory = room.memory.motivations[this.name];
-	var numContainers;
-	var numHarvesters;
+	let room = Game.rooms[roomName];
+	let memory = room.memory.motivations[this.name];
+	let numContainers;
+	let numHarvesters;
 
 	if (room.controller.my)
 	{
@@ -82,8 +82,8 @@ MotivationHarvestSource.prototype.updateActive = function (roomName, demands)
 
 MotivationHarvestSource.prototype.updateNeeds = function (roomName)
 {
-	var room = Game.rooms[roomName];
-	var memory = room.memory.motivations[this.name];
+	let room = Game.rooms[roomName];
+	let memory = room.memory.motivations[this.name];
 
 	// insure memory is initialized for needs
 	if (lib.isNull(memory.needs))
@@ -93,11 +93,11 @@ MotivationHarvestSource.prototype.updateNeeds = function (roomName)
 
 	// Handle Harvest Energy Needs -------------------------------------------------------------------------------------
 	// look up sources and find out how many needs we should have for each one
-	var sources = room.find(FIND_SOURCES);
+	let sources = room.find(FIND_SOURCES);
 	sources.forEach(function (s) {
-		var needName = "harvest." + s.id;
-		var need;
-		var container = s.pos.findInRange(FIND_STRUCTURES, 1,{ filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }})[0];
+		let needName = "harvest." + s.id;
+		let need;
+		let container = s.pos.findInRange(FIND_STRUCTURES, 1,{ filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }})[0];
 
 		//console.log('Need Name: ' + needName);
 

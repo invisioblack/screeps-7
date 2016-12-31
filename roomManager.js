@@ -13,12 +13,12 @@ module.exports =
 		//--------------------------------------------------------------------------
 		"getLongDistanceHarvestTarget": function ()
 		{
-			var sortList = {};
-			var result;
+			let sortList = {};
+			let result;
 
 			Memory.longDistanceHarvestTargets.forEach( function (roomName)
 			{
-				var room = Game.rooms[roomName];
+				let room = Game.rooms[roomName];
 				if (lib.isNull(room))
 				{
 					sortList[roomName] = {};

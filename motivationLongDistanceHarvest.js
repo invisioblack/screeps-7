@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 // motivationLongDistanceHarvest
 //-------------------------------------------------------------------------
-var Motivation = require('Motivation.prototype')();
+let Motivation = require('Motivation.prototype')();
 
 //-------------------------------------------------------------------------
 // Declarations
@@ -10,7 +10,7 @@ var Motivation = require('Motivation.prototype')();
 //-------------------------------------------------------------------------
 // constructor
 //-------------------------------------------------------------------------
-var MotivationLongDistanceHarvest = function ()
+let MotivationLongDistanceHarvest = function ()
 {
 	Motivation.call(this);
 	this.name = "motivationLongDistanceHarvest";
@@ -23,8 +23,8 @@ MotivationLongDistanceHarvest.prototype.constructor = MotivationLongDistanceHarv
 // implementation
 //-------------------------------------------------------------------------
 MotivationLongDistanceHarvest.prototype.getDemands = function (roomName, resources) {
-	var result = {};
-	var unitName = this.getDesiredSpawnUnit(roomName);
+	let result = {};
+	let unitName = this.getDesiredSpawnUnit(roomName);
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
 	//console.log(JSON.stringify(result.units));
@@ -44,8 +44,8 @@ MotivationLongDistanceHarvest.prototype.getDesireSpawn = function (roomName, dem
 
 MotivationLongDistanceHarvest.prototype.updateActive = function (roomName, demands)
 {
-	var room = Game.rooms[roomName];
-	var memory = room.memory.motivations[this.name];
+	let room = Game.rooms[roomName];
+	let memory = room.memory.motivations[this.name];
 
 	if (room.controller.my)
 		memory.active = false;
@@ -55,8 +55,8 @@ MotivationLongDistanceHarvest.prototype.updateActive = function (roomName, deman
 
 MotivationLongDistanceHarvest.prototype.updateNeeds = function (roomName)
 {
-	var room = Game.rooms[roomName];
-	var memory = room.memory.motivations[this.name];
+	let room = Game.rooms[roomName];
+	let memory = room.memory.motivations[this.name];
 
 	// insure memory is initialized for needs
 	if (lib.isNull(memory.needs))
@@ -66,10 +66,10 @@ MotivationLongDistanceHarvest.prototype.updateNeeds = function (roomName)
 
 	// Handle Harvest Energy Needs -------------------------------------------------------------------------------------
 	// look up sources and find out how many needs we should have for each one
-	var sources = room.find(FIND_SOURCES);
+	let sources = room.find(FIND_SOURCES);
 	sources.forEach(function (s) {
-		var needName = "ldharvest." + s.id;
-		var need;
+		let needName = "ldharvest." + s.id;
+		let need;
 
 		//console.log('Need Name: ' + needName);
 

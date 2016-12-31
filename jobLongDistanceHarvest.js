@@ -5,7 +5,7 @@
 //-------------------------------------------------------------------------
 // modules
 //-------------------------------------------------------------------------
-var Job = require("Job.prototype")();
+let Job = require("Job.prototype")();
 
 //-------------------------------------------------------------------------
 // Declarations
@@ -14,7 +14,7 @@ var Job = require("Job.prototype")();
 //-------------------------------------------------------------------------
 // constructor
 //-------------------------------------------------------------------------
-var JobLongDistanceHarvest = function ()
+let JobLongDistanceHarvest = function ()
 {
 	Job.call(this);
 	this.name = "jobLongDistanceHarvest";
@@ -28,9 +28,9 @@ JobLongDistanceHarvest.prototype.constructor = JobLongDistanceHarvest;
 //-------------------------------------------------------------------------
 JobLongDistanceHarvest.prototype.work = function (creep)
 {
-	var need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
-	var target = Game.getObjectById(need.targetId);
-	var carry = _.sum(creep.carry);
+	let need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
+	let target = Game.getObjectById(need.targetId);
+	let carry = _.sum(creep.carry);
 
 	creep.say("GLORY!");
 

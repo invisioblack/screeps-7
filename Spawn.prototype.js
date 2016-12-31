@@ -18,10 +18,10 @@ Spawn.prototype.costs[CLAIM] = 600;
     // returns cost for an array of parts
 Spawn.prototype.getCostParts = function (parts)
 {
-	var result = 0;
+	let result = 0;
 	if (parts.length)
 	{
-		for (var x in parts)
+		for (let x in parts)
 		{
 		    //console.log("P: " + parts[x]);
 			result += Spawn.prototype.getCostParts.costs[parts[x]];
@@ -33,14 +33,14 @@ Spawn.prototype.getCostParts = function (parts)
 // generate a name for a creep
 Spawn.prototype.generateName = function (name)
 {
-	var result = false;
-	var x = 1;
+	let result = false;
+	let x = 1;
 	while (!result)
 	{
-		var found = false;
-		var nameTry = name + '-' + x;
+		let found = false;
+		let nameTry = name + '-' + x;
 		// check for creeps with that name
-		for (var i in Game.creeps)
+		for (let i in Game.creeps)
 		{
 			if (Game.creeps[i].name == nameTry)
 			{
@@ -59,7 +59,7 @@ Spawn.prototype.generateName = function (name)
 
 Spawn.prototype.spawnUnit = function (unitName, fullEnergy)
 {
-	var energy = this.room.getSpawnEnergy();
+	let energy = this.room.getSpawnEnergy();
 
 	console.log("  Spawn Status: " + energy.energy + "/" + energy.energyCapacity + " full energy: " + fullEnergy);
 
@@ -73,10 +73,10 @@ Spawn.prototype.spawnUnit = function (unitName, fullEnergy)
 
 Spawn.prototype.spawnUnitByEnergy = function (unitName, energy)
 {
-	var parts = [];
-	var name = this.generateName(unitName);
-	var result;
-	var energyLeft = energy;
+	let parts = [];
+	let name = this.generateName(unitName);
+	let result;
+	let energyLeft = energy;
 
 	if (units[unitName].mode == 1)
 	{
@@ -84,8 +84,8 @@ Spawn.prototype.spawnUnitByEnergy = function (unitName, energy)
 		units[unitName].parts.forEach(function (part)
 		{
 
-			var partEnergy = energy * part.weight;
-			var numberParts = Math.floor(partEnergy / this.costs[part.part]);
+			let partEnergy = energy * part.weight;
+			let numberParts = Math.floor(partEnergy / this.costs[part.part]);
 
 			if (numberParts < part.minimum)
 				numberParts = part.minimum;
@@ -113,7 +113,7 @@ Spawn.prototype.spawnUnitByEnergy = function (unitName, energy)
 		if (_.isString(result))
 		{
 			console.log('+++++++++++++++++++Creating creep ' + unitName + ' : ' + name + " energy: " + energy + " result: " + result);
-			var creep = Game.creeps[name];
+			let creep = Game.creeps[name];
 			creep.initMotive();
 			creep.memory.homeRoom = this.room.name;
 			creep.memory.spawn = this.name;

@@ -57,6 +57,24 @@ module.exports =
 			"unit": "hauler"
 		}
 	},
+	"claimer": {
+		"mode": 1,
+		"parts": [
+			{
+				"part" : CLAIM,
+				"weight" : 0.8,
+				"minimum" : 2
+			},
+			{
+				"part" : MOVE,
+				"weight" : 0.2,
+				"minimum" : 1
+			}
+		],
+		"memory": {
+			"unit": "claimer"
+		}
+	},
 	"guard": {
 		"mode": 1,
 		"parts": [

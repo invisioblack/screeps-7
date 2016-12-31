@@ -6,7 +6,7 @@
 // modules
 //-------------------------------------------------------------------------
 // script prototypes
-var Need = require('Need.prototype')();
+let Need = require('Need.prototype')();
 
 //-------------------------------------------------------------------------
 // Declarations
@@ -15,7 +15,7 @@ var Need = require('Need.prototype')();
 //-------------------------------------------------------------------------
 // function
 //-------------------------------------------------------------------------
-var NeedGarrison = function ()
+let NeedGarrison = function ()
 {
 	Need.call(this);
 	this.name = "needGarrison";
@@ -26,9 +26,9 @@ NeedGarrison.prototype.constructor = NeedGarrison;
 
 NeedGarrison.prototype.getUnitDemands = function(roomName, memory, motivationName)
 {
-	var room = Game.rooms[roomName];
-	var unitCount = room.memory.threat.count;
-	var result = {};
+	let room = Game.rooms[roomName];
+	let unitCount = room.memory.threat.count;
+	let result = {};
 	result["guard"] = unitCount * 2;
 	result["rangedGuard"] = unitCount * 2;
 	result["healer"] = unitCount * 2;

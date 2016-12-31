@@ -17,8 +17,8 @@ module.exports =
 	//--------------------------------------------------------------------------
 	"manageNeeds": function (roomName, motivation, motivationMemory)
 	{
-		var room = Game.rooms[roomName];
-		var needs;
+		let room = Game.rooms[roomName];
+		let needs;
 
 		// create and update needs for motivation
 		//console.log("needManager.manageNeeds: motivation.name: " + motivation.name);
@@ -28,13 +28,13 @@ module.exports =
 		needs = _.sortByOrder(room.memory.motivations[motivation.name].needs , ['priority'], ['desc']);
 
 		// first we need to figure out if we have any open allocations
-		for (var unitName in units)
+		for (let unitName in units)
 		{
-			var assignedUnits = room.countMotivationUnits(motivation.name , unitName);
-			var allocatedUnits = motivationMemory.allocatedUnits[unitName];
+			let assignedUnits = room.countMotivationUnits(motivation.name , unitName);
+			let allocatedUnits = motivationMemory.allocatedUnits[unitName];
 
 			// if we have open allocations, we need to find if there is a creep to assign
-			var outOfCreeps = false;
+			let outOfCreeps = false;
 			//console.log("Preloop");
 			while (!outOfCreeps && assignedUnits < allocatedUnits)
 			{
@@ -45,10 +45,10 @@ module.exports =
 
 
 					// if there is a creep to assign, we need to assign it
-					var unitDemands = global[need.type].getUnitDemands(roomName , need, motivation.name);
-					var creepsDemanded = unitDemands[unitName];
-					var creepsAssigned = room.countMotivationNeedUnits(motivation.name , need.name , unitName);
-					var creep = room.findUnallocatedUnit(unitName);
+					let unitDemands = global[need.type].getUnitDemands(roomName , need, motivation.name);
+					let creepsDemanded = unitDemands[unitName];
+					let creepsAssigned = room.countMotivationNeedUnits(motivation.name , need.name , unitName);
+					let creep = room.findUnallocatedUnit(unitName);
 
 					if (creepsDemanded == 0)
 						outOfCreeps = true;
@@ -81,15 +81,16 @@ module.exports =
 
 	"fulfillNeeds": function (roomName)
 	{
-		for (var creepName in Game.creeps)
+		let debug = false;
+		for (let creepName in Game.creeps)
 		{
-			var creep = Game.creeps[creepName];
+			let creep = Game.creeps[creepName];
 			if (creep.room.name == roomName && creep.memory.motive.room == roomName && creep.memory.motive.need != "")
 			{
-				//console.log("Creep executing need: " + creep.name + " : " + creep.memory.motive.motivation + " : " + creep.memory.motive.need);
-				var need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
+				lib.log("Creep executing need: " + creep.name + " : " + creep.memory.motive.motivation + " : " + creep.memory.motive.need, debug);
+				let need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
 
-				//console.log("Creep: " + creep.name + " m: " + creep.memory.motive.motivation + " n: " + creep.memory.motive.need);
+				lib.log("Creep: " + creep.name + " m: " + creep.memory.motive.motivation + " n: " + creep.memory.motive.need, debug);
 
 				// deassign motive if we can't find the need
 				if (lib.isNull(need))
@@ -98,31 +99,32 @@ module.exports =
 					creep.deassignMotive();
 				else if (need.type == "needTransferEnergy")
 				{
-					//console.log("Creep: " + creep.name + " Working needTransferEnergy");
+					lib.log("Creep: " + creep.name + " Working needTransferEnergy", debug);
 					jobTransfer.work(creep);
 				}
 				else if (need.type == "needBuild")
 				{
-					//console.log("Creep: " + creep.name + " Working needBuild");
+					lib.log("Creep: " + creep.name + " Working needBuild", debug);
 					jobBuild.work(creep);
 				}
 				else if (need.type == "needRepair")
 				{
-					//console.log("Creep: " + creep.name + " Working needRepair");
+					lib.log("Creep: " + creep.name + " Working needRepair", debug);
 					jobRepair.work(creep);
 				}
 				else if (need.type == "needHarvestSource")
 				{
-					//console.log("Creep: " + creep.name + " Working needHarvestSource");
+					lib.log("Creep: " + creep.name + " Working needHarvestSource", debug);
 					jobHarvestSource.work(creep);
 				}
 				else if (need.type == "needLongDistanceHarvest")
 				{
-					//console.log("Creep: " + creep.name + " Working needHarvestSource");
+					lib.log("Creep: " + creep.name + " Working needLongDistanceHarvest", debug);
 					jobLongDistanceHarvest.work(creep);
 				}
 				else if (need.type == "needGarrison")
 				{
+					lib.log("Creep: " + creep.name + " Working needGarrison", debug);
 					switch (creep.memory.unit)
 					{
 						case "guard":
@@ -139,8 +141,13 @@ module.exports =
 				}
 				else if (need.type == "needHaulToStorage")
 				{
-					//console.log("Creep: " + creep.name + " Working needHarvestSource");
+					lib.log("Creep: " + creep.name + " Working needHaulToStorage", debug);
 					jobTransfer.work(creep);
+				}
+				else if (need.type == "needClaim")
+				{
+					lib.log("Creep: " + creep.name + " Working needClaim", debug);
+					jobClaim.work(creep);
 				}
 			}
 		}

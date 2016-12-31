@@ -5,10 +5,10 @@
 
 Room.prototype.getCostParts = function (parts)
 {
-	var result = 0;
+	let result = 0;
 	if (parts.length)
 	{
-		for (var x in parts)
+		for (let x in parts)
 		{
 			//console.log("P: " + parts[x]);
 			result += Spawn.prototype.getCostParts.costs[parts[x]];
@@ -19,7 +19,7 @@ Room.prototype.getCostParts = function (parts)
 
 Room.prototype.getResources = function ()
 {
-	var resources = {};
+	let resources = {};
 	// determine room resources ----------------------------------------------------------------------------
 	// energy
 	resources.spawnEnergy = this.getSpawnEnergy();
@@ -33,7 +33,7 @@ Room.prototype.getResources = function ()
 
 	// get unit resources
 	resources.units = [];
-	for (var unitName in units)
+	for (let unitName in units)
 	{
 
 		resources.units[unitName] = {};
@@ -51,14 +51,14 @@ Room.prototype.getResources = function ()
 
 Room.prototype.getSpawnEnergy = function ()
 {
-	var result = {};
+	let result = {};
 	result.energy = 0;
 	result.energyCapacity = 0;
 
 	// Enumerate over spawns
-	for (var spawnName in Game.spawns)
+	for (let spawnName in Game.spawns)
 	{
-		var spawn = Game.spawns[spawnName];
+		let spawn = Game.spawns[spawnName];
 		if (spawn.room.name == this.name)
 		{
 			result.energy += spawn.energy;
@@ -66,7 +66,7 @@ Room.prototype.getSpawnEnergy = function ()
 		}
 	}
 
-	var extenders = this.find(FIND_MY_STRUCTURES , {filter: {structureType: STRUCTURE_EXTENSION}});
+	let extenders = this.find(FIND_MY_STRUCTURES , {filter: {structureType: STRUCTURE_EXTENSION}});
 	extenders.forEach(function (ex)
 	{
 		result.energy += ex.energy;
@@ -78,10 +78,10 @@ Room.prototype.getSpawnEnergy = function ()
 
 Room.prototype.getControllerStatus = function ()
 {
-	var result = {};
+	let result = {};
 
 	// Enumerate over spawns
-	var controller = this.controller;
+	let controller = this.controller;
 
 	if (controller.my)
 	{
@@ -101,15 +101,15 @@ Room.prototype.getControllerStatus = function ()
 
 Room.prototype.countCreeps = function ()
 {
-	var result = this.getCreeps().length;
+	let result = this.getCreeps().length;
 
 	return result;
 };
 
 Room.prototype.getCreeps = function ()
 {
-	var roomName = this.name;
-	var result = _.filter(Game.creeps , function (creep)
+	let roomName = this.name;
+	let result = _.filter(Game.creeps , function (creep)
 	{
 		return creep.room.name == roomName;
 	});
@@ -118,14 +118,14 @@ Room.prototype.getCreeps = function ()
 
 Room.prototype.countUnits = function (unitName)
 {
-	var result = this.getUnits(unitName).length;
+	let result = this.getUnits(unitName).length;
 	return result;
 };
 
 Room.prototype.getUnits = function (unitName)
 {
-	var roomName = this.name;
-	var result = _.filter(Game.creeps , function (creep)
+	let roomName = this.name;
+	let result = _.filter(Game.creeps , function (creep)
 	{
 		return creep.room.name == roomName
 			&& creep.memory.motive.room == roomName
@@ -136,14 +136,14 @@ Room.prototype.getUnits = function (unitName)
 
 Room.prototype.countMotivationCreeps = function (motivationName)
 {
-	var result = this.getRoomMotivationCreeps(motivationName).length;
+	let result = this.getRoomMotivationCreeps(motivationName).length;
 	return result;
 };
 
 Room.prototype.getMotivationCreeps = function (motivationName)
 {
-	var roomName = this.name;
-	var result = _.filter(Game.creeps , function (creep)
+	let roomName = this.name;
+	let result = _.filter(Game.creeps , function (creep)
 	{
 		return creep.room.name == roomName
 			&& creep.memory.motive.room == roomName
@@ -154,14 +154,14 @@ Room.prototype.getMotivationCreeps = function (motivationName)
 
 Room.prototype.countMotivationUnits = function (motivationName , unitName)
 {
-	var result = this.getMotivationUnits(motivationName , unitName).length;
+	let result = this.getMotivationUnits(motivationName , unitName).length;
 	return result;
 };
 
 Room.prototype.getMotivationUnits = function (motivationName , unitName)
 {
-	var roomName = this.name;
-	var result = _.filter(Game.creeps , function (creep)
+	let roomName = this.name;
+	let result = _.filter(Game.creeps , function (creep)
 	{
 		return creep.room.name == roomName
 			&& creep.memory.motive.room == roomName
@@ -173,14 +173,14 @@ Room.prototype.getMotivationUnits = function (motivationName , unitName)
 
 Room.prototype.countMotivationNeedCreeps = function (motivationName , needName)
 {
-	var result = this.getMotivationNeedCreeps(motivationName , needName).length;
+	let result = this.getMotivationNeedCreeps(motivationName , needName).length;
 	return result;
 };
 
 Room.prototype.getMotivationNeedCreeps = function (motivationName , needName)
 {
-	var roomName = this.name;
-	var result = _.filter(Game.creeps , function (creep)
+	let roomName = this.name;
+	let result = _.filter(Game.creeps , function (creep)
 	{
 		return creep.room.name == roomName
 			&& creep.memory.motive.room == roomName
@@ -192,14 +192,14 @@ Room.prototype.getMotivationNeedCreeps = function (motivationName , needName)
 
 Room.prototype.countMotivationNeedUnits = function (motivationName , needName , unitName)
 {
-	var result = this.getMotivationNeedUnits(motivationName , needName , unitName).length;
+	let result = this.getMotivationNeedUnits(motivationName , needName , unitName).length;
 	return result;
 };
 
 Room.prototype.getMotivationNeedUnits = function (motivationName , needName , unitName)
 {
-	var roomName = this.name;
-	var result = _.filter(Game.creeps , function (creep)
+	let roomName = this.name;
+	let result = _.filter(Game.creeps , function (creep)
 	{
 		return creep.room.name == roomName
 			&& creep.memory.motive.room == roomName
@@ -212,14 +212,14 @@ Room.prototype.getMotivationNeedUnits = function (motivationName , needName , un
 
 Room.prototype.countAssignedUnits = function (unitName)
 {
-	var result = this.getAssignedUnits(unitName).length;
+	let result = this.getAssignedUnits(unitName).length;
 	return result;
 };
 
 Room.prototype.getAssignedUnits = function (unitName)
 {
-	var roomName = this.name;
-	var result = _.filter(Game.creeps , function (creep)
+	let roomName = this.name;
+	let result = _.filter(Game.creeps , function (creep)
 	{
 		return creep.room.name == roomName
 			&& creep.memory.motive.room == roomName
@@ -232,14 +232,14 @@ Room.prototype.getAssignedUnits = function (unitName)
 
 Room.prototype.countUnassignedUnits = function (unitName)
 {
-	var result = this.getUnassignedUnits(unitName).length;
+	let result = this.getUnassignedUnits(unitName).length;
 	return result;
 };
 
 Room.prototype.getUnassignedUnits = function (unitName)
 {
-	var roomName = this.name;
-	var result = _.filter(Game.creeps , function (creep)
+	let roomName = this.name;
+	let result = _.filter(Game.creeps , function (creep)
 	{
 		return creep.room.name == roomName
 			&& creep.memory.motive.room == roomName
@@ -253,16 +253,16 @@ Room.prototype.getUnassignedUnits = function (unitName)
 
 Room.prototype.countLostCreeps = function ()
 {
-	var result = this.getLostCreeps().length;
+	let result = this.getLostCreeps().length;
 	return result;
 };
 
 Room.prototype.getLostCreeps = function ()
 {
-	var debug = true;
-	var roomName = this.name;
+	let debug = true;
+	let roomName = this.name;
 
-	var result = _.filter(Game.creeps , function (creep)
+	let result = _.filter(Game.creeps , function (creep)
 	{
 		return creep.room.name == roomName
 			&& creep.memory.motive.room != roomName;
@@ -273,16 +273,16 @@ Room.prototype.getLostCreeps = function ()
 
 Room.prototype.countCreepsOnSource = function (sourceId)
 {
-	var result = this.getCreepsOnSource(sourceId).length;
+	let result = this.getCreepsOnSource(sourceId).length;
 	return result;
 };
 
 Room.prototype.getCreepsOnSource = function (sourceId)
 {
-	var roomName = this.name;
-	var result = _.filter(Game.creeps , function (creep)
+	let roomName = this.name;
+	let result = _.filter(Game.creeps , function (creep)
 	{
-		var need = Game.rooms[creep.room.name].memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
+		let need = Game.rooms[creep.room.name].memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
 		return (creep.room.name == roomName
 				&& creep.memory.motive.room == roomName
 				&& creep.memory.motive.motivation != ""
@@ -303,8 +303,8 @@ Room.prototype.findUnallocatedUnit = function (unitName)
 
 Room.prototype.findUnallocatedUnits = function (unitName)
 {
-	var roomName = this.name;
-	var result = _.filter(Game.creeps , function (creep)
+	let roomName = this.name;
+	let result = _.filter(Game.creeps , function (creep)
 	{
 		return creep.room.name == roomName
 			&& creep.memory.motive.room == roomName
@@ -317,10 +317,10 @@ Room.prototype.findUnallocatedUnits = function (unitName)
 
 Room.prototype.handleLostCreeps = function()
 {
-	var lostCreeps = this.getLostCreeps();
+	let lostCreeps = this.getLostCreeps();
 	lostCreeps.forEach(function (creep)
 	{
-		var exit = creep.room.findExitTo(creep.memory.motive.room);
+		let exit = creep.room.findExitTo(creep.memory.motive.room);
 		// and move to exit
 		creep.moveTo(creep.pos.findClosestByPath(exit, { ignoreCreeps: true }));
 		creep.say("Leave!");
@@ -329,17 +329,17 @@ Room.prototype.handleLostCreeps = function()
 
 Room.prototype.safeModeFailsafe = function ()
 {
-	var room = Game.rooms[this.name];
+	let room = Game.rooms[this.name];
 	if (room.controller.my)
 	{
-		var controller = room.controller;
-		var hostiles = this.getAgressivesPresent(this.name);
+		let controller = room.controller;
+		let hostiles = this.getAgressivesPresent(this.name);
 		//safeMode	number	How many ticks of safe mode remaining, or undefined.
-		var safeMode = lib.nullProtect(controller.safeMode , 0);
+		let safeMode = lib.nullProtect(controller.safeMode , 0);
 		//safeModeAvailable	number	Safe mode activations available to use.
-		var safeModeAvailable = lib.nullProtect(controller.safeModeAvailable , 0);
+		let safeModeAvailable = lib.nullProtect(controller.safeModeAvailable , 0);
 		//safeModeCooldown	number	During this period in ticks new safe mode activations will be blocked, undefined if cooldown is inactive.
-		var safeModeCooldown = lib.nullProtect(controller.safeModeCooldown , 0);
+		let safeModeCooldown = lib.nullProtect(controller.safeModeCooldown , 0);
 
 		if (hostiles.length && !safeMode && safeModeAvailable && !safeModeCooldown)
 		{
@@ -355,8 +355,8 @@ Room.prototype.safeModeFailsafe = function ()
 
 Room.prototype.getAgressivesPresent = function ()
 {
-	var room = Game.rooms[this.name];
-	var hostileCreeps = room.find(FIND_HOSTILE_CREEPS , {
+	let room = Game.rooms[this.name];
+	let hostileCreeps = room.find(FIND_HOSTILE_CREEPS , {
 		filter: function (creep)
 		{
 			//console.log(JSON.stringify(creep.body));
@@ -374,7 +374,7 @@ Room.prototype.motivateTowers = function ()
 	if (this.controller.my)
 	{
 		// find all towers
-		var towers = this.find(FIND_STRUCTURES , {
+		let towers = this.find(FIND_STRUCTURES , {
 			filter: function (s)
 			{
 				return s.structureType == STRUCTURE_TOWER
@@ -390,8 +390,8 @@ Room.prototype.motivateTowers = function ()
 
 Room.prototype.updateThreat = function ()
 {
-	var numAggressives = this.getAgressivesPresent().length;
-	var timeSinceSeen;
+	let numAggressives = this.getAgressivesPresent().length;
+	let timeSinceSeen;
 
 	if (lib.isNull(this.memory.threat))
 	{

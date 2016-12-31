@@ -6,7 +6,7 @@
 // modules
 //-------------------------------------------------------------------------
 // script prototypes
-var Need = require('Need.prototype')();
+let Need = require('Need.prototype')();
 
 //-------------------------------------------------------------------------
 // Declarations
@@ -15,7 +15,7 @@ var Need = require('Need.prototype')();
 //-------------------------------------------------------------------------
 // function
 //-------------------------------------------------------------------------
-var NeedLongDistanceHarvest = function ()
+let NeedLongDistanceHarvest = function ()
 {
 	Need.call(this);
 	this.name = "needLongDistanceHarvest";
@@ -26,8 +26,8 @@ NeedLongDistanceHarvest.prototype.constructor = NeedLongDistanceHarvest;
 
 NeedLongDistanceHarvest.prototype.getUnitDemands = function(roomName, memory, motivationName)
 {
-	var result = {};
-	var source = Game.getObjectById(memory.targetId);
+	let result = {};
+	let source = Game.getObjectById(memory.targetId);
 	result["worker"] = source.getMaxHarvesters();
 	//console.log("-----------LDH: " + result["worker"]);
 	return result;

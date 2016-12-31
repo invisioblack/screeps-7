@@ -6,7 +6,7 @@
 // modules
 //-------------------------------------------------------------------------
 // script prototypes
-var Need = require('Need.prototype')();
+let Need = require('Need.prototype')();
 
 //-------------------------------------------------------------------------
 // Declarations
@@ -15,7 +15,7 @@ var Need = require('Need.prototype')();
 //-------------------------------------------------------------------------
 // function
 //-------------------------------------------------------------------------
-var NeedHaulToStorage = function ()
+let NeedHaulToStorage = function ()
 {
 	Need.call(this);
 	this.name = "needHaulToStorage";
@@ -26,7 +26,7 @@ NeedHaulToStorage.prototype.constructor = NeedHaulToStorage;
 
 NeedHaulToStorage.prototype.getUnitDemands = function(roomName, memory, motivationName)
 {
-	var result = {};
+	let result = {};
 	result["hauler"] = 2;
 
 	//console.log(JSON.stringify(memory));

@@ -6,7 +6,7 @@
 // modules
 //-------------------------------------------------------------------------
 // script prototypes
-var Need = require('Need.prototype')();
+let Need = require('Need.prototype')();
 
 //-------------------------------------------------------------------------
 // Declarations
@@ -15,7 +15,7 @@ var Need = require('Need.prototype')();
 //-------------------------------------------------------------------------
 // function
 //-------------------------------------------------------------------------
-var NeedTransferEnergy = function ()
+let NeedTransferEnergy = function ()
 {
 	Need.call(this);
 	this.name = "needTransferEnergy";
@@ -26,12 +26,12 @@ NeedTransferEnergy.prototype.constructor = NeedTransferEnergy;
 
 NeedTransferEnergy.prototype.getUnitDemands = function(roomName, memory, motivationName)
 {
-	var result = {};
-	var room = Game.rooms[roomName];
-	var target = Game.getObjectById(memory.targetId);
-	var energy, energyCapacity, neededEnergy;
-	var worker = lib.nullProtect(room.getUnits("worker")[0], {});
-	var workerCapacity = lib.nullProtect(worker.carryCapacity, 50);
+	let result = {};
+	let room = Game.rooms[roomName];
+	let target = Game.getObjectById(memory.targetId);
+	let energy, energyCapacity, neededEnergy;
+	let worker = lib.nullProtect(room.getUnits("worker")[0], {});
+	let workerCapacity = lib.nullProtect(worker.carryCapacity, 50);
 	//console.log(JSON.stringify(memory));
 
 	if (!lib.isNull(target.energy))

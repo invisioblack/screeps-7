@@ -5,18 +5,18 @@
 //-------------------------------------------------------------------------
 // modules
 //-------------------------------------------------------------------------
-var Job = require("Job.prototype")();
+let Job = require("Job.prototype")();
 
 //-------------------------------------------------------------------------
 // Declarations
 //-------------------------------------------------------------------------
-var JOB_MODE_GETENERGY = 0;
-var JOB_MODE_WORK = 1;
+let JOB_MODE_GETENERGY = 0;
+let JOB_MODE_WORK = 1;
 
 //-------------------------------------------------------------------------
 // constructor
 //-------------------------------------------------------------------------
-var JobRepair = function ()
+let JobRepair = function ()
 {
 	Job.call(this);
 	this.name = "jobRepair";
@@ -31,9 +31,9 @@ JobRepair.prototype.constructor = JobRepair;
 
 JobRepair.prototype.work = function (creep)
 {
-	var need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
-	var target = Game.getObjectById(need.targetId);
-	var carry = _.sum(creep.carry);
+	let need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
+	let target = Game.getObjectById(need.targetId);
+	let carry = _.sum(creep.carry);
 
 	//avoid hostiles
 	if (creep.avoidHostile(creep))
@@ -65,12 +65,12 @@ JobRepair.prototype.work = function (creep)
 				creep.deassignMotive();
 			} else {
 
-				var result = creep.repair(target);
+				let result = creep.repair(target);
 				//console.log("return: " + target);
 				//console.log("creep: " + creep.name);
 				if (result == ERR_NOT_IN_RANGE)
 				{
-					var moveResult = creep.moveTo(target, {"maxRooms": 1});
+					let moveResult = creep.moveTo(target, {"maxRooms": 1});
 					if (moveResult < 0 && moveResult != ERR_TIRED)
 						console.log(creep.name + " Can't move while repairing: " + moveResult);
 				} else if (result == ERR_FULL) {

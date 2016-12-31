@@ -1,7 +1,7 @@
 //-------------------------------------------------------------------------
 // modules
 //-------------------------------------------------------------------------
-var Job = require("Job.prototype")();
+let Job = require("Job.prototype")();
 
 //-------------------------------------------------------------------------
 // Declarations
@@ -10,7 +10,7 @@ var Job = require("Job.prototype")();
 //-------------------------------------------------------------------------
 // constructor
 //-------------------------------------------------------------------------
-var JobHeal = function ()
+let JobHeal = function ()
 {
 	Job.call(this);
 	this.name = "jobHeal";
@@ -31,7 +31,7 @@ JobHeal.prototype.work = function (creep)
 	}
 
 	//Find my creeps that are hurt. If they're hurt, heal them.
-	var healTarget = creep.pos.findClosestByPath(FIND_MY_CREEPS, { ignoreCreeps: true,
+	let healTarget = creep.pos.findClosestByPath(FIND_MY_CREEPS, { ignoreCreeps: true,
 		filter: function (t)
 		{
 			return t != creep && t.hits < t.hitsMax
@@ -46,11 +46,11 @@ JobHeal.prototype.work = function (creep)
 	}
 	else
 	{
-		var targets = creep.room.find(FIND_HOSTILE_CREEPS);
+		let targets = creep.room.find(FIND_HOSTILE_CREEPS);
 		//if there are hostile targets stay near the action
 		if (targets.length)
 		{
-			var target = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS, { ignoreCreeps: true});
+			let target = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS, { ignoreCreeps: true});
 
 			if (target)
 			{

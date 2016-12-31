@@ -5,7 +5,7 @@
 //-------------------------------------------------------------------------
 // modules
 //-------------------------------------------------------------------------
-var Job = require("Job.prototype")();
+let Job = require("Job.prototype")();
 
 //-------------------------------------------------------------------------
 // Declarations
@@ -14,7 +14,7 @@ var Job = require("Job.prototype")();
 //-------------------------------------------------------------------------
 // constructor
 //-------------------------------------------------------------------------
-var JobTransfer = function ()
+let JobTransfer = function ()
 {
 	Job.call(this);
 	this.name = "jobTransfer";
@@ -28,9 +28,10 @@ JobTransfer.prototype.constructor = JobTransfer;
 //-------------------------------------------------------------------------
 JobTransfer.prototype.work = function (creep)
 {
-	var need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
-	var target = Game.getObjectById(need.targetId);
-	var carry = _.sum(creep.carry);
+	let debug = false;
+	let need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
+	let target = Game.getObjectById(need.targetId);
+	let carry = creep.carry[RESOURCE_ENERGY];
 
 	//avoid hostiles
 	if (creep.avoidHostile(creep))
@@ -48,13 +49,13 @@ JobTransfer.prototype.work = function (creep)
 		creep.memory.job.mode = this.JOB_MODE_GETENERGY;
 	}
 
-	//console.log(creep.name + " job/mode: " + creep.memory.job.mode);
+	lib.log(creep.name + " job/mode: " + creep.memory.job.mode, debug);
 
 	// manage job
 	switch (creep.memory.job.mode)
 	{
 		case this.JOB_MODE_GETENERGY:
-
+			lib.log(creep.name + " getting energy ", debug);
 			this.getEnergy(creep);
 			break;
 		case this.JOB_MODE_WORK:
@@ -66,16 +67,16 @@ JobTransfer.prototype.work = function (creep)
 
 				//console.log("return: " + target);
 				this.resetSource(creep);
-				var result = creep.transfer(target, RESOURCE_ENERGY);
-				//console.log(creep.name + " transfer result: " + result);
+				let result = creep.transfer(target, RESOURCE_ENERGY);
+				lib.log(creep.name + " transfer result: " + result, debug);
 				if (result == ERR_NOT_IN_RANGE)
 				{
 
-					var moveResult = creep.moveTo(target, {"maxRooms": 1});
+					let moveResult = creep.moveTo(target, {"maxRooms": 1});
 					if (moveResult < 0 && moveResult != ERR_TIRED)
 						console.log(creep.name + " Can't move while transferring: " + moveResult);
 				} else if (result == ERR_FULL) {
-					//console.log("---- RESET");
+					lib.log("---- RESET", debug);
 					creep.deassignMotive();
 				}
 			}

@@ -10,8 +10,8 @@ Source.prototype.getPercentFull = function()
 
 Source.prototype.getMaxHarvesters = function ()
 {
-    var result = 0;
-    var area = this.room.lookForAtArea(LOOK_TERRAIN, lib.clamp(this.pos.y - 1, 0, 49), lib.clamp(this.pos.x - 1, 0, 49), lib.clamp(this.pos.y + 1, 0, 49), lib.clamp(this.pos.x + 1, 0, 49), true);
+    let result = 0;
+    let area = this.room.lookForAtArea(LOOK_TERRAIN, lib.clamp(this.pos.y - 1, 0, 49), lib.clamp(this.pos.x - 1, 0, 49), lib.clamp(this.pos.y + 1, 0, 49), lib.clamp(this.pos.x + 1, 0, 49), true);
 
     area.forEach(function(p) {
 		if ( !(p.x == this.pos.x && p.y === this.pos.y) && p.terrain != 'wall')
@@ -25,11 +25,11 @@ Source.prototype.getMaxHarvesters = function ()
 
 Source.prototype.countCreepsOnSource = function ()
 {
-	var result = 0;
+	let result = 0;
 
-	for (var creepName in Game.creeps)
+	for (let creepName in Game.creeps)
 	{
-		var creep = Game.creeps[creepName];
+		let creep = Game.creeps[creepName];
 		if (!lib.isNull(creep.memory.sourceId))
 		{
 			if (creep.memory.sourceId == this.id)

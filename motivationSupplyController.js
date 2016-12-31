@@ -6,7 +6,7 @@
 // modules
 //-------------------------------------------------------------------------
 // script prototypes
-var Motivation = require("Motivation.prototype")();
+let Motivation = require("Motivation.prototype")();
 
 //-------------------------------------------------------------------------
 // Declarations
@@ -15,7 +15,7 @@ var Motivation = require("Motivation.prototype")();
 //-------------------------------------------------------------------------
 // constructor
 //-------------------------------------------------------------------------
-var MotivationSupplyController = function ()
+let MotivationSupplyController = function ()
 {
 	Motivation.call(this);
 	this.name = "motivationSupplyController";
@@ -28,8 +28,8 @@ MotivationSupplyController.prototype.constructor = MotivationSupplyController;
 // implementation
 //-------------------------------------------------------------------------
 MotivationSupplyController.prototype.getDemands = function (roomName, resources) {
-	var result = {};
-	var unitName = this.getDesiredSpawnUnit(roomName);
+	let result = {};
+	let unitName = this.getDesiredSpawnUnit(roomName);
 	result.energy = resources.controllerStatus.progressTotal - resources.controllerStatus.progress;
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
@@ -44,12 +44,12 @@ MotivationSupplyController.prototype.getDesiredSpawnUnit = function (roomName)
 
 MotivationSupplyController.prototype.getDesireSpawn = function (roomName, demands)
 {
-	var result = true;
-	var room = Game.rooms[roomName];
-	var memory = room.memory.motivations[this.name];
+	let result = true;
+	let room = Game.rooms[roomName];
+	let memory = room.memory.motivations[this.name];
 	if (memory.active)
 	{
-		for (var unitName in units)
+		for (let unitName in units)
 		{
 			if (!lib.isNull(demands.units[unitName]) && demands.units[unitName] <= room.countUnits(unitName))
 			{
@@ -65,8 +65,8 @@ MotivationSupplyController.prototype.getDesireSpawn = function (roomName, demand
 
 MotivationSupplyController.prototype.updateActive = function (roomName, demands)
 {
-	var room = Game.rooms[roomName];
-	var memory = room.memory.motivations[this.name];
+	let room = Game.rooms[roomName];
+	let memory = room.memory.motivations[this.name];
 	if (room.controller.my && demands.energy > 0)
 	{
 		memory.active = true;
@@ -77,8 +77,8 @@ MotivationSupplyController.prototype.updateActive = function (roomName, demands)
 
 MotivationSupplyController.prototype.updateNeeds = function (roomName)
 {
-	var room = Game.rooms[roomName];
-	var memory = room.memory.motivations[this.name];
+	let room = Game.rooms[roomName];
+	let memory = room.memory.motivations[this.name];
 
 	// insure memory is initialized for needs
 	if (lib.isNull(memory.needs))
@@ -88,8 +88,8 @@ MotivationSupplyController.prototype.updateNeeds = function (roomName)
 
 	// Handle Harvest Energy Needs -------------------------------------------------------------------------------------
 	// look up sources and find out how many needs we should have for each one
-	var needName = "supplyController." + room.controller.id;
-	var need;
+	let needName = "supplyController." + room.controller.id;
+	let need;
 
 	//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
 

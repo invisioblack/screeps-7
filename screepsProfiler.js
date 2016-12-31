@@ -258,15 +258,15 @@ module.exports = {
 			// Commented lines are part of an on going experiment to keep the profiler
 			// performant, and measure certain types of overhead.
 
-			// var callbackStart = Game.cpu.getUsed();
+			// let callbackStart = Game.cpu.getUsed();
 			const returnVal = callback();
-			// var callbackEnd = Game.cpu.getUsed();
+			// let callbackEnd = Game.cpu.getUsed();
 			Profiler.endTick();
-			// var end = Game.cpu.getUsed();
+			// let end = Game.cpu.getUsed();
 
-			// var profilerTime = (end - start) - (callbackEnd - callbackStart);
-			// var callbackTime = callbackEnd - callbackStart;
-			// var unaccounted = end - profilerTime - callbackTime;
+			// let profilerTime = (end - start) - (callbackEnd - callbackStart);
+			// let callbackTime = callbackEnd - callbackStart;
+			// let unaccounted = end - profilerTime - callbackTime;
 			// console.log('total-', end, 'profiler-', profilerTime, 'callbacktime-',
 			// callbackTime, 'start-', start, 'unaccounted', unaccounted);
 			return returnVal;

@@ -6,7 +6,7 @@
 // modules
 //-------------------------------------------------------------------------
 // script prototypes
-var Motivation = require("Motivation.prototype")();
+let Motivation = require("Motivation.prototype")();
 
 //-------------------------------------------------------------------------
 // Declarations
@@ -15,7 +15,7 @@ var Motivation = require("Motivation.prototype")();
 //-------------------------------------------------------------------------
 // constructor
 //-------------------------------------------------------------------------
-var MotivationSupplyTower = function ()
+let MotivationSupplyTower = function ()
 {
 	Motivation.call(this);
 	this.name = "motivationSupplyTower";
@@ -29,12 +29,12 @@ MotivationSupplyTower.prototype.constructor = MotivationSupplyTower;
 //-------------------------------------------------------------------------
 MotivationSupplyTower.prototype.getDemands = function (roomName, resources)
 {
-	var result = {};
-	var unitName = this.getDesiredSpawnUnit(roomName);
-	var towers = Game.rooms[roomName].find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_TOWER}});
+	let result = {};
+	let unitName = this.getDesiredSpawnUnit(roomName);
+	let towers = Game.rooms[roomName].find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_TOWER}});
 
-	var energy = _.sum(towers, "energy");
-	var energyTotal = _.sum(towers, "energyCapacity");
+	let energy = _.sum(towers, "energy");
+	let energyTotal = _.sum(towers, "energyCapacity");
 	//console.log("e: " + energy + " et: " + energyTotal);
 	result.energy = energyTotal - energy;
 	result.units = this.getUnitDemands(roomName);
@@ -47,12 +47,12 @@ MotivationSupplyTower.prototype.getDemands = function (roomName, resources)
 
 MotivationSupplyTower.prototype.getDesireSpawn = function (roomName, demands)
 {
-	var result = true;
-	var room = Game.rooms[roomName];
-	var memory = room.memory.motivations[this.name];
+	let result = true;
+	let room = Game.rooms[roomName];
+	let memory = room.memory.motivations[this.name];
 	if (memory.active)
 	{
-		for (var unitName in units)
+		for (let unitName in units)
 		{
 			if (!lib.isNull(demands.units[unitName]) && demands.units[unitName] <= room.countUnits(unitName))
 			{
@@ -73,8 +73,8 @@ MotivationSupplyTower.prototype.getDesiredSpawnUnit = function (roomName)
 
 MotivationSupplyTower.prototype.updateActive = function (roomName, demands)
 {
-	var room = Game.rooms[roomName];
-	var memory = room.memory.motivations[this.name];
+	let room = Game.rooms[roomName];
+	let memory = room.memory.motivations[this.name];
 	if (room.controller.my && demands.energy > 0)
 	{
 		memory.active = true;
@@ -85,10 +85,10 @@ MotivationSupplyTower.prototype.updateActive = function (roomName, demands)
 
 MotivationSupplyTower.prototype.updateNeeds = function (roomName)
 {
-	var room = Game.rooms[roomName];
-	var memory = room.memory.motivations[this.name];
-	var sortedNeedsByDistance, x;
-	var towers = Game.rooms[roomName].find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_TOWER}});
+	let room = Game.rooms[roomName];
+	let memory = room.memory.motivations[this.name];
+	let sortedNeedsByDistance, x;
+	let towers = Game.rooms[roomName].find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_TOWER}});
 
 	// insure memory is initialized for needs
 	if (lib.isNull(memory.needs))
@@ -103,8 +103,8 @@ MotivationSupplyTower.prototype.updateNeeds = function (roomName)
 		// loop over spawns in room
 		if (tower.room.name == roomName)
 		{
-			var needName = "supplyTower." + tower.id;
-			var need;
+			let needName = "supplyTower." + tower.id;
+			let need;
 
 			//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
 

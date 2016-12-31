@@ -1,7 +1,7 @@
 //-------------------------------------------------------------------------
 // modules
 //-------------------------------------------------------------------------
-var Job = require("Job.prototype")();
+let Job = require("Job.prototype")();
 
 //-------------------------------------------------------------------------
 // Declarations
@@ -10,7 +10,7 @@ var Job = require("Job.prototype")();
 //-------------------------------------------------------------------------
 // constructor
 //-------------------------------------------------------------------------
-var JobRangedGuard = function ()
+let JobRangedGuard = function ()
 {
 	Job.call(this);
 	this.name = "jobRangedGuard";
@@ -24,10 +24,10 @@ JobRangedGuard.prototype.constructor = JobRangedGuard;
 //-------------------------------------------------------------------------
 JobRangedGuard.prototype.work = function (creep)
 {
-	var targets = creep.room.find(FIND_HOSTILE_CREEPS);
+	let targets = creep.room.find(FIND_HOSTILE_CREEPS);
 
 	if (targets.length) {
-		var target = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS, { ignoreCreeps: true});
+		let target = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS, { ignoreCreeps: true});
 
 		if (target)
 		{

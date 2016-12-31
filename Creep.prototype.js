@@ -36,10 +36,10 @@ Creep.prototype.avoidHostile = function (range)
 	{
 		range = 3;
 	}
-	var inRange = this.pos.findInRange(Game.HOSTILE_CREEPS, range);
+	let inRange = this.pos.findInRange(Game.HOSTILE_CREEPS, range);
 	if (inRange && inRange.length)
 	{
-		var target = this.pos.findNearest(Game.HOSTILE_CREEPS);
+		let target = this.pos.findNearest(Game.HOSTILE_CREEPS);
 		if (target)
 		{
 			this.moveAwayFromTarget(target);
@@ -51,13 +51,13 @@ Creep.prototype.avoidHostile = function (range)
 
 Creep.prototype.moveAwayFromTarget = function (target)
 {
-	var avoid = this.pos.getDirectionTo(target);
+	let avoid = this.pos.getDirectionTo(target);
 	this.move((avoid + 4) % 8);
 };
 
 Creep.prototype.rendezvous = function (range)
 {
-	var flags = this.room.find(FIND_FLAGS, {'name': 'Flag1'});
+	let flags = this.room.find(FIND_FLAGS, {'name': 'Flag1'});
 
 	//console.log(JSON.stringify(flags));
 	if (this.memory.rendezvous)
@@ -66,7 +66,7 @@ Creep.prototype.rendezvous = function (range)
 	}
 	else if (flags && flags.length)
 	{
-		var flag = flags[0];
+		let flag = flags[0];
 		this.moveToRange(flag, range);
 	}
 	else
@@ -77,7 +77,7 @@ Creep.prototype.rendezvous = function (range)
 
 Creep.prototype.carrying = function()
 {
-    var result = 0;
+    let result = 0;
 
     if (this.carryCapacity > 0)
     {
@@ -89,7 +89,7 @@ Creep.prototype.carrying = function()
 
 Creep.prototype.percentFull = function()
 {
-    var percent = 0;
+    let percent = 0;
 
     if (this.carryCapacity > 0)
     {
@@ -101,13 +101,13 @@ Creep.prototype.percentFull = function()
 
 Creep.prototype.getSpawn = function()
 {
-	var creepSpawn = lib.nullProtect(Game.spawns[this.memory.spawn], this.pos.findClosestByPath(FIND_MY_SPAWNS, { ignoreCreeps: true }));
+	let creepSpawn = lib.nullProtect(Game.spawns[this.memory.spawn], this.pos.findClosestByPath(FIND_MY_SPAWNS, { ignoreCreeps: true }));
 	return creepSpawn;
 };
 
 Creep.prototype.getHasPart = function (part)
 {
-	var result = false;
+	let result = false;
 	this.body.forEach(function (i) {
 		if (i.type == part)
 		{
@@ -144,7 +144,7 @@ Creep.prototype.deassignMotive = function ()
 
 Creep.prototype.assignToLongDistanceHarvest = function ()
 {
-	var room = roomManager.getLongDistanceHarvestTarget();
+	let room = roomManager.getLongDistanceHarvestTarget();
 	if (!lib.isNull(room))
 	{
 		this.memory.motive.room = room;
