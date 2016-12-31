@@ -44,12 +44,12 @@ module.exports =
 		"parts": [
 			{
 				"part" : CARRY,
-				"weight" : 0.75,
+				"weight" : 0.5,
 				"minimum" : 1
 			},
 			{
 				"part" : MOVE,
-				"weight" : 0.25,
+				"weight" : 0.5,
 				"minimum" : 1
 			}
 		],
