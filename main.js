@@ -54,6 +54,21 @@ global.roomManager = require("roomManager");
 global.strategyManager = require("strategyManager");
 global.units = require("units");
 
+global.roomCreep = function(creepName, roomName)
+{
+Game.creeps[creepName].memory.homeRoom = roomName;
+	Game.creeps[creepName].memory.motive.room = roomName;
+	Game.creeps[creepName].memory.motive.motivation = "";
+	Game.creeps[creepName].memory.motive.need = "";
+};
+
+global.lrh = function(creepName, roomName)
+{
+	Game.creeps[creepName].memory.motive.room = roomName;
+	Game.creeps[creepName].memory.motive.motivation = "";
+	Game.creeps[creepName].memory.motive.need = "";
+};
+
 // settings
 global.config = require("config");
 

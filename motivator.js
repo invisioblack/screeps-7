@@ -76,7 +76,14 @@ module.exports =
 			room.memory.motivations[motivationMaintainInfrastructure.name].priority = C.PRIORITY_5;
 
 			motivationSupplyController.init(room.name);
-			if (room.controller.ticksToDowngrade > 1000)
+			let roomController = room.controller;
+			let ticksToDowngrade;
+			if (!lib.isNull(roomController))
+				ticksToDowngrade = roomController.ticksToDowngrade;
+			else
+				ticksToDowngrade = 0;
+
+			if (ticksToDowngrade > 1000)
 				room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_7;
 			else
 				room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_2;
@@ -107,7 +114,7 @@ module.exports =
 			lib.log('-------- motivator.motivate: ' + roomName, true);
 
 			// safeMode failsafe
-			if (room.controller.my)
+			if (!lib.isNull(room.controller) && room.controller.my)
 			{
 				room.safeModeFailsafe(roomName);
 			}
@@ -362,33 +369,37 @@ module.exports =
 
 	"sendOffLongDistanceHarvesters": function (roomName)
 	{
-		let debug = true;
+		let debug = false;
 		let room = Game.rooms[roomName];
 		let numWorkers = room.countUnits("worker");
 		let storages = room.find(FIND_STRUCTURES, { filter: function (s) {
 			return s.structureType == STRUCTURE_STORAGE;
 		}});
 
-		lib.log("LR Harvest: " + roomName
-			+ " workers/min: " + numWorkers + "/" + config.longRangeHarvestMinWorkers
-			+ " storages: " + storages.length
-			+ " RCL: " + room.controller.level
-			, debug);
-
-		// if we have some workers to send off, do it
-		if (room.controller.my
-			&& room.controller.level >= 4
-			&& storages.length > 0
-			&& config.longRangeHarvestMinWorkers < numWorkers)
+		// do I have vis on room, does room have a controller
+		if (!lib.isNull(room) && !lib.isNull(room.controller))
 		{
-			let unallocatedWorker = room.findUnallocatedUnit("worker");
+			lib.log("LR Harvest: " + roomName
+				+ " workers/min: " + numWorkers + "/" + config.longRangeHarvestMinWorkers
+				+ " storages: " + storages.length
+				+ " RCL: " + room.controller.level
+				, debug);
 
-			if (!lib.isNull(unallocatedWorker) && _.sum(unallocatedWorker.carry) == 0)
+			// if we have some workers to send off, do it
+			if (room.controller.my
+				&& room.controller.level >= 4
+				&& storages.length > 0
+				&& config.longRangeHarvestMinWorkers < numWorkers)
 			{
-				lib.log(" Creep: " + JSON.stringify(unallocatedWorker) , debug);
-				unallocatedWorker.assignToLongDistanceHarvest();
-			}
+				let unallocatedWorker = room.findUnallocatedUnit("worker");
 
+				if (!lib.isNull(unallocatedWorker) && _.sum(unallocatedWorker.carry) == 0)
+				{
+					//lib.log(" Creep: " + JSON.stringify(unallocatedWorker) , debug);
+					unallocatedWorker.assignToLongDistanceHarvest();
+				}
+
+			}
 		}
 	}
 };

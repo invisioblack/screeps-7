@@ -23,18 +23,25 @@ module.exports =
 				{
 					sortList[roomName] = {};
 					sortList[roomName].units = 0;
+					sortList[roomName].maxUnits = 1;
 					sortList[roomName].room = roomName;
 
 				} else
 				{
 					sortList[roomName] = {};
 					sortList[roomName].units = strategyManager.countRoomUnits(roomName, "worker");
+					sortList[roomName].maxUnits = room.getMaxHarvesters();
 					sortList[roomName].room = roomName;
 				}
+
+				sortList[roomName].availUnits = sortList[roomName].maxUnits - sortList[roomName].units;
 			}, this);
 
-			result = _.min(sortList, r => r.units);
-			return result.room;
+			result = _.max(sortList, r => r.availUnits);
 
+			if (result.room === "")
+				return "";
+			else
+				return result.room;
 		}
 	};

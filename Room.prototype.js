@@ -83,7 +83,7 @@ Room.prototype.getControllerStatus = function ()
 	// Enumerate over spawns
 	let controller = this.controller;
 
-	if (controller.my)
+	if (!lib.isNull(controller) && controller.my)
 	{
 		result.progress = controller.progress;
 		result.progressTotal = controller.progressTotal;
@@ -415,4 +415,14 @@ Room.prototype.updateThreat = function ()
 	}
 
 };
+
+Room.prototype.getMaxHarvesters = function ()
+{
+	let sources = this.find(FIND_SOURCES);
+	let result = 0;
+	_.forEach(sources, function (s) {
+		result += s.getMaxHarvesters();
+	})
+};
+
 module.exports = function() {};

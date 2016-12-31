@@ -145,7 +145,7 @@ Creep.prototype.deassignMotive = function ()
 Creep.prototype.assignToLongDistanceHarvest = function ()
 {
 	let room = roomManager.getLongDistanceHarvestTarget();
-	if (!lib.isNull(room))
+	if (!lib.isNull(room) && room != "")
 	{
 		this.memory.motive.room = room;
 		this.memory.motive.motivation = "";

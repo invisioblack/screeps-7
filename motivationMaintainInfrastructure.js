@@ -238,6 +238,9 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 
 		switch (site.structureType)
 		{
+			case STRUCTURE_SPAWN:
+				need.priority = C.PRIORITY_1;
+				break;
 			case STRUCTURE_TOWER:
 				need.priority = C.PRIORITY_2;
 				break;

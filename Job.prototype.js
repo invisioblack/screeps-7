@@ -55,11 +55,12 @@ module.exports = function()
 		// validate energy source
 		if (creep.memory.sourceId != "")
 		{
+
 			source = Game.getObjectById(creep.memory.sourceId);
 
 			if (lib.isNull(source))
 			{
-				this.resetSource(creep);
+					this.resetSource(creep);
 			}
 		}
 
@@ -134,8 +135,6 @@ module.exports = function()
 			}
 		}
 
-
-
 		// harvest my own energy
 		if (creep.memory.sourceId == "" && creep.getHasPart(WORK))
 		{
@@ -203,9 +202,11 @@ module.exports = function()
 					}
 					break;
 				case this.JOB_SOURCETYPE_SOURCE:
+
 					let source = Game.getObjectById(creep.memory.sourceId);
 					result = creep.harvest(source);
 					//console.log("harvest: " + creep.name + " :" + result);
+
 					if (result == ERR_NOT_ENOUGH_ENERGY)
 					{
 						this.resetSource(creep);

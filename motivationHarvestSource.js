@@ -61,7 +61,7 @@ MotivationHarvestSource.prototype.updateActive = function (roomName, demands)
 	let numContainers;
 	let numHarvesters;
 
-	if (room.controller.my)
+	if (!lib.isNull(room.controller) && room.controller.my)
 	{
 		numContainers = room.find(FIND_STRUCTURES , {
 			filter: function (s)
@@ -72,7 +72,7 @@ MotivationHarvestSource.prototype.updateActive = function (roomName, demands)
 		numHarvesters = room.countUnits("harvester");
 	}
 
-	if (room.controller.my && numContainers > 0 && numHarvesters > 0)
+	if (!lib.isNull(room.controller) && room.controller.my && numContainers > 0 && numHarvesters > 0)
 	{
 		memory.active = true;
 	} else {

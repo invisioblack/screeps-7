@@ -32,7 +32,7 @@ JobLongDistanceHarvest.prototype.work = function (creep)
 	let target = Game.getObjectById(need.targetId);
 	let carry = _.sum(creep.carry);
 
-	creep.say("GLORY!");
+
 
 	//avoid hostiles
 	if (creep.avoidHostile(creep))
@@ -56,7 +56,6 @@ JobLongDistanceHarvest.prototype.work = function (creep)
 	switch (creep.memory.job.mode)
 	{
 		case this.JOB_MODE_GETENERGY:
-
 			this.getEnergy(creep);
 			break;
 		case this.JOB_MODE_WORK:
