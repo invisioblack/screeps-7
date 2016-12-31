@@ -118,11 +118,13 @@ module.exports = function()
 						return s.structureType == STRUCTURE_CONTAINER;
 					}
 				});
-				var sortedContainers = _.sortByOrder(containers, ['store.RESOURCE_ENERGY'], ['desc']);
+				var sortedContainers = _.sortByOrder(containers, ['store["energy"]'], ['desc']);
 				container = sortedContainers[0];
+
+				console.log("containers: " + JSON.stringify(sortedContainers));
 			}
 
-			console.log(JSON.stringify(sortedContainers));
+
 
 			// second pass check and assign
 			if (!lib.isNull(container) && container.store[RESOURCE_ENERGY] > 0)
