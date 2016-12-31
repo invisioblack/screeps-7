@@ -32,14 +32,16 @@ module.exports =
 			motivationSupplyTower.init(room.name);
 			room.memory.motivations[motivationSupplyTower.name].priority = C.PRIORITY_2;
 
+			motivationClaimRoom.init(room.name);
+			room.memory.motivations[motivationClaimRoom.name].priority = C.PRIORITY_4;
+
 			motivationGarrison.init(room.name);
 			room.memory.motivations[motivationGarrison.name].priority = C.PRIORITY_2;
 
 			motivationLongDistanceHarvest.init(room.name);
 			room.memory.motivations[motivationLongDistanceHarvest.name].priority = C.PRIORITY_3;
 
-			motivationClaimRoom.init(room.name);
-			room.memory.motivations[motivationClaimRoom.name].priority = C.PRIORITY_3;
+
 
 			motivationSupplySpawn.init(room.name);
 			let numWorkers = room.countUnits("worker");
@@ -47,20 +49,25 @@ module.exports =
 			let numContainers = room.find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }}).length;
 
 			// normal priority
-			if (numWorkers < 10)
+			if (numWorkers < config.minWorkers)
 				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
-			else if (numWorkers < 14)
+			else if (numWorkers < config.medWorkers)
 				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_5;
 			else
 				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_7;
 
 			// harvester override
-			if (numWorkers >= 2 && numContainers >= 1 && numHarvesters < numContainers)
+			if (numWorkers >= config.critWorkers && numContainers >= 1 && numHarvesters < numContainers)
 				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
 
 			// defense override
-			if (numWorkers >= 2 && !lib.isNull(room.memory.threat) && room.memory.threat.count > 0)
+			if (numWorkers >= config.critWorkers && !lib.isNull(room.memory.threat) && room.memory.threat.count > 0)
 				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
+
+			// claim override
+			if (numWorkers >= config.minWorkers && room.memory.motivations[motivationClaimRoom.name].spawnAllocated)
+				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
+
 
 			motivationMaintainInfrastructure.init(room.name);
 			room.memory.motivations[motivationMaintainInfrastructure.name].priority = C.PRIORITY_4;

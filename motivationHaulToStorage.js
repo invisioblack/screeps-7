@@ -52,7 +52,7 @@ MotivationHaulToStorage.prototype.getDesireSpawn = function (roomName, demands)
 	{
 		for (let unitName in units)
 		{
-			if ((!lib.isNull(demands.units[unitName]) && demands.units[unitName] <= room.countUnits(unitName)) || numWorkers < config.minWorkers)
+			if ((!lib.isNull(demands.units[unitName]) && demands.units[unitName] <= room.countUnits(unitName)) || numWorkers < config.critWorkers)
 			{
 				result = false;
 			}

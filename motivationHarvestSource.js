@@ -45,7 +45,7 @@ MotivationHarvestSource.prototype.getDesireSpawn = function (roomName, demands)
 	let numHarvesters = room.countUnits("harvester");
 	let numWorkers = room.countUnits("worker");
 
-	if (numContainers == 0 || numHarvesters >= demands.units["harvester"] || numWorkers < config.minWorkers)
+	if (numContainers == 0 || numHarvesters >= demands.units["harvester"] || numWorkers < config.critWorkers)
 	{
 		result = false;
 	}

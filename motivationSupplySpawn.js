@@ -12,6 +12,10 @@ let Motivation = require("Motivation.prototype")();
 // Declarations
 //-------------------------------------------------------------------------
 
+// TODO: rework this so that there is 2 needs, one for the spawn, one for
+// the extenders, then make the movement pattern on filling the extenders
+// better, like keep filling till out of evergy instead of resetting
+
 //-------------------------------------------------------------------------
 // constructor
 //-------------------------------------------------------------------------

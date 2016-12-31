@@ -28,7 +28,7 @@ module.exports =
 				} else
 				{
 					sortList[roomName] = {};
-					sortList[roomName].units = room.getUnits("worker");
+					sortList[roomName].units = strategyManager.countRoomUnits(roomName, "worker");
 					sortList[roomName].room = roomName;
 				}
 			}, this);

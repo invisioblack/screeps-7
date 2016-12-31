@@ -43,6 +43,7 @@ Motivations:
         Supply Controller
         Supply Spawn
         Supply Tower
+        Claiming Rooms
 
 Need Manager:
 

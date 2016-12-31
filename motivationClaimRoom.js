@@ -65,7 +65,7 @@ MotivationClaimRoom.prototype.getDesireSpawn = function (roomName, demands)
 		, debug);
 
 	// if it isn't our room or we have a worker shortage, false
-	if (!room.controller.my || numWorkers < config.minWorkers)
+	if (!room.controller.my || numWorkers < config.critWorkers)
 	{
 		lib.log(">&>&>&>&>&>&> FAIL", debug);
 		return false;
