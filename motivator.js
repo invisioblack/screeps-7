@@ -23,6 +23,9 @@ module.exports =
 			}
 
 			// init each motivation for this room
+			motivationManualTactical.init(room.name);
+			room.memory.motivations[motivationManualTactical.name].priority = C.PRIORITY_1;
+
 			motivationHarvestSource.init(room.name);
 			room.memory.motivations[motivationHarvestSource.name].priority = C.PRIORITY_1;
 

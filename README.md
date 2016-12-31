@@ -13,6 +13,7 @@ Current Status:
     Simple tower defense.
     Long range harvesting.
     Haulers.
+    Manual Tactical.
 
 Behavior model
 ===============================================================================

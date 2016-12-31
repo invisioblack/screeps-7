@@ -149,6 +149,11 @@ module.exports =
 					lib.log("Creep: " + creep.name + " Working needClaim", debug);
 					jobClaim.work(creep);
 				}
+				else if (need.type == "needManualTactical")
+				{
+					lib.log("Creep: " + creep.name + " Working needManualTactical", debug);
+					jobManualTactical.work(creep);
+				}
 			}
 		}
 	}

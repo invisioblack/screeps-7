@@ -74,9 +74,17 @@ Spawn.prototype.spawnUnit = function (unitName, fullEnergy)
 Spawn.prototype.spawnUnitByEnergy = function (unitName, energy)
 {
 	let parts = [];
-	let name = this.generateName(unitName);
+	let name;
 	let result;
 	let energyLeft = energy;
+
+	// hijack if forceSpawn is enabled
+	if (!lib.isNull(this.room.memory.forceSpawn) && this.room.memory.forceSpawn != "")
+	{
+		unitName = this.room.memory.forceSpawn;
+	}
+
+	name = this.generateName(unitName);
 
 	if (units[unitName].mode == 1)
 	{
