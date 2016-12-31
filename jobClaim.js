@@ -82,7 +82,7 @@ JobClaim.prototype.work = function (creep)
 			}
 
 		} else {
-			creep.say("ERROR!");
+			creep.say("GetShwifty");
 		}
 	}
 };

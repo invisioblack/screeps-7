@@ -55,9 +55,9 @@ module.exports =
 			if (numWorkers < config.minWorkers)
 				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
 			else if (numWorkers < config.medWorkers)
-				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_5;
+				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_6;
 			else
-				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_7;
+				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_8;
 
 			// harvester override
 			if (numWorkers >= config.critWorkers && numContainers >= 1 && numHarvesters < numContainers)
@@ -73,11 +73,11 @@ module.exports =
 
 
 			motivationMaintainInfrastructure.init(room.name);
-			room.memory.motivations[motivationMaintainInfrastructure.name].priority = C.PRIORITY_4;
+			room.memory.motivations[motivationMaintainInfrastructure.name].priority = C.PRIORITY_5;
 
 			motivationSupplyController.init(room.name);
 			if (room.controller.ticksToDowngrade > 1000)
-				room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_6;
+				room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_7;
 			else
 				room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_2;
 		}

@@ -35,21 +35,21 @@ JobManualTactical.prototype.work = function (creep)
 	}
 	else if (Game.flags.wall)
 	{
-		let wall = Game.flags.wall.findClosestByPath(FIND_STRUCTURES, { filter: function (s) { return s.structureType === STRUCTURE_WALL} });
+		let wall = Game.flags.wall.pos.findClosestByPath(FIND_STRUCTURES, { filter: function (s) { return s.structureType === STRUCTURE_WALL} });
 		let result = creep.attack(wall);
 		if (result === ERR_NOT_IN_RANGE)
 			creep.moveTo(wall);
 	}
 	else if (Game.flags.creep)
 	{
-		let target = creep.findClosestByPath(FIND_HOSTILE_CREEPS);
+		let target = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS);
 		let result = creep.attack(target);
 		if (result === ERR_NOT_IN_RANGE)
 			creep.moveTo(target);
 	}
 	else if (Game.flags.structure)
 	{
-		let target = creep.findClosestByPath(FIND_HOSTILE_STRUCTURES);
+		let target = creep.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES);
 		let result = creep.attack(target);
 		if (result === ERR_NOT_IN_RANGE)
 			creep.moveTo(target);

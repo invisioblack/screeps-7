@@ -80,17 +80,17 @@ module.exports =
 		"parts": [
 			{
 				"part" : TOUGH,
-				"weight" : 0.1,
+				"weight" : 0.05,
 				"minimum" : 0
 			},
 			{
 				"part" : ATTACK,
-				"weight" : 0.5,
+				"weight" : 0.45,
 				"minimum" : 1
 			},
 			{
 				"part" : MOVE,
-				"weight" : 0.4,
+				"weight" : 0.5,
 				"minimum" : 1
 			}
 		],

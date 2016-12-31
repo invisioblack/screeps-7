@@ -117,6 +117,7 @@ Spawn.prototype.spawnUnitByEnergy = function (unitName, energy)
 		console.log('-------------------Failed creating creep ' + unitName + ' : ' + name + " energy: " + energy + " result: too little energy");
 	else
 	{
+		parts = this.shuffle(parts);
 		result = this.createCreep(parts , name , units[unitName].memory);
 		if (_.isString(result))
 		{
@@ -131,5 +132,20 @@ Spawn.prototype.spawnUnitByEnergy = function (unitName, energy)
 			console.log('-------------------Failed creating creep ' + unitName + ' : ' + name + " energy: " + energy + " result: " + result);
 		}
 	}
+};
+
+Spawn.prototype.shuffle = function(body) {
+	if(body == undefined)
+		return undefined;
+	return _(body)
+		.sortBy(function(part) {
+			if(part === TOUGH)
+				return 0;
+			else if(part === HEAL)
+				return BODYPARTS_ALL.length;
+			else
+				return _.random(1,BODYPARTS_ALL.length-1);
+		})
+		.value();
 };
 module.exports = function() {};
