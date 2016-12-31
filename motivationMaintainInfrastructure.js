@@ -63,7 +63,7 @@ MotivationMaintainInfrastructure.prototype.getDesireSpawn = function (roomName, 
 	if (memory.active)
 	{
 		var workers = room.countUnits("worker");
-		if (!lib.isNull(demands.units["worker"]) && demands.units["worker"] < workers)
+		if (!lib.isNull(demands.units["worker"]) && demands.units["worker"] <= workers)
 			result = false;
 	} else {
 		result = false;

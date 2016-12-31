@@ -91,13 +91,38 @@ module.exports = function()
 		// look for energy in containers
 		if (creep.memory.sourceId == "")
 		{
-			var container = creep.pos.findClosestByPath(FIND_STRUCTURES, { ignoreCreeps: true, filter: function (s) { return s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] >= creep.carryCapacity; }});
-			if (lib.isNull(container))
+			var container;
+			if (creep.memory.unit != "hauler")
 			{
-				container = creep.pos.findClosestByPath(FIND_STRUCTURES, { ignoreCreeps: true, filter: function (s) { return s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] >= 0; }});
+				container = creep.pos.findClosestByPath(FIND_STRUCTURES , {
+					ignoreCreeps: true , filter: function (s)
+					{
+						return s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] >= creep.carryCapacity;
+					}
+				});
+				if (lib.isNull(container))
+				{
+					container = creep.pos.findClosestByPath(FIND_STRUCTURES , {
+						ignoreCreeps: true , filter: function (s)
+						{
+							return s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] >= 0;
+						}
+					});
+				}
+			} else
+			{
+				creep.say("HAUL!");
+				containers = creep.room.find(FIND_STRUCTURES , {
+					filter: function (s)
+					{
+						return s.structureType == STRUCTURE_CONTAINER;
+					}
+				});
+				var sortedContainers = _.sortByOrder(containers, ['store.RESOURCE_ENERGY'], ['desc']);
+				container = sortedContainers[0];
 			}
 
-			//console.log(container.store[RESOURCE_ENERGY]);
+			console.log(JSON.stringify(sortedContainers));
 
 			// second pass check and assign
 			if (!lib.isNull(container) && container.store[RESOURCE_ENERGY] > 0)
