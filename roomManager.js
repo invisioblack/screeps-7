@@ -14,7 +14,7 @@ module.exports =
 		"getLongDistanceHarvestTarget": function ()
 		{
 			var sortList = {};
-			var sortedArray = [];
+			var result;
 
 			Memory.longDistanceHarvestTargets.forEach( function (roomName)
 			{
@@ -28,13 +28,13 @@ module.exports =
 				} else
 				{
 					sortList[roomName] = {};
-					sortList[roomName].units = room.getMotivationUnits("motivationLongDistanceHarvest" , "worker");
+					sortList[roomName].units = room.getUnits("worker");
 					sortList[roomName].room = roomName;
 				}
 			}, this);
 
-			sortedArray = _.sortByOrder(sortList, ['units'], ['asc']);
+			result = _.min(sortList, r => r.units);
+			return result.room;
 
-			return sortedArray[0].room;
 		}
 	};
