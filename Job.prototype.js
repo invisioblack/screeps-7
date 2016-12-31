@@ -158,6 +158,13 @@ module.exports = function()
 		if (creep.memory.sourceId == "") // I'm screwed, I cannot get energy
 		{
 			creep.say("No Energy!");
+			if (creep.room.name != creep.memory.homeRoom)
+			{
+				creep.memory.motive.room = creep.memory.homeRoom;
+				creep.deassignMotive();
+				this.resetSource(creep);
+			}
+
 			if (carry > 0)
 			{
 				creep.memory.job.mode = this.JOB_MODE_WORK;
