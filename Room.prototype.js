@@ -66,6 +66,23 @@ Room.prototype.getSpawnEnergy = function ()
 		}
 	}
 
+	// TODO: refactor this to use the below function
+	let extenders = this.find(FIND_MY_STRUCTURES , {filter: {structureType: STRUCTURE_EXTENSION}});
+	extenders.forEach(function (ex)
+	{
+		result.energy += ex.energy;
+		result.energyCapacity += ex.energyCapacity;
+	} , this);
+
+	return result;
+};
+
+Room.prototype.getExtenderEnergy = function ()
+{
+	let result = {};
+	result.energy = 0;
+	result.energyCapacity = 0;
+
 	let extenders = this.find(FIND_MY_STRUCTURES , {filter: {structureType: STRUCTURE_EXTENSION}});
 	extenders.forEach(function (ex)
 	{
@@ -384,6 +401,8 @@ Room.prototype.motivateTowers = function ()
 		towers.forEach(function (tower)
 		{
 			tower.autoAttack();
+			tower.autoCreepHeal();
+			tower.autoRepair();
 		} , this);
 	}
 };
@@ -428,5 +447,23 @@ Room.prototype.getMaxHarvesters = function ()
 	return result;
 };
 
+/*
+ * NOTES: sentences are broken down using | to seperate pieces
+ *        public will default to true
+ * Room.prototype.sing(sentence, public)
+ *   all creeps in the room will sing parts of the sentence
+ *     from top left to bottom right. the sentence will repeat
+ *     if there are more creeps than parts in the sentence
+ */
+Room.prototype.sing = function(sentence, public){
+	if(public === undefined)public = true;
+	let words = sentence.split(" ");
+	let creeps = _.filter(Game.creeps, (c) => c.room.name == this.name);
+	creeps = _.sortBy(creeps, function(c){return (c.pos.x + (c.pos.y*50))});
+
+	for(let i in creeps){
+		creeps[i].say(words[i % words.length], public);
+	}
+};
 
 module.exports = function() {};

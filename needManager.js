@@ -154,6 +154,11 @@ module.exports =
 					lib.log("Creep: " + creep.name + " Working needManualTactical", debug);
 					jobManualTactical.work(creep);
 				}
+				else if (need.type == "needSupplyExtenders")
+				{
+					lib.log("Creep: " + creep.name + " Working needSupplyExtenders", debug);
+					jobSupplyExtenders.work(creep);
+				}
 			}
 		}
 	}

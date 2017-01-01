@@ -23,7 +23,7 @@ module.exports = function()
 		if (creep.carryCapacity == 0)
 		{
 			creep.deassignMotive();
-			creep.say("Can't Carry!");
+			creep.sing("I cannot carry!");
 			delete creep.memory.sourceId;
 			delete creep.memory.sourceType;
 
@@ -93,42 +93,19 @@ module.exports = function()
 		if (creep.memory.sourceId == "")
 		{
 			let container;
-			if (creep.memory.unit != "hauler")
-			{
-				container = creep.pos.findClosestByPath(FIND_STRUCTURES , {
-					ignoreCreeps: true , filter: function (s)
-					{
-						return s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] >= creep.carryCapacity;
-					}
-				});
-				if (lib.isNull(container))
+			let containers = creep.room.find(FIND_STRUCTURES , {
+				filter: function (s)
 				{
-					container = creep.pos.findClosestByPath(FIND_STRUCTURES , {
-						ignoreCreeps: true , filter: function (s)
-						{
-							return s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] >= 0;
-						}
-					});
+					return s.structureType == STRUCTURE_CONTAINER;
 				}
-			} else
-			{
-				creep.say("HAUL!");
-				containers = creep.room.find(FIND_STRUCTURES , {
-					filter: function (s)
-					{
-						return s.structureType == STRUCTURE_CONTAINER;
-					}
-				});
-				let sortedContainers = _.sortByOrder(containers, ['store["energy"]'], ['desc']);
-				container = sortedContainers[0];
+			});
+			let sortedContainers = _.sortByOrder(containers, ['store["energy"]'], ['desc']);
+			container = sortedContainers[0];
 
-				//console.log("containers: " + JSON.stringify(sortedContainers));
-			}
-
-
+			//console.log("containers: " + JSON.stringify(sortedContainers));
 
 			// second pass check and assign
-			if (!lib.isNull(container) && container.store[RESOURCE_ENERGY] > 0)
+			if (!lib.isNull(container) && container.store[RESOURCE_ENERGY] > 20)
 			{
 				creep.memory.sourceId = container.id;
 				creep.memory.sourceType = this.JOB_SOURCETYPE_CONTAINER;
@@ -140,7 +117,9 @@ module.exports = function()
 		{
 			let source = creep.pos.findClosestByPath(FIND_SOURCES, { ignoreCreeps: true, filter: function (s)
 			{
-				let max = s.getMaxHarvesters();
+				let max = 1;
+				if (creep.memory.unit != "harvester")
+					max = s.getMaxHarvesters();
 				let on = s.countCreepsOnSource();
 				return max > on && s.energy > 0;
 			}});
@@ -156,7 +135,7 @@ module.exports = function()
 		// check to see if I can get energy, if so get it, if not, complain
 		if (creep.memory.sourceId == "") // I'm screwed, I cannot get energy
 		{
-			creep.say("No Energy!");
+			creep.sing("💩");
 			if (creep.room.name != creep.memory.homeRoom)
 			{
 				creep.memory.motive.room = creep.memory.homeRoom;
@@ -172,6 +151,7 @@ module.exports = function()
 				creep.assignToLongDistanceHarvest();
 			}
 		} else { // move to and pick up the goods
+			creep.sing("⛽ ⚡");
 			let result;
 			switch (creep.memory.sourceType)
 			{
@@ -194,9 +174,9 @@ module.exports = function()
 						if (moveResult < 0 && moveResult != ERR_TIRED)
 							console.log(creep.name + " Can't move while getting from container: " + moveResult);
 					}
-					if (container.store[RESOURCE_ENERGY] <= 10)
+					if (container.store[RESOURCE_ENERGY] = 0)
 					{
-						creep.say("Its Empty!");
+						creep.say("Empty!");
 						creep.memory.job.mode = this.JOB_MODE_WORK;
 						this.resetSource(creep);
 					}

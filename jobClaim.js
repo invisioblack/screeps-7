@@ -30,6 +30,8 @@ JobClaim.prototype.work = function (creep)
 {
 	let need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
 
+	creep.sing("This is mine!", true);
+
 	//avoid hostiles
 	if (creep.avoidHostile(creep))
 	{
@@ -62,7 +64,6 @@ JobClaim.prototype.work = function (creep)
 		});
 		if (!lib.isNull(claim))
 		{
-			creep.say("MINE!");
 			if (claim.type === "claim")
 			{
 				if(creep.room.controller) {

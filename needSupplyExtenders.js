@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------
-// needTransferEnergy
+// needSupplyExtenders
 //-------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------
@@ -15,33 +15,27 @@ let Need = require('Need.prototype')();
 //-------------------------------------------------------------------------
 // function
 //-------------------------------------------------------------------------
-let NeedTransferEnergy = function ()
+let NeedSupplyExtenders = function ()
 {
 	Need.call(this);
-	this.name = "needTransferEnergy";
+	this.name = "needSupplyExtenders";
 };
 
-NeedTransferEnergy.prototype = Object.create(Need.prototype);
-NeedTransferEnergy.prototype.constructor = NeedTransferEnergy;
+NeedSupplyExtenders.prototype = Object.create(Need.prototype);
+NeedSupplyExtenders.prototype.constructor = NeedSupplyExtenders;
 
-NeedTransferEnergy.prototype.getUnitDemands = function(roomName, memory, motivationName)
+NeedSupplyExtenders.prototype.getUnitDemands = function(roomName, memory, motivationName)
 {
 	let result = {};
 	let room = Game.rooms[roomName];
-	let target = Game.getObjectById(memory.targetId);
 	let energy, energyCapacity, neededEnergy;
 	let worker = lib.nullProtect(room.getUnits("worker")[0], {});
 	let workerCapacity = lib.nullProtect(worker.carryCapacity, 50);
+	let extenderEnergy = room.getExtenderEnergy();
 	//console.log(JSON.stringify(memory));
 
-	if (!lib.isNull(target.energy))
-	{
-		energyCapacity = target.energyCapacity;
-		energy = target.energy;
-	} else {
-		energyCapacity = target.progressTotal;
-		energy = target.progress;
-	}
+	energy = extenderEnergy.energy;
+	energyCapacity = extenderEnergy.energyCapacity;
 
 	neededEnergy = energyCapacity - energy;
 	result["worker"] = Math.ceil(neededEnergy / workerCapacity) * 10;
@@ -54,4 +48,4 @@ NeedTransferEnergy.prototype.getUnitDemands = function(roomName, memory, motivat
 };
 
 
-module.exports = new NeedTransferEnergy();
+module.exports = new NeedSupplyExtenders();

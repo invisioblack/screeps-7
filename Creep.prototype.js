@@ -155,4 +155,17 @@ Creep.prototype.assignToLongDistanceHarvest = function ()
 	}
 };
 
+/*
+ * NOTES: sentences are broken down using | to seperate pieces
+ *        public will default to true
+ *
+ * Creep.prototype.sing(sentence, public)
+ *   creep will sing a different part of sentence per tick
+ */
+Creep.prototype.sing = function(sentence, public){
+	if(public === undefined)public = false;
+	let words = sentence.split(" ");
+	this.say(words[Game.time % words.length], public);
+};
+
 module.exports = function() {};

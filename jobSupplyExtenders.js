@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------
-// jobBuild
+// jobSupplyExtenders
 //-------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------
@@ -10,31 +10,27 @@ let Job = require("Job.prototype")();
 //-------------------------------------------------------------------------
 // Declarations
 //-------------------------------------------------------------------------
-let JOB_MODE_GETENERGY = 0;
-let JOB_MODE_WORK = 1;
 
 //-------------------------------------------------------------------------
 // constructor
 //-------------------------------------------------------------------------
-let JobBuild = function ()
+let JobSupplyExtenders = function ()
 {
 	Job.call(this);
-	this.name = "jobBuild";
+	this.name = "jobSupplyExtenders";
 };
 
-JobBuild.prototype = Object.create(Job.prototype);
-JobBuild.prototype.constructor = JobBuild;
+JobSupplyExtenders.prototype = Object.create(Job.prototype);
+JobSupplyExtenders.prototype.constructor = JobSupplyExtenders;
 
 //-------------------------------------------------------------------------
 // implementation
 //-------------------------------------------------------------------------
-JobBuild.prototype.work = function (creep)
+JobSupplyExtenders.prototype.work = function (creep)
 {
+	let debug = false;
 	let need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
-	let target = Game.getObjectById(need.targetId);
-	let carry = _.sum(creep.carry);
-
-	creep.say("🔨");
+	let carry = creep.carry[RESOURCE_ENERGY];
 
 	//avoid hostiles
 	if (creep.avoidHostile(creep))
@@ -52,33 +48,47 @@ JobBuild.prototype.work = function (creep)
 		creep.memory.job.mode = this.JOB_MODE_GETENERGY;
 	}
 
+	lib.log(creep.name + " job/mode: " + creep.memory.job.mode, debug);
+
 	// manage job
 	switch (creep.memory.job.mode)
 	{
 		case this.JOB_MODE_GETENERGY:
+			lib.log(creep.name + " getting energy ", debug);
 			this.getEnergy(creep);
 			break;
 		case this.JOB_MODE_WORK:
-			this.resetSource(creep);
 			if (carry == 0)
 			{
+				// reset our need assignment when we run out of energy
 				creep.memory.job.mode = this.JOB_MODE_GETENERGY;
 				creep.deassignMotive();
 			} else {
+				this.resetSource(creep);
+				let target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+					ignoreCreeps: true,
+					filter: function (e)
+					{
+						return e.structureType === STRUCTURE_EXTENSION && e.energy < e.energyCapacity;
+					}
+				});
 
-				let result = creep.build(target);
-				// /console.log("build: " + target + " Result: " + result);
-				if (result == ERR_NOT_IN_RANGE)
+				lib.log(creep.name + " target: " + JSON.stringify(target), debug);
+
+				if (!lib.isNull(target))
 				{
-					let moveResult = creep.moveTo(target, {"maxRooms": 1});
-					if (moveResult < 0 && moveResult != ERR_TIRED)
-						console.log(creep.name + " Can't move while building: " + moveResult);
-				} else if (result == ERR_FULL) {
-					//console.log("---- RESET");
-					creep.deassignMotive();
+
+					let result = creep.transfer(target , RESOURCE_ENERGY);
+					lib.log(creep.name + " transfer result: " + result , debug);
+					if (result == ERR_NOT_IN_RANGE)
+					{
+
+						let moveResult = creep.moveTo(target , {"maxRooms": 1});
+						if (moveResult < 0 && moveResult != ERR_TIRED)
+							console.log(creep.name + " Can't move while transferring: " + moveResult);
+					} else
+						creep.deassignMotive();
 				}
-				else if (result < 0)
-					console.log(creep.name + " Can't build: " + target + " result: " + result);
 			}
 			break;
 	}
@@ -87,4 +97,4 @@ JobBuild.prototype.work = function (creep)
 //-------------------------------------------------------------------------
 // export
 //-------------------------------------------------------------------------
-module.exports = new JobBuild();
+module.exports = new JobSupplyExtenders();

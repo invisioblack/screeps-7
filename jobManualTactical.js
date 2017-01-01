@@ -24,7 +24,7 @@ JobManualTactical.prototype.constructor = JobManualTactical;
 //-------------------------------------------------------------------------
 JobManualTactical.prototype.work = function (creep)
 {
-	creep.say("CHARGE!");
+	creep.sing("🔫");
 
 	if (Game.flags.spawn)
 	{

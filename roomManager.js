@@ -22,7 +22,7 @@ module.exports =
 				if (lib.isNull(room))
 				{
 					sortList[roomName] = {};
-					sortList[roomName].units = 0;
+					sortList[roomName].units = strategyManager.countRoomUnits(roomName, "worker");
 					sortList[roomName].maxUnits = 1;
 					sortList[roomName].room = roomName;
 

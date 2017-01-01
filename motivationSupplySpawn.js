@@ -126,6 +126,36 @@ MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
 
 	// extenders -------------------------------------------------------------------------------------------------------
 	// look up sources and find out how many needs we should have for each one
+	let needName = "supplyExtenders." + roomName;
+	let need;
+	let extenderEnergy = room.getExtenderEnergy();
+
+	if ((extenderEnergy.energyCapacity - extenderEnergy.energy) > 0)
+	{
+		// create new need if one doesn't exist
+		if (lib.isNull(memory.needs[needName]))
+		{
+			memory.needs[needName] = {};
+			need = memory.needs[needName];
+			need.type = "needSupplyExtenders";
+			need.name = needName;
+			need.priority = C.PRIORITY_1;
+		}
+	} else { // cull need if we don't need energy
+		delete memory.needs[needName];
+	}
+
+
+	let extenders = room.find(FIND_MY_STRUCTURES, {filter: { structureType: STRUCTURE_EXTENSION }});
+	extenders.forEach(function (ex) {
+		let needName = "supplyExtender." + ex.id;
+		let need;
+
+		delete memory.needs[needName];
+
+	}, this);
+
+	/*
 	let extenders = room.find(FIND_MY_STRUCTURES, {filter: { structureType: STRUCTURE_EXTENSION }});
 	extenders.forEach(function (ex) {
 		let needName = "supplyExtender." + ex.id;
@@ -149,9 +179,7 @@ MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
 			delete memory.needs[needName];
 		}
 	}, this);
-
-	delete memory.needs["harvest.5836b7268b8b9619519efeba.5859ec4ea7dab3591e5a0ed3"];
-
+	*/
 };
 
 //-------------------------------------------------------------------------

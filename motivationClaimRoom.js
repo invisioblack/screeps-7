@@ -75,11 +75,23 @@ MotivationClaimRoom.prototype.getDesireSpawn = function (roomName, demands)
 
 	_.forEach(spawnClaims, function (c) {
 		let numClaimers = strategyManager.countRoomUnits(c.room, "claimer");
-		lib.log("Room: " + c.room + " COUNT: " + numClaimers, debug);
-		if (!numClaimers)
+		let claimRoom = Game.rooms[c.room];
+		let reservation;
+
+		if (!lib.isNull(claimRoom) && !lib.isNull(claimRoom.controller))
+		{
+			reservation = claimRoom.controller.reservation.ticksToEnd;
+		} else
+			reservation = 0;
+
+		// don't request a spawn if somebody is already there, or we're not worried about degrade
+		if (!numClaimers && reservation < config.claimTicks)
 			result = true;
+
+		lib.log("Room: " + c.room + " COUNT: " + numClaimers + " TICKS: " + reservation, debug);
 	});
 
+	lib.log("Spawn claimer " + result, debug);
 	return result;
 };
 

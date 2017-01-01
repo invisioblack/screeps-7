@@ -35,6 +35,8 @@ JobRepair.prototype.work = function (creep)
 	let target = Game.getObjectById(need.targetId);
 	let carry = _.sum(creep.carry);
 
+	creep.say("🔧");
+
 	//avoid hostiles
 	if (creep.avoidHostile(creep))
 	{

@@ -28,6 +28,7 @@ global.jobLongDistanceHarvest = require("jobLongDistanceHarvest");
 global.jobManualTactical = require("jobManualTactical");
 global.jobRangedGuard = require("jobRangedGuard");
 global.jobRepair = require("jobRepair");
+global.jobSupplyExtenders = require("jobSupplyExtenders");
 global.jobTransfer = require("jobTransfer");
 global.motivator = require("motivator");
 global.motivationClaimRoom = require("motivationClaimRoom");
@@ -49,14 +50,21 @@ global.needHaulToStorage = require("needHaulToStorage");
 global.needLongDistanceHarvest = require("needLongDistanceHarvest");
 global.needManualTactical = require("needManualTactical");
 global.needRepair = require("needRepair");
+global.needSupplyExtenders = require("needSupplyExtenders");
 global.needTransferEnergy = require("needTransferEnergy");
 global.roomManager = require("roomManager");
 global.strategyManager = require("strategyManager");
 global.units = require("units");
 
+
+//Game.rooms["W13S77"].memory.motivations["motivationSupplySpawn"].needs["supplyExtenders.W13S77"].type = "needSupplyExtenders";
+//Game.rooms["W13S77"].memory.motivations["motivationSupplySpawn"].needs["supplyExtenders.W13S77"].name = "supplyExtenders.W13S77";
+//Game.rooms["W12S76"].memory.motivations["motivationSupplySpawn"].needs["supplyExtenders.W12S76"].type = "needSupplyExtenders";
+//Game.rooms["W12S76"].memory.motivations["motivationSupplySpawn"].needs["supplyExtenders.W12S76"].name = "supplyExtenders.W12S76";
+
 global.roomCreep = function(creepName, roomName)
 {
-Game.creeps[creepName].memory.homeRoom = roomName;
+	Game.creeps[creepName].memory.homeRoom = roomName;
 	Game.creeps[creepName].memory.motive.room = roomName;
 	Game.creeps[creepName].memory.motive.motivation = "";
 	Game.creeps[creepName].memory.motive.need = "";

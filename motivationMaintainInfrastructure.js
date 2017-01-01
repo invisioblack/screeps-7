@@ -266,27 +266,27 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 			//console.log(needName + " PERCENT: " + percent);
 			if (percent < 5)
 			{
-				need.priority = C.PRIORITY_1;
-			}
-			else if (percent < 10)
-			{
-				need.priority = C.PRIORITY_2;
-			}
-			else if (percent < 25)
-			{
 				need.priority = C.PRIORITY_3;
 			}
-			else if (percent < 50)
+			else if (percent < 15)
 			{
 				need.priority = C.PRIORITY_4;
 			}
-			else if (percent < 75)
+			else if (percent < 25)
+			{
+				need.priority = C.PRIORITY_5;
+			}
+			else if (percent < 50)
 			{
 				need.priority = C.PRIORITY_6;
 			}
-			else
+			else if (percent < 75)
 			{
 				need.priority = C.PRIORITY_7;
+			}
+			else
+			{
+				need.priority = C.PRIORITY_8;
 			}
 		}
 	}

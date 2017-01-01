@@ -43,4 +43,22 @@ Source.prototype.countCreepsOnSource = function ()
 
 	return result;
 };
+
+Source.prototype.countHarvestersOnSource = function ()
+{
+	let result = 0;
+
+	for (let creepName in Game.creeps)
+	{
+		let creep = Game.creeps[creepName];
+		if (!lib.isNull(creep.memory.sourceId) && creep.memory.unit === "harvester")
+		{
+			if (creep.memory.sourceId == this.id)
+				result++;
+		}
+	}
+
+	return result;
+};
+
 module.exports = function() {};
