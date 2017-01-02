@@ -29,6 +29,7 @@ MotivationGarrison.prototype.constructor = MotivationGarrison;
 //-------------------------------------------------------------------------
 MotivationGarrison.prototype.getDemands = function (roomName, resources)
 {
+	let debug = false;
 	let result = {};
 	let unitName = this.getDesiredSpawnUnit(roomName);
 	let towers = Game.rooms[roomName].find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_TOWER}});
@@ -39,7 +40,7 @@ MotivationGarrison.prototype.getDemands = function (roomName, resources)
 	result.energy = energyTotal - energy;
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
-	console.log('  Garrison Demands: e: ' + result.energy + ' ' + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn);
+	lib.log('  Garrison Demands: e: ' + result.energy + ' ' + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn, debug);
 	return result;
 };
 

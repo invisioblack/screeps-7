@@ -59,9 +59,10 @@ Spawn.prototype.generateName = function (name)
 
 Spawn.prototype.spawnUnit = function (unitName, fullEnergy)
 {
+	let debug = false;
 	let energy = this.room.getSpawnEnergy();
 
-	console.log("  Spawn Status: " + energy.energy + "/" + energy.energyCapacity + " full energy: " + fullEnergy);
+	lib.log("  Spawn Status: " + energy.energy + "/" + energy.energyCapacity + " full energy: " + fullEnergy, debug);
 
 	if (fullEnergy)
 	{
@@ -73,6 +74,7 @@ Spawn.prototype.spawnUnit = function (unitName, fullEnergy)
 
 Spawn.prototype.spawnUnitByEnergy = function (unitName, energy)
 {
+	let debug = false;
 	let parts = [];
 	let name;
 	let result;
@@ -114,14 +116,14 @@ Spawn.prototype.spawnUnitByEnergy = function (unitName, energy)
 
 	//console.log(JSON.stringify(parts));
 	if (energy < 300)
-		console.log('-------------------Failed creating creep ' + unitName + ' : ' + name + " energy: " + energy + " result: too little energy");
+		lib.log('-------------------Failed creating creep ' + unitName + ' : ' + name + " energy: " + energy + " result: too little energy", debug);
 	else
 	{
 		parts = this.shuffle(parts);
 		result = this.createCreep(parts , name , units[unitName].memory);
 		if (_.isString(result))
 		{
-			console.log('+++++++++++++++++++Creating creep ' + unitName + ' : ' + name + " energy: " + energy + " result: " + result);
+			lib.log('+++++++++++++++++++Creating creep ' + unitName + ' : ' + name + " energy: " + energy + " result: " + result, debug);
 			let creep = Game.creeps[name];
 			creep.initMotive();
 			creep.memory.homeRoom = this.room.name;
@@ -129,7 +131,7 @@ Spawn.prototype.spawnUnitByEnergy = function (unitName, energy)
 		}
 		else
 		{
-			console.log('-------------------Failed creating creep ' + unitName + ' : ' + name + " energy: " + energy + " result: " + result);
+			lib.log('-------------------Failed creating creep ' + unitName + ' : ' + name + " energy: " + energy + " result: " + result, debug);
 		}
 	}
 };

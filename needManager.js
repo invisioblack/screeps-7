@@ -17,6 +17,7 @@ module.exports =
 	//--------------------------------------------------------------------------
 	"manageNeeds": function (roomName, motivation, motivationMemory)
 	{
+		let debug = false;
 		let room = Game.rooms[roomName];
 		let needs;
 
@@ -75,7 +76,7 @@ module.exports =
 			}
 
 			if (assignedUnits || allocatedUnits)
-				console.log("    " + motivation.name + ": Assigned/Allocated " + unitName + ": " + assignedUnits + "/" + allocatedUnits);
+				lib.log("    " + motivation.name + ": Assigned/Allocated " + unitName + ": " + assignedUnits + "/" + allocatedUnits, debug);
 		}
 	},
 

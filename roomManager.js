@@ -37,11 +37,11 @@ module.exports =
 				sortList[roomName].availUnits = sortList[roomName].maxUnits - sortList[roomName].units;
 			}, this);
 
-			console.log("sortList: " + JSON.stringify(sortList));
+			//console.log("sortList: " + JSON.stringify(sortList));
 
 			result = _.max(sortList, r => r.availUnits);
 
-			console.log("result: " + JSON.stringify(result));
+			//console.log("result: " + JSON.stringify(result));
 
 			if (result.room === "" || result.availUnits === 0)
 				return "";

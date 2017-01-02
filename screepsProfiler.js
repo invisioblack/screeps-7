@@ -1,5 +1,8 @@
-// this is not my code, it is from here:
-// https://github.com/gdborton/screeps-profiler
+/*
+ * All of the code below here was provided by guys here:
+ * https://github.com/gdborton/screeps-profiler
+ * Huge props to all the guys for sharing this!
+ */
 
 let usedOnStart = 0;
 let enabled = false;

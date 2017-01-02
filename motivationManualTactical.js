@@ -29,13 +29,14 @@ MotivationManualTactical.prototype.constructor = MotivationManualTactical;
 //-------------------------------------------------------------------------
 MotivationManualTactical.prototype.getDemands = function (roomName, resources)
 {
+	let debug = false;
 	let result = {};
 	let unitName = this.getDesiredSpawnUnit(roomName);
 
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
 	// TODO: improve this output, it is in the same in all of them, only shows the first unit demanded
-	console.log('  Manual Tactical Demands: ' + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn);
+	lib.log('  Manual Tactical Demands: ' + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn, debug);
 	return result;
 };
 

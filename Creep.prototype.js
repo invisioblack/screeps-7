@@ -168,4 +168,10 @@ Creep.prototype.sing = function(sentence, public){
 	this.say(words[Game.time % words.length], public);
 };
 
+Creep.prototype.resetSource = function ()
+{
+	this.memory.sourceId = "";
+	this.memory.sourceType = 0;
+};
+
 module.exports = function() {};

@@ -14,6 +14,7 @@ Current Status:
     Long range harvesting.
     Haulers.
     Manual Tactical.
+    Console interaction with the AI including buttons for config
 
 Behavior model
 ===============================================================================

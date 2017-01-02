@@ -59,6 +59,7 @@ JobTransfer.prototype.work = function (creep)
 			this.getEnergy(creep);
 			break;
 		case this.JOB_MODE_WORK:
+			this.resetSource(creep);
 			if (carry == 0)
 			{
 				creep.memory.job.mode = this.JOB_MODE_GETENERGY;
@@ -73,8 +74,8 @@ JobTransfer.prototype.work = function (creep)
 				{
 
 					let moveResult = creep.moveTo(target, {"maxRooms": 1});
-					if (moveResult < 0 && moveResult != ERR_TIRED)
-						console.log(creep.name + " Can't move while transferring: " + moveResult);
+					//if (moveResult < 0 && moveResult != ERR_TIRED)
+					//	console.log(creep.name + " Can't move while transferring: " + moveResult);
 				} else if (result == ERR_FULL) {
 					lib.log("---- RESET", debug);
 					creep.deassignMotive();

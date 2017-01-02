@@ -50,18 +50,19 @@ JobHarvestSource.prototype.work = function (creep)
 
 	if (_.sum(container.store) < container.storeCapacity)
 	{
+		if (creep.pos != container.pos)
+		{
+			let moveResult = creep.moveTo(container, {"maxRooms": 1});
+			//if (moveResult < 0 && moveResult != ERR_TIRED)
+			//	console.log(creep.name + " Can't move to container: " + moveResult);
+		}
+
 		result = creep.harvest(target);
 
 		//console.log("harvest: " + container.storeCapacity);
 		if (result == ERR_NOT_ENOUGH_ENERGY)
 		{
 			creep.say("Source Empty!");
-		}
-		if (result == ERR_NOT_IN_RANGE)
-		{
-			let moveResult = creep.moveTo(container, {"maxRooms": 1});
-			if (moveResult < 0 && moveResult != ERR_TIRED)
-				console.log(creep.name + " Can't move to container: " + moveResult);
 		}
 	} else {
 		creep.say("Full!");

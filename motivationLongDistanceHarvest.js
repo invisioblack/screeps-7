@@ -23,12 +23,13 @@ MotivationLongDistanceHarvest.prototype.constructor = MotivationLongDistanceHarv
 // implementation
 //-------------------------------------------------------------------------
 MotivationLongDistanceHarvest.prototype.getDemands = function (roomName, resources) {
+	let debug = false;
 	let result = {};
 	let unitName = this.getDesiredSpawnUnit(roomName);
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
 	//console.log(JSON.stringify(result.units));
-	lib.log("  Long Distance Harvest Demands : " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn, true);
+	lib.log("  Long Distance Harvest Demands : " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn, debug);
 	return result;
 };
 

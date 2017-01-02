@@ -23,7 +23,7 @@ module.exports = function()
 		if (creep.carryCapacity == 0)
 		{
 			creep.deassignMotive();
-			creep.sing("I cannot carry!");
+			creep.sing("NOCARRY!");
 			delete creep.memory.sourceId;
 			delete creep.memory.sourceType;
 
@@ -38,10 +38,10 @@ module.exports = function()
 		// if I am full, then reset into work mode ---------------------------------------------------------------------
 		if (carry == creep.carryCapacity)
 		{
-
 			creep.say("Full!");
-			creep.memory.job.mode = this.JOB_MODE_WORK;
 			this.resetSource(creep);
+			creep.memory.job.mode = this.JOB_MODE_WORK;
+			return;
 		}
 
 		// get some energy ---------------------------------------------------------------------------------------------
@@ -55,12 +55,10 @@ module.exports = function()
 		// validate energy source
 		if (creep.memory.sourceId != "")
 		{
-
 			source = Game.getObjectById(creep.memory.sourceId);
-
 			if (lib.isNull(source))
 			{
-					this.resetSource(creep);
+				this.resetSource(creep);
 			}
 		}
 
@@ -79,7 +77,16 @@ module.exports = function()
 		// look for energy in storages
 		if (creep.memory.unit != "hauler" && creep.memory.sourceId == "")
 		{
-			let storage = creep.pos.findClosestByPath(FIND_STRUCTURES, { ignoreCreeps: true, filter: function (s) { return s.structureType == STRUCTURE_STORAGE && s.store[RESOURCE_ENERGY] > 0; }});
+			let storage = creep.pos.findClosestByPath(FIND_STRUCTURES,
+			{
+				maxRooms: 1,
+				ignoreCreeps: true,
+				filter: function (s)
+				{
+					return s.structureType == STRUCTURE_STORAGE
+						&& s.store[RESOURCE_ENERGY] > 0;
+				}}
+			);
 
 			// second pass check and assign
 			if (!lib.isNull(storage) && storage.store[RESOURCE_ENERGY] > 0)
@@ -115,14 +122,19 @@ module.exports = function()
 		// harvest my own energy
 		if (creep.memory.sourceId == "" && creep.getHasPart(WORK))
 		{
-			let source = creep.pos.findClosestByPath(FIND_SOURCES, { ignoreCreeps: true, filter: function (s)
+			let source = creep.pos.findClosestByPath(FIND_SOURCES,
 			{
-				let max = 1;
-				if (creep.memory.unit != "harvester")
-					max = s.getMaxHarvesters();
-				let on = s.countCreepsOnSource();
-				return max > on && s.energy > 0;
-			}});
+				maxRooms: 1,
+				ignoreCreeps: true,
+				filter: function (s)
+				{
+					let max = 1;
+					if (creep.memory.unit != "harvester")
+						max = s.getMaxHarvesters();
+					let on = s.countCreepsOnSource();
+					return max > on && s.energy > 0;
+				}
+			});
 
 			if (!lib.isNull(source))
 			{
@@ -135,7 +147,7 @@ module.exports = function()
 		// check to see if I can get energy, if so get it, if not, complain
 		if (creep.memory.sourceId == "") // I'm screwed, I cannot get energy
 		{
-			creep.sing("💩");
+			creep.sing("No Energy!");
 			if (creep.room.name != creep.memory.homeRoom)
 			{
 				creep.memory.motive.room = creep.memory.homeRoom;
@@ -151,7 +163,7 @@ module.exports = function()
 				creep.assignToLongDistanceHarvest();
 			}
 		} else { // move to and pick up the goods
-			creep.sing("⛽ ⚡");
+			creep.sing("Getting energy!");
 			let result;
 			switch (creep.memory.sourceType)
 			{
@@ -161,8 +173,8 @@ module.exports = function()
 					if (result == ERR_NOT_IN_RANGE)
 					{
 						let moveResult = creep.moveTo(drop, {"maxRooms": 1});
-						if (moveResult < 0 && moveResult != ERR_TIRED)
-							console.log(creep.name + " Can't move while getting from container: " + moveResult);
+						//if (moveResult < 0 && moveResult != ERR_TIRED)
+						//	console.log(creep.name + " Can't move while getting from container: " + moveResult);
 					}
 					break;
 				case this.JOB_SOURCETYPE_CONTAINER:
@@ -171,8 +183,8 @@ module.exports = function()
 					if (result == ERR_NOT_IN_RANGE)
 					{
 						let moveResult = creep.moveTo(container, {"maxRooms": 1});
-						if (moveResult < 0 && moveResult != ERR_TIRED)
-							console.log(creep.name + " Can't move while getting from container: " + moveResult);
+						//if (moveResult < 0 && moveResult != ERR_TIRED)
+						//	console.log(creep.name + " Can't move while getting from container: " + moveResult);
 					}
 					if (container.store[RESOURCE_ENERGY] = 0)
 					{
@@ -194,8 +206,8 @@ module.exports = function()
 					if (result == ERR_NOT_IN_RANGE)
 					{
 						let moveResult = creep.moveTo(source, {"maxRooms": 1});
-						if (moveResult < 0 && moveResult != ERR_TIRED)
-							console.log(creep.name + " Can't move while harvesting: " + moveResult);
+						//if (moveResult < 0 && moveResult != ERR_TIRED)
+						//	console.log(creep.name + " Can't move while harvesting: " + moveResult);
 					}
 					break;
 			}

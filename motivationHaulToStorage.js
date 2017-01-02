@@ -28,11 +28,12 @@ MotivationHaulToStorage.prototype.constructor = MotivationHaulToStorage;
 // implementation
 //-------------------------------------------------------------------------
 MotivationHaulToStorage.prototype.getDemands = function (roomName, resources) {
+	let debug = false;
 	let result = {};
 	let unitName = this.getDesiredSpawnUnit(roomName);
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
-	console.log("  Haul to Storage Demands: " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn);
+	lib.log("  Haul to Storage Demands: " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn, debug);
 	return result;
 };
 

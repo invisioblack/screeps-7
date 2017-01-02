@@ -32,6 +32,8 @@ JobSupplyExtenders.prototype.work = function (creep)
 	let need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
 	let carry = creep.carry[RESOURCE_ENERGY];
 
+	creep.sing("Supplying extenders!");
+
 	//avoid hostiles
 	if (creep.avoidHostile(creep))
 	{
@@ -58,6 +60,7 @@ JobSupplyExtenders.prototype.work = function (creep)
 			this.getEnergy(creep);
 			break;
 		case this.JOB_MODE_WORK:
+			this.resetSource(creep);
 			if (carry == 0)
 			{
 				// reset our need assignment when we run out of energy
@@ -84,8 +87,8 @@ JobSupplyExtenders.prototype.work = function (creep)
 					{
 
 						let moveResult = creep.moveTo(target , {"maxRooms": 1});
-						if (moveResult < 0 && moveResult != ERR_TIRED)
-							console.log(creep.name + " Can't move while transferring: " + moveResult);
+						//if (moveResult < 0 && moveResult != ERR_TIRED)
+						//	console.log(creep.name + " Can't move while transferring: " + moveResult);
 					} else
 						creep.deassignMotive();
 				}

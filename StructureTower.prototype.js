@@ -36,7 +36,7 @@ StructureTower.prototype.autoRepair = function ()
 		}
 	});
 
-	console.log(JSON.stringify(damagedBuildings));
+	//console.log(JSON.stringify(damagedBuildings));
 
 	if (!lib.isNull(damagedBuildings[0]) && this.energy > (this.energyCapacity * config.towerPowerFactor))
 		this.repair(damagedBuildings[0]);

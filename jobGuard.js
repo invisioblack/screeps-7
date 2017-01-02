@@ -26,6 +26,9 @@ JobGuard.prototype.work = function (creep)
 {
 	let targets = creep.room.find(FIND_HOSTILE_CREEPS);
 	//console.log(JSON.stringify(targets));
+
+	creep.sing("For the glory to the empire!", true);
+
 	if (targets.length)
 	{
 		let target = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS, { ignoreCreeps: true});

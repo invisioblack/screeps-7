@@ -35,7 +35,7 @@ JobRepair.prototype.work = function (creep)
 	let target = Game.getObjectById(need.targetId);
 	let carry = _.sum(creep.carry);
 
-	creep.say("🔧");
+	creep.sing("Fixing stuff!");
 
 	//avoid hostiles
 	if (creep.avoidHostile(creep))
@@ -73,8 +73,8 @@ JobRepair.prototype.work = function (creep)
 				if (result == ERR_NOT_IN_RANGE)
 				{
 					let moveResult = creep.moveTo(target, {"maxRooms": 1});
-					if (moveResult < 0 && moveResult != ERR_TIRED)
-						console.log(creep.name + " Can't move while repairing: " + moveResult);
+					//if (moveResult < 0 && moveResult != ERR_TIRED)
+					//	console.log(creep.name + " Can't move while repairing: " + moveResult);
 				} else if (result == ERR_FULL) {
 					//console.log("---- RESET");
 					creep.deassignMotive();

@@ -29,6 +29,7 @@ MotivationMaintainInfrastructure.prototype.constructor = MotivationMaintainInfra
 //-------------------------------------------------------------------------
 MotivationMaintainInfrastructure.prototype.getDemands = function (roomName, resources)
 {
+	let debug = false;
 	let result = {};
 	let unitName = this.getDesiredSpawnUnit(roomName);
 	let constructionSites = Game.rooms[roomName].find(FIND_CONSTRUCTION_SITES);
@@ -43,7 +44,7 @@ MotivationMaintainInfrastructure.prototype.getDemands = function (roomName, reso
 	result.energy = progressTotal - progress + Object.keys(repairSites).length;
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
-	console.log('  Maintain Infrastructure Demands: ' + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn);
+	lib.log('  Maintain Infrastructure Demands: ' + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn, debug);
 	return result;
 };
 
@@ -85,6 +86,7 @@ MotivationMaintainInfrastructure.prototype.updateActive = function (roomName, de
 
 MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 {
+	let debug = false;
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
 	let sortedNeedsByDistance, x;
@@ -174,7 +176,7 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 
 		if (lib.isNull(memory.needs[needName]))
 		{
-			console.log("-------------- CULLING NULL maintain infrastructure need -------------");
+			lib.log("-------------- CULLING NULL maintain infrastructure need -------------", debug);
 			delete memory.needs[needName];
 		}
 		else
@@ -182,14 +184,14 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 			//console.log("Need.type: " + memory.needs[needName].type);
 			if (lib.isNull(memory.needs[needName].type))
 			{
-				console.log("-------------- CULLING untyped maintain infrastructure need -------------");
+				lib.log("-------------- CULLING untyped maintain infrastructure need -------------", debug);
 				delete memory.needs[needName];
 
 			} else if (memory.needs[needName].type == "needBuild") {
 				// cull build needs
 				if (lib.isNull(memory.needs[needName].targetId))
 				{
-					console.log("-------------- CULLING INCOMPLETE CONSTRUCTION SITE -------------");
+					lib.log("-------------- CULLING INCOMPLETE CONSTRUCTION SITE -------------", debug);
 					delete memory.needs[needName];
 				}
 				else
@@ -200,7 +202,7 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 					// if there are no sites, then cull it
 					if (result.length == 0)
 					{
-						console.log("-------------- CULLING CONSTRUCTION SITE -------------");
+						lib.log("-------------- CULLING CONSTRUCTION SITE -------------", debug);
 						delete memory.needs[needName];
 					}
 				}
@@ -209,7 +211,7 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 				// cull repair needs
 				if (lib.isNull(memory.needs[needName].targetId))
 				{
-					console.log("-------------- CULLING INCOMPLETE REPAIR SITE -------------");
+					lib.log("-------------- CULLING INCOMPLETE REPAIR SITE -------------", debug);
 					delete memory.needs[needName];
 				}
 				else
@@ -222,7 +224,7 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 					// if there are no sites, then cull it
 					if (result.length == 0 && resultWall.length == 0)
 					{
-						console.log("-------------- CULLING REPAIR SITE: " + siteId);
+						lib.log("-------------- CULLING REPAIR SITE: " + siteId, debug);
 						delete memory.needs[needName];
 					}
 				}

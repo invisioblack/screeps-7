@@ -24,14 +24,14 @@ JobManualTactical.prototype.constructor = JobManualTactical;
 //-------------------------------------------------------------------------
 JobManualTactical.prototype.work = function (creep)
 {
-	creep.sing("🔫");
+	creep.sing("For the glory of the empire!", true);
 
 	if (Game.flags.spawn)
 	{
 		let spawn = creep.room.find(FIND_HOSTILE_SPAWNS)[0];
 		let result = creep.attack(spawn);
 		if (result === ERR_NOT_IN_RANGE)
-			creep.moveTo(spawn);
+			creep.moveTo(spawn, { maxRooms: 1});
 	}
 	else if (Game.flags.wall)
 	{
@@ -45,19 +45,19 @@ JobManualTactical.prototype.work = function (creep)
 		let target = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS);
 		let result = creep.attack(target);
 		if (result === ERR_NOT_IN_RANGE)
-			creep.moveTo(target);
+			creep.moveTo(target, { maxRooms: 1});
 	}
 	else if (Game.flags.structure)
 	{
 		let target = creep.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES);
 		let result = creep.attack(target);
 		if (result === ERR_NOT_IN_RANGE)
-			creep.moveTo(target);
+			creep.moveTo(target, { maxRooms: 1});
 	}
 	else if (Game.flags.move)
 	{
 		let flag = Game.flags.move;
-		let result = creep.moveTo(flag);
+		let result = creep.moveTo(flag, { maxRooms: 1});
 		if (result === ERR_NOT_IN_RANGE)
 			creep.rendezvous(flag, 2);
 	}

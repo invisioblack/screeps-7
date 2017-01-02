@@ -32,12 +32,13 @@ MotivationClaimRoom.prototype.constructor = MotivationClaimRoom;
 // implementation
 //-------------------------------------------------------------------------
 MotivationClaimRoom.prototype.getDemands = function (roomName, resources) {
+	let debug = false;
 	let result = {};
 	let unitName = this.getDesiredSpawnUnit(roomName);
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
 	//console.log(JSON.stringify(result.units));
-	lib.log("  Claim Room Demands : " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn, true);
+	lib.log("  Claim Room Demands : " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn, false);
 	return result;
 };
 
@@ -78,7 +79,7 @@ MotivationClaimRoom.prototype.getDesireSpawn = function (roomName, demands)
 		let claimRoom = Game.rooms[c.room];
 		let reservation;
 
-		if (!lib.isNull(claimRoom) && !lib.isNull(claimRoom.controller))
+		if (!lib.isNull(claimRoom) && !lib.isNull(claimRoom.controller) && !lib.isNull(claimRoom.controller.reservation))
 		{
 			reservation = claimRoom.controller.reservation.ticksToEnd;
 		} else
@@ -149,7 +150,7 @@ MotivationClaimRoom.prototype.updateNeeds = function (roomName)
 		need = memory.needs[needName];
 		need.name = needName;
 		need.type = "needClaim";
-		need.targetId = s.id;
+		need.targetId = room.controller.id;
 		need.priority = C.PRIORITY_1;
 	}
 };

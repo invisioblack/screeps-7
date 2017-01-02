@@ -2,7 +2,15 @@
 // Room.prototype
 //-------------------------------------------------------------------------
 
+/***********************************************************************************************************************
+ * functions
+ */
 
+/**
+ * Returns the cost of passed array of parts
+ * @param parts
+ * @returns {number}
+ */
 Room.prototype.getCostParts = function (parts)
 {
 	let result = 0;
@@ -19,6 +27,7 @@ Room.prototype.getCostParts = function (parts)
 
 Room.prototype.getResources = function ()
 {
+	let debug = false;
 	let resources = {};
 	// determine room resources ----------------------------------------------------------------------------
 	// energy
@@ -28,8 +37,8 @@ Room.prototype.getResources = function ()
 	resources.controllerStatus = this.getControllerStatus();
 
 	// output info
-	console.log("---- Room Resources: " + this.name);
-	console.log('  Spawn Energy: ' + resources.spawnEnergy.energy + '/' + resources.spawnEnergy.energyCapacity + ' Controller Level: ' + resources.controllerStatus.level + ' ' + resources.controllerStatus.progress + '/' + resources.controllerStatus.progressTotal + ' Downgrade: ' + resources.controllerStatus.ticksToDowngrade);
+	lib.log("---- Room Resources: " + this.name, debug);
+	lib.log('  Spawn Energy: ' + resources.spawnEnergy.energy + '/' + resources.spawnEnergy.energyCapacity + ' Controller Level: ' + resources.controllerStatus.level + ' ' + resources.controllerStatus.progress + '/' + resources.controllerStatus.progressTotal + ' Downgrade: ' + resources.controllerStatus.ticksToDowngrade, debug);
 
 	// get unit resources
 	resources.units = [];
@@ -42,9 +51,9 @@ Room.prototype.getResources = function ()
 		resources.units[unitName].unallocated = resources.units[unitName].total;
 		resources.units[unitName].unassigned = this.countUnassignedUnits(unitName);
 		resources.units[unitName].assigned = this.countAssignedUnits(unitName);
-		console.log("  " + unitName + " total: " + resources.units[unitName].total
+		lib.log("  " + unitName + " total: " + resources.units[unitName].total
 			+ " Assigned/UnAssigned: " + resources.units[unitName].assigned
-			+ "/" + resources.units[unitName].unassigned);
+			+ "/" + resources.units[unitName].unassigned, debug);
 	}
 	return resources;
 };
@@ -172,6 +181,7 @@ Room.prototype.getMotivationCreeps = function (motivationName)
 Room.prototype.countMotivationUnits = function (motivationName , unitName)
 {
 	let result = this.getMotivationUnits(motivationName , unitName).length;
+	//console.log(result);
 	return result;
 };
 
@@ -346,6 +356,7 @@ Room.prototype.handleLostCreeps = function()
 
 Room.prototype.safeModeFailsafe = function ()
 {
+	let debug = false;
 	let room = Game.rooms[this.name];
 	if (room.controller.my)
 	{
@@ -360,13 +371,13 @@ Room.prototype.safeModeFailsafe = function ()
 
 		if (hostiles.length && !safeMode && safeModeAvailable && !safeModeCooldown)
 		{
-			console.log("!!!!!!!!!!!!!!! ACTIVATING SAFE MODE !!!!!!!!!!!!!!!");
+			lib.log("!!!!!!!!!!!!!!! ACTIVATING SAFE MODE !!!!!!!!!!!!!!!", debug);
 			controller.activateSafeMode();
 		}
-		console.log(">>>> Safe Mode Status: Hostiles: " + hostiles.length
+		lib.log(">>>> Safe Mode Status: Hostiles: " + hostiles.length
 			+ " SafeMode: " + safeMode
 			+ " SafeModeAvailable: " + safeModeAvailable
-			+ " SafeModeCooldown: " + safeModeCooldown);
+			+ " SafeModeCooldown: " + safeModeCooldown, debug);
 	}
 };
 
@@ -443,7 +454,7 @@ Room.prototype.getMaxHarvesters = function ()
 		result += s.getMaxHarvesters();
 	});
 
-	console.log("MAX: " + result);
+	//console.log("MAX: " + result);
 	return result;
 };
 
@@ -465,5 +476,74 @@ Room.prototype.sing = function(sentence, public){
 		creeps[i].say(words[i % words.length], public);
 	}
 };
+
+/***********************************************************************************************************************
+ * Properties
+ */
+
+/**
+ * Returns the mineral type of the room.
+ * Stores it in memory if not already stored.
+ */
+Object.defineProperty(Room.prototype, 'mineralType', {
+	get: function() {
+		if (this == undefined || this.name == undefined)
+			return undefined;
+		if (!this._mineralType) {
+			if (!this.memory.mineralType) {
+				this.memory.mineralType = (this.find(FIND_MINERALS)[0] || {}).mineralType;
+			}
+			this._mineralType = this.memory.mineralType;
+		}
+		return this._mineralType;
+	},
+	enumerable: false,
+	configurable: true
+});
+
+/**
+ * Returns the mineral object in the room.
+ * Stores the id in memory if not already stored.
+ */
+Object.defineProperty(Room.prototype, 'mineral', {
+	get: function() {
+		if (this == undefined || this.name == undefined)
+			return undefined;
+		if (!this._mineral) {
+			if (this.memory.mineralId === undefined) {
+				let [mineral] = this.find(FIND_MINERALS);
+				if (!mineral) {
+					return this.memory.mineralId = null;
+				}
+				this._mineral = mineral;
+				this.memory.mineralId = mineral.id;
+			} else {
+				this._mineral = Game.getObjectById(this.memory.mineralId);
+			}
+		}
+		return this._mineral;
+	},
+	enumerable: false,
+	configurable: true
+});
+
+/**
+ * Returns the reaction type of the room. Shortcut to Memory.rooms[roomName].reactionType.
+ * This value gets set by the reaction type menu in the storageContents function.
+ */
+Object.defineProperty(Room.prototype, 'reactionType', {
+	get: function() {
+		if (this == undefined || this.name == undefined)
+			return undefined;
+		if (!this._reactionType) {
+			this._reactionType = this.memory.reactionType;
+		}
+		return this._reactionType;
+	},
+	enumerable: false,
+	configurable: true
+});
+
+
 
 module.exports = function() {};
