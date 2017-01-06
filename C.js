@@ -53,5 +53,11 @@ module.exports =
 
 	// override flag
 	'OVERRIDE_AUTONOMOUS': 0,
-	'OVERRIDE_PLAYER': 1
+	'OVERRIDE_PLAYER': 1,
+
+	'ROOM_ENERGYPICKUPMODE_NOENERGY': 0,
+	'ROOM_ENERGYPICKUPMODE_HARVEST': 1,
+	'ROOM_ENERGYPICKUPMODE_CONTAINER': 2,
+	'ROOM_ENERGYPICKUPMODE_STORAGE': 3,
+	'ROOM_ENERGYPICKUPMODE_LINK': 4, // this will remain unimplementing until I write up some link code
 };

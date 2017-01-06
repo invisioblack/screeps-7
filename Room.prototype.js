@@ -6,13 +6,118 @@
  * functions
  */
 
-Room.prototype.updateCache = function ()
+/**
+ * Updates the memory structure cache to reduce the number of Room.find() calls for structures
+ */
+Room.prototype.updateStructureCache = function (forceRefresh)
 {
+	// don't require forceRefresh to be passed
+	if (lib.isNull(forceRefresh)) forceRefresh = false;
+	// insure the memory object exists
+	if (lib.isNull(this.memory.cache.structures))
+	{
+		this.memory.cache.structures = {};
+		forceRefresh = true;
+	}
+
+	if (Game.time % 10 === 0)
+		forceRefresh = true;
+
+	if (forceRefresh)
+	{
+		let structures = this.memory.cache.structures;
+		let roomLevel = this.getControllerLevel();
+		let room = this;
+
+		_.forEach(STRUCTURES , function (s)
+		{
+			//console.log(`Type: ${s} Level: ${roomLevel}`);
+			if (!lib.isNull(CONTROLLER_STRUCTURES[s]) && CONTROLLER_STRUCTURES[s][roomLevel] <= roomLevel)
+			{
+				//console.log(`Checking ${s}...`);
+				let foundStructures = room.find(FIND_STRUCTURES , { filter: function (st)
+				{
+					return st.structureType == s;
+				}});
+				//console.log(`Found ${foundStructures}...`);
+
+
+				// map structure ids to the memory object
+				structures[s] = _.map(foundStructures, function (st) {
+					return st.id;
+				});
+			}
+		});
+	}
+};
+
+Room.prototype.updateSourceCache = function (forceRefresh)
+{
+	// don't require forceRefresh to be passed
+	if (lib.isNull(forceRefresh)) forceRefresh = false;
+	// insure the memory object exists
+	if (lib.isNull(this.memory.cache.sources))
+	{
+		this.memory.cache.sources = {};
+		forceRefresh = true;
+	}
+
+	if (Game.time % 100 === 0)
+		forceRefresh = true;
+
+	if (forceRefresh)
+	{
+		let foundSources = this.find(FIND_SOURCES);
+		console.log(`Found: ${foundSources}`);
+
+		// map structure ids to the memory object
+		this.memory.cache.sources = _.map(foundSources, function (s) {
+			return s.id;
+		});
+		console.log(`Result ${this.memory.cache.sources}`);
+	}
+};
+
+Room.prototype.initMemCache = function (forceRefresh)
+{
+	// don't require forceRefresh to be passed
+	if (lib.isNull(forceRefresh)) forceRefresh = true;
+
+	// insure the memory object exists
+	if (lib.isNull(this.memory.cache) || forceRefresh)
+	{
+		this.memory.cache = {};
+		forceRefresh = true;
+	}
+
+	this.updateStructureCache(forceRefresh);
+	this.updateSourceCache(forceRefresh);
+};
+
+
+
+/**
+ * This function updates the state of the energy pickup mode for this room. This is how creeps who need energy will go
+ * about acquiring it.
+ */
+Room.prototype.updateEnergyPickupMode = function ()
+{
+	result = C.ROOM_ENERGYPICKUPMODE_NOENERGY;
 
 };
 
+Room.prototype.getControllerLevel = function ()
+{
+	let result = 0;
+	if (!lib.isNull(this.controller))
+	{
+		result = this.controller.level;
+	}
+	return result;
+};
+
 /***********************************************************************************************************************
- * Resource related function
+ * Resource related functions
  *
  */
 

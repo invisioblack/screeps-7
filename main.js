@@ -1,7 +1,5 @@
-//-------------------------------------------------------------------------
-// Main
-//-------------------------------------------------------------------------
-
+/**
+ *
 // TODO: figure out links
 // TODO: set rooms as defended, and send creeps to kill enemies there
 //          tie this to garrison
@@ -24,7 +22,7 @@
 // TODO: create linked room manager for console
 //          creep details and manager
 //          storage details
-//          memmory details
+//          memory details
 //          motivator details
 // TODO: create data reporting system
 //          collect data, store it in Memory.reporting
@@ -34,6 +32,8 @@
 // TODO: improve creep design
 //          allow for specify max parts
 //          allow to specify max/for other parts
+ * TODO: fix energy collection, creeps seem to make idiotic choices about where to get their energy
+ */
 
 //----------------------------------------------------------------------------------------------------------------------
 // Modules
