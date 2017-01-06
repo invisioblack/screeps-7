@@ -10,5 +10,7 @@ module.exports =
 	"claimTicks": 1000,
 	'towerPowerFactor': 0.8,
 	'towerRepairFactor': 0.1,
-	"cpuDebug": false
+	"cpuDebug": false,
+	"cpuHistorySize": 1000
+
 };

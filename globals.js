@@ -3,6 +3,8 @@ const profiler = require('screepsProfiler');
 global.C = require("C");
 global.cacheManager = require("cacheManager");
 profiler.registerObject(cacheManager, 'cacheManager');
+global.cpuManager = require("cpuManager");
+profiler.registerObject(cpuManager, 'cpuManager');
 global.lib = require("lib");
 profiler.registerObject(lib, 'lib');
 global.jobBuild = require("jobBuild");
@@ -90,6 +92,3 @@ global.REMOTE_CONTAINER_UPKEEP  = CONTAINER_DECAY / REPAIR_POWER / CONTAINER_DEC
 global.STRUCTURES = [STRUCTURE_SPAWN, STRUCTURE_EXTENSION, STRUCTURE_ROAD, STRUCTURE_WALL, STRUCTURE_RAMPART, STRUCTURE_KEEPER_LAIR, STRUCTURE_PORTAL,
 	STRUCTURE_CONTROLLER, STRUCTURE_LINK, STRUCTURE_STORAGE, STRUCTURE_TOWER, STRUCTURE_OBSERVER, STRUCTURE_POWER_BANK, STRUCTURE_POWER_SPAWN, STRUCTURE_EXTRACTOR,
 	STRUCTURE_LAB, STRUCTURE_TERMINAL, STRUCTURE_CONTAINER, STRUCTURE_NUKER];
-
-global.ROOM
-

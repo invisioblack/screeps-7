@@ -84,7 +84,7 @@ module.exports.loop = function ()
 		//------------------------------------------------------------------------------------------------------------------
 
 		lib.log("<b>+++++++++++++++++++++++ end tick +++++++++++++++++++++++</b>", debug);
-		lib.log(`Used CPU: ${Game.cpu.getUsed()}/${Game.cpu.limit} Bucket: ${(Game.cpu.getUsed()-Game.cpu.limit)*-1}/${Game.cpu.bucket}`, config.cpuDebug);
+		cpuManager.tickTrack();
 		
 	});
 };

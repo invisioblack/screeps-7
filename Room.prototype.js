@@ -6,6 +6,24 @@
  * functions
  */
 
+
+Room.prototype.initMemCache = function (forceRefresh)
+{
+	// don't require forceRefresh to be passed
+	if (lib.isNull(forceRefresh)) forceRefresh = true;
+
+	// insure the memory object exists
+	if (lib.isNull(this.memory.cache) || forceRefresh)
+	{
+		this.memory.cache = {};
+		forceRefresh = true;
+	}
+
+	this.updateStructureCache(forceRefresh);
+	this.updateSourceCache(forceRefresh);
+	this.updateDroppedCache(forceRefresh);
+};
+
 /**
  * Updates the memory structure cache to reduce the number of Room.find() calls for structures
  */
@@ -78,21 +96,34 @@ Room.prototype.updateSourceCache = function (forceRefresh)
 	}
 };
 
-Room.prototype.initMemCache = function (forceRefresh)
+Room.prototype.updateDroppedCache = function (forceRefresh)
 {
 	// don't require forceRefresh to be passed
-	if (lib.isNull(forceRefresh)) forceRefresh = true;
-
+	if (lib.isNull(forceRefresh)) forceRefresh = false;
 	// insure the memory object exists
-	if (lib.isNull(this.memory.cache) || forceRefresh)
+	if (lib.isNull(this.memory.cache.dropped))
 	{
-		this.memory.cache = {};
+		this.memory.cache.dropped = {};
 		forceRefresh = true;
 	}
 
-	this.updateStructureCache(forceRefresh);
-	this.updateSourceCache(forceRefresh);
+	if (Game.time % 2 === 0)
+		forceRefresh = true;
+
+	if (forceRefresh)
+	{
+		let foundDropped = this.find(FIND_DROPPED_RESOURCES);
+		//console.log(`Found: ${foundDropped}`);
+
+		// map structure ids to the memory object
+		this.memory.cache.dropped = _.map(foundDropped, function (s) {
+			return s.id;
+		});
+		//console.log(`Result ${this.memory.cache.sources}`);
+	}
 };
+
+
 
 
 
@@ -114,9 +145,17 @@ Room.prototype.updateEnergyPickupMode = function ()
 		{
 			let numStorage = lib.nullProtect(this.memory.cache.structures[STRUCTURE_STORAGE], []).length;
 			result = C.ROOM_ENERGYPICKUPMODE_CONTAINER;
+
 			if (numStorage > 0)
 			{
-				result = C.ROOM_ENERGYPICKUPMODE_STORAGE;
+				if (strategyManager.countRoomUnits(this.name, "harvester") > 0 && strategyManager.countRoomUnits(this.name, "hauler") > 0)
+					result = C.ROOM_ENERGYPICKUPMODE_STORAGE;
+				else
+				{
+					let storage = Game.getObjectById(this.memory.cache.structures[STRUCTURE_STORAGE][0]);
+					if (storage.store[RESOURCE_ENERGY] > 0)
+						result = C.ROOM_ENERGYPICKUPMODE_STORAGE;
+				}
 			}
 		}
 	}
