@@ -19,6 +19,7 @@ module.exports =
 
 
 			room.initMemCache();
+			room.updateEnergyPickupMode();
 
 			// init motivations in memory
 			if (lib.isNull(room.memory.motivations))

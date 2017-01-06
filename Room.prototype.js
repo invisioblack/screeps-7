@@ -68,13 +68,13 @@ Room.prototype.updateSourceCache = function (forceRefresh)
 	if (forceRefresh)
 	{
 		let foundSources = this.find(FIND_SOURCES);
-		console.log(`Found: ${foundSources}`);
+		//console.log(`Found: ${foundSources}`);
 
 		// map structure ids to the memory object
 		this.memory.cache.sources = _.map(foundSources, function (s) {
 			return s.id;
 		});
-		console.log(`Result ${this.memory.cache.sources}`);
+		//console.log(`Result ${this.memory.cache.sources}`);
 	}
 };
 
@@ -102,8 +102,26 @@ Room.prototype.initMemCache = function (forceRefresh)
  */
 Room.prototype.updateEnergyPickupMode = function ()
 {
-	result = C.ROOM_ENERGYPICKUPMODE_NOENERGY;
 
+	result = C.ROOM_ENERGYPICKUPMODE_NOENERGY;
+	if (this.memory.cache.sources.length > 0)
+	{
+		result = C.ROOM_ENERGYPICKUPMODE_HARVEST;
+
+		let numContainers = lib.nullProtect(this.memory.cache.structures[STRUCTURE_CONTAINER], []).length;
+
+		if (numContainers >= this.memory.cache.sources.length && strategyManager.countRoomUnits(this.name, "harvester") > 0)
+		{
+			let numStorage = lib.nullProtect(this.memory.cache.structures[STRUCTURE_STORAGE], []).length;
+			result = C.ROOM_ENERGYPICKUPMODE_CONTAINER;
+			if (numStorage > 0)
+			{
+				result = C.ROOM_ENERGYPICKUPMODE_STORAGE;
+			}
+		}
+	}
+
+	this.memory.energyPickupMode = result;
 };
 
 Room.prototype.getControllerLevel = function ()
