@@ -3,51 +3,48 @@
 //------------------------------------------------------------------------------
 
 module.exports =
+{
+	//--------------------------------------------------------------------------
+	// Declarations
+	//--------------------------------------------------------------------------
+
+	//--------------------------------------------------------------------------
+	// top level functions
+	//--------------------------------------------------------------------------
+
+	// these functions differ than the ones in Room in that these do not require visibility of the room
+	// and they do not require the unit to be in the room, just assigned to whatever is specified
+
+	countUnits: function (unitName)
 	{
-		//--------------------------------------------------------------------------
-		// Declarations
-		//--------------------------------------------------------------------------
+		let result = this.getUnits(unitName).length;
+		return result;
+	} ,
 
-		//--------------------------------------------------------------------------
-		// top level functions
-		//--------------------------------------------------------------------------
-
-		// these functions differ than the ones in Room in that these do not require visibility of the room
-		// and they do not require the unit to be in the room, just assigned to whatever is specified
-
-		"countUnits": function (unitName)
+	getUnits: function (unitName)
+	{
+		let result = _.filter(Game.creeps , function (creep)
 		{
-			let result = this.getUnits(unitName).length;
-			return result;
-		} ,
+			return creep.memory.unit == unitName;
+		});
+		return result;
+	} ,
 
-		"getUnits": function (unitName)
+	countRoomUnits: function (roomName , unitName)
+	{
+		let result = this.getRoomUnits(roomName , unitName).length;
+		return result;
+	} ,
+
+	getRoomUnits: function (roomName , unitName)
+	{
+		let result = _.filter(Game.creeps , function (creep)
 		{
-			let result = _.filter(Game.creeps , function (creep)
-			{
-				return creep.memory.unit == unitName;
-			});
-			return result;
-		} ,
-
-		"countRoomUnits": function (roomName , unitName)
-		{
-			let result = this.getRoomUnits(roomName , unitName).length;
-			return result;
-		} ,
-
-		"getRoomUnits": function (roomName , unitName)
-		{
-			let result = _.filter(Game.creeps , function (creep)
-			{
-				return creep.memory.motive.room == roomName
-					&& creep.memory.unit == unitName;
-			});
-			return result;
-		} ,
-
-	// TODO: Cache - ROOM needs to be part of key
-	// TODO: Cache - implement ROOM assign for creeps, handle all of the instances
+			return creep.memory.motive.room == roomName
+				&& creep.memory.unit == unitName;
+		});
+		return result;
+	} ,
 
 	/**
 	 * returns the number of units assigned to the given motivationName
@@ -93,6 +90,99 @@ module.exports =
 			return creep.memory.motive.room === roomName
 				&& creep.memory.motive.motivation === motivationName
 				&& creep.memory.unit === unitName;
+		});
+		return result;
+	},
+
+	countRoomMotivationNeedCreeps: function (roomName, motivationName , needName)
+	{
+		let result = this.getRoomMotivationNeedCreeps(roomName, motivationName , needName).length;
+		return result;
+	},
+
+	getRoomMotivationNeedCreeps: function (roomName, motivationName , needName)
+	{
+		let result = _.filter(Game.creeps , function (creep)
+		{
+			return creep.memory.motive.room === roomName
+				&& creep.memory.motive.motivation === motivationName
+				&& creep.memory.motive.need === needName;
+		});
+		return result;
+	},
+
+	countRoomMotivationNeedUnits: function (roomName, motivationName , needName , unitName)
+	{
+		let result = this.getRoomMotivationNeedUnits(roomName, motivationName , needName , unitName).length;
+		return result;
+	},
+
+	getRoomMotivationNeedUnits: function (roomName, motivationName , needName , unitName)
+	{
+		let result = _.filter(Game.creeps , function (creep)
+		{
+			return creep.memory.motive.room == roomName
+				&& creep.memory.motive.motivation == motivationName
+				&& creep.memory.motive.need == needName
+				&& creep.memory.unit == unitName;
+		});
+		return result;
+	},
+
+	countRoomAssignedUnits: function (roomName, unitName)
+	{
+		let result = this.getRoomAssignedUnits(roomName, unitName).length;
+		return result;
+	},
+
+	getRoomAssignedUnits: function (roomName, unitName)
+	{
+		let result = _.filter(Game.creeps , function (creep)
+		{
+			return creep.memory.motive.room == roomName
+				&& creep.memory.motive.motivation != ""
+				&& creep.memory.motive.need != ""
+				&& creep.memory.unit == unitName;
+		});
+		return result;
+	},
+
+	countRoomUnassignedUnits: function (roomName, unitName)
+	{
+		let result = this.getRoomUnassignedUnits(roomName, unitName).length;
+
+		return result;
+	},
+
+	getRoomUnassignedUnits: function (roomName, unitName)
+	{
+		let result = _.filter(Game.creeps , function (creep)
+		{
+			return creep.memory.motive.room == roomName
+				&& creep.memory.motive.motivation == ""
+				&& creep.memory.motive.need == ""
+				&& creep.memory.unit == unitName;
+		});
+
+		return result;
+	},
+
+	findRoomUnassignedUnit: function(roomName, unitName)
+	{
+		return this.getRoomUnassignedUnits(roomName, unitName)[0];
+	},
+
+	countCreepsOnSource: function (sourceId)
+	{
+		let result = this.getCreepsOnSource(sourceId).length;
+		return result;
+	},
+
+	getCreepsOnSource: function (sourceId)
+	{
+		let result = _.filter(Game.creeps , function (creep)
+		{
+			return !lib.isNull(creep.memory.sourceId) && creep.memory.sourceId === sourceId;
 		});
 		return result;
 	}

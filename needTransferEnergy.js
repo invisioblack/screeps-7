@@ -30,7 +30,7 @@ NeedTransferEnergy.prototype.getUnitDemands = function(roomName, memory, motivat
 	let room = Game.rooms[roomName];
 	let target = Game.getObjectById(memory.targetId);
 	let energy, energyCapacity, neededEnergy;
-	let worker = lib.nullProtect(room.getUnits("worker")[0], {});
+	let worker = lib.nullProtect(strategyManager.getRoomUnits(roomName, "worker")[0], {});
 	let workerCapacity = lib.nullProtect(worker.carryCapacity, 50);
 	//console.log(JSON.stringify(memory));
 

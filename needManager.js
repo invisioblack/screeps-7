@@ -48,8 +48,8 @@ module.exports =
 					// if there is a creep to assign, we need to assign it
 					let unitDemands = global[need.type].getUnitDemands(roomName , need, motivation.name);
 					let creepsDemanded = unitDemands[unitName];
-					let creepsAssigned = room.countMotivationNeedUnits(motivation.name , need.name , unitName);
-					let creep = room.findUnallocatedUnit(unitName);
+					let creepsAssigned = strategyManager.countRoomMotivationNeedUnits(roomName, motivation.name , need.name , unitName);
+					let creep = strategyManager.findRoomUnassignedUnit(roomName, unitName);
 
 					if (creepsDemanded == 0)
 						outOfCreeps = true;
@@ -63,8 +63,8 @@ module.exports =
 						creep.assignMotive(roomName , motivation.name , need.name);
 
 						// update for iteration
-						creep = room.findUnallocatedUnit(unitName);
-						creepsAssigned = room.countMotivationNeedUnits(motivation.name , need.name , unitName);
+						creep = strategyManager.findRoomUnassignedUnit(roomName, unitName);
+						creepsAssigned = strategyManager.countRoomMotivationNeedUnits(roomName, motivation.name , need.name , unitName);
 						assignedUnits = strategyManager.countRoomMotivationUnits(roomName, motivation.name , unitName);
 						allocatedUnits = motivationMemory.allocatedUnits[unitName];
 					}

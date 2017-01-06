@@ -47,8 +47,8 @@ module.exports =
 
 
 			motivationSupplySpawn.init(room.name);
-			let numWorkers = room.countUnits("worker");
-			let numHarvesters = room.countUnits("harvester");
+			let numWorkers = strategyManager.countRoomUnits(roomName, "worker");
+			let numHarvesters = strategyManager.countRoomUnits(roomName, "harvester");
 			let numContainers = room.find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }}).length;
 
 			// normal priority
@@ -171,7 +171,7 @@ module.exports =
 							if (spawn.room.name == roomName)
 							{
 								let r = Game.rooms[roomName];
-								let countUnits = r.countUnits(unitName);
+								let countUnits = strategyManager.getRoomUnits(roomName, unitName);
 								//console.log(unitName + " " + countUnits);
 								if (unitName == "worker" && countUnits < 2)
 									spawn.spawnUnit(unitName , false);
@@ -407,12 +407,12 @@ module.exports =
 				&& storages.length > 0
 				&& config.longRangeHarvestMinWorkers < numWorkers)
 			{
-				let unallocatedWorker = room.findUnallocatedUnit("worker");
+				let unassignedWorker = strategyManager.findRoomUnassignedUnit(roomName, "worker");
 
-				if (!lib.isNull(unallocatedWorker) && _.sum(unallocatedWorker.carry) == 0)
+				if (!lib.isNull(unassignedWorker) && _.sum(unassignedWorker.carry) == 0)
 				{
-					//lib.log(" Creep: " + JSON.stringify(unallocatedWorker) , debug);
-					unallocatedWorker.assignToLongDistanceHarvest();
+					//lib.log(" Creep: " + JSON.stringify(unassignedWorker) , debug);
+					unassignedWorker.assignToLongDistanceHarvest();
 				}
 
 			}

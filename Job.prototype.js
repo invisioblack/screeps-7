@@ -66,7 +66,7 @@ module.exports = function()
 		let droppedEnergy = creep.room.find(FIND_DROPPED_ENERGY);
 		droppedEnergy.forEach(function (drop) {
 			//console.log("dropID: " + drop.id);
-			if (creep.memory.sourceType != this.JOB_SOURCETYPE_DROP && this.countCreepsOnSource(drop.id) == 0)
+			if (creep.memory.sourceType != this.JOB_SOURCETYPE_DROP && strategyManager.countCreepsOnSource(drop.id) == 0)
 			{
 				//console.log("I'll get it! dropID: " + drop.id);
 				creep.memory.sourceId = drop.id;
@@ -131,7 +131,7 @@ module.exports = function()
 					let max = 1;
 					if (creep.memory.unit != "harvester")
 						max = s.getMaxHarvesters();
-					let on = s.countCreepsOnSource();
+					let on = strategyManager.countCreepsOnSource(s.id);
 					return max > on && s.energy > 0;
 				}
 			});

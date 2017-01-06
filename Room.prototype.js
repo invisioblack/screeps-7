@@ -11,6 +11,11 @@ Room.prototype.updateCache = function ()
 
 };
 
+/***********************************************************************************************************************
+ * Resource related function
+ *
+ */
+
 Room.prototype.getResources = function ()
 {
 	let debug = false;
@@ -32,11 +37,11 @@ Room.prototype.getResources = function ()
 	{
 
 		resources.units[unitName] = {};
-		resources.units[unitName].total = this.countUnits(unitName);
+		resources.units[unitName].total = strategyManager.countRoomUnits(this.name, unitName);
 		resources.units[unitName].allocated = 0;
 		resources.units[unitName].unallocated = resources.units[unitName].total;
-		resources.units[unitName].unassigned = this.countUnassignedUnits(unitName);
-		resources.units[unitName].assigned = this.countAssignedUnits(unitName);
+		resources.units[unitName].unassigned = strategyManager.countRoomUnassignedUnits(this.name, unitName);
+		resources.units[unitName].assigned = strategyManager.countRoomAssignedUnits(this.name, unitName);
 		lib.log("  " + unitName + " total: " + resources.units[unitName].total
 			+ " Assigned/UnAssigned: " + resources.units[unitName].assigned
 			+ "/" + resources.units[unitName].unassigned, debug);
@@ -62,13 +67,9 @@ Room.prototype.getSpawnEnergy = function ()
 		}
 	}
 
-	// TODO: refactor this to use the below function
-	let extenders = this.find(FIND_MY_STRUCTURES , {filter: {structureType: STRUCTURE_EXTENSION}});
-	extenders.forEach(function (ex)
-	{
-		result.energy += ex.energy;
-		result.energyCapacity += ex.energyCapacity;
-	} , this);
+	let extenderEnergy = this.getExtenderEnergy();
+	result.energy += extenderEnergy.energy;
+	result.energyCapacity += extenderEnergy.energyCapacity;
 
 	return result;
 };
@@ -112,10 +113,14 @@ Room.prototype.getControllerStatus = function ()
 	return result;
 };
 
+/***********************************************************************************************************************
+ * Creep finding functions
+ *
+ */
+
 /**
  * count creeps present in a room
  */
-
 Room.prototype.countCreeps = function ()
 {
 	let result = this.getCreeps().length;
@@ -136,19 +141,26 @@ Room.prototype.getCreeps = function ()
 	return result;
 };
 
+/**
+ * returns number of creeps in room of a unit type
+ * @param unitName
+ */
 Room.prototype.countUnits = function (unitName)
 {
 	let result = this.getUnits(unitName).length;
 	return result;
 };
 
-//
+/**
+ * returns creeps in room of unit type
+ * @param unitName
+ */
 Room.prototype.getUnits = function (unitName)
 {
 	let roomName = this.name;
 	let result = _.filter(Game.creeps , function (creep)
 	{
-		return creep.memory.motive.room == roomName
+		return creep.room.name == roomName
 		&& creep.memory.unit == unitName;
 	});
 	return result;
@@ -269,50 +281,6 @@ Room.prototype.getLostCreeps = function ()
 			&& creep.memory.motive.room != roomName;
 	});
 
-	return result;
-};
-
-Room.prototype.countCreepsOnSource = function (sourceId)
-{
-	let result = this.getCreepsOnSource(sourceId).length;
-	return result;
-};
-
-Room.prototype.getCreepsOnSource = function (sourceId)
-{
-	let roomName = this.name;
-	let result = _.filter(Game.creeps , function (creep)
-	{
-		let need = Game.rooms[creep.room.name].memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
-		return (creep.room.name == roomName
-				&& creep.memory.motive.room == roomName
-				&& creep.memory.motive.motivation != ""
-				&& creep.memory.motive.need != ""
-			) && (
-				(!lib.isNull(need) && !lib.isNull(need.sourceId))
-				&&
-				(!lib.isNull(creep.memory.job) && need.sourceId == sourceId && creep.memory.job.mode == 0)
-			);
-	});
-	return result;
-};
-
-Room.prototype.findUnallocatedUnit = function (unitName)
-{
-	return this.findUnallocatedUnits(unitName)[0];
-};
-
-Room.prototype.findUnallocatedUnits = function (unitName)
-{
-	let roomName = this.name;
-	let result = _.filter(Game.creeps , function (creep)
-	{
-		return creep.room.name == roomName
-			&& creep.memory.motive.room == roomName
-			&& creep.memory.motive.motivation == ""
-			&& creep.memory.motive.need == ""
-			&& creep.memory.unit == unitName;
-	});
 	return result;
 };
 
