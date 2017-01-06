@@ -31,7 +31,7 @@ module.exports =
 		// first we need to figure out if we have any open allocations
 		for (let unitName in units)
 		{
-			let assignedUnits = room.countMotivationUnits(motivation.name , unitName);
+			let assignedUnits = strategyManager.countRoomMotivationUnits(roomName, motivation.name , unitName);
 			let allocatedUnits = motivationMemory.allocatedUnits[unitName];
 
 			// if we have open allocations, we need to find if there is a creep to assign
@@ -65,7 +65,7 @@ module.exports =
 						// update for iteration
 						creep = room.findUnallocatedUnit(unitName);
 						creepsAssigned = room.countMotivationNeedUnits(motivation.name , need.name , unitName);
-						assignedUnits = room.countMotivationUnits(motivation.name , unitName);
+						assignedUnits = strategyManager.countRoomMotivationUnits(roomName, motivation.name , unitName);
 						allocatedUnits = motivationMemory.allocatedUnits[unitName];
 					}
 

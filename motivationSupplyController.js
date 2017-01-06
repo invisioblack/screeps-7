@@ -52,7 +52,7 @@ MotivationSupplyController.prototype.getDesireSpawn = function (roomName, demand
 	{
 		for (let unitName in units)
 		{
-			if (!lib.isNull(demands.units[unitName]) && demands.units[unitName] <= room.countUnits(unitName))
+			if (!lib.isNull(demands.units[unitName]) && demands.units[unitName] <= strategyManager.countRoomUnits(roomName, unitName))
 			{
 				result = false;
 			}
@@ -68,7 +68,7 @@ MotivationSupplyController.prototype.updateActive = function (roomName, demands)
 {
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	if (room.controller.my && demands.energy > 0)
+	if (!lib.isNull(room.controller) && room.controller.my && demands.energy > 0)
 	{
 		memory.active = true;
 	} else {
@@ -89,7 +89,7 @@ MotivationSupplyController.prototype.updateNeeds = function (roomName)
 
 	// Handle Harvest Energy Needs -------------------------------------------------------------------------------------
 	// look up sources and find out how many needs we should have for each one
-	let needName = "supplyController." + room.controller.id;
+	let needName = "supplyController." + room.name;
 	let need;
 
 	//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);

@@ -47,13 +47,13 @@ MotivationHaulToStorage.prototype.getDesireSpawn = function (roomName, demands)
 	let result = true;
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	let numWorkers = room.countUnits("worker");
+	let numWorkers = strategyManager.countRoomUnits(roomName, "worker");
 
 	if (memory.active)
 	{
 		for (let unitName in units)
 		{
-			if ((!lib.isNull(demands.units[unitName]) && demands.units[unitName] <= room.countUnits(unitName)) || numWorkers < config.critWorkers)
+			if ((!lib.isNull(demands.units[unitName]) && demands.units[unitName] <= strategyManager.countRoomUnits(roomName, unitName)) || numWorkers < config.critWorkers)
 			{
 				result = false;
 			}
@@ -72,7 +72,7 @@ MotivationHaulToStorage.prototype.updateActive = function (roomName, demands)
 	let storages = room.find(FIND_STRUCTURES, { filter: function (s) {
 		return s.structureType == STRUCTURE_STORAGE;
 	}});
-	if (room.controller.my && room.controller.level >= 4 && storages.length > 0)
+	if (!lib.isNull(room.controller) && room.controller.my && room.controller.level >= 4 && storages.length > 0)
 	{
 		memory.active = true;
 	} else {
@@ -93,7 +93,7 @@ MotivationHaulToStorage.prototype.updateNeeds = function (roomName)
 
 	// Handle Harvest Energy Needs -------------------------------------------------------------------------------------
 	// look up sources and find out how many needs we should have for each one
-	let needName = "haulStorage." + room.controller.id;
+	let needName = "haulStorage." + room.name;
 	let need;
 	let storages = room.find(FIND_STRUCTURES, { filter: function (s) {
 		return s.structureType == STRUCTURE_STORAGE;

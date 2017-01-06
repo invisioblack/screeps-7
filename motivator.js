@@ -125,9 +125,6 @@ module.exports =
 					room.safeModeFailsafe(roomName);
 				}
 
-				// handle lost creeps
-				room.handleLostCreeps();
-
 				// declarations ----------------------------------------------------------------------------------------
 				let resources = room.getResources(); // get room resources
 				let demands = {};
@@ -264,7 +261,9 @@ module.exports =
 								// update resources.units["worker"].unallocated
 								resources.units[unitName].allocated += motivationMemory.allocatedUnits[unitName];
 								resources.units[unitName].unallocated -= motivationMemory.allocatedUnits[unitName];
-								lib.log('    Allocation/Total: ' + resources.units[unitName].allocated + '/' + resources.units[unitName].total + ' Unallocated: ' + resources.units[unitName].unallocated , debug);
+								lib.log('    Allocation/Total: ' + resources.units[unitName].allocated
+									+ '/' + resources.units[unitName].total
+									+ ' Unallocated: ' + resources.units[unitName].unallocated , debug);
 							}
 							else
 							{ // handle no demands
@@ -354,11 +353,15 @@ module.exports =
 				needManager.fulfillNeeds(roomName);
 
 				// motivate defense towers -----------------------------------------------------------------------------
-				if (room.controller.my)
+				if (!lib.isNull(room.controller) && room.controller.my)
 				{
 					room.motivateTowers(roomName);
 				}
 			}
+
+			// handle lost creeps
+			room.handleLostCreeps();
+
 			lib.log(`Room: ${roomLink(lib.nullProtect(roomName, ""))} Used CPU: ${Game.cpu.getUsed() - cpuUsed}`, config.cpuDebug);
 			cpuUsed = Game.cpu.getUsed();
 		}
@@ -384,7 +387,7 @@ module.exports =
 	{
 		let debug = false;
 		let room = Game.rooms[roomName];
-		let numWorkers = room.countUnits("worker");
+		let numWorkers = strategyManager.countRoomUnits(roomName, "worker");
 		let storages = room.find(FIND_STRUCTURES, { filter: function (s) {
 			return s.structureType == STRUCTURE_STORAGE;
 		}});

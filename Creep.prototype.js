@@ -121,6 +121,8 @@ Creep.prototype.initMotive = function()
 {
 	if (lib.isNull(this.memory.motive))
 	{
+		//cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("strategyManager.countRoomMotivationUnits", [this.memory.motive.room, this.memory.motive.motivation, this.memory.unit]));
+
 		this.memory.motive = {};
 		this.memory.motive.room = this.room.name;
 		this.memory.motive.motivation = "";
@@ -130,28 +132,49 @@ Creep.prototype.initMotive = function()
 
 Creep.prototype.assignMotive = function (roomName, motivationName, needName)
 {
+	// dirty the cache for the before and after values
+	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("strategyManager.countRoomMotivationUnits", [this.memory.motive.room, this.memory.motive.motivation, this.memory.unit]));
+	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("strategyManager.countRoomMotivationUnits", [roomName, motivationName, this.memory.unit]));
+
+
+	// assign the new motive
 	this.say(needName);
+	this.memory.motive.room = roomName;
 	this.memory.motive.motivation = motivationName;
 	this.memory.motive.need = needName;
 };
 
-Creep.prototype.deassignMotive = function ()
+Creep.prototype.deassignMotive = function (roomName)
 {
+	// dirty the cache for the before and after values
+	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("strategyManager.countRoomMotivationUnits", [this.memory.motive.room, this.memory.motive.motivation, this.memory.unit]));
+	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("strategyManager.countRoomMotivationUnits", [roomName, "", this.memory.unit]));
+
+
 	this.say("Done!");
+	if (!lib.isNull(roomName))
+		this.memory.motive.room = roomName;
 	this.memory.motive.motivation = "";
 	this.memory.motive.need = "";
 };
 
 Creep.prototype.assignToLongDistanceHarvest = function ()
 {
+    if (this.memory.unit != "worker")
+        return;
+    
 	let room = roomManager.getLongDistanceHarvestTarget();
+	// dirty the cache for the before and after values
+	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("strategyManager.countRoomMotivationUnits", [this.memory.motive.room, this.memory.motive.motivation, this.memory.unit]));
+	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("strategyManager.countRoomMotivationUnits", [room, "", this.memory.unit]));
+
 	if (!lib.isNull(room) && room != "")
 	{
 		this.memory.motive.room = room;
-		this.memory.motive.motivation = "";
-		this.memory.motive.need = "";
 		this.memory.sourceId = "";
 		this.memory.sourceType = 0;
+		this.deassignMotive();
+
 	}
 };
 

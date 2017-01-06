@@ -67,8 +67,7 @@ JobLongDistanceHarvest.prototype.work = function (creep)
 				// once the creep is full of energy, deassign him and send him home
 				//console.log("return: " + target);
 				this.resetSource(creep);
-				creep.deassignMotive();
-				creep.memory.motive.room = creep.memory.homeRoom;
+				creep.deassignMotive(creep.memory.homeRoom);
 			}
 			break;
 	}

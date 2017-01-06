@@ -150,8 +150,7 @@ module.exports = function()
 			creep.sing("No Energy!");
 			if (creep.room.name != creep.memory.homeRoom)
 			{
-				creep.memory.motive.room = creep.memory.homeRoom;
-				creep.deassignMotive();
+				creep.deassignMotive(creep.memory.homeRoom);
 				this.resetSource(creep);
 			}
 

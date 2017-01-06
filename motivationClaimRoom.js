@@ -24,7 +24,6 @@ let MotivationClaimRoom = function ()
 	}
 };
 
-
 MotivationClaimRoom.prototype = Object.create(Motivation.prototype);
 MotivationClaimRoom.prototype.constructor = MotivationClaimRoom;
 
@@ -52,7 +51,7 @@ MotivationClaimRoom.prototype.getDesireSpawn = function (roomName, demands)
 	let debug = false;
 	let result = false;
 	let room = Game.rooms[roomName];
-	let numWorkers = room.countUnits("worker");
+	let numWorkers = strategyManager.countRoomUnits(roomName, "worker");
 
 
 	// filter this to only claims spawning in specified room
@@ -66,7 +65,7 @@ MotivationClaimRoom.prototype.getDesireSpawn = function (roomName, demands)
 		, debug);
 
 	// if it isn't our room or we have a worker shortage, false
-	if (!room.controller.my || numWorkers < config.critWorkers)
+	if (!lib.isNull(room.controller) && !room.controller.my || numWorkers < config.critWorkers)
 	{
 		lib.log(">&>&>&>&>&>&> FAIL", debug);
 		return false;
@@ -109,7 +108,12 @@ MotivationClaimRoom.prototype.updateActive = function (roomName, demands)
 	});
 
 	// handle updating active
-	if (room.controller.my)
+	if (lib.isNull(room.controller))
+	{
+		// if the room does not have a controller, inactive
+		memory.active = false;
+	}
+	else if (room.controller.my)
 	{
 		// be active if we are specified as a spawning room
 		if (countSpawnClaims)
@@ -125,6 +129,7 @@ MotivationClaimRoom.prototype.updateActive = function (roomName, demands)
 		else
 			memory.active = false;
 	}
+
 };
 
 MotivationClaimRoom.prototype.updateNeeds = function (roomName)
@@ -132,26 +137,30 @@ MotivationClaimRoom.prototype.updateNeeds = function (roomName)
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
 
-	// insure memory is initialized for needs
-	if (lib.isNull(memory.needs))
+	// only create needs if a controller is present
+	if (!lib.isNull(room.controller))
 	{
-		memory.needs = {};
-	}
+		// insure memory is initialized for needs
+		if (lib.isNull(memory.needs))
+		{
+			memory.needs = {};
+		}
 
-	let needName = "claim." + roomName;
-	let need;
+		let needName = "claim." + roomName;
+		let need;
 
-	//console.log('Need Name: ' + needName);
+		//console.log('Need Name: ' + needName);
 
-	// create new need if one doesn't exist
-	if (lib.isNull(memory.needs[needName]))
-	{
-		memory.needs[needName] = {};
-		need = memory.needs[needName];
-		need.name = needName;
-		need.type = "needClaim";
-		need.targetId = room.controller.id;
-		need.priority = C.PRIORITY_1;
+		// create new need if one doesn't exist
+		if (lib.isNull(memory.needs[needName]))
+		{
+			memory.needs[needName] = {};
+			need = memory.needs[needName];
+			need.name = needName;
+			need.type = "needClaim";
+			need.targetId = room.controller.id;
+			need.priority = C.PRIORITY_1;
+		}
 	}
 };
 

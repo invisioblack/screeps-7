@@ -62,7 +62,7 @@ MotivationMaintainInfrastructure.prototype.getDesireSpawn = function (roomName, 
 
 	if (memory.active)
 	{
-		let workers = room.countUnits("worker");
+		let workers = strategyManager.countRoomUnits(roomName, "worker");
 		if (!lib.isNull(demands.units["worker"]) && demands.units["worker"] <= workers)
 			result = false;
 	} else {
@@ -144,7 +144,7 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 
 	// Handle WALLRepair Needs -------------------------------------------------------------------------------------
 	// look up sources and find out how many needs we should have for each one
-	let wallHP = config.wallHP[room.controller.level];
+	let wallHP = config.wallHP[lib.isNull(room.controller) ? 0 : room.controller.level];
 	let wallRepairSites = room.find(FIND_STRUCTURES, {
 		filter: function (s) {
 			return (s.structureType == STRUCTURE_WALL || s.structureType == STRUCTURE_RAMPART) && s.hits < wallHP;

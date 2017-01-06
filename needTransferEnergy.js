@@ -34,7 +34,12 @@ NeedTransferEnergy.prototype.getUnitDemands = function(roomName, memory, motivat
 	let workerCapacity = lib.nullProtect(worker.carryCapacity, 50);
 	//console.log(JSON.stringify(memory));
 
-	if (!lib.isNull(target.energy))
+	if (lib.isNull(target))
+	{
+		energyCapacity = 0;
+		energy = 0;
+	}
+	else if (!lib.isNull(target.energy))
 	{
 		energyCapacity = target.energyCapacity;
 		energy = target.energy;

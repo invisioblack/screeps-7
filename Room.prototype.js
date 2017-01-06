@@ -6,23 +6,9 @@
  * functions
  */
 
-/**
- * Returns the cost of passed array of parts
- * @param parts
- * @returns {number}
- */
-Room.prototype.getCostParts = function (parts)
+Room.prototype.updateCache = function ()
 {
-	let result = 0;
-	if (parts.length)
-	{
-		for (let x in parts)
-		{
-			//console.log("P: " + parts[x]);
-			result += Spawn.prototype.getCostParts.costs[parts[x]];
-		}
-	}
-	return result;
+
 };
 
 Room.prototype.getResources = function ()
@@ -41,7 +27,7 @@ Room.prototype.getResources = function ()
 	lib.log('  Spawn Energy: ' + resources.spawnEnergy.energy + '/' + resources.spawnEnergy.energyCapacity + ' Controller Level: ' + resources.controllerStatus.level + ' ' + resources.controllerStatus.progress + '/' + resources.controllerStatus.progressTotal + ' Downgrade: ' + resources.controllerStatus.ticksToDowngrade, debug);
 
 	// get unit resources
-	resources.units = [];
+	resources.units = {};
 	for (let unitName in units)
 	{
 
@@ -55,6 +41,7 @@ Room.prototype.getResources = function ()
 			+ " Assigned/UnAssigned: " + resources.units[unitName].assigned
 			+ "/" + resources.units[unitName].unassigned, debug);
 	}
+
 	return resources;
 };
 
@@ -125,6 +112,10 @@ Room.prototype.getControllerStatus = function ()
 	return result;
 };
 
+/**
+ * count creeps present in a room
+ */
+
 Room.prototype.countCreeps = function ()
 {
 	let result = this.getCreeps().length;
@@ -132,6 +123,9 @@ Room.prototype.countCreeps = function ()
 	return result;
 };
 
+/**
+ * returns creeps present in a room
+ */
 Room.prototype.getCreeps = function ()
 {
 	let roomName = this.name;
@@ -148,14 +142,14 @@ Room.prototype.countUnits = function (unitName)
 	return result;
 };
 
+//
 Room.prototype.getUnits = function (unitName)
 {
 	let roomName = this.name;
 	let result = _.filter(Game.creeps , function (creep)
 	{
-		return creep.room.name == roomName
-			&& creep.memory.motive.room == roomName
-			&& creep.memory.unit == unitName;
+		return creep.memory.motive.room == roomName
+		&& creep.memory.unit == unitName;
 	});
 	return result;
 };
@@ -174,26 +168,6 @@ Room.prototype.getMotivationCreeps = function (motivationName)
 		return creep.room.name == roomName
 			&& creep.memory.motive.room == roomName
 			&& creep.memory.motive.motivation == motivationName;
-	});
-	return result;
-};
-
-Room.prototype.countMotivationUnits = function (motivationName , unitName)
-{
-	let result = this.getMotivationUnits(motivationName , unitName).length;
-	//console.log(result);
-	return result;
-};
-
-Room.prototype.getMotivationUnits = function (motivationName , unitName)
-{
-	let roomName = this.name;
-	let result = _.filter(Game.creeps , function (creep)
-	{
-		return creep.room.name == roomName
-			&& creep.memory.motive.room == roomName
-			&& creep.memory.motive.motivation == motivationName
-			&& creep.memory.unit == unitName;
 	});
 	return result;
 };
@@ -260,6 +234,7 @@ Room.prototype.getAssignedUnits = function (unitName)
 Room.prototype.countUnassignedUnits = function (unitName)
 {
 	let result = this.getUnassignedUnits(unitName).length;
+
 	return result;
 };
 
@@ -286,7 +261,6 @@ Room.prototype.countLostCreeps = function ()
 
 Room.prototype.getLostCreeps = function ()
 {
-	let debug = true;
 	let roomName = this.name;
 
 	let result = _.filter(Game.creeps , function (creep)
@@ -459,7 +433,7 @@ Room.prototype.getMaxHarvesters = function ()
 };
 
 /*
- * NOTES: sentences are broken down using | to seperate pieces
+ * NOTES: sentences are broken down using | to separate pieces
  *        public will default to true
  * Room.prototype.sing(sentence, public)
  *   all creeps in the room will sing parts of the sentence

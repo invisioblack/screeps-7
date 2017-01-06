@@ -29,7 +29,7 @@ NeedSupplyExtenders.prototype.getUnitDemands = function(roomName, memory, motiva
 	let result = {};
 	let room = Game.rooms[roomName];
 	let energy, energyCapacity, neededEnergy;
-	let worker = lib.nullProtect(room.getUnits("worker")[0], {});
+	let worker = lib.nullProtect(strategyManager.getRoomUnits(roomName, "worker")[0], {});
 	let workerCapacity = lib.nullProtect(worker.carryCapacity, 50);
 	let extenderEnergy = room.getExtenderEnergy();
 	//console.log(JSON.stringify(memory));

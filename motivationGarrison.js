@@ -58,9 +58,9 @@ MotivationGarrison.prototype.getDesireSpawn = function (roomName, demands)
 MotivationGarrison.prototype.getDesiredSpawnUnit = function (roomName)
 {
 	let room = Game.rooms[roomName];
-	let numGuard = room.countUnits("guard");
-	let numRangedGuard = room.countUnits("rangedGuard");
-	let numHeal = room.countUnits("heal");
+	let numGuard = strategyManager.countRoomUnits(roomName, "guard");
+	let numRangedGuard = strategyManager.countRoomUnits("rangedGuard");
+	let numHeal = strategyManager.countRoomUnits("heal");
 
 	if (numRangedGuard < numGuard)
 		return "rangedGuard";
@@ -74,7 +74,7 @@ MotivationGarrison.prototype.updateActive = function (roomName, demands)
 {
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	if (room.controller.my && room.memory.threat.count > 0)
+	if (!lib.isNull(room.controller) && room.controller.my && room.memory.threat.count > 0)
 	{
 		memory.active = true;
 	} else {

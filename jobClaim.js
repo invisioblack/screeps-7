@@ -47,8 +47,7 @@ JobClaim.prototype.work = function (creep)
 				let countUnits = strategyManager.countRoomUnits(c.room, "claimer");
 				if (!countUnits)
 				{
-					creep.deassignMotive();
-					creep.memory.motive.room = c.room;
+					creep.deassignMotive(c.room);
 				}
 			});
 

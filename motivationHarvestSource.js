@@ -43,8 +43,8 @@ MotivationHarvestSource.prototype.getDesireSpawn = function (roomName, demands)
 	let result = true;
 	let room = Game.rooms[roomName];
 	let numContainers = room.find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }}).length;
-	let numHarvesters = room.countUnits("harvester");
-	let numWorkers = room.countUnits("worker");
+	let numHarvesters = strategyManager.countRoomUnits(roomName, "harvester");
+	let numWorkers = strategyManager.countRoomUnits(roomName, "worker");
 
 	if (numContainers == 0 || numHarvesters >= demands.units["harvester"] || numWorkers < config.critWorkers)
 	{
@@ -70,7 +70,7 @@ MotivationHarvestSource.prototype.updateActive = function (roomName, demands)
 				return s.structureType == STRUCTURE_CONTAINER;
 			}
 		}).length;
-		numHarvesters = room.countUnits("harvester");
+		numHarvesters = strategyManager.countRoomUnits(roomName, "harvester");
 	}
 
 	if (!lib.isNull(room.controller) && room.controller.my && numContainers > 0 && numHarvesters > 0)
