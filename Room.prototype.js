@@ -473,7 +473,7 @@ Room.prototype.safeModeFailsafe = function ()
 		//safeModeCooldown	number	During this period in ticks new safe mode activations will be blocked, undefined if cooldown is inactive.
 		let safeModeCooldown = lib.nullProtect(controller.safeModeCooldown , 0);
 
-		if (hostiles.length && !safeMode && safeModeAvailable && !safeModeCooldown)
+		if (hostiles.length && !safeMode && safeModeAvailable && !safeModeCooldown && controller.level < 4)
 		{
 			lib.log("!!!!!!!!!!!!!!! ACTIVATING SAFE MODE !!!!!!!!!!!!!!!", debug);
 			controller.activateSafeMode();

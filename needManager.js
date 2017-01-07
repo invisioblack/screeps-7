@@ -86,9 +86,10 @@ module.exports =
 		for (let creepName in Game.creeps)
 		{
 			let creep = Game.creeps[creepName];
-			if (creep.room.name == roomName && creep.memory.motive.room == roomName && creep.memory.motive.need != "")
+			if (creep.room.name == roomName && creep.memory.motive.room == roomName && creep.memory.motive.motivation != "" && creep.memory.motive.need != "")
 			{
 				lib.log("Creep executing need: " + creep.name + " : " + creep.memory.motive.motivation + " : " + creep.memory.motive.need, debug);
+
 				let need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
 
 				lib.log("Creep: " + creep.name + " m: " + creep.memory.motive.motivation + " n: " + creep.memory.motive.need, debug);

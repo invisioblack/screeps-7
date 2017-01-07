@@ -110,6 +110,9 @@ global.h10 = "healer-10";
 global.cRoom = function(creepName, roomName)
 {
 	Game.creeps[creepName].deassignMotive(roomName);
+	Game.creeps[creepName].memory.motive.room = roomName;
+	Game.creeps[creepName].memory.motive.motivation = "";
+	Game.creeps[creepName].memory.motive.need = "";
 };
 
 /**

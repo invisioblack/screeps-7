@@ -11,11 +11,10 @@ module.exports =
 		}
 	},
 
-
 	tickTrack: function ()
 	{
 		let result = {};
-		let tenTickAverage, hunTickAve, thouTickAve;
+		let tenTick, hunTick, thouTick;
 
 		this.initMem();
 		// insure memory structure exist
@@ -39,18 +38,25 @@ module.exports =
 		if (config.cpuDebug)
 		{
 			let ticks = _.take(Memory.cpu.tickTrack, 10);
-			tenTickAverage = _.round(_.sum(ticks, function (t) { return t.used;})/10, 1);
+			tenTick = _.round(_.sum(ticks, function (t) { return t.used;})/10, 1);
 
 			ticks = _.take(Memory.cpu.tickTrack, 100);
-			hunTickAve = _.round(_.sum(ticks, function (t) { return t.used;})/100, 1);
+			hunTick = _.round(_.sum(ticks, function (t) { return t.used;})/100, 1);
 
-			thouTickAve = _.round(_.sum(Memory.cpu.tickTrack, function (t) { return t.used;})/Memory.cpu.tickTrack.length, 1);
+			thouTick = _.round(_.sum(Memory.cpu.tickTrack, function (t) { return t.used;})/Memory.cpu.tickTrack.length, 1);
 
 		}
 
-		lib.log(`Tick: ${result.tick} Ave 10/100/All: ${tenTickAverage}/${hunTickAve}/${thouTickAve} Used CPU: ${_.round(result.used, 1)}/${result.limit} Bucket: ${_.round(result.bucketChange, 1)}/${result.bucket}`, config.cpuDebug);
+		lib.log(`Tick: ${result.tick} Ave 10/100/All: ${tenTick}/${hunTick}/${thouTick} Used CPU: ${_.round(result.used, 1)}/${result.limit} Bucket: ${_.round(result.bucketChange, 1)}/${result.bucket}`, config.cpuDebug);
 
+	},
+
+	cpuLog: function (message)
+	{
+		global.cpuUsed = Game.cpu.getUsed();
+		let cpuDiff = cpuUsed - cpuUsedLast;
+		lib.log(`${message} CPU Used Total: ${_.round(cpuUsed, 1)} CPU Used Diff: ${_.round(cpuDiff, 1)}`, config.cpuDetailDebug);
+		cpuUsedLast = cpuUsed;
 	}
-
 
 };

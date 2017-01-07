@@ -99,6 +99,7 @@ module.exports =
 	// Main motivator function, should be called first from main
 	"motivate": function ()
 	{
+		cpuManager.cpuLog("Motivate Start");
 		let debug = false;
 		let room;
 		let cpuUsed = 0;
@@ -106,9 +107,6 @@ module.exports =
 		// motivate in each room we control ----------------------------------------------------------------------------
 		for (let roomName in Game.rooms)
 		{
-			if (cpuUsed === 0)
-				cpuUsed = Game.cpu.getUsed();
-
 			if (!lib.isNull(roomName))
 			{
 				room = Game.rooms[roomName];
@@ -367,8 +365,9 @@ module.exports =
 			// handle lost creeps
 			room.handleLostCreeps();
 
-			lib.log(`Room: ${roomLink(lib.nullProtect(roomName, ""))} Used CPU: ${Game.cpu.getUsed() - cpuUsed}`, config.cpuDebug);
-			cpuUsed = Game.cpu.getUsed();
+			cpuManager.cpuLog(`Room: ${roomLink(lib.nullProtect(roomName, ""))}`);
+			//lib.log(` Used CPU: ${Game.cpu.getUsed() - cpuUsed}`, config.cpuDetailDebug);
+			//cpuUsed = Game.cpu.getUsed();
 		}
 
 	},
