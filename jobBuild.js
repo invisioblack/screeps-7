@@ -67,7 +67,7 @@ JobBuild.prototype.work = function (creep)
 			} else {
 
 				let result = creep.build(target);
-				// /console.log("build: " + target + " Result: " + result);
+				//console.log("build: " + target + " Result: " + result);
 				if (result == ERR_NOT_IN_RANGE)
 				{
 					let moveResult = creep.moveTo(target, {"maxRooms": 1});
@@ -78,7 +78,10 @@ JobBuild.prototype.work = function (creep)
 					creep.deassignMotive();
 				}
 				else if (result < 0)
+				{
+					creep.deassignMotive();
 					console.log(creep.name + " Can't build: " + target + " result: " + result);
+				}
 			}
 			break;
 	}

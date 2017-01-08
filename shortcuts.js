@@ -249,48 +249,60 @@ global.qUnclaim = function (roomName)
 // long range harvest --------------------------------------------------------------------------------------------------
 global.lList = function ()
 {
-	let outputString = "\n--- Current Long Distance Harvest Targets ---\n";
-	outputString += "\tRoom\n";
-	_.forEach(Memory.longDistanceHarvestTargets, function (target)
-	{
-		let button;
-		let buttonCommand = "lRemove('" + target + "')";
-		let link = roomLink(target);
+	let outputString = "\n--- Current Long Distance Harvest Targets ---";
+	let button, buttonCommand, link;
 
-		button = makeButton(getId() , undefined , "Stop Harvesting" , buttonCommand);
-		outputString += `\troom: ${link}\t ${button}\n`;
+	_.forEach(Memory.rooms, function (r, k) {
+		link = roomLink(k);
+		outputString += `\nSource Room: ${link}`;
+		_.forEach(r.longDistanceHarvestTargets, function (target)
+		{
+			buttonCommand = "lRemove('" + target + "')";
+			link = roomLink(target);
+			button = makeButton(getId() , undefined , "Stop Harvesting" , buttonCommand);
+			outputString += `\n\troom: ${link}\t ${button}\n`;
+		});
+		if (r.longDistanceHarvestTargets.length === 0)
+			outputString += `\n\tNo targets.`;
 	});
 
-	console.log(outputString);
+
+	return outputString;
 };
 
-global.lAdd = function (roomName)
+global.lAdd = function (sourceRoomName, targetRoomName)
 {
-	let targets = Memory.longDistanceHarvestTargets;
+	if (lib.isNull(sourceRoomName) || lib.isNull(targetRoomName))
+		return "Missing argument(s). - sourceRoomName, targetRoomName";
+	if (lib.isNull(Memory.rooms[sourceRoomName]))
+		return "Missing source room: " + sourceRoomName;
+
+	let targets = Memory.rooms[sourceRoomName].longDistanceHarvestTargets;
 	let target = _.find(targets, function (c)
 	{
-		return c === roomName;
+		return c === targetRoomName;
 	});
-
-	if (lib.isNull(roomName))
-		return "Missing argument(s). - roomName, spawnRoom, claimType";
-
 
 	if (lib.isNull(target))
 	{
-		targets.push(roomName);
+		targets.push(targetRoomName);
 		return "New target added.";
 	} else {
 		return "Target exists."
 	}
 };
 
-global.lRemove = function (roomName)
+global.lRemove = function (sourceRoomName, targetRoomName)
 {
-	let targets = Memory.longDistanceHarvestTargets;
+	if (lib.isNull(sourceRoomName) || lib.isNull(targetRoomName))
+		return "Missing argument(s). - sourceRoomName, targetRoomName";
+	if (lib.isNull(Memory.rooms[sourceRoomName]))
+		return "Missing source room: " + sourceRoomName;
+
+	let targets = Memory.rooms[sourceRoomName].longDistanceHarvestTargets;
 	let target = _.find(targets, function (c)
 	{
-		return c === roomName;
+		return c === targetRoomName;
 	});
 
 	if (lib.isNull(target))

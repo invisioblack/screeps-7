@@ -16,7 +16,7 @@ module.exports =
 			let sortList = {};
 			let result;
 
-			Memory.longDistanceHarvestTargets.forEach( function (roomName)
+			this.memory.longDistanceHarvestTargets.forEach( function (roomName)
 			{
 				let room = Game.rooms[roomName];
 				if (lib.isNull(room))

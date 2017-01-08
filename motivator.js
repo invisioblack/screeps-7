@@ -17,7 +17,10 @@ module.exports =
 		{
 			let room = Game.rooms[roomName];
 
+			if (lib.isNull(room))
+				console.log("NULL ROOM");
 
+			room.init();
 			room.initMemCache();
 			room.updateEnergyPickupMode();
 

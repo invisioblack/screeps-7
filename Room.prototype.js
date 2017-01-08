@@ -6,6 +6,16 @@
  * functions
  */
 
+/**
+ * Insure all memory is setup for a room
+ */
+Room.prototype.init = function ()
+{
+	if(lib.isNull(this.memory.longDistanceHarvestTargets))
+	{
+		this.memory.longDistanceHarvestTargets = [];
+	}
+};
 
 Room.prototype.initMemCache = function (forceRefresh)
 {
@@ -50,7 +60,7 @@ Room.prototype.updateStructureCache = function (forceRefresh)
 		_.forEach(STRUCTURES , function (s)
 		{
 			//console.log(`Type: ${s} Level: ${roomLevel}`);
-			if (!lib.isNull(CONTROLLER_STRUCTURES[s]) && CONTROLLER_STRUCTURES[s][roomLevel] <= roomLevel)
+			if (!lib.isNull(CONTROLLER_STRUCTURES[s]) && CONTROLLER_STRUCTURES[s][roomLevel] >= 0)
 			{
 				//console.log(`Checking ${s}...`);
 				let foundStructures = room.find(FIND_STRUCTURES , { filter: function (st)

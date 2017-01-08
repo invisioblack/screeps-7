@@ -47,10 +47,13 @@ require('RoomPosition.prototype');
 require('Spawn.prototype');
 require('StructureTower.prototype');
 
+
+
+
 const profiler = require('screepsProfiler');
 profiler.enable();
-
 require("globals");
+
 
 // global -------------------------------------------------------------------------------------------------------------
 // modules
@@ -58,8 +61,10 @@ require("globals");
 // main loop -----------------------------------------------------------------------------------------------------------
 module.exports.loop = function ()
 {
+
 	profiler.wrap(function()
 	{
+		delete Memory.rooms[undefined];
 		require("logging");
 		require("shortcuts");
 		global.cpuUsedLast = 0;

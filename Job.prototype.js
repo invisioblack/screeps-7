@@ -142,7 +142,7 @@ module.exports = function()
 			{
 				creep.memory.job.mode = this.JOB_MODE_WORK;
 				this.resetSource(creep);
-			} else if (creep.memory.unit == "worker" && Memory.longDistanceHarvestTargets.length > 0) {
+			} else if (creep.memory.unit == "worker" && creep.room.memory.longDistanceHarvestTargets.length > 0) {
 				creep.assignToLongDistanceHarvest();
 			}
 		} else { // move to and pick up the goods
