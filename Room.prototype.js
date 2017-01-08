@@ -140,8 +140,14 @@ Room.prototype.updateEnergyPickupMode = function ()
 		result = C.ROOM_ENERGYPICKUPMODE_HARVEST;
 
 		let numContainers = lib.nullProtect(this.memory.cache.structures[STRUCTURE_CONTAINER], []).length;
+		let containers = _.map(this.memory.cache.structures[STRUCTURE_CONTAINER], function (cid) {
+			return Game.getObjectById(cid);
+		});
+		let containerEnergy = _.sum(containers, function (c) {
+			return c.store[RESOURCE_ENERGY];
+		});
 
-		if (numContainers >= this.memory.cache.sources.length && strategyManager.countRoomUnits(this.name, "harvester") > 0)
+		if (numContainers >= this.memory.cache.sources.length && (containerEnergy > 0 || strategyManager.countRoomUnits(this.name, "harvester") > 0))
 		{
 			let numStorage = lib.nullProtect(this.memory.cache.structures[STRUCTURE_STORAGE], []).length;
 			result = C.ROOM_ENERGYPICKUPMODE_CONTAINER;
@@ -455,10 +461,18 @@ Room.prototype.handleLostCreeps = function()
 	let lostCreeps = this.getLostCreeps();
 	lostCreeps.forEach(function (creep)
 	{
-		let exit = creep.room.findExitTo(creep.memory.motive.room);
-		// and move to exit
-		creep.moveTo(creep.pos.findClosestByPath(exit, { ignoreCreeps: true }));
-		creep.say("Leave!");
+		let room = Game.rooms[creep.memory.motive.room];
+
+		if (!lib.isNull(room) && !lib.isNull(room.controller))
+		{
+			creep.moveTo(room.controller);
+			creep.say("Exit!");
+		} else {
+			let exit = creep.room.findExitTo(creep.memory.motive.room);
+			// and move to exit
+			creep.moveTo(creep.pos.findClosestByPath(exit, { ignoreCreeps: true }));
+			creep.say("Leave!");
+		}
 	}, this);
 };
 

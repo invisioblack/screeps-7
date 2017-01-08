@@ -98,6 +98,11 @@ function cleanupMemory ()
         if(!Game.creeps[i])
         {
         	let mem = Memory.creeps[i];
+        	if (!lib.isNull(mem)
+		        && !lib.isNull(mem.unit)
+		        && !lib.isNull(mem.motive)
+		        && !lib.isNull(mem.motive.room)
+		        && !lib.isNull(mem.motive.motivation))
 	        cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("strategyManager.countRoomMotivationUnits", [mem.motive.room, mem.motive.motivation, mem.unit]));
 	        delete Memory.creeps[i];
         }

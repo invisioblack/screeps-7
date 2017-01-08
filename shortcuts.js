@@ -110,9 +110,7 @@ global.h10 = "healer-10";
 global.cRoom = function(creepName, roomName)
 {
 	Game.creeps[creepName].deassignMotive(roomName);
-	Game.creeps[creepName].memory.motive.room = roomName;
-	Game.creeps[creepName].memory.motive.motivation = "";
-	Game.creeps[creepName].memory.motive.need = "";
+	Game.creeps[creepName].memory.homeRoom = roomName;
 };
 
 /**
@@ -122,9 +120,13 @@ global.cRoom = function(creepName, roomName)
  */
 global.cTRoom = function(creepName, roomName)
 {
-	Game.creeps[creepName].memory.motive.room = roomName;
-	Game.creeps[creepName].memory.motive.motivation = "";
-	Game.creeps[creepName].memory.motive.need = "";
+	Game.creeps[creepName].deassignMotive(roomName);
+};
+
+
+global.cAssign = function (creepName, roomName, motivationName, needName)
+{
+	Game.creeps[creepName].assignMotive(roomName, motivationName, needName);
 };
 
 global.cList = function (roomName)
