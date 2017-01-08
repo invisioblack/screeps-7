@@ -257,7 +257,7 @@ global.lList = function ()
 		outputString += `\nSource Room: ${link}`;
 		_.forEach(r.longDistanceHarvestTargets, function (target)
 		{
-			buttonCommand = "lRemove('" + target + "')";
+			buttonCommand = "lRemove('" + k + "','" + target + "')";
 			link = roomLink(target);
 			button = makeButton(getId() , undefined , "Stop Harvesting" , buttonCommand);
 			outputString += `\n\troom: ${link}\t ${button}\n`;

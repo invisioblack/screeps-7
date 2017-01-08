@@ -392,7 +392,7 @@ module.exports =
 
 	"sendOffLongDistanceHarvesters": function (roomName)
 	{
-		let debug = false;
+		let debug = true;
 		let room = Game.rooms[roomName];
 		let numWorkers = strategyManager.countRoomUnits(roomName, "worker");
 		let storages = room.find(FIND_STRUCTURES, { filter: function (s) {
@@ -402,7 +402,7 @@ module.exports =
 		// do I have vis on room, does room have a controller
 		if (!lib.isNull(room) && !lib.isNull(room.controller))
 		{
-			lib.log("LR Harvest: " + roomName
+			lib.log("LR Harvest: " + roomName + " My: " + room.controller.my
 				+ " workers/min: " + numWorkers + "/" + config.longRangeHarvestMinWorkers
 				+ " storages: " + storages.length
 				+ " RCL: " + room.controller.level

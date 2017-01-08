@@ -163,7 +163,7 @@ Creep.prototype.assignToLongDistanceHarvest = function ()
     if (this.memory.unit != "worker")
         return;
     
-	let room = roomManager.getLongDistanceHarvestTarget();
+	let room = roomManager.getLongDistanceHarvestTarget(this.memory.motive.room);
 	// dirty the cache for the before and after values
 	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("strategyManager.countRoomMotivationUnits", [this.memory.motive.room, this.memory.motive.motivation, this.memory.unit]));
 	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("strategyManager.countRoomMotivationUnits", [room, "", this.memory.unit]));

@@ -11,12 +11,15 @@ module.exports =
 		//--------------------------------------------------------------------------
 		// top level functions
 		//--------------------------------------------------------------------------
-		"getLongDistanceHarvestTarget": function ()
+		"getLongDistanceHarvestTarget": function (roomName)
 		{
 			let sortList = {};
 			let result;
 
-			this.memory.longDistanceHarvestTargets.forEach( function (roomName)
+			if (lib.isNull(Memory.rooms[roomName]) || lib.isNull(Memory.rooms[roomName].longDistanceHarvestTargets))
+				return "";
+
+			Memory.rooms[roomName].longDistanceHarvestTargets.forEach( function (roomName)
 			{
 				let room = Game.rooms[roomName];
 				if (lib.isNull(room))
