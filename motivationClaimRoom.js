@@ -38,6 +38,7 @@ MotivationClaimRoom.prototype.getDemands = function (roomName, resources) {
 	result.spawn = this.getDesireSpawn(roomName, result);
 	//console.log(JSON.stringify(result.units));
 	lib.log("  Claim Room Demands : " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn, false);
+	Memory.rooms[roomName].motivations[this.name].demands = result;
 	return result;
 };
 
@@ -51,8 +52,7 @@ MotivationClaimRoom.prototype.getDesireSpawn = function (roomName, demands)
 	let debug = false;
 	let result = false;
 	let room = Game.rooms[roomName];
-	let numWorkers = strategyManager.countRoomUnits(roomName, "worker");
-
+	let numWorkers = Memory.rooms[roomName].resources.units["worker"].total;
 
 	// filter this to only claims spawning in specified room
 	let spawnClaims = _.filter(Memory.claims, function (c){

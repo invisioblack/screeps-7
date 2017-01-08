@@ -47,7 +47,7 @@ module.exports =
 
 		}
 
-		lib.log(`Tick: ${result.tick} Ave 10/100/All: ${tenTick}/${hunTick}/${thouTick} Used CPU: ${_.round(result.used, 1)}/${result.limit} Bucket: ${_.round(result.bucketChange, 1)}/${result.bucket}`, config.cpuDebug);
+		lib.log(`Tick: ${result.tick}\tAve 10/100/All: ${tenTick}/${hunTick}/${thouTick}\tUsed CPU: ${_.round(result.used, 1)}/${result.limit}\tBucket: ${_.round(result.bucketChange, 1)}/${result.bucket}`, config.cpuDebug);
 
 	},
 
@@ -55,7 +55,7 @@ module.exports =
 	{
 		global.cpuUsed = Game.cpu.getUsed();
 		let cpuDiff = cpuUsed - cpuUsedLast;
-		lib.log(`${message} CPU Used Total: ${_.round(cpuUsed, 1)} CPU Used Diff: ${_.round(cpuDiff, 1)}`, config.cpuDetailDebug);
+		lib.log(`${message}\tCPU Used Total: ${_.round(cpuUsed, 1)}\tCPU Used Diff: ${_.round(cpuDiff, 1)}`, config.cpuDetailDebug);
 		cpuUsedLast = cpuUsed;
 	}
 

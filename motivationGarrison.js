@@ -41,6 +41,7 @@ MotivationGarrison.prototype.getDemands = function (roomName, resources)
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
 	lib.log('  Garrison Demands: e: ' + result.energy + ' ' + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn, debug);
+	Memory.rooms[roomName].motivations[this.name].demands = result;
 	return result;
 };
 

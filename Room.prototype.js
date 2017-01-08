@@ -161,6 +161,7 @@ Room.prototype.updateEnergyPickupMode = function ()
 	}
 
 	this.memory.energyPickupMode = result;
+	return result;
 };
 
 Room.prototype.getControllerLevel = function ()
@@ -178,38 +179,42 @@ Room.prototype.getControllerLevel = function ()
  *
  */
 
-Room.prototype.getResources = function ()
+Room.prototype.updateResources = function ()
 {
 	let debug = false;
-	let resources = {};
 	// determine room resources ----------------------------------------------------------------------------
 	// energy
-	resources.spawnEnergy = this.getSpawnEnergy();
+	this.memory.resources = {};
+	this.memory.resources.spawnEnergy = this.getSpawnEnergy();
 
 	// get room collector status
-	resources.controllerStatus = this.getControllerStatus();
+	this.memory.resources.controllerStatus = this.updateControllerStatus();
 
 	// output info
 	lib.log("---- Room Resources: " + this.name, debug);
-	lib.log('  Spawn Energy: ' + resources.spawnEnergy.energy + '/' + resources.spawnEnergy.energyCapacity + ' Controller Level: ' + resources.controllerStatus.level + ' ' + resources.controllerStatus.progress + '/' + resources.controllerStatus.progressTotal + ' Downgrade: ' + resources.controllerStatus.ticksToDowngrade, debug);
+	lib.log('  Spawn Energy: ' + this.memory.resources.spawnEnergy.energy + '/'
+		+ this.memory.resources.spawnEnergy.energyCapacity
+		+ ' Controller Level: ' + this.memory.resources.controllerStatus.level + ' '
+		+ this.memory.resources.controllerStatus.progress + '/' + this.memory.resources.controllerStatus.progressTotal
+		+ ' Downgrade: ' + this.memory.resources.controllerStatus.ticksToDowngrade, debug);
 
 	// get unit resources
-	resources.units = {};
+	this.memory.resources.units = {};
 	for (let unitName in units)
 	{
 
-		resources.units[unitName] = {};
-		resources.units[unitName].total = strategyManager.countRoomUnits(this.name, unitName);
-		resources.units[unitName].allocated = 0;
-		resources.units[unitName].unallocated = resources.units[unitName].total;
-		resources.units[unitName].unassigned = strategyManager.countRoomUnassignedUnits(this.name, unitName);
-		resources.units[unitName].assigned = strategyManager.countRoomAssignedUnits(this.name, unitName);
-		lib.log("  " + unitName + " total: " + resources.units[unitName].total
-			+ " Assigned/UnAssigned: " + resources.units[unitName].assigned
-			+ "/" + resources.units[unitName].unassigned, debug);
+		this.memory.resources.units[unitName] = {};
+		this.memory.resources.units[unitName].total = strategyManager.countRoomUnits(this.name, unitName);
+		this.memory.resources.units[unitName].allocated = 0;
+		this.memory.resources.units[unitName].unallocated = this.memory.resources.units[unitName].total;
+		this.memory.resources.units[unitName].unassigned = strategyManager.countRoomUnassignedUnits(this.name, unitName);
+		this.memory.resources.units[unitName].assigned = strategyManager.countRoomAssignedUnits(this.name, unitName);
+		lib.log("  " + unitName + " total: " + this.memory.resources.units[unitName].total
+			+ " Assigned/UnAssigned: " + this.memory.resources.units[unitName].assigned
+			+ "/" + this.memory.resources.units[unitName].unassigned, debug);
 	}
 
-	return resources;
+	return this.memory.resources;
 };
 
 Room.prototype.getSpawnEnergy = function ()
@@ -252,27 +257,26 @@ Room.prototype.getExtenderEnergy = function ()
 	return result;
 };
 
-Room.prototype.getControllerStatus = function ()
+Room.prototype.updateControllerStatus = function ()
 {
-	let result = {};
-
+	this.memory.controllerStatus = {};
 	// Enumerate over spawns
 	let controller = this.controller;
 
 	if (!lib.isNull(controller) && controller.my)
 	{
-		result.progress = controller.progress;
-		result.progressTotal = controller.progressTotal;
-		result.ticksToDowngrade = controller.ticksToDowngrade;
-		result.level = controller.level;
+		this.memory.controllerStatus.progress = controller.progress;
+		this.memory.controllerStatus.progressTotal = controller.progressTotal;
+		this.memory.controllerStatus.ticksToDowngrade = controller.ticksToDowngrade;
+		this.memory.controllerStatus.level = controller.level;
 	} else {
-		result.progress = 0;
-		result.progressTotal = 0;
-		result.ticksToDowngrade = 0;
-		result.level = 0;
+		this.memory.controllerStatus.progress = 0;
+		this.memory.controllerStatus.progressTotal = 0;
+		this.memory.controllerStatus.ticksToDowngrade = 0;
+		this.memory.controllerStatus.level = 0;
 	}
 
-	return result;
+	return this.memory.controllerStatus;
 };
 
 /***********************************************************************************************************************

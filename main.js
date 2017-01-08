@@ -50,6 +50,8 @@ require('StructureTower.prototype');
 const profiler = require('screepsProfiler');
 profiler.enable();
 
+require("globals");
+
 // global -------------------------------------------------------------------------------------------------------------
 // modules
 
@@ -58,11 +60,10 @@ module.exports.loop = function ()
 {
 	profiler.wrap(function()
 	{
-		global.cpuUsedLast = 0;
-		require("globals");
 		require("logging");
 		require("shortcuts");
-		cpuManager.cpuLog("++++++ Loop Start");
+		global.cpuUsedLast = 0;
+		cpuManager.cpuLog("++++ Loop Start");
 		//------------------------------------------------------------------------------------------------------------------
 		// Declarations
 		//------------------------------------------------------------------------------------------------------------------

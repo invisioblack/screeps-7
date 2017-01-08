@@ -43,6 +43,7 @@ MotivationSupplyTower.prototype.getDemands = function (roomName, resources)
 		result.units["worker"] = 0;
 	result.spawn = this.getDesireSpawn(roomName, result);
 	lib.log('  Supply Tower Demands: e: ' + result.energy + ' ' + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn, debug);
+	Memory.rooms[roomName].motivations[this.name].demands = result;
 	return result;
 };
 

@@ -129,7 +129,7 @@ module.exports =
 				}
 
 				// declarations ----------------------------------------------------------------------------------------
-				let resources = room.getResources(); // get room resources
+				let resources = room.updateResources(); // get room resources
 				let demands = {};
 				let sortedMotivations;
 				let isSpawnAllocated = false;

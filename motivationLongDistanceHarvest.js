@@ -30,6 +30,7 @@ MotivationLongDistanceHarvest.prototype.getDemands = function (roomName, resourc
 	result.spawn = this.getDesireSpawn(roomName, result);
 	//console.log(JSON.stringify(result.units));
 	lib.log("  Long Distance Harvest Demands : " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn, debug);
+	Memory.rooms[roomName].motivations[this.name].demands = result;
 	return result;
 };
 

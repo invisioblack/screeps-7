@@ -30,6 +30,7 @@ MotivationHarvestSource.prototype.getDemands = function (roomName, resources) {
 	result.spawn = this.getDesireSpawn(roomName, result);
 	//console.log(JSON.stringify(result.units));
 	lib.log("  Harvest Source Demands : " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn, debug);
+	Memory.rooms[roomName].motivations[this.name].demands = result;
 	return result;
 };
 

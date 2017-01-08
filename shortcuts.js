@@ -127,6 +127,23 @@ global.cTRoom = function(creepName, roomName)
 	Game.creeps[creepName].memory.motive.need = "";
 };
 
+global.cList = function (roomName)
+{
+	let output = "";
+
+	if (lib.isNull(Memory.rooms[roomName]))
+	{
+		return `Room: ${roomName} not found in memory.`;
+	}
+
+	output += `\n-- Creeps for ${roomName}`;
+	_.forEach(Memory.rooms[roomName].resources.units, function (c, k) {
+		output += `\n${k}\n\ttotal: ${c.total}\tallocated: ${c.allocated}\tunallocated: ${c.unallocated}\tassigned: ${c.assigned}\tunassigned: ${c.unassigned}`;
+	});
+
+	return output;
+};
+
 // force spawn ---------------------------------------------------------------------------------------------------------
 global.fs = function (roomName, unit)
 {
@@ -405,6 +422,31 @@ global.rmList = function ()
 	// output
 	console.log(outputString);
 };
+
+/***********************************************************************************************************************
+ * Motivation display/management
+ */
+
+global.mList = function (roomName)
+{
+	let output = "";
+	let sortedMotivations = [];
+
+	if (lib.isNull(Memory.rooms[roomName]))
+	{
+		return `Room: ${roomName} not found in memory.`;
+	}
+
+	sortedMotivations = _.sortByOrder(Memory.rooms[roomName].motivations , ['priority'] , ['desc']);
+
+	output += `\n-- Motivations for ${roomName}`;
+	_.forEach(Memory.rooms[roomName].motivations, function (motivation) {
+		output += `\n${motivation.name}\n\tactive: ${motivation.active}\tdemand spawn:${motivation.demands.spawn}\tspawn allocated: ${motivation.spawnAllocated}`;
+	});
+
+	return output;
+};
+
 
 /*
 * All of the code below here was provided by guys on the screeps slack.
