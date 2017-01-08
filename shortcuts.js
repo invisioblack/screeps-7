@@ -253,6 +253,9 @@ global.lList = function ()
 	let button, buttonCommand, link;
 
 	_.forEach(Memory.rooms, function (r, k) {
+		if (lib.isNull(r.longDistanceHarvestTargets))
+			r.longDistanceHarvestTargets = [];
+
 		link = roomLink(k);
 		outputString += `\nSource Room: ${link}`;
 		_.forEach(r.longDistanceHarvestTargets, function (target)

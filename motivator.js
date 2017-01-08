@@ -392,7 +392,7 @@ module.exports =
 
 	"sendOffLongDistanceHarvesters": function (roomName)
 	{
-		let debug = true;
+		let debug = false;
 		let room = Game.rooms[roomName];
 		let numWorkers = strategyManager.countRoomUnits(roomName, "worker");
 		let storages = room.find(FIND_STRUCTURES, { filter: function (s) {
