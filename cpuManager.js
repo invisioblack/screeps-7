@@ -47,7 +47,7 @@ module.exports =
 
 		}
 
-		lib.log(`Tick: ${result.tick}\tAve 10/100/All: ${tenTick}/${hunTick}/${thouTick}\tUsed CPU: ${_.round(result.used, 1)}/${result.limit}\tBucket: ${_.round(result.bucketChange, 1)}/${result.bucket}`, config.cpuDebug);
+		lib.log(`Tick: ${result.tick}\tAve 10/100/All: ${tenTick}/${hunTick}/${thouTick}\tUsed CPU: ${_.round(result.used, 1)}\t<progress value="${result.used}" max="${result.limit}"></progress>\tBucket: ${_.round(result.bucketChange, 1)}/${result.bucket}`, config.cpuDebug);
 
 	},
 
@@ -55,7 +55,17 @@ module.exports =
 	{
 		global.cpuUsed = Game.cpu.getUsed();
 		let cpuDiff = cpuUsed - cpuUsedLast;
-		lib.log(`${message}\tCPU Used Total: ${_.round(cpuUsed, 1)}\tCPU Used Diff: ${_.round(cpuDiff, 1)}`, config.cpuDetailDebug);
+		let green = "#00BB11";
+		let yellow = "#AAAA00";
+		let red = "#CC0011";
+		let color = "#00BB11";
+
+		if (cpuDiff > 1)
+			color = yellow;
+		if (cpuDiff >= 5)
+			color = red;
+
+		lib.log(`${message}\tCPU Used Total: ${_.round(cpuUsed, 1)}\tCPU Used Diff: <span style=color:${color}>${_.round(cpuDiff, 1)}</span>`, config.cpuDetailDebug);
 		cpuUsedLast = cpuUsed;
 	}
 

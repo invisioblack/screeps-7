@@ -45,6 +45,7 @@ module.exports =
 					lib.log(`Need: ${need.name}`, debug);
 
 					// if there is a creep to assign, we need to assign it
+					// TODO: This does not need to do this again, although teh current demands does not keep need demands separate, we could store them though
 					let unitDemands = global[need.type].getUnitDemands(roomName , need, motivation.name);
 					let creepsDemanded = lib.nullProtect(unitDemands[unitName], 0);
 					let creepsAssigned = strategyManager.countRoomMotivationNeedUnits(roomName, motivation.name , need.name , unitName);
