@@ -113,6 +113,7 @@ module.exports =
 			if (!lib.isNull(roomName))
 			{
 				room = Game.rooms[roomName];
+				cpuManager.cpuLog(`Room Start: ${roomLink(lib.nullProtect(roomName, ""))}`);
 				//debug = room.name == "W8N3";
 
 				// update defenses -----------------------------------------------------------------------------------------
@@ -142,7 +143,7 @@ module.exports =
 				// process motivations in order of priority ------------------------------------------------------------
 				// get sorted motivations
 				sortedMotivations = _.sortByOrder(room.memory.motivations , ['priority'] , ['desc']);
-
+				cpuManager.cpuLog("\tMotivate round 1 start");
 				// first round motivation processing--------------------------------------------------------------------
 				// set up demands, active and spawning
 				sortedMotivations.forEach(function (motivationMemory)
@@ -194,6 +195,7 @@ module.exports =
 				lib.log("--: Active Motivations: " + countActiveMotivations , debug);
 
 				// process round 2 and 3 for each unit type ------------------------------------------------------------
+				cpuManager.cpuLog("\tMotivate round 2 start");
 				for (let unitName in units)
 				{
 					// -------------------------------------------------------------------------------------------------
@@ -351,6 +353,7 @@ module.exports =
 
 				// motivation round 4 ----------------------------------------------------------------------------------
 				lib.log(">>>> Final Motivation Round <<<<" , debug);
+				cpuManager.cpuLog("\tMotivate round 4 start");
 				sortedMotivations.forEach(function (motivationMemory)
 				{
 					lib.log("---- Motivating round 4 - manage needs: " + motivationMemory.name + " Active: " + motivationMemory.active , debug);
@@ -361,6 +364,7 @@ module.exports =
 
 
 				// fulfill needs ---------------------------------------------------------------------------------------
+				cpuManager.cpuLog("\tFulfill Needs start");
 				needManager.fulfillNeeds(roomName);
 
 				// motivate defense towers -----------------------------------------------------------------------------
@@ -368,14 +372,14 @@ module.exports =
 				{
 					room.motivateTowers(roomName);
 				}
+
 			}
 
 			// handle lost creeps
+			cpuManager.cpuLog("\tLost creeps start");
 			room.handleLostCreeps();
 
-			cpuManager.cpuLog(`Room: ${roomLink(lib.nullProtect(roomName, ""))}`);
-			//lib.log(` Used CPU: ${Game.cpu.getUsed() - cpuUsed}`, config.cpuDetailDebug);
-			//cpuUsed = Game.cpu.getUsed();
+			cpuManager.cpuLog(`Room End: ${roomLink(lib.nullProtect(roomName, ""))}`);
 		}
 
 	},
