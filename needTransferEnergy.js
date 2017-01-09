@@ -27,33 +27,24 @@ NeedTransferEnergy.prototype.constructor = NeedTransferEnergy;
 NeedTransferEnergy.prototype.getUnitDemands = function(roomName, memory, motivationName)
 {
 	let result = {};
-	let room = Game.rooms[roomName];
 	let target = Game.getObjectById(memory.targetId);
-	let energy, energyCapacity, neededEnergy;
-	let worker = lib.nullProtect(strategyManager.getRoomUnits(roomName, "worker")[0], {});
-	let workerCapacity = lib.nullProtect(worker.carryCapacity, 50);
-	//console.log(JSON.stringify(memory));
+	let numHaulers = strategyManager.countRoomUnits(roomName, "hauler");
 
-	if (lib.isNull(target))
+	if (motivationName === "motivationSupplyController")
 	{
-		energyCapacity = 0;
-		energy = 0;
+		result["worker"] = 999;
 	}
-	else if (!lib.isNull(target.energy))
+	else
 	{
-		energyCapacity = target.energyCapacity;
-		energy = target.energy;
-	} else {
-		energyCapacity = target.progressTotal;
-		energy = target.progress;
+		this.getUnitSupplyDemand(roomName , target , "hauler" , result);
+		if (numHaulers > 2)
+		{
+			result["worker"] = 0;
+		} else
+			this.getUnitSupplyDemand(roomName , target , "worker" , result);
 	}
 
-	neededEnergy = energyCapacity - energy;
-	result["worker"] = Math.ceil(neededEnergy / workerCapacity) * 10;
-
-	//console.log(JSON.stringify(memory));
-	//console.log("getUnitDemands: " + energy + "/" + energyCapacity + "/" + neededEnergy);
-	//console.log("   workers: carry: " + workerCapacity + " demanded workers: " + result["worker"]);
+	//console.log(`NeedTransferEnergy.prototype.getUnitDemands: ${motivationName}\t${JSON.stringify(result)}`);
 
 	return result;
 };

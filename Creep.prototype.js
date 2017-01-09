@@ -152,7 +152,7 @@ Creep.prototype.deassignMotive = function (roomName)
 
 
 	this.say("Done!");
-	if (!lib.isNull(roomName))
+	if (!lib.isNull(roomName) && roomName != "")
 		this.memory.motive.room = roomName;
 	this.memory.motive.motivation = "";
 	this.memory.motive.need = "";

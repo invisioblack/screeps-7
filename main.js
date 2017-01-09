@@ -48,8 +48,6 @@ require('Spawn.prototype');
 require('StructureTower.prototype');
 
 
-
-
 const profiler = require('screepsProfiler');
 profiler.enable();
 require("globals");

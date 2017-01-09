@@ -177,7 +177,7 @@ module.exports =
 							if (spawn.room.name == roomName)
 							{
 								let r = Game.rooms[roomName];
-								let countUnits = strategyManager.getRoomUnits(roomName, unitName);
+								let countUnits = strategyManager.getRoomUnits(roomName, unitName).length;
 								//console.log(unitName + " " + countUnits);
 								if (unitName == "worker" && countUnits < 2)
 									spawn.spawnUnit(unitName , false);
@@ -300,6 +300,8 @@ module.exports =
 						}
 					} , this);
 
+
+
 					//console.log("-------PREALLOCATION: totalUnitsAvailable: " + totalUnitsAvailable + " totalUnitsDemanded: " + totalUnitsDemanded + " totalUnitsAllocated: " + totalUnitsAllocated);
 					while (totalUnitsAvailable > 0 && (totalUnitsDemanded - totalUnitsAllocated) > 0)
 					{
@@ -315,7 +317,7 @@ module.exports =
 								if (unitsDemanded < 0)
 									unitsDemanded = 0;
 
-								lib.log("    " + unitName + "Available/Demanded-Allocated/Allocated units: " + unitsAvailable + "/" + unitsDemanded + "/" + unitsAllocated , debug);
+								lib.log(`    ${motivationMemory.name}\t\t${unitName} Available/Demanded-Allocated/Allocated units: ${unitsAvailable}/${unitsDemanded}/${unitsAllocated}` , debug);
 
 								// allocate an additional unit if it is needed
 								if (unitsAvailable > 0 && unitsDemanded > 0)
@@ -346,6 +348,7 @@ module.exports =
 					lib.log(">>>>Final " + unitName + " Allocation: " + resources.units[unitName].allocated + "/" + resources.units[unitName].total + " Unallocated: " + resources.units[unitName].unallocated , debug);
 				}
 
+
 				// motivation round 4 ----------------------------------------------------------------------------------
 				lib.log(">>>> Final Motivation Round <<<<" , debug);
 				sortedMotivations.forEach(function (motivationMemory)
@@ -354,6 +357,8 @@ module.exports =
 					// processes needs for motivation ------------------------------------------------------------------
 					needManager.manageNeeds(roomName , global[motivationMemory.name] , motivationMemory);
 				} , this);
+
+
 
 				// fulfill needs ---------------------------------------------------------------------------------------
 				needManager.fulfillNeeds(roomName);

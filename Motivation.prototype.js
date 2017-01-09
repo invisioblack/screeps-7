@@ -49,7 +49,7 @@ module.exports = function ()
 
 			let need = room.memory.motivations[this.name].needs[needName];
 			//console.log("!!!!!!!!!!!!---:" + need.type);
-			let demands = global[need.type].getUnitDemands(roomName, need);
+			let demands = global[need.type].getUnitDemands(roomName, need, this.name);
 
 
 			lib.log("----------- demands: " + JSON.stringify(demands), room.name == "W8N2", debug);

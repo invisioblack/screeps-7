@@ -15,7 +15,7 @@ module.exports = function()
 
 	Job.prototype.getEnergy = function (creep)
 	{
-		//console.log(creep.name + " ***getEnergy()");
+		//console.log(`${creep.name} M: ${creep.memory.motive.motivation} N: ${creep.memory.motive.need}`);
 		// declarations
 		let carry, source, room;
 
@@ -78,7 +78,7 @@ module.exports = function()
 		/**
 		 * handle finding energy in storage
 		 */
-		if (room.memory.energyPickupMode === C.ROOM_ENERGYPICKUPMODE_STORAGE && creep.memory.sourceId == "" && creep.memory.unit != "hauler")
+		if (room.memory.energyPickupMode === C.ROOM_ENERGYPICKUPMODE_STORAGE && creep.memory.sourceId == "" && creep.memory.motive.motivation != "motivationHaulToStorage")
 		{
 			this.findEnergyStorage(creep);
 		}
@@ -94,7 +94,7 @@ module.exports = function()
 		}
 
 		// otherwise, only haulers get them out
-		if (room.memory.energyPickupMode === C.ROOM_ENERGYPICKUPMODE_STORAGE && creep.memory.sourceId == "" && creep.memory.unit == "hauler")
+		if (room.memory.energyPickupMode === C.ROOM_ENERGYPICKUPMODE_STORAGE && creep.memory.sourceId == "" && creep.memory.motive.motivation == "motivationHaulToStorage")
 		{
 			this.findEnergyContainer(creep);
 		}

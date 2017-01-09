@@ -42,21 +42,19 @@ module.exports =
 
 				needs.forEach(function (need)
 				{
-					//console.log(need.name);
-
+					lib.log(`Need: ${need.name}`, debug);
 
 					// if there is a creep to assign, we need to assign it
 					let unitDemands = global[need.type].getUnitDemands(roomName , need, motivation.name);
-					let creepsDemanded = unitDemands[unitName];
+					let creepsDemanded = lib.nullProtect(unitDemands[unitName], 0);
 					let creepsAssigned = strategyManager.countRoomMotivationNeedUnits(roomName, motivation.name , need.name , unitName);
 					let creep = strategyManager.findRoomUnassignedUnit(roomName, unitName);
 
 					if (creepsDemanded == 0)
 						outOfCreeps = true;
 
-					//console.log("unit: " + unitName + " outOfCreeps: " + outOfCreeps + " assignedUnits: " + assignedUnits + " allocatedUnits " + allocatedUnits);
-					//console.log("creepsAssigned: " + creepsAssigned + " creepsDemanded: " + creepsDemanded);
-
+					lib.log("unit: " + unitName + " outOfCreeps: " + outOfCreeps + " assignedUnits: " + assignedUnits + " allocatedUnits " + allocatedUnits,debug);
+					lib.log("creepsAssigned: " + creepsAssigned + " creepsDemanded: " + creepsDemanded, debug);
 
 					while (!lib.isNull(creep) && creepsAssigned < creepsDemanded && assignedUnits < allocatedUnits)
 					{

@@ -52,6 +52,9 @@ MotivationSupplyTower.prototype.getDesireSpawn = function (roomName, demands)
 	let result = true;
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
+	let numWorkers = strategyManager.countRoomUnits(roomName, "worker");
+	let numHaulers = strategyManager.countRoomUnits(roomName, "hauler");
+
 	if (memory.active)
 	{
 		for (let unitName in units)
@@ -65,12 +68,26 @@ MotivationSupplyTower.prototype.getDesireSpawn = function (roomName, demands)
 		result = false;
 	}
 
+	if (this.getDesiredSpawnUnit(roomName) === "worker" && numWorkers >= config.maxWorkers)
+		result = false;
+	if (this.getDesiredSpawnUnit(roomName) === "hauler" && numHaulers >= config.maxHaulers)
+		result = false;
+
 	return result;
 };
 
 MotivationSupplyTower.prototype.getDesiredSpawnUnit = function (roomName)
 {
-	return "worker";
+	let energyPickupMode = lib.nullProtect(Memory.rooms[roomName].energyPickupMode, C.ROOM_ENERGYPICKUPMODE_NOENERGY);
+	let numWorkers = strategyManager.countRoomUnits(roomName, "worker");
+
+	//console.log(config.critWorkers);
+
+
+	if (energyPickupMode < C.ROOM_ENERGYPICKUPMODE_CONTAINER || numWorkers <= config.critWorkers)
+		return "worker";
+	else
+		return "hauler";
 };
 
 MotivationSupplyTower.prototype.updateActive = function (roomName, demands)

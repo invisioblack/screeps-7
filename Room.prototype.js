@@ -150,6 +150,7 @@ Room.prototype.updateEnergyPickupMode = function ()
 		result = C.ROOM_ENERGYPICKUPMODE_HARVEST;
 
 		let numContainers = lib.nullProtect(this.memory.cache.structures[STRUCTURE_CONTAINER], []).length;
+		let numStorage = lib.nullProtect(this.memory.cache.structures[STRUCTURE_STORAGE], []).length;
 		let containers = _.map(this.memory.cache.structures[STRUCTURE_CONTAINER], function (cid) {
 			return Game.getObjectById(cid);
 		});
@@ -159,19 +160,18 @@ Room.prototype.updateEnergyPickupMode = function ()
 
 		if (numContainers >= this.memory.cache.sources.length && (containerEnergy > 0 || strategyManager.countRoomUnits(this.name, "harvester") > 0))
 		{
-			let numStorage = lib.nullProtect(this.memory.cache.structures[STRUCTURE_STORAGE], []).length;
 			result = C.ROOM_ENERGYPICKUPMODE_CONTAINER;
+		}
 
-			if (numStorage > 0)
+		if (numStorage > 0)
+		{
+			if (strategyManager.countRoomUnits(this.name, "harvester") > 0 && strategyManager.countRoomUnits(this.name, "hauler") > 0)
+				result = C.ROOM_ENERGYPICKUPMODE_STORAGE;
+			else
 			{
-				if (strategyManager.countRoomUnits(this.name, "harvester") > 0 && strategyManager.countRoomUnits(this.name, "hauler") > 0)
+				let storage = Game.getObjectById(this.memory.cache.structures[STRUCTURE_STORAGE][0]);
+				if (storage.store[RESOURCE_ENERGY] > 0)
 					result = C.ROOM_ENERGYPICKUPMODE_STORAGE;
-				else
-				{
-					let storage = Game.getObjectById(this.memory.cache.structures[STRUCTURE_STORAGE][0]);
-					if (storage.store[RESOURCE_ENERGY] > 0)
-						result = C.ROOM_ENERGYPICKUPMODE_STORAGE;
-				}
 			}
 		}
 	}

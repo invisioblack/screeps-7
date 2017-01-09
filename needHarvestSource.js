@@ -27,6 +27,7 @@ NeedHarvestSource.prototype.constructor = NeedHarvestSource;
 NeedHarvestSource.prototype.getUnitDemands = function(roomName, memory, motivationName)
 {
 	let result = {};
+	this.getUnitHaulToStorageDemand(roomName, "harvester", result);
 	result["harvester"] = 1;
 
 	return result;

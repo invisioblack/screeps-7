@@ -27,11 +27,15 @@ NeedHaulToStorage.prototype.constructor = NeedHaulToStorage;
 NeedHaulToStorage.prototype.getUnitDemands = function(roomName, memory, motivationName)
 {
 	let result = {};
-	result["hauler"] = 2;
+
+	this.getUnitHaulToStorageDemand(roomName, "hauler", result);
+
 
 	//console.log(JSON.stringify(memory));
 	//console.log("getUnitDemands: " + energy + "/" + energyCapacity + "/" + neededEnergy);
 	//console.log("   workers: carry: " + workerCapacity + " demanded workers: " + result["worker"]);
+
+	//console.log(`NeedTransferEnergy.prototype.getUnitDemands: ${motivationName}\t${JSON.stringify(result)}`);
 
 	return result;
 };
