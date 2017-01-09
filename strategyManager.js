@@ -44,7 +44,7 @@ module.exports =
 		let key = cacheManager.genKey("strategyManager.countRoomUnits" , arguments);
 		let cache = cacheManager.fetchMem("cacheFunction" , key);
 
-		if (!cache.valid || (cache.time - Game.time) != 0)
+		if (!cache.valid || (Game.time - cache.time) > 0)
 		{
 			//console.log("-");
 			result = this.getRoomUnits(roomName , unitName).length;

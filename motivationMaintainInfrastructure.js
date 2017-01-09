@@ -60,6 +60,7 @@ MotivationMaintainInfrastructure.prototype.getDesireSpawn = function (roomName, 
 	let result = true;
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
+	let numWorkers = strategyManager.countRoomUnits(roomName, "worker");
 
 	if (memory.active)
 	{
@@ -69,6 +70,9 @@ MotivationMaintainInfrastructure.prototype.getDesireSpawn = function (roomName, 
 	} else {
 		result = false;
 	}
+
+	if (this.getDesiredSpawnUnit(roomName) === "worker" && numWorkers >= config.maxWorkers)
+		result = false;
 
 	return result;
 };

@@ -49,6 +49,7 @@ MotivationSupplyController.prototype.getDesireSpawn = function (roomName, demand
 	let result = true;
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
+	let numWorkers = strategyManager.countRoomUnits(roomName, "worker");
 	if (memory.active)
 	{
 		for (let unitName in units)
@@ -61,6 +62,9 @@ MotivationSupplyController.prototype.getDesireSpawn = function (roomName, demand
 	} else {
 		result = false;
 	}
+
+	if (this.getDesiredSpawnUnit(roomName) === "worker" && numWorkers >= config.maxWorkers)
+		result = false;
 
 	return result;
 };

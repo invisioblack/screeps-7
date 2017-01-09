@@ -91,7 +91,6 @@ module.exports.loop = function ()
 		cpuManager.cpuLog("Loop End");
 		lib.log("<b>+++++++++++++++++++++++ end tick +++++++++++++++++++++++</b>", debug);
 		cpuManager.tickTrack();
-		
 	});
 };
 

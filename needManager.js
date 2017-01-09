@@ -62,9 +62,9 @@ module.exports =
 
 						// update for iteration
 						creep = strategyManager.findRoomUnassignedUnit(roomName, unitName);
-						creepsAssigned = strategyManager.countRoomMotivationNeedUnits(roomName, motivation.name , need.name , unitName);
-						assignedUnits = strategyManager.countRoomMotivationUnits(roomName, motivation.name , unitName);
-						allocatedUnits = motivationMemory.allocatedUnits[unitName];
+						creepsAssigned++;
+						assignedUnits++;
+						allocatedUnits++;
 					}
 
 					// you think you can move this up into the while above, but don't it causes problems on rare iterations

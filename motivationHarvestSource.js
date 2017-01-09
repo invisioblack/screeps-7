@@ -49,7 +49,7 @@ MotivationHarvestSource.prototype.getDesireSpawn = function (roomName, demands)
 	let numWorkers = strategyManager.countRoomUnits(roomName, "worker");
 
 
-	//console.log(`Room: ${roomName} #Containers: ${numContainers} Demanded Harvesters: ${demandedHarvesters} Workers: ${numWorkers}`);
+	//console.log(`Room: ${roomName} #Containers: ${numContainers} Demanded Harvesters: ${demandedHarvesters}/${numHarvesters} Workers: ${numWorkers}`);
 
 	if (numContainers == 0 || numHarvesters >= demandedHarvesters || numWorkers < config.critWorkers)
 	{

@@ -11,7 +11,7 @@ module.exports =
 	"claimTicks": 1000,
 	'towerPowerFactor': 0.8,
 	'towerRepairFactor': 0.1,
-	"cpuDebug": Game.time % 10,
+	"cpuDebug": false,
 	"cpuDetailDebug": false,
 	"cpuHistorySize": 1000
 
