@@ -177,7 +177,7 @@ module.exports =
 							if (spawn.room.name == roomName)
 							{
 								let r = Game.rooms[roomName];
-								let countUnits = strategyManager.getRoomUnits(roomName, unitName).length;
+								let countUnits = strategyManager.countRoomUnits(roomName, unitName);
 								//console.log(unitName + " " + countUnits);
 								if (unitName == "worker" && countUnits < 2)
 									spawn.spawnUnit(unitName , false);

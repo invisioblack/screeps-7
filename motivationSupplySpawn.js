@@ -59,7 +59,7 @@ MotivationSupplySpawn.prototype.getDesireSpawn = function (roomName, demands)
 
 			let numDemandedUnits = lib.nullProtect(demands.units[unitName], 0);
 			//console.log(`unitName: ${unitName} demand: ${numDemandedUnits}`);
-			if (numDemandedUnits < strategyManager.getRoomUnits(roomName, unitName))
+			if (numDemandedUnits < strategyManager.countRoomUnits(roomName, unitName))
 			{
 				result = false;
 			}
