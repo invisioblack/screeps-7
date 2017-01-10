@@ -29,20 +29,20 @@ NeedClaim.prototype.getUnitDemands = function(roomName, memory, motivationName)
 {
 	let debug = false;
 	let room = Game.rooms[roomName];
-	let result = {};
+	memory.demands = {};
 
 	if (!lib.isNull(room) || !room.controller.my)
-		result["claimer"] = 1;
+		memory.demands["claimer"] = 1;
 	else
 	{
 		let spawnClaims = _.filter(Memory.claims, function (c){
 			return c.spawnRoom === roomName;
 		});
-		result["claimer"] = spawnClaims;
+		memory.demands["claimer"] = spawnClaims;
 	}
 
-	lib.log(" Claim: " + JSON.stringify(result), debug);
-	return result;
+	lib.log(" Claim: " + JSON.stringify(memory.demands), debug);
+	return memory.demands;
 };
 
 module.exports = new NeedClaim();

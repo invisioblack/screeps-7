@@ -214,5 +214,15 @@ module.exports =
 			return !lib.isNull(creep.memory.sourceId) && creep.memory.sourceId === sourceId;
 		});
 		return result;
+	},
+
+	handleLostCreeps: function ()
+	{
+
+		_.forEach(Game.rooms, function (r, k){
+			// handle lost creeps
+			r.handleLostCreeps();
+		});
 	}
+
 };

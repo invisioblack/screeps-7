@@ -26,12 +26,12 @@ NeedManualTactical.prototype.constructor = NeedManualTactical;
 
 NeedManualTactical.prototype.getUnitDemands = function(roomName, memory, motivationName)
 {
-	let room = Game.rooms[roomName];
-	let result = {};
-	result["guard"] = 99;
-	result["rangedGuard"] = 99;
-	result["healer"] = 99;
-	return result;
+	memory.demands = {};
+	memory.demands["guard"] = 99;
+	memory.demands["rangedGuard"] = 99;
+	memory.demands["healer"] = 99;
+
+	return memory.demands;
 };
 
 

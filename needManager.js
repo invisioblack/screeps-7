@@ -22,8 +22,10 @@ module.exports =
 		let needs;
 
 		// create and update needs for motivation
+
 		//console.log("needManager.manageNeeds: motivation.name: " + motivation.name);
 		motivation.updateNeeds(roomName);
+
 
 		// read up needs sorted by priority
 		needs = _.sortByOrder(room.memory.motivations[motivation.name].needs , ['priority'], ['desc']);
@@ -31,6 +33,7 @@ module.exports =
 		// first we need to figure out if we have any open allocations
 		for (let unitName in units)
 		{
+			//cpuManager.timerStart("Unit: " + unitName, "manageNeeds." + unitName);
 			let assignedUnits = strategyManager.countRoomMotivationUnits(roomName, motivation.name , unitName);
 			let allocatedUnits = motivationMemory.allocatedUnits[unitName];
 
@@ -45,8 +48,7 @@ module.exports =
 					lib.log(`Need: ${need.name}`, debug);
 
 					// if there is a creep to assign, we need to assign it
-					// TODO: This does not need to do this again, although teh current demands does not keep need demands separate, we could store them though
-					let unitDemands = global[need.type].getUnitDemands(roomName , need, motivation.name);
+					let unitDemands = lib.nullProtect(motivationMemory.needs[need.name].demands, {});
 					let creepsDemanded = lib.nullProtect(unitDemands[unitName], 0);
 					let creepsAssigned = strategyManager.countRoomMotivationNeedUnits(roomName, motivation.name , need.name , unitName);
 					let creep = strategyManager.findRoomUnassignedUnit(roomName, unitName);
@@ -54,7 +56,7 @@ module.exports =
 					if (creepsDemanded == 0)
 						outOfCreeps = true;
 
-					lib.log("unit: " + unitName + " outOfCreeps: " + outOfCreeps + " assignedUnits: " + assignedUnits + " allocatedUnits " + allocatedUnits,debug);
+					lib.log("unit: " + unitName + " outOfCreeps: " + outOfCreeps + " assignedUnits: " + assignedUnits + " allocatedUnits " + allocatedUnits, debug);
 					lib.log("creepsAssigned: " + creepsAssigned + " creepsDemanded: " + creepsDemanded, debug);
 
 					while (!lib.isNull(creep) && creepsAssigned < creepsDemanded && assignedUnits < allocatedUnits)
@@ -76,6 +78,7 @@ module.exports =
 
 			if (assignedUnits || allocatedUnits)
 				lib.log("    " + motivation.name + ": Assigned/Allocated " + unitName + ": " + assignedUnits + "/" + allocatedUnits, debug);
+			//cpuManager.timerStop("manageNeeds." + unitName, 0.5, 1);
 		}
 	},
 
@@ -84,6 +87,7 @@ module.exports =
 		let debug = false;
 		for (let creepName in Game.creeps)
 		{
+			// @type {Creep}
 			let creep = Game.creeps[creepName];
 			if (creep.room.name == roomName && creep.memory.motive.room == roomName && creep.memory.motive.motivation != "" && creep.memory.motive.need != "")
 			{

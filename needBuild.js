@@ -26,16 +26,16 @@ NeedBuild.prototype.constructor = NeedBuild;
 
 NeedBuild.prototype.getUnitDemands = function(roomName, memory, motivationName)
 {
-	let result = {};
+	memory.demands = {};
 	let site = Game.getObjectById(memory.targetId);
 	if (!lib.isNull(site))
 	{
 		let workers = Math.ceil((site.progressTotal - site.progress) / 50);
-		result["worker"] = workers;
+		memory.demands["worker"] = workers;
 	}
 
 	//console.log(" Build: " + JSON.stringify(site));
-	return result;
+	return memory.demands;
 };
 
 

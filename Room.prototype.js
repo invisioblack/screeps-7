@@ -17,11 +17,8 @@ Room.prototype.init = function ()
 	}
 };
 
-Room.prototype.initMemCache = function (forceRefresh)
+Room.prototype.initMemCache = function (forceRefresh = false)
 {
-	// don't require forceRefresh to be passed
-	if (lib.isNull(forceRefresh)) forceRefresh = true;
-
 	// insure the memory object exists
 	if (lib.isNull(this.memory.cache) || forceRefresh)
 	{
@@ -348,111 +345,6 @@ Room.prototype.getUnits = function (unitName)
 	return result;
 };
 
-Room.prototype.countMotivationCreeps = function (motivationName)
-{
-	let result = this.getRoomMotivationCreeps(motivationName).length;
-	return result;
-};
-
-Room.prototype.getMotivationCreeps = function (motivationName)
-{
-	let roomName = this.name;
-	let result = _.filter(Game.creeps , function (creep)
-	{
-		return creep.room.name == roomName
-			&& creep.memory.motive.room == roomName
-			&& creep.memory.motive.motivation == motivationName;
-	});
-	return result;
-};
-
-Room.prototype.countMotivationNeedCreeps = function (motivationName , needName)
-{
-	let result = this.getMotivationNeedCreeps(motivationName , needName).length;
-	return result;
-};
-
-Room.prototype.getMotivationNeedCreeps = function (motivationName , needName)
-{
-	let roomName = this.name;
-	let result = _.filter(Game.creeps , function (creep)
-	{
-		return creep.room.name == roomName
-			&& creep.memory.motive.room == roomName
-			&& creep.memory.motive.motivation == motivationName
-			&& creep.memory.motive.need == needName;
-	});
-	return result;
-};
-
-Room.prototype.countMotivationNeedUnits = function (motivationName , needName , unitName)
-{
-	let result = this.getMotivationNeedUnits(motivationName , needName , unitName).length;
-	return result;
-};
-
-Room.prototype.getMotivationNeedUnits = function (motivationName , needName , unitName)
-{
-	let roomName = this.name;
-	let result = _.filter(Game.creeps , function (creep)
-	{
-		return creep.room.name == roomName
-			&& creep.memory.motive.room == roomName
-			&& creep.memory.motive.motivation == motivationName
-			&& creep.memory.motive.need == needName
-			&& creep.memory.unit == unitName;
-	});
-	return result;
-};
-
-Room.prototype.countAssignedUnits = function (unitName)
-{
-	let result = this.getAssignedUnits(unitName).length;
-	return result;
-};
-
-Room.prototype.getAssignedUnits = function (unitName)
-{
-	let roomName = this.name;
-	let result = _.filter(Game.creeps , function (creep)
-	{
-		return creep.room.name == roomName
-			&& creep.memory.motive.room == roomName
-			&& creep.memory.motive.motivation != ""
-			&& creep.memory.motive.need != ""
-			&& creep.memory.unit == unitName;
-	});
-	return result;
-};
-
-Room.prototype.countUnassignedUnits = function (unitName)
-{
-	let result = this.getUnassignedUnits(unitName).length;
-
-	return result;
-};
-
-Room.prototype.getUnassignedUnits = function (unitName)
-{
-	let roomName = this.name;
-	let result = _.filter(Game.creeps , function (creep)
-	{
-		return creep.room.name == roomName
-			&& creep.memory.motive.room == roomName
-			&& creep.memory.motive.motivation == ""
-			&& creep.memory.motive.need == ""
-			&& creep.memory.unit == unitName;
-	});
-
-	return result;
-};
-
-Room.prototype.countLostCreeps = function ()
-{
-	let result = this.getLostCreeps().length;
-	return result;
-};
-
 Room.prototype.getLostCreeps = function ()
 {
 	let roomName = this.name;
@@ -608,74 +500,5 @@ Room.prototype.sing = function(sentence, public){
 		creeps[i].say(words[i % words.length], public);
 	}
 };
-
-/***********************************************************************************************************************
- * Properties
- */
-
-/**
- * Returns the mineral type of the room.
- * Stores it in memory if not already stored.
- */
-Object.defineProperty(Room.prototype, 'mineralType', {
-	get: function() {
-		if (this == undefined || this.name == undefined)
-			return undefined;
-		if (!this._mineralType) {
-			if (!this.memory.mineralType) {
-				this.memory.mineralType = (this.find(FIND_MINERALS)[0] || {}).mineralType;
-			}
-			this._mineralType = this.memory.mineralType;
-		}
-		return this._mineralType;
-	},
-	enumerable: false,
-	configurable: true
-});
-
-/**
- * Returns the mineral object in the room.
- * Stores the id in memory if not already stored.
- */
-Object.defineProperty(Room.prototype, 'mineral', {
-	get: function() {
-		if (this == undefined || this.name == undefined)
-			return undefined;
-		if (!this._mineral) {
-			if (this.memory.mineralId === undefined) {
-				let [mineral] = this.find(FIND_MINERALS);
-				if (!mineral) {
-					return this.memory.mineralId = null;
-				}
-				this._mineral = mineral;
-				this.memory.mineralId = mineral.id;
-			} else {
-				this._mineral = Game.getObjectById(this.memory.mineralId);
-			}
-		}
-		return this._mineral;
-	},
-	enumerable: false,
-	configurable: true
-});
-
-/**
- * Returns the reaction type of the room. Shortcut to Memory.rooms[roomName].reactionType.
- * This value gets set by the reaction type menu in the storageContents function.
- */
-Object.defineProperty(Room.prototype, 'reactionType', {
-	get: function() {
-		if (this == undefined || this.name == undefined)
-			return undefined;
-		if (!this._reactionType) {
-			this._reactionType = this.memory.reactionType;
-		}
-		return this._reactionType;
-	},
-	enumerable: false,
-	configurable: true
-});
-
-
 
 module.exports = function() {};

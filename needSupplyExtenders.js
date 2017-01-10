@@ -26,14 +26,13 @@ NeedSupplyExtenders.prototype.constructor = NeedSupplyExtenders;
 
 NeedSupplyExtenders.prototype.getUnitDemands = function(roomName, memory, motivationName)
 {
-	let result = {};
+	memory.demands = {};
 	let room = Game.rooms[roomName];
 	let energy, energyCapacity, neededEnergy;
 	let worker = lib.nullProtect(strategyManager.getRoomUnits(roomName, "worker")[0], {});
 	let workerCapacity = lib.nullProtect(worker.carryCapacity, 50);
 	let extenderEnergy = room.getExtenderEnergy();
 	let hauler = lib.nullProtect(strategyManager.getRoomUnits(roomName, "hauler")[0], {});
-	let numWorkers = strategyManager.countRoomUnits(roomName, "worker");
 	let numHaulers = strategyManager.countRoomUnits(roomName, "hauler");
 	//console.log(JSON.stringify(memory));
 
@@ -41,13 +40,13 @@ NeedSupplyExtenders.prototype.getUnitDemands = function(roomName, memory, motiva
 	energyCapacity = extenderEnergy.energyCapacity;
 	neededEnergy = energyCapacity - energy;
 
-	result["worker"] = Math.ceil(neededEnergy / workerCapacity);
-	result["hauler"] = 999;
+	memory.demands["worker"] = Math.ceil(neededEnergy / workerCapacity);
+	memory.demands["hauler"] = 999;
 
 
 	if (numHaulers > 2)
 	{
-		result["worker"] = 0;
+		memory.demands["worker"] = 0;
 	}
 
 	//console.log(`NeedTransferEnergy.prototype.getUnitDemands: ${motivationName}\t${JSON.stringify(result)}`);
@@ -56,7 +55,7 @@ NeedSupplyExtenders.prototype.getUnitDemands = function(roomName, memory, motiva
 	//console.log("getUnitDemands: " + energy + "/" + energyCapacity + "/" + neededEnergy);
 	//console.log("   workers: carry: " + workerCapacity + " demanded workers: " + result["worker"]);
 
-	return result;
+	return memory.demands;
 };
 
 

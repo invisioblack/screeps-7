@@ -26,14 +26,14 @@ NeedRepair.prototype.constructor = NeedRepair;
 
 NeedRepair.prototype.getUnitDemands = function(roomName, memory, motivationName)
 {
-	let result = {};
+	memory.demands = {};
 	let target = Game.getObjectById(memory.targetId);
 	if (!lib.isNull(target))
-		result["worker"] = Math.ceil((target.hitsMax - target.hits)/1000);
+		memory.demands["worker"] = Math.ceil((target.hitsMax - target.hits)/1000);
 	else
-		result["worker"] = 0;
+		memory.demands["worker"] = 0;
 	//console.log(memory.targetId);
-	return result;
+	return memory.demands;
 };
 
 

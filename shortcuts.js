@@ -11,94 +11,11 @@ global.r1 = "W12S76";
 global.r2 = "W13S77";
 global.r3 = "W13S76";
 global.r4 = "W12S77";
+global.r5 = "W14S77";
 
 global.rl = roomLevels;
 global.ws = wallStatus;
 
-global.h1 = "harvester-1";
-global.h2 = "harvester-2";
-global.h3 = "harvester-3";
-global.h4 = "harvester-4";
-global.h5 = "harvester-5";
-global.h6 = "harvester-6";
-global.h7 = "harvester-7";
-global.h8 = "harvester-8";
-global.h9 = "harvester-9";
-global.h10 = "harvester-10";
-global.h11 = "harvester-11";
-global.h12 = "harvester-12";
-global.h13 = "harvester-13";
-global.h14 = "harvester-14";
-global.h15 = "harvester-15";
-global.h16 = "harvester-16";
-global.h17 = "harvester-17";
-global.h18 = "harvester-18";
-global.h19 = "harvester-19";
-global.h20 = "harvester-20";
-
-global.w1 = "worker-1";
-global.w2 = "worker-2";
-global.w3 = "worker-3";
-global.w4 = "worker-4";
-global.w5 = "worker-5";
-global.w6 = "worker-6";
-global.w7 = "worker-7";
-global.w8 = "worker-8";
-global.w9 = "worker-9";
-global.w10 = "worker-10";
-global.w11 = "worker-11";
-global.w12 = "worker-12";
-global.w13 = "worker-13";
-global.w14 = "worker-14";
-global.w15 = "worker-15";
-global.w16 = "worker-16";
-global.w17 = "worker-17";
-global.w18 = "worker-18";
-global.w19 = "worker-19";
-global.w20 = "worker-20";
-global.w21 = "worker-21";
-global.w22 = "worker-22";
-global.w23 = "worker-23";
-global.w24 = "worker-24";
-global.w25 = "worker-25";
-global.w26 = "worker-26";
-global.w27 = "worker-27";
-global.w28 = "worker-28";
-global.w29 = "worker-29";
-global.w30 = "worker-30";
-
-global.g1 = "guard-1";
-global.g2 = "guard-2";
-global.g3 = "guard-3";
-global.g4 = "guard-4";
-global.g5 = "guard-5";
-global.g6 = "guard-6";
-global.g7 = "guard-7";
-global.g8 = "guard-8";
-global.g9 = "guard-9";
-global.g10 = "guard-10";
-
-global.rg1 = "rangedGuard-1";
-global.rg2 = "rangedGuard-2";
-global.rg3 = "rangedGuard-3";
-global.rg4 = "rangedGuard-4";
-global.rg5 = "rangedGuard-5";
-global.rg6 = "rangedGuard-6";
-global.rg7 = "rangedGuard-7";
-global.rg8 = "rangedGuard-8";
-global.rg9 = "rangedGuard-9";
-global.rg10 = "rangedGuard-10";
-
-global.h1 = "healer-1";
-global.h2 = "healer-2";
-global.h3 = "healer-3";
-global.h4 = "healer-4";
-global.h5 = "healer-5";
-global.h6 = "healer-6";
-global.h7 = "healer-7";
-global.h8 = "healer-8";
-global.h9 = "healer-9";
-global.h10 = "healer-10";
 // ---------------------------------------------------------------------------------------------------------------------
 // Creep assignment ----------------------------------------------------------------------------------------------------
 
@@ -470,17 +387,6 @@ global.mList = function (roomName)
 * If you haven't checked that out, do so now, it is awesome.
 * Huge props to all the guys for sharing this!
  */
-
-// profiler ------------------------------------------------------------------------------------------------------------
-if(Game.profiler){
-	global.p = Game.profiler;
-	global.o = Game.profiler.output;
-	global.rb = function(){
-		Game.profiler.reset();
-		Game.profiler.background();
-	}
-}
-
 // ---------------------------------------------------------------------------------------------------------------------
 // credit due for next line to warinternal
 global.ex = (x) => JSON.stringify(x, null, 2);
@@ -502,15 +408,6 @@ global.total = function(){
 	return Object.keys(Game.creeps).length;
 };
 
-global.LOGGING_ENABLED = true;
-global.logging = function(bool){global.LOGGING_ENABLED = bool};
-global.log = {
-	log:   function log  (arg){if(global.LOGGING_ENABLED)return console.log(arg)},
-	warn:  function warn (arg){if(global.LOGGING_ENABLED)return console.log('<span style=color:#FFBF3F>'+arg+'</span>');},
-	err:   function err  (arg){if(global.LOGGING_ENABLED)return console.log('<span style=color:#D18F98>'+arg+'</span>');},
-	error: function error(arg){if(global.LOGGING_ENABLED)return console.log('<span style=color:#D18F98>'+arg+'</span>');},
-};
-
 // to be used after you respawn into a new location
 //   but before you spawn your first creep...
 global.respawn = function(){
@@ -519,36 +416,4 @@ global.respawn = function(){
 	}
 	Memory = {};
 	RawMemory.set('');
-};
-
-global.errName = function(err){
-	switch(err){
-		case ERR_NOT_OWNER: return 'ERR_NOT_OWNER';
-		case ERR_NO_PATH: return 'ERR_NO_PATH';
-		case ERR_NAME_EXISTS: return 'ERR_NAME_EXISTS';
-		case ERR_BUSY: return 'ERR_BUSY';
-		case ERR_NOT_FOUND: return 'ERR_NOT_FOUND';
-		case ERR_NOT_ENOUGH_RESOURCES: return 'ERR_NOT_ENOUGH_ENERGY/ERR_NOT_ENOUGH_RESOURCES/ERR_NOT_ENOUGH_EXTENSIONS';
-		case ERR_INVALID_TARGET: return 'ERR_INVALID_TARGET';
-		case ERR_FULL: return 'ERR_FULL';
-		case ERR_NOT_IN_RANGE: return 'ERR_NOT_IN_RANGE';
-		case ERR_INVALID_ARGS: return 'ERR_INVALID_ARGS';
-		case ERR_TIRED: return 'ERR_TIRED';
-		case ERR_NO_BODYPART: return 'ERR_NO_BODYPART';
-		case ERR_RCL_NOT_ENOUGH: return 'ERR_RCL_NOT_ENOUGH';
-		case ERR_GCL_NOT_ENOUGH: return 'ERR_GCL_NOT_ENOUGH';
-	}
-	return '';
-};
-
-// Courtesy of proximo, Dec 9 2016
-global.REVERSE_DIR = {
-	[TOP]            : BOTTOM,
-	[TOP_RIGHT]        : BOTTOM_LEFT,
-	[RIGHT]            : LEFT,
-	[BOTTOM_RIGHT]    : TOP_LEFT,
-	[BOTTOM]        : TOP,
-	[BOTTOM_LEFT]    : TOP_RIGHT,
-	[LEFT]            : RIGHT,
-	[TOP_LEFT]        : BOTTOM_RIGHT
 };

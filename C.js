@@ -60,4 +60,13 @@ module.exports =
 	'ROOM_ENERGYPICKUPMODE_CONTAINER': 2,
 	'ROOM_ENERGYPICKUPMODE_STORAGE': 3,
 	'ROOM_ENERGYPICKUPMODE_LINK': 4, // this will remain unimplementing until I write up some link code
+	
+	'CPU_THROTTLE_NORMAL': 0,
+	'CPU_THROTTLE_THIRD': 1,
+	'CPU_THROTTLE_HALF': 2,
+	'CPU_THROTTLE_QUARTER': 3,
+
+	'COLOR_GREEN': "#00BB11",
+	'COLOR_YELLOW': "#AAAA00",
+	'COLOR_RED': "#CC0011"
 };

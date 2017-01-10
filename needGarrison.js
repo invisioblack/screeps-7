@@ -28,11 +28,11 @@ NeedGarrison.prototype.getUnitDemands = function(roomName, memory, motivationNam
 {
 	let room = Game.rooms[roomName];
 	let unitCount = room.memory.threat.count;
-	let result = {};
-	result["guard"] = unitCount * 2;
-	result["rangedGuard"] = unitCount * 2;
-	result["healer"] = unitCount * 2;
-	return result;
+	memory.demands = {};
+	memory.demands["guard"] = unitCount * 2;
+	memory.demands["rangedGuard"] = unitCount * 2;
+	memory.demands["healer"] = unitCount * 2;
+	return memory.demands;
 };
 
 
