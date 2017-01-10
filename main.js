@@ -28,7 +28,7 @@
 //          allow for specify max parts
 //          allow to specify max/for other parts
  */
-
+"use strict";
 //----------------------------------------------------------------------------------------------------------------------
 // Modules
 //----------------------------------------------------------------------------------------------------------------------
@@ -41,6 +41,8 @@ require('Spawn.prototype');
 require('StructureTower.prototype');
 
 require("globals");
+require("logging");
+require("shortcuts");
 global.cpuUsedLast = 0;
 cpuManager.log(">>>> Global Start <<<<");
 
@@ -53,9 +55,6 @@ module.exports.loop = function ()
 {
 	cpuManager.timerStart("++++ Loop ++++", "loop");
 	delete Memory.rooms[undefined];
-	require("logging");
-	require("shortcuts");
-	global.cpuUsedLast = 0;
 	//------------------------------------------------------------------------------------------------------------------
 	// Declarations
 	//------------------------------------------------------------------------------------------------------------------

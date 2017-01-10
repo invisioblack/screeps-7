@@ -96,9 +96,7 @@ MotivationHaulToStorage.prototype.updateNeeds = function (roomName)
 	// look up sources and find out how many needs we should have for each one
 	let needName = "haulStorage." + room.name;
 	let need;
-	let storages = room.find(FIND_STRUCTURES, { filter: function (s) {
-		return s.structureType == STRUCTURE_STORAGE;
-	}});
+	let storages = room.memory.cache.structures[STRUCTURE_STORAGE].length;
 
 	// create new need if one doesn't exist
 	if (lib.isNull(memory.needs[needName]) && storages.length)
@@ -107,7 +105,7 @@ MotivationHaulToStorage.prototype.updateNeeds = function (roomName)
 		need = memory.needs[needName];
 		need.name = needName;
 		need.type = "needHaulToStorage";
-		need.targetId = storages[0].id;
+		need.targetId = room.memory.cache.structures[STRUCTURE_STORAGE][0];
 		need.priority = C.PRIORITY_1;
 	}
 };

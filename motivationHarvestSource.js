@@ -89,22 +89,23 @@ MotivationHarvestSource.prototype.updateNeeds = function (roomName)
 	sources.forEach(function (s) {
 		let needName = "harvest." + s.id;
 		let need;
-		let container = s.pos.findInRange(FIND_STRUCTURES, 1,{ filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }})[0];
 
 		//console.log('Need Name: ' + needName);
 
 		// create new need if one doesn't exist
-		if (lib.isNull(memory.needs[needName]) && !lib.isNull(container))
+		if (lib.isNull(memory.needs[needName]))
 		{
+			let container = s.pos.findInRange(FIND_STRUCTURES, 1,{ filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }})[0];
 			memory.needs[needName] = {};
 			need = memory.needs[needName];
 			need.name = needName;
 			need.type = "needHarvestSource";
 			need.targetId = s.id;
+			need.containerId = container.id;
 			need.priority = C.PRIORITY_1;
 		}
 
-		if (lib.isNull(container))
+		if (lib.isNull(Game.getObjectById(memory.needs[needName].containerId)))
 		{
 			delete memory.needs[needName];
 		}

@@ -166,42 +166,6 @@ MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
 	} else { // cull need if we don't need energy
 		delete memory.needs[needName];
 	}
-
-
-	let extenders = room.find(FIND_MY_STRUCTURES, {filter: { structureType: STRUCTURE_EXTENSION }});
-	extenders.forEach(function (ex) {
-		let needName = "supplyExtender." + ex.id;
-		let need;
-
-		delete memory.needs[needName];
-
-	}, this);
-
-	/*
-	let extenders = room.find(FIND_MY_STRUCTURES, {filter: { structureType: STRUCTURE_EXTENSION }});
-	extenders.forEach(function (ex) {
-		let needName = "supplyExtender." + ex.id;
-		let need;
-
-		//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
-
-		if ((ex.energyCapacity - ex.energy) > 0)
-		{
-			// create new need if one doesn't exist
-			if (lib.isNull(memory.needs[needName]))
-			{
-				memory.needs[needName] = {};
-				need = memory.needs[needName];
-				need.type = "needTransferEnergy";
-				need.name = needName;
-				need.targetId = ex.id;
-				need.priority = C.PRIORITY_1;
-			}
-		} else { // cull need if we don't need energy
-			delete memory.needs[needName];
-		}
-	}, this);
-	*/
 };
 
 //-------------------------------------------------------------------------

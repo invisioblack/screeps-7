@@ -418,9 +418,11 @@ module.exports =
 		lib.log(">>>> Final Motivation Round - Manage Needs <<<<" , debug);
 		sortedMotivations.forEach(function (motivationMemory)
 		{
-			lib.log("---- Motivating round 4 - manage needs: " + motivationMemory.name + " Active: " + motivationMemory.active , debug);
-			// processes needs for motivation ------------------------------------------------------------------
-			needManager.manageNeeds(roomName , global[motivationMemory.name] , motivationMemory);
+			if (motivationMemory.active) {
+				lib.log("---- Motivating round 4 - manage needs: " + motivationMemory.name + " Active: " + motivationMemory.active, debug);
+				// processes needs for motivation ------------------------------------------------------------------
+				needManager.manageNeeds(roomName, global[motivationMemory.name], motivationMemory);
+			}
 		} , this);
 	},
 

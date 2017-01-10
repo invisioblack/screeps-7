@@ -68,9 +68,9 @@ MotivationLongDistanceHarvest.prototype.updateNeeds = function (roomName)
 
 	// Handle Harvest Energy Needs -------------------------------------------------------------------------------------
 	// look up sources and find out how many needs we should have for each one
-	let sources = room.find(FIND_SOURCES);
+	let sources = room.memory.cache.sources;
 	sources.forEach(function (s) {
-		let needName = "ldharvest." + s.id;
+		let needName = "ldharvest." + s;
 		let need;
 
 		//console.log('Need Name: ' + needName);
@@ -82,7 +82,7 @@ MotivationLongDistanceHarvest.prototype.updateNeeds = function (roomName)
 			need = memory.needs[needName];
 			need.name = needName;
 			need.type = "needLongDistanceHarvest";
-			need.targetId = s.id;
+			need.targetId = s;
 			need.priority = C.PRIORITY_1;
 		}
 
