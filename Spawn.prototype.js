@@ -124,11 +124,13 @@ Spawn.prototype.spawnUnitByEnergy = function (unitName, energy)
 		if (_.isString(result))
 		{
 			lib.log('+++++++++++++++++++Creating creep ' + unitName + ' : ' + name + " energy: " + energy + " result: " + result, debug);
+			// @type {Creep}
 			let creep = Game.creeps[name];
-			creep.initMotive();
-			creep.deassignMotive(this.room.name);
 			creep.memory.homeRoom = this.room.name;
 			creep.memory.spawn = this.name;
+			creep.initMotive();
+			creep.deassignMotive(this.room.name);
+			creep.resetSource();
 		}
 		else
 		{

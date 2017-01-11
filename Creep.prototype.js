@@ -64,11 +64,6 @@ Creep.prototype.rendezvous = function (range)
 	{
 		this.moveToRange(this.memory.rendezvous, range);
 	}
-	else if (flags && flags.length)
-	{
-		let flag = flags[0];
-		this.moveToRange(flag, range);
-	}
 	else
 	{
 		this.moveToRange(this.getSpawn(), range);
