@@ -456,7 +456,7 @@ Room.prototype.getThreats = function ()
 	let result = _.map(hostiles, (c) => {
 		let r = {};
 		r.id = c;
-		r.status = diplomacyManager.get(c.owner.username);
+		r.status = diplomacyManager.status(c.owner.username);
 		console.log("getThreats: " + c.owner.username);
 		if (r.status === PLAYER_HOSTILE)
 			return r;

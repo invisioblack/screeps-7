@@ -100,6 +100,7 @@ MotivationClaimRoom.prototype.updateActive = function (roomName, demands)
 {
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
+	// TODO: THIS ISN'T RIGHT
 	// filter this to only claims spawning in specified room
 	let countSpawnClaims = _.size(Memory.claims, function (c){
 		return c.spawnRoom === roomName;

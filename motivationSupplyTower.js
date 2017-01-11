@@ -33,7 +33,8 @@ MotivationSupplyTower.prototype.getDemands = function (roomName, resources)
 	let room = Game.rooms[roomName];
 	let result = {};
 	let unitName = this.getDesiredSpawnUnit(roomName);
-	let towers = lib.nullProtect(room.memory.cache.structures[STRUCTURE_TOWER], []).length;
+	let towerIds = lib.nullProtect(room.memory.cache.structures[STRUCTURE_TOWER], []);
+	let towers = _.map(towerIds, (o) => { return Game.getObjectById(o)});
 
 	let energy = _.sum(towers, "energy");
 	let energyTotal = _.sum(towers, "energyCapacity");
@@ -107,7 +108,8 @@ MotivationSupplyTower.prototype.updateNeeds = function (roomName)
 {
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	let towers = lib.nullProtect(room.memory.cache.structures[STRUCTURE_TOWER], []).length;
+	let towerIds = lib.nullProtect(room.memory.cache.structures[STRUCTURE_TOWER], []);
+	let towers = _.map(towerIds, (o) => { return Game.getObjectById(o)});
 
 	// insure memory is initialized for needs
 	if (lib.isNull(memory.needs))

@@ -96,7 +96,9 @@ MotivationHaulToStorage.prototype.updateNeeds = function (roomName)
 	// look up sources and find out how many needs we should have for each one
 	let needName = "haulStorage." + room.name;
 	let need;
-	let storages = room.memory.cache.structures[STRUCTURE_STORAGE].length;
+	let towerIds = lib.nullProtect(room.memory.cache.structures[STRUCTURE_TOWER], []);
+	let storageIds = lib.nullProtect(room.memory.cache.structures[STRUCTURE_STORAGE], []);
+	let storages  = _.map(storageIds, (id) => { return Game.getObjectById(id) });
 
 	// create new need if one doesn't exist
 	if (lib.isNull(memory.needs[needName]) && storages.length)

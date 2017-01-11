@@ -253,7 +253,7 @@ module.exports =
 		{
 			// -------------------------------------------------------------------------------------------------
 			// round 2, regular allocation ---------------------------------------------------------------------
-			let debug = false;
+			let debug = true;
 			let iteration = 1;
 			let totalShares;
 			let totalUnits;

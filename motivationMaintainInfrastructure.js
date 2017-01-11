@@ -82,12 +82,7 @@ MotivationMaintainInfrastructure.prototype.updateActive = function (roomName, de
 {
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	if (Object.keys(demands.units).length > 0)
-	{
-		memory.active = true;
-	} else {
-		memory.active = false;
-	}
+	memory.active = true;
 };
 
 MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)

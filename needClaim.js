@@ -38,7 +38,7 @@ NeedClaim.prototype.getUnitDemands = function(roomName, memory, motivationName)
 		let spawnClaims = _.filter(Memory.claims, function (c){
 			return c.spawnRoom === roomName;
 		});
-		memory.demands["claimer"] = spawnClaims;
+		memory.demands["claimer"] = spawnClaims.length;
 	}
 
 	lib.log(" Claim: " + JSON.stringify(memory.demands), debug);
