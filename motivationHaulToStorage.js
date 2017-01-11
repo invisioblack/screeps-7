@@ -70,9 +70,9 @@ MotivationHaulToStorage.prototype.updateActive = function (roomName, demands)
 {
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	let storages = room.find(FIND_STRUCTURES, { filter: function (s) {
-		return s.structureType == STRUCTURE_STORAGE;
-	}});
+	let storageIds = lib.nullProtect(room.memory.cache.structures[STRUCTURE_STORAGE], []);
+	let storages  = _.map(storageIds, (id) => { return Game.getObjectById(id) });
+
 	if (!lib.isNull(room.controller) && room.controller.my && room.controller.level >= 4 && storages.length > 0)
 	{
 		memory.active = true;

@@ -43,7 +43,7 @@ MotivationHarvestSource.prototype.getDesireSpawn = function (roomName, demands)
 {
 	let result = true;
 	let room = Game.rooms[roomName];
-	let numContainers = room.find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }}).length;
+	let numContainers = lib.nullProtect(room.memory.cache.structures[STRUCTURE_CONTAINER], []).length;
 	let numHarvesters = strategyManager.countRoomUnits(roomName, "harvester");
 	let demandedHarvesters = lib.nullProtect(demands.units["harvester"], 0);
 	let numWorkers = strategyManager.countRoomUnits(roomName, "worker");
@@ -85,7 +85,9 @@ MotivationHarvestSource.prototype.updateNeeds = function (roomName)
 
 	// Handle Harvest Energy Needs -------------------------------------------------------------------------------------
 	// look up sources and find out how many needs we should have for each one
-	let sources = room.find(FIND_SOURCES);
+	let sourceIds = lib.nullProtect(room.memory.cache.sources, []);
+	let sources = _.map(sourceIds, (id) => { return Game.getObjectById(id) });
+
 	sources.forEach(function (s) {
 		let needName = "harvest." + s.id;
 		let need;

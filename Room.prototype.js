@@ -34,10 +34,8 @@ Room.prototype.initMemCache = function (forceRefresh = false)
 /**
  * Updates the memory structure cache to reduce the number of Room.find() calls for structures
  */
-Room.prototype.updateStructureCache = function (forceRefresh)
+Room.prototype.updateStructureCache = function (forceRefresh = false)
 {
-	// don't require forceRefresh to be passed
-	if (lib.isNull(forceRefresh)) forceRefresh = false;
 	// insure the memory object exists
 	if (lib.isNull(this.memory.cache.structures))
 	{
@@ -76,10 +74,8 @@ Room.prototype.updateStructureCache = function (forceRefresh)
 	}
 };
 
-Room.prototype.updateSourceCache = function (forceRefresh)
+Room.prototype.updateSourceCache = function (forceRefresh = false)
 {
-	// don't require forceRefresh to be passed
-	if (lib.isNull(forceRefresh)) forceRefresh = false;
 	// insure the memory object exists
 	if (lib.isNull(this.memory.cache.sources))
 	{

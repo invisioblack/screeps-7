@@ -58,7 +58,7 @@ module.exports =
 			motivationSupplySpawn.init(room.name);
 			let numWorkers = strategyManager.countRoomUnits(roomName, "worker");
 			let numHarvesters = strategyManager.countRoomUnits(roomName, "harvester");
-			let numContainers = room.memory.cache.structures[STRUCTURE_CONTAINER].length;
+			let numContainers = lib.nullProtect(room.memory.cache.structures[STRUCTURE_CONTAINER], []).length;
 
 			// normal priority
 			if (numWorkers < config.minWorkers)
@@ -455,9 +455,8 @@ module.exports =
 		let debug = false;
 		let room = Game.rooms[roomName];
 		let numWorkers = strategyManager.countRoomUnits(roomName, "worker");
-		let storages = room.find(FIND_STRUCTURES, { filter: function (s) {
-			return s.structureType == STRUCTURE_STORAGE;
-		}});
+		let storageIds = lib.nullProtect(room.memory.cache.structures[STRUCTURE_STORAGE], []);
+		let storages  = _.map(storageIds, (id) => { return Game.getObjectById(id) });
 
 		// do I have vis on room, does room have a controller
 		if (!lib.isNull(room) && !lib.isNull(room.controller))

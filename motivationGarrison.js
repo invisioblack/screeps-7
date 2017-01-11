@@ -32,8 +32,6 @@ MotivationGarrison.prototype.getDemands = function (roomName, resources)
 	let debug = false;
 	let result = {};
 	let unitName = this.getDesiredSpawnUnit(roomName);
-	let towers = Game.rooms[roomName].find(FIND_STRUCTURES, { filter: function (s) { return s.structureType == STRUCTURE_TOWER}});
-
 	let energy = 0;
 	let energyTotal = 0;
 	//console.log("e: " + energy + " et: " + energyTotal);

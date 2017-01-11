@@ -249,11 +249,9 @@ module.exports = function()
 
 	Job.prototype.findEnergyContainer = function (creep)
 	{
-		let container;
 		let containerIds = creep.room.memory.cache.structures[STRUCTURE_CONTAINER];
 		let containers = _.map(containerIds, function (c) { return Game.getObjectById(c)});
-		let sortedContainers = _.sortByOrder(containers, ['store["energy"]'], ['desc']);
-		container = sortedContainers[0];
+		let container = _.max(containers, function (o) { return o.store[RESOURCE_ENERGY]});
 
 		//console.log("containers: " + container.store[RESOURCE_ENERGY]);
 
