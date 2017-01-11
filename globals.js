@@ -1,3 +1,4 @@
+"use strict";
 global.C = require("C");
 global.cacheManager = require("cacheManager");
 global.cpuManager = require("cpuManager");

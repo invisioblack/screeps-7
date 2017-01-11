@@ -154,7 +154,7 @@ module.exports =
 		        break;
 		}
 
-		if (pingPong == 0)
+		if (pingPong === 0)
 		{   
 		    return true;
 		}

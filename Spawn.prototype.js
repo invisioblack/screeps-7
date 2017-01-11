@@ -1,7 +1,7 @@
 //-------------------------------------------------------------------------
 // prototype.spawn
 //-------------------------------------------------------------------------
-
+"use strict";
 
 // game costs for spawning parts
 Spawn.prototype.costs = {};
@@ -42,7 +42,7 @@ Spawn.prototype.generateName = function (name)
 		// check for creeps with that name
 		for (let i in Game.creeps)
 		{
-			if (Game.creeps[i].name == nameTry)
+			if (Game.creeps[i].name === nameTry)
 			{
 				found = true;
 			}
@@ -88,7 +88,7 @@ Spawn.prototype.spawnUnitByEnergy = function (unitName, energy)
 
 	name = this.generateName(unitName);
 
-	if (units[unitName].mode == 1)
+	if (units[unitName].mode === 1)
 	{
 
 		units[unitName].parts.forEach(function (part)
@@ -99,7 +99,7 @@ Spawn.prototype.spawnUnitByEnergy = function (unitName, energy)
 
 			if (numberParts < part.minimum)
 				numberParts = part.minimum;
-			for (x = 0; x < numberParts; x++)
+			for (let x = 0; x < numberParts; x++)
 			{
 				//console.log(energyLeft + "/" + this.costs[part.part]);
 			    if (energyLeft >= this.costs[part.part])
@@ -109,7 +109,7 @@ Spawn.prototype.spawnUnitByEnergy = function (unitName, energy)
 			    }
 			}
 		} , this);
-	} else if (units[unitName].mode == 2)
+	} else if (units[unitName].mode === 2)
 	{
 		parts = units[unitName].parts;
 	}
@@ -140,7 +140,7 @@ Spawn.prototype.spawnUnitByEnergy = function (unitName, energy)
 };
 
 Spawn.prototype.shuffle = function(body) {
-	if(body == undefined)
+	if(body === undefined)
 		return undefined;
 	return _(body)
 		.sortBy(function(part) {

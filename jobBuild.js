@@ -1,7 +1,7 @@
 //-------------------------------------------------------------------------
 // jobBuild
 //-------------------------------------------------------------------------
-
+"use strict";
 //-------------------------------------------------------------------------
 // modules
 //-------------------------------------------------------------------------
@@ -60,7 +60,7 @@ JobBuild.prototype.work = function (creep)
 			break;
 		case this.JOB_MODE_WORK:
 			this.resetSource(creep);
-			if (carry == 0)
+			if (carry === 0)
 			{
 				creep.memory.job.mode = this.JOB_MODE_GETENERGY;
 				creep.deassignMotive();
@@ -68,12 +68,12 @@ JobBuild.prototype.work = function (creep)
 
 				let result = creep.build(target);
 				//console.log("build: " + target + " Result: " + result);
-				if (result == ERR_NOT_IN_RANGE)
+				if (result === ERR_NOT_IN_RANGE)
 				{
 					let moveResult = creep.moveTo(target, {"maxRooms": 1});
 					//if (moveResult < 0 && moveResult != ERR_TIRED)
 					//	console.log(creep.name + " Can't move while building: " + moveResult);
-				} else if (result == ERR_FULL) {
+				} else if (result === ERR_FULL) {
 					//console.log("---- RESET");
 					creep.deassignMotive();
 				}

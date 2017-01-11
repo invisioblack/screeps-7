@@ -7,6 +7,7 @@
 // room.memory.motivations[this.name].allocatedUnits
 // room.memory.motivations[this.name].spawnAllocated
 // room.memory.motivations[this.name].needs
+"use strict";
 
 module.exports = function ()
 {
@@ -35,7 +36,7 @@ module.exports = function ()
 
 	Motivation.prototype.getUnitDemands = function (roomName)
 	{
-		let debug = false; //roomName == "W8N2";
+		let debug = false; //roomName === "W8N2";
 		let result = {};
 		let room = Game.rooms[roomName];
 
@@ -48,7 +49,7 @@ module.exports = function ()
 			let demands = global[need.type].getUnitDemands(roomName, need, this.name);
 
 
-			lib.log("----------- demands: " + JSON.stringify(demands), room.name == "W8N2", debug);
+			lib.log("----------- demands: " + JSON.stringify(demands), room.name === "W8N2", debug);
 			for (let unitName in demands)
 			{
 				if (lib.isNull(result[unitName]))

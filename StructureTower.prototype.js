@@ -1,6 +1,7 @@
 //-------------------------------------------------------------------------
 // StructureTower.prototype
 //-------------------------------------------------------------------------
+"use strict";
 
 StructureTower.prototype.autoAttack = function ()
 {
@@ -43,7 +44,7 @@ StructureTower.prototype.autoRepair = function ()
 
 	// walls and ramparts
 	damagedBuildings = this.room.find(FIND_STRUCTURES, { filter: function(object) {
-			return (object.structureType == STRUCTURE_WALL || object.structureType == STRUCTURE_RAMPART)
+			return (object.structureType === STRUCTURE_WALL || object.structureType === STRUCTURE_RAMPART)
 				&& object.hits < (wallHP * config.towerRepairFactor);
 		}
 	});

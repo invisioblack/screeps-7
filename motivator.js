@@ -5,7 +5,7 @@
 // It makes decisions on how resources many resources are allocated to 
 // each active motivation.
 //----------------------------------------------------------------------------------------------------------------------
-
+"use strict";
 module.exports =
 {
 	//------------------------------------------------------------------------------------------------------------------
@@ -115,7 +115,7 @@ module.exports =
 		{
 			cpuManager.timerStart(`\tRoom: ${roomLink(roomName)}`, "motivate.room");
 			room = Game.rooms[roomName];
-			//debug = room.name == "W8N3";
+			//debug = room.name === "W8N3";
 
 			// update defenses -----------------------------------------------------------------------------------------
 			room.updateThreat();
@@ -227,12 +227,12 @@ module.exports =
 				{
 					let spawn = Game.spawns[spawnName];
 					// this probably isn't handling multiple spawns well
-					if (spawn.room.name == roomName)
+					if (spawn.room.name === roomName)
 					{
 						let r = Game.rooms[roomName];
 						let countUnits = strategyManager.countRoomUnits(roomName, unitName);
 						//console.log(unitName + " " + countUnits);
-						if (unitName == "worker" && countUnits < 2)
+						if (unitName === "worker" && countUnits < 2)
 							spawn.spawnUnit(unitName , false);
 						else
 							spawn.spawnUnit(unitName , true);
@@ -475,7 +475,7 @@ module.exports =
 			{
 				let unassignedWorker = strategyManager.findRoomUnassignedUnit(roomName, "worker");
 
-				if (!lib.isNull(unassignedWorker) && _.sum(unassignedWorker.carry) == 0)
+				if (!lib.isNull(unassignedWorker) && _.sum(unassignedWorker.carry) === 0)
 				{
 					//lib.log(" Creep: " + JSON.stringify(unassignedWorker) , debug);
 					unassignedWorker.assignToLongDistanceHarvest();

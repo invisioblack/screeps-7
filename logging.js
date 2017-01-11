@@ -1,4 +1,4 @@
-
+"use strict";
 /**
  * returns string for a link that can be clicked from the console
  * to change which room you are viewing. Useful for other logging functions
@@ -88,7 +88,7 @@ global.wallStatus = function() {
  * @returns {*|number}
  */
 global.getId = function() {
-	if (Memory.globalId == undefined || Memory.globalId > 10000) {
+	if (Memory.globalId === undefined || Memory.globalId > 10000) {
 		Memory.globalId = 0;
 	}
 	Memory.globalId = Memory.globalId + 1;
@@ -167,7 +167,7 @@ global.roomLevels = function() {
 				let numStructures = (getRoomStructuresByType(room)[type] || []).length;
 				numStructures = numStructures + (getRoomConstructionSitesByType(room)[type] || []).length;
 				let numPossible = CONTROLLER_STRUCTURES[type][roomLevel];
-				if (type !== STRUCTURE_CONTAINER && numPossible < 2500 && numStructures < numPossible) {
+				if (type != STRUCTURE_CONTAINER && numPossible < 2500 && numStructures < numPossible) {
 					string += `\t | <font color="#00ffff">${type}'s missing: ${numPossible - numStructures}</font>`;
 				}
 			});

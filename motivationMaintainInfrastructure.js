@@ -1,6 +1,7 @@
 //-------------------------------------------------------------------------
 // MotivationMaintainInfrastructure
 //-------------------------------------------------------------------------
+"use strict";
 
 //-------------------------------------------------------------------------
 // modules
@@ -152,14 +153,14 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 	let wallHP = config.wallHP[lib.isNull(room.controller) ? 0 : room.controller.level];
 	let wallRepairSites = room.find(FIND_STRUCTURES, {
 		filter: function (s) {
-			return (s.structureType == STRUCTURE_WALL || s.structureType == STRUCTURE_RAMPART) && s.hits < wallHP;
+			return (s.structureType === STRUCTURE_WALL || s.structureType === STRUCTURE_RAMPART) && s.hits < wallHP;
 		}
 	});
 	wallRepairSites.forEach(function (rs) {
 		let needName;
-		if (rs.structureType == STRUCTURE_WALL)
+		if (rs.structureType === STRUCTURE_WALL)
 			needName = "repairWall." + rs.id;
-		else if (rs.structureType == STRUCTURE_RAMPART)
+		else if (rs.structureType === STRUCTURE_RAMPART)
 			needName = "repairRampart." + rs.id;
 
 		//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
@@ -192,7 +193,7 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 				lib.log("-------------- CULLING untyped maintain infrastructure need -------------", debug);
 				delete memory.needs[needName];
 
-			} else if (memory.needs[needName].type == "needBuild") {
+			} else if (memory.needs[needName].type === "needBuild") {
 				// cull build needs
 				if (lib.isNull(memory.needs[needName].targetId))
 				{
@@ -205,14 +206,14 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 					let result = _.filter(constructionSites , {"id": siteId});
 
 					// if there are no sites, then cull it
-					if (result.length == 0)
+					if (result.length === 0)
 					{
 						lib.log("-------------- CULLING CONSTRUCTION SITE -------------", debug);
 						delete memory.needs[needName];
 					}
 				}
 
-			} else if (memory.needs[needName].type == "needRepair") {
+			} else if (memory.needs[needName].type === "needRepair") {
 				// cull repair needs
 				if (lib.isNull(memory.needs[needName].targetId))
 				{
@@ -227,7 +228,7 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 					let resultWall = _.filter(wallRepairSites , {"id": siteId});
 
 					// if there are no sites, then cull it
-					if (result.length == 0 && resultWall.length == 0)
+					if (result.length === 0 && resultWall.length === 0)
 					{
 						lib.log("-------------- CULLING REPAIR SITE: " + siteId, debug);
 						delete memory.needs[needName];
@@ -262,12 +263,12 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 				break;
 		}
 
-		if (need.type == "needRepair")
+		if (need.type === "needRepair")
 		{
 			let percent;
 			let max = site.hitsMax;
 
-			if (site.structureType == STRUCTURE_WALL || site.structureType == STRUCTURE_RAMPART)
+			if (site.structureType === STRUCTURE_WALL || site.structureType === STRUCTURE_RAMPART)
 				max =  config.wallHP[room.controller.level];
 			percent = (site.hits / max) * 10000 / 100;
 			//console.log(needName + " PERCENT: " + percent);

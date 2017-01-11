@@ -1,8 +1,7 @@
 /***********************************************************************************************************************
  * GLOBAL SHORTCUTS TO MAKE STUFF EASY!
- * NOTE: anything involving Game requires you to run it INSIDE
- * your main loop, as Game gets recreated each tick...
  **********************************************************************************************************************/
+"use strict";
 
 /**
  * Room shortcuts

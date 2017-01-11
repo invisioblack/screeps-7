@@ -11,6 +11,7 @@
 //-------------------------------------------------------------------------
 // modules
 //-------------------------------------------------------------------------
+"use strict";
 
 Creep.prototype.moveToRange = function (target, range)
 {
@@ -104,7 +105,7 @@ Creep.prototype.getHasPart = function (part)
 {
 	let result = false;
 	this.body.forEach(function (i) {
-		if (i.type == part)
+		if (i.type === part)
 		{
 			result = true;
 		}
@@ -180,10 +181,10 @@ Creep.prototype.assignToLongDistanceHarvest = function ()
  * Creep.prototype.sing(sentence, public)
  *   creep will sing a different part of sentence per tick
  */
-Creep.prototype.sing = function(sentence, public){
-	if(public === undefined)public = false;
+Creep.prototype.sing = function(sentence, pub){
+	if(pub === undefined)pub = false;
 	let words = sentence.split(" ");
-	this.say(words[Game.time % words.length], public);
+	this.say(words[Game.time % words.length], pub);
 };
 
 Creep.prototype.resetSource = function ()

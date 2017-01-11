@@ -2,6 +2,7 @@
  * Cache Manager
  *  Manages both global and memory caching
  */
+"use strict";
 
 module.exports = {
 	init: function () {

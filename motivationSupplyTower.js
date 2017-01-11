@@ -1,7 +1,7 @@
 //-------------------------------------------------------------------------
 // motivationSupplyTower
 //-------------------------------------------------------------------------
-
+"use strict";
 //-------------------------------------------------------------------------
 // modules
 //-------------------------------------------------------------------------
@@ -120,7 +120,7 @@ MotivationSupplyTower.prototype.updateNeeds = function (roomName)
 	towers.forEach(function (tower){
 		//console.log(towers);
 		// loop over spawns in room
-		if (tower.room.name == roomName)
+		if (tower.room.name === roomName)
 		{
 			let needName = "supplyTower." + tower.id;
 			let need;

@@ -60,7 +60,7 @@ Room.prototype.updateStructureCache = function (forceRefresh = false)
 				//console.log(`Checking ${s}...`);
 				let foundStructures = room.find(FIND_STRUCTURES , { filter: function (st)
 				{
-					return st.structureType == s;
+					return st.structureType === s;
 				}});
 				//console.log(`Found ${foundStructures}...`);
 
@@ -236,7 +236,7 @@ Room.prototype.getSpawnEnergy = function ()
 	for (let spawnName in Game.spawns)
 	{
 		let spawn = Game.spawns[spawnName];
-		if (spawn.room.name == this.name)
+		if (spawn.room.name === this.name)
 		{
 			result.energy += spawn.energy;
 			result.energyCapacity += spawn.energyCapacity;
@@ -311,7 +311,7 @@ Room.prototype.getCreeps = function ()
 	let roomName = this.name;
 	let result = _.filter(Game.creeps , function (creep)
 	{
-		return creep.room.name == roomName;
+		return creep.room.name === roomName;
 	});
 	return result;
 };
@@ -335,8 +335,8 @@ Room.prototype.getUnits = function (unitName)
 	let roomName = this.name;
 	let result = _.filter(Game.creeps , function (creep)
 	{
-		return creep.room.name == roomName
-		&& creep.memory.unit == unitName;
+		return creep.room.name === roomName
+		&& creep.memory.unit === unitName;
 	});
 	return result;
 };
@@ -347,7 +347,7 @@ Room.prototype.getLostCreeps = function ()
 
 	let result = _.filter(Game.creeps , function (creep)
 	{
-		return creep.room.name == roomName
+		return creep.room.name === roomName
 			&& creep.memory.motive.room != roomName;
 	});
 
@@ -410,7 +410,7 @@ Room.prototype.getAgressivesPresent = function ()
 			//console.log(JSON.stringify(creep.body));
 			return _.find(creep.body , function (p)
 			{
-				return p.type == ATTACK || p.type == RANGED_ATTACK || p.type == CLAIM;
+				return p.type === ATTACK || p.type === RANGED_ATTACK || p.type === CLAIM;
 			});
 		}
 	});
@@ -425,7 +425,7 @@ Room.prototype.motivateTowers = function ()
 		let towers = this.find(FIND_STRUCTURES , {
 			filter: function (s)
 			{
-				return s.structureType == STRUCTURE_TOWER
+				return s.structureType === STRUCTURE_TOWER
 			}
 		});
 		// for each tower
@@ -489,7 +489,7 @@ Room.prototype.getMaxHarvesters = function ()
 Room.prototype.sing = function(sentence, public){
 	if(public === undefined)public = true;
 	let words = sentence.split(" ");
-	let creeps = _.filter(Game.creeps, (c) => c.room.name == this.name);
+	let creeps = _.filter(Game.creeps, (c) => c.room.name === this.name);
 	creeps = _.sortBy(creeps, function(c){return (c.pos.x + (c.pos.y*50))});
 
 	for(let i in creeps){

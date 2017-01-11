@@ -1,7 +1,7 @@
 //-------------------------------------------------------------------------
 // jobLongDistanceHarvest
 //-------------------------------------------------------------------------
-
+"use strict";
 //-------------------------------------------------------------------------
 // modules
 //-------------------------------------------------------------------------
@@ -59,7 +59,7 @@ JobLongDistanceHarvest.prototype.work = function (creep)
 			this.getEnergy(creep);
 			break;
 		case this.JOB_MODE_WORK:
-			if (carry == 0)
+			if (carry === 0)
 			{
 				creep.memory.job.mode = this.JOB_MODE_GETENERGY;
 				creep.deassignMotive();

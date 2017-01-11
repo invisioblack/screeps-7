@@ -1,7 +1,7 @@
 //-------------------------------------------------------------------------
 // jobHarvest
 //-------------------------------------------------------------------------
-
+"use strict";
 //-------------------------------------------------------------------------
 // modules
 //-------------------------------------------------------------------------
@@ -60,7 +60,7 @@ JobTransfer.prototype.work = function (creep)
 			break;
 		case this.JOB_MODE_WORK:
 			this.resetSource(creep);
-			if (carry == 0)
+			if (carry === 0)
 			{
 				creep.memory.job.mode = this.JOB_MODE_GETENERGY;
 				creep.deassignMotive();
@@ -70,13 +70,13 @@ JobTransfer.prototype.work = function (creep)
 				this.resetSource(creep);
 				let result = creep.transfer(target, RESOURCE_ENERGY);
 				lib.log(creep.name + " transfer result: " + result, debug);
-				if (result == ERR_NOT_IN_RANGE)
+				if (result === ERR_NOT_IN_RANGE)
 				{
 
 					let moveResult = creep.moveTo(target, {"maxRooms": 1});
 					//if (moveResult < 0 && moveResult != ERR_TIRED)
 					//	console.log(creep.name + " Can't move while transferring: " + moveResult);
-				} else if (result == ERR_FULL) {
+				} else if (result === ERR_FULL) {
 					lib.log("---- RESET", debug);
 					creep.deassignMotive();
 				}

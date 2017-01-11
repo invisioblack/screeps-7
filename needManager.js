@@ -5,6 +5,7 @@
 // creep to fulfill the task, but in some cases it will be things like asking 
 // the spawn to build another unit.
 //------------------------------------------------------------------------------
+"use strict";
 
 module.exports =
 {
@@ -53,7 +54,7 @@ module.exports =
 					let creepsAssigned = strategyManager.countRoomMotivationNeedUnits(roomName, motivation.name , need.name , unitName);
 					let creep = strategyManager.findRoomUnassignedUnit(roomName, unitName);
 
-					if (creepsDemanded == 0)
+					if (creepsDemanded === 0)
 						outOfCreeps = true;
 
 					lib.log("unit: " + unitName + " outOfCreeps: " + outOfCreeps + " assignedUnits: " + assignedUnits + " allocatedUnits " + allocatedUnits, debug);
@@ -89,7 +90,7 @@ module.exports =
 		{
 			// @type {Creep}
 			let creep = Game.creeps[creepName];
-			if (creep.room.name == roomName && creep.memory.motive.room == roomName && creep.memory.motive.motivation != "" && creep.memory.motive.need != "")
+			if (creep.room.name === roomName && creep.memory.motive.room === roomName && creep.memory.motive.motivation != "" && creep.memory.motive.need != "")
 			{
 				lib.log("Creep executing need: " + creep.name + " : " + creep.memory.motive.motivation + " : " + creep.memory.motive.need, debug);
 
@@ -102,32 +103,32 @@ module.exports =
 					creep.deassignMotive();
 				else if (lib.isNull(need.type))
 					creep.deassignMotive();
-				else if (need.type == "needTransferEnergy")
+				else if (need.type === "needTransferEnergy")
 				{
 					lib.log("Creep: " + creep.name + " Working needTransferEnergy", debug);
 					jobTransfer.work(creep);
 				}
-				else if (need.type == "needBuild")
+				else if (need.type === "needBuild")
 				{
 					lib.log("Creep: " + creep.name + " Working needBuild", debug);
 					jobBuild.work(creep);
 				}
-				else if (need.type == "needRepair")
+				else if (need.type === "needRepair")
 				{
 					lib.log("Creep: " + creep.name + " Working needRepair", debug);
 					jobRepair.work(creep);
 				}
-				else if (need.type == "needHarvestSource")
+				else if (need.type === "needHarvestSource")
 				{
 					lib.log("Creep: " + creep.name + " Working needHarvestSource", debug);
 					jobHarvestSource.work(creep);
 				}
-				else if (need.type == "needLongDistanceHarvest")
+				else if (need.type === "needLongDistanceHarvest")
 				{
 					lib.log("Creep: " + creep.name + " Working needLongDistanceHarvest", debug);
 					jobLongDistanceHarvest.work(creep);
 				}
-				else if (need.type == "needGarrison")
+				else if (need.type === "needGarrison")
 				{
 					lib.log("Creep: " + creep.name + " Working needGarrison", debug);
 					switch (creep.memory.unit)
@@ -144,22 +145,22 @@ module.exports =
 					}
 
 				}
-				else if (need.type == "needHaulToStorage")
+				else if (need.type === "needHaulToStorage")
 				{
 					lib.log("Creep: " + creep.name + " Working needHaulToStorage", debug);
 					jobTransfer.work(creep);
 				}
-				else if (need.type == "needClaim")
+				else if (need.type === "needClaim")
 				{
 					lib.log("Creep: " + creep.name + " Working needClaim", debug);
 					jobClaim.work(creep);
 				}
-				else if (need.type == "needManualTactical")
+				else if (need.type === "needManualTactical")
 				{
 					lib.log("Creep: " + creep.name + " Working needManualTactical", debug);
 					jobManualTactical.work(creep);
 				}
-				else if (need.type == "needSupplyExtenders")
+				else if (need.type === "needSupplyExtenders")
 				{
 					lib.log("Creep: " + creep.name + " Working needSupplyExtenders", debug);
 					jobSupplyExtenders.work(creep);

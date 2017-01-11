@@ -7,7 +7,7 @@
 // name: same as key
 // unitDemands: {} - key unit, value number
 // priority: constant
-
+"use strict";
 // probably need specific
 // sourceId:
 // targetId:

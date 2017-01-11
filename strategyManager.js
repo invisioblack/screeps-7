@@ -1,6 +1,7 @@
 //------------------------------------------------------------------------------
 // strategyManager
 //------------------------------------------------------------------------------
+"use strict";
 
 module.exports =
 {
@@ -25,7 +26,7 @@ module.exports =
 	{
 		let result = _.filter(Game.creeps , function (creep)
 		{
-			return creep.memory.unit == unitName;
+			return creep.memory.unit === unitName;
 		});
 		return result;
 	} ,
@@ -69,8 +70,8 @@ module.exports =
 	{
 		let result = _.filter(Game.creeps , function (creep)
 		{
-			return creep.memory.motive.room == roomName
-				&& creep.memory.unit == unitName;
+			return creep.memory.motive.room === roomName
+				&& creep.memory.unit === unitName;
 		});
 		return result;
 	} ,
@@ -150,10 +151,10 @@ module.exports =
 	{
 		let result = _.filter(Game.creeps , function (creep)
 		{
-			return creep.memory.motive.room == roomName
-				&& creep.memory.motive.motivation == motivationName
-				&& creep.memory.motive.need == needName
-				&& creep.memory.unit == unitName;
+			return creep.memory.motive.room === roomName
+				&& creep.memory.motive.motivation === motivationName
+				&& creep.memory.motive.need === needName
+				&& creep.memory.unit === unitName;
 		});
 		return result;
 	},
@@ -168,10 +169,10 @@ module.exports =
 	{
 		let result = _.filter(Game.creeps , function (creep)
 		{
-			return creep.memory.motive.room == roomName
+			return creep.memory.motive.room === roomName
 				&& creep.memory.motive.motivation != ""
 				&& creep.memory.motive.need != ""
-				&& creep.memory.unit == unitName;
+				&& creep.memory.unit === unitName;
 		});
 		return result;
 	},
@@ -187,10 +188,10 @@ module.exports =
 	{
 		let result = _.filter(Game.creeps , function (creep)
 		{
-			return creep.memory.motive.room == roomName
-				&& creep.memory.motive.motivation == ""
-				&& creep.memory.motive.need == ""
-				&& creep.memory.unit == unitName;
+			return creep.memory.motive.room === roomName
+				&& creep.memory.motive.motivation === ""
+				&& creep.memory.motive.need === ""
+				&& creep.memory.unit === unitName;
 		});
 
 		return result;

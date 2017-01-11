@@ -1,6 +1,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 // motivationSupplyController
 //-------------------------------------------------------------------------
+"use strict";
 let Motivation = require('Motivation.prototype')();
 
 //-------------------------------------------------------------------------
@@ -51,7 +52,7 @@ MotivationHarvestSource.prototype.getDesireSpawn = function (roomName, demands)
 
 	//console.log(`Room: ${roomName} #Containers: ${numContainers} Demanded Harvesters: ${demandedHarvesters}/${numHarvesters} Workers: ${numWorkers}`);
 
-	if (numContainers == 0 || numHarvesters >= demandedHarvesters || numWorkers < config.critWorkers)
+	if (numContainers === 0 || numHarvesters >= demandedHarvesters || numWorkers < config.critWorkers)
 	{
 		result = false;
 	}
@@ -97,7 +98,7 @@ MotivationHarvestSource.prototype.updateNeeds = function (roomName)
 		// create new need if one doesn't exist
 		if (lib.isNull(memory.needs[needName]))
 		{
-			let container = s.pos.findInRange(FIND_STRUCTURES, 1,{ filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }})[0];
+			let container = s.pos.findInRange(FIND_STRUCTURES, 1,{ filter: function (s) { return s.structureType === STRUCTURE_CONTAINER; }})[0];
 			memory.needs[needName] = {};
 			need = memory.needs[needName];
 			need.name = needName;

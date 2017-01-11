@@ -1,32 +1,28 @@
 /**
- *
-// TODO: figure out links
-// TODO: set rooms as defended, and send creeps to kill enemies there
-//          tie this to garrison
-//          set garrison to allow to pull units from elsewhere
-//          create specific spawn profiles based on threat
-// TODO: send maintainers to maintain roads in ldh rooms
-// TODO: create ally exemption
-// TODO: create scout motivation
-// TODO: create CPU monitor
- *          Implement CPU panic mode, when less than 1000 bucket, only process every other tick
- *          Implement multiple point CPU tracking
-// TODO: create motivation to spawn units for other rooms, rewire claim to use this
-// TODO: should be able to set a motivation on a creep and have the need manager auto set a need on it
-//          this wil be used for things like periodically sending units places to do things
-// TODO: create linked room manager for console
-//          creep details and manager
-//          storage details
-//          memory details
-//          motivator details
-// TODO: create data reporting system
-//          collect data, store it in Memory.reporting
-//          allow turing entire system on and off
-//          use this to pull and track historical data
-//          store data by tick, auto cull old data
-// TODO: improve creep design
-//          allow for specify max parts
-//          allow to specify max/for other parts
+ * TODO: figure out links
+ * TODO: create ally exemption
+ * TODO: set rooms as defended, and send creeps to kill enemies there
+ *          tie this to garrison
+ *          set garrison to allow to pull units from elsewhere
+ *          create specific spawn profiles based on threat
+ * TODO: send maintainers to maintain roads in ldh rooms
+ * TODO: create motivation to spawn units for other rooms, rewire claim to use this
+ * TODO: should be able to set a motivation on a creep and have the need manager auto set a need on it
+ *          this wil be used for things like periodically sending units places to do things
+ * TODO: improve creep design
+ *          allow for specify max parts
+ *          allow to specify max/for other parts
+ * TODO: create scout motivation
+ * TODO: create linked room manager for console
+ *          creep details and manager
+ *          storage details
+ *          memory details
+ *          motivator details
+ * TODO: create data reporting system
+ *          collect data, store it in Memory.reporting
+ *          allow turing entire system on and off
+ *          use this to pull and track historical data
+ *          store data by tick, auto cull old data
  */
 "use strict";
 //----------------------------------------------------------------------------------------------------------------------
@@ -84,7 +80,7 @@ module.exports.loop = function ()
 	//------------------------------------------------------------------------------------------------------------------
 	lib.log("<b>+++++++++++++++++++++++ end tick +++++++++++++++++++++++</b>", debug);
 
-	if (Game.time % 100 == 0)
+	if (Game.time % 100 === 0)
 		cacheManager.flushMem("cacheFunction");
 
 	cpuManager.timerStop("loop", 30, 38);

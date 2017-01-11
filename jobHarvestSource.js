@@ -1,7 +1,7 @@
 //-------------------------------------------------------------------------
 // jobHarvestSource
 //-------------------------------------------------------------------------
-
+"use strict";
 //-------------------------------------------------------------------------
 // modules
 //-------------------------------------------------------------------------
@@ -30,7 +30,7 @@ JobHarvestSource.prototype.work = function (creep)
 {
 	let need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
 	let target = Game.getObjectById(need.targetId);
-	let container = target.pos.findInRange(FIND_STRUCTURES, 1,{ filter: function (s) { return s.structureType == STRUCTURE_CONTAINER; }})[0];
+	let container = target.pos.findInRange(FIND_STRUCTURES, 1,{ filter: function (s) { return s.structureType === STRUCTURE_CONTAINER; }})[0];
 
 	//avoid hostiles
 	if (creep.avoidHostile(creep))
@@ -57,10 +57,10 @@ JobHarvestSource.prototype.work = function (creep)
 			//	console.log(creep.name + " Can't move to container: " + moveResult);
 		}
 
-		result = creep.harvest(target);
+		let result = creep.harvest(target);
 
 		//console.log("harvest: " + container.storeCapacity);
-		if (result == ERR_NOT_ENOUGH_ENERGY)
+		if (result === ERR_NOT_ENOUGH_ENERGY)
 		{
 			creep.say("Source Empty!");
 		}

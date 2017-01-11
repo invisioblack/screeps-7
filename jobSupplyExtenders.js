@@ -1,7 +1,7 @@
 //-------------------------------------------------------------------------
 // jobSupplyExtenders
 //-------------------------------------------------------------------------
-
+"use strict";
 //-------------------------------------------------------------------------
 // modules
 //-------------------------------------------------------------------------
@@ -61,7 +61,7 @@ JobSupplyExtenders.prototype.work = function (creep)
 			break;
 		case this.JOB_MODE_WORK:
 			this.resetSource(creep);
-			if (carry == 0)
+			if (carry === 0)
 			{
 				// reset our need assignment when we run out of energy
 				creep.memory.job.mode = this.JOB_MODE_GETENERGY;
@@ -83,7 +83,7 @@ JobSupplyExtenders.prototype.work = function (creep)
 
 					let result = creep.transfer(target , RESOURCE_ENERGY);
 					lib.log(creep.name + " transfer result: " + result , debug);
-					if (result == ERR_NOT_IN_RANGE)
+					if (result === ERR_NOT_IN_RANGE)
 					{
 
 						let moveResult = creep.moveTo(target , {"maxRooms": 1});

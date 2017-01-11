@@ -1,6 +1,7 @@
 //-------------------------------------------------------------------------
 // jobBuild
 //-------------------------------------------------------------------------
+"use strict";
 
 //-------------------------------------------------------------------------
 // modules
@@ -120,7 +121,7 @@ MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
 	{
 		// loop over spawns in room
 		let spawn = Game.spawns[spawnName];
-		if (spawn.room.name == roomName)
+		if (spawn.room.name === roomName)
 		{
 			let needName = "supplySpawn." + spawn.id;
 			let need;

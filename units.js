@@ -1,4 +1,5 @@
 // TODO: implement max property
+"use strict";
 module.exports =
 {
 	"worker": {
