@@ -49,7 +49,6 @@ MotivationHarvestSource.prototype.getDesireSpawn = function (roomName, demands)
 	let demandedHarvesters = lib.nullProtect(demands.units["harvester"], 0);
 	let numWorkers = strategyManager.countRoomUnits(roomName, "worker");
 
-
 	//console.log(`Room: ${roomName} #Containers: ${numContainers} Demanded Harvesters: ${demandedHarvesters}/${numHarvesters} Workers: ${numWorkers}`);
 
 	if (numContainers === 0 || numHarvesters >= demandedHarvesters || numWorkers < config.critWorkers)
@@ -89,6 +88,10 @@ MotivationHarvestSource.prototype.updateNeeds = function (roomName)
 	let sourceIds = lib.nullProtect(room.memory.cache.sources, []);
 	let sources = _.map(sourceIds, (id) => { return Game.getObjectById(id) });
 
+	// if the room doesn't have containers, we don't even try
+	if (room.memory.cache.structures[STRUCTURE_CONTAINER].length === 0)
+		return;
+
 	sources.forEach(function (s) {
 		let needName = "harvest." + s.id;
 		let need;
@@ -104,7 +107,12 @@ MotivationHarvestSource.prototype.updateNeeds = function (roomName)
 			need.name = needName;
 			need.type = "needHarvestSource";
 			need.targetId = s.id;
-			need.containerId = container.id;
+			if (!lib.isNull(container))
+			{
+				need.containerId = container.id;
+			} else {
+				need.containerId = "";
+			}
 			need.priority = C.PRIORITY_1;
 		}
 

@@ -120,6 +120,15 @@ module.exports =
 			// update defenses -----------------------------------------------------------------------------------------
 			room.updateThreat();
 
+			// motivate defense towers -----------------------------------------------------------------------------
+			if (room.getIsMine() && room.memory.threat.level >= C.THREAT_NPC)
+			{
+				room.motivateTowers(roomName);
+				// safeMode failsafe
+				room.safeModeFailsafe(roomName);
+			}
+
+
 			// long distance harvesters --------------------------------------------------------------------------------
 			this.sendOffLongDistanceHarvesters(roomName);
 
@@ -127,11 +136,7 @@ module.exports =
 			// motivate
 			lib.log('-------- motivator.motivate: ' + roomName , debug);
 
-			// safeMode failsafe
-			if (!lib.isNull(room.controller) && room.controller.my)
-			{
-				room.safeModeFailsafe(roomName);
-			}
+
 
 			// declarations ----------------------------------------------------------------------------------------
 			let resources = room.updateResources(); // get room resources
@@ -171,12 +176,6 @@ module.exports =
 			cpuManager.timerStart("\t\tFulfill Needs", "motivate.fulfillNeeds");
 			needManager.fulfillNeeds(roomName);
 			cpuManager.timerStop("motivate.fulfillNeeds");
-
-			// motivate defense towers -----------------------------------------------------------------------------
-			if (!lib.isNull(room.controller) && room.controller.my)
-			{
-				room.motivateTowers(roomName);
-			}
 
 			cpuManager.timerStop("motivate.room", 8, 10);
 		}
@@ -461,14 +460,14 @@ module.exports =
 		// do I have vis on room, does room have a controller
 		if (!lib.isNull(room) && !lib.isNull(room.controller))
 		{
-			lib.log("LR Harvest: " + roomName + " My: " + room.controller.my
+			lib.log("LR Harvest: " + roomName + " My: " + room.getIsMine()
 				+ " workers/min: " + numWorkers + "/" + config.longRangeHarvestMinWorkers
 				+ " storages: " + storages.length
 				+ " RCL: " + room.controller.level
 				, debug);
 
 			// if we have some workers to send off, do it
-			if (room.controller.my
+			if (room.getIsMine()
 				&& room.controller.level >= 4
 				&& storages.length > 0
 				&& config.longRangeHarvestMinWorkers < numWorkers)

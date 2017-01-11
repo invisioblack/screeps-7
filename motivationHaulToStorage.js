@@ -73,7 +73,7 @@ MotivationHaulToStorage.prototype.updateActive = function (roomName, demands)
 	let storageIds = lib.nullProtect(room.memory.cache.structures[STRUCTURE_STORAGE], []);
 	let storages  = _.map(storageIds, (id) => { return Game.getObjectById(id) });
 
-	if (!lib.isNull(room.controller) && room.controller.my && room.controller.level >= 4 && storages.length > 0)
+	if (room.getIsMine() && room.controller.level >= 4 && storages.length > 0)
 	{
 		memory.active = true;
 	} else {

@@ -73,7 +73,7 @@ MotivationGarrison.prototype.updateActive = function (roomName, demands)
 {
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	if (!lib.isNull(room.controller) && room.controller.my && room.memory.threat.count > 0)
+	if (room.getIsMine() && room.memory.threat.count > 0)
 	{
 		memory.active = true;
 	} else {

@@ -2,6 +2,7 @@
 global.C = require("C");
 global.cacheManager = require("cacheManager");
 global.cpuManager = require("cpuManager");
+global.diplomacyManager = require("diplomacyManager");
 global.lib = require("lib");
 global.jobBuild = require("jobBuild");
 global.jobClaim = require("jobClaim");

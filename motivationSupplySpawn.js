@@ -95,7 +95,7 @@ MotivationSupplySpawn.prototype.updateActive = function (roomName, demands)
 {
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	if (!lib.isNull(room.controller) && room.controller.my && demands.energy > 0)
+	if (room.getIsMine() && demands.energy > 0)
 	{
 		memory.active = true;
 	} else {

@@ -183,6 +183,16 @@ Room.prototype.getControllerLevel = function ()
 	return result;
 };
 
+Room.prototype.getIsMine = function ()
+{
+	let result = false;
+	if (!lib.isNull(this.controller) && this.controller.my)
+	{
+		result = true;
+	}
+	return result;
+};
+
 /***********************************************************************************************************************
  * Resource related functions
  *
@@ -272,7 +282,7 @@ Room.prototype.updateControllerStatus = function ()
 	// Enumerate over spawns
 	let controller = this.controller;
 
-	if (!lib.isNull(controller) && controller.my)
+	if (this.getIsMine())
 	{
 		this.memory.controllerStatus.progress = controller.progress;
 		this.memory.controllerStatus.progressTotal = controller.progressTotal;
@@ -292,29 +302,6 @@ Room.prototype.updateControllerStatus = function ()
  * Creep finding functions
  *
  */
-
-/**
- * count creeps present in a room
- */
-Room.prototype.countCreeps = function ()
-{
-	let result = this.getCreeps().length;
-
-	return result;
-};
-
-/**
- * returns creeps present in a room
- */
-Room.prototype.getCreeps = function ()
-{
-	let roomName = this.name;
-	let result = _.filter(Game.creeps , function (creep)
-	{
-		return creep.room.name === roomName;
-	});
-	return result;
-};
 
 /**
  * returns number of creeps in room of a unit type
@@ -377,11 +364,9 @@ Room.prototype.handleLostCreeps = function()
 Room.prototype.safeModeFailsafe = function ()
 {
 	let debug = false;
-	let room = Game.rooms[this.name];
-	if (room.controller.my)
+	if (this.getIsMine())
 	{
-		let controller = room.controller;
-		let hostiles = this.getAgressivesPresent(this.name);
+		let controller = this.controller;
 		//safeMode	number	How many ticks of safe mode remaining, or undefined.
 		let safeMode = lib.nullProtect(controller.safeMode , 0);
 		//safeModeAvailable	number	Safe mode activations available to use.
@@ -389,7 +374,7 @@ Room.prototype.safeModeFailsafe = function ()
 		//safeModeCooldown	number	During this period in ticks new safe mode activations will be blocked, undefined if cooldown is inactive.
 		let safeModeCooldown = lib.nullProtect(controller.safeModeCooldown , 0);
 
-		if (hostiles.length && !safeMode && safeModeAvailable && !safeModeCooldown && controller.level < 4)
+		if (!safeMode && safeModeAvailable && !safeModeCooldown && (controller.level < 4 || this.memory.threat.breach))
 		{
 			lib.log("!!!!!!!!!!!!!!! ACTIVATING SAFE MODE !!!!!!!!!!!!!!!", debug);
 			controller.activateSafeMode();
@@ -399,22 +384,6 @@ Room.prototype.safeModeFailsafe = function ()
 			+ " SafeModeAvailable: " + safeModeAvailable
 			+ " SafeModeCooldown: " + safeModeCooldown, debug);
 	}
-};
-
-Room.prototype.getAgressivesPresent = function ()
-{
-	let room = Game.rooms[this.name];
-	let hostileCreeps = room.find(FIND_HOSTILE_CREEPS , {
-		filter: function (creep)
-		{
-			//console.log(JSON.stringify(creep.body));
-			return _.find(creep.body , function (p)
-			{
-				return p.type === ATTACK || p.type === RANGED_ATTACK || p.type === CLAIM;
-			});
-		}
-	});
-	return hostileCreeps;
 };
 
 Room.prototype.motivateTowers = function ()
@@ -440,30 +409,78 @@ Room.prototype.motivateTowers = function ()
 
 Room.prototype.updateThreat = function ()
 {
-	let numAggressives = this.getAgressivesPresent().length;
 	let timeSinceSeen;
-
+	// init memory if need be
 	if (lib.isNull(this.memory.threat))
 	{
 		this.memory.threat = {};
 		this.memory.threat.lastSeen = 0;
-		this.memory.threat.count
+		this.memory.threat.count = 0;
+		this.memory.threat.threats = [];
+		this.memory.threat.level = C.THREAT_STANDBY;
+		this.memory.threat.breach = false;
 	}
 
 	timeSinceSeen = Game.time - this.memory.threat.lastSeen;
 
-	// update enemy count
-	if (numAggressives > this.memory.threat.count)
-		this.memory.threat.count = numAggressives;
-
-	// update based on time
-	if (numAggressives > 0)
-		this.memory.threat.lastSeen = Game.time;
-	else if (timeSinceSeen > config.garrisonTime)
+	// update aggressives based on our current status
+	if (this.memory.threat.level >= C.THREAT_ALERT)
 	{
-		this.memory.threat.count = 0;
+		this.memory.threat.threats = this.getThreats();
+		if (Game.time % 5 === 0)	{
+			//this.memory.threat.breach = this.getBreach();
+		}
+	} else if (this.memory.threat.level >= C.THREAT_PLAYER)
+	{
+		this.memory.threat.threats = this.getThreats();
+		//this.memory.threat.breach = this.getBreach();
+	} else if (Game.time % 5 === 0)
+	{
+		this.memory.threat.threats = this.getThreats();
+		//this.memory.threat.breach = this.getBreach();
 	}
 
+	// based on threats, update our status
+	if (timeSinceSeen > config.alertTime && this.memory.threat.threats === 0)
+	{
+		this.memory.threat.level = C.THREAT_STANDBY;
+	} else if (timeSinceSeen < config.alertTime && this.memory.threats === 0)
+	{
+		this.memory.threat.level = C.THREAT_ALERT;
+	}
+};
+
+Room.prototype.getThreats = function ()
+{
+	let hostiles = this.find(FIND_HOSTILE_CREEPS);
+	let result = _.map(hostiles, (c) => {
+		let r = {};
+		r.id = c;
+		r.status = diplomacyManager.get(c.owner.username);
+		console.log("getThreats: " + c.owner.username);
+		if (r.status === PLAYER_HOSTILE)
+			return r;
+	});
+	return result;
+};
+
+Room.prototype.getBreach = function ()
+{
+	let result = false;
+	let spawn, spawnId;
+
+	// if not my room, always return false
+	if (!this.getIsMine())
+		return result;
+
+	spawnId = this.memory.cache.structures[STRUCTURE_SPAWN][0];
+	spawn = Game.getObjectById(spawnId);
+	if (!lib.isNull(spawn))
+	{
+		result = spawn.pos.isEnclosed();
+	}
+
+	return result;
 };
 
 Room.prototype.getMaxHarvesters = function ()

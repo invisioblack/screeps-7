@@ -1,7 +1,6 @@
 /***********************************************************************************************************************
  * GLOBAL SHORTCUTS TO MAKE STUFF EASY!
  **********************************************************************************************************************/
-"use strict";
 
 /**
  * Room shortcuts
@@ -320,7 +319,7 @@ global.rmList = function ()
 			let visible = !lib.isNull(room);
 
 			// mine
-			let mine = !lib.isNull(room) && !lib.isNull(room.controller) && (!lib.isNull(room.controller.my) && room.controller.my);
+			let mine = room.getIsMine();
 
 			// Manual Tactical
 

@@ -40,7 +40,7 @@ global.wallStatus = function() {
 	}
 
 	Object.keys(Game.rooms).map(name => Game.rooms[name])
-		.filter( r => r.controller && r.controller.my )
+		.filter( r => r.controller && r.getIsMine() )
 		.sort( (a,b) => b.controller.level - a.controller.level || b.controller.progress - a.controller.progress )
 		.forEach( room => {
 
@@ -150,7 +150,7 @@ global.roomLevels = function() {
 	// /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 
 	Object.keys(Game.rooms).map(name => Game.rooms[name])
-		.filter( r => r.controller && r.controller.my )
+		.filter( r => r.controller && r.getIsMine() )
 		.sort( (a,b) => b.controller.level - a.controller.level || b.controller.progress - a.controller.progress )
 		.forEach( room => {
 			let rclPercentage = ((room.controller.progress / room.controller.progressTotal) * 100.0).toFixed(1);

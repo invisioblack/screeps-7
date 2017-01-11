@@ -50,7 +50,7 @@ MotivationLongDistanceHarvest.prototype.updateActive = function (roomName, deman
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
 
-	if (!lib.isNull(room.controller) && room.controller.my)
+	if (room.getIsMine())
 		memory.active = false;
 	else
 		memory.active = true;
