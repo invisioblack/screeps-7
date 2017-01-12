@@ -230,7 +230,7 @@ module.exports =
 						let r = Game.rooms[roomName];
 						let countUnits = creepManager.countRoomUnits(roomName, unitName);
 						//console.log(unitName + " " + countUnits);
-						if (unitName === "worker" && countUnits < 2)
+						if (unitName === "worker" && countUnits < config.critWorkers)
 							spawn.spawnUnit(unitName , false);
 						else
 							spawn.spawnUnit(unitName , true);

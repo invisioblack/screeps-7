@@ -20,3 +20,7 @@ RoomPosition.prototype.isEnclosed = function() {
 		opts
 	).incomplete;
 };
+
+RoomPosition.prototype.search = function(goals, opts) {
+	return PathFinder.search(this, goals, opts);
+};

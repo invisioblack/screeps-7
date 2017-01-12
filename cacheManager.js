@@ -7,9 +7,14 @@
 module.exports = {
 	init: function () {
 		// init global cache
-		lib.isNull(global.cache);
+		if (lib.isNull(global.cache))
 		{
 			global.cache = {};
+		}
+
+		if (lib.isNull(global.cache.rooms))
+		{
+			global.cache.rooms = {};
 		}
 
 		// init function memCache

@@ -49,7 +49,7 @@ MotivationHarvestSource.prototype.getDesireSpawn = function (roomName, demands)
 	let demandedHarvesters = lib.nullProtect(demands.units["harvester"], 0);
 	let numWorkers = creepManager.countRoomUnits(roomName, "worker");
 
-	//console.log(`Room: ${roomName} #Containers: ${numContainers} Demanded Harvesters: ${demandedHarvesters}/${numHarvesters} Workers: ${numWorkers}`);
+	//console.log(`Room: ${roomName} #Containers: ${numContainers} Demanded Harvesters: ${demandedHarvesters}/${numHarvesters} Workers: ${numWorkers}/${config.critWorkers}`);
 
 	if (numContainers === 0 || numHarvesters >= demandedHarvesters || numWorkers < config.critWorkers)
 	{

@@ -29,6 +29,7 @@ Room.prototype.initMemCache = function (forceRefresh = false)
 	this.updateStructureCache(forceRefresh);
 	this.updateSourceCache(forceRefresh);
 	this.updateDroppedCache(forceRefresh);
+	this.updateUnitCache();
 };
 
 /**
@@ -99,10 +100,8 @@ Room.prototype.updateSourceCache = function (forceRefresh = false)
 	}
 };
 
-Room.prototype.updateDroppedCache = function (forceRefresh)
+Room.prototype.updateDroppedCache = function (forceRefresh = false)
 {
-	// don't require forceRefresh to be passed
-	if (lib.isNull(forceRefresh)) forceRefresh = false;
 	// insure the memory object exists
 	if (lib.isNull(this.memory.cache.dropped))
 	{
@@ -126,7 +125,27 @@ Room.prototype.updateDroppedCache = function (forceRefresh)
 	}
 };
 
+/**
+ * This is a room based unit cache that lives for the duration of one tick in global
+ */
+Room.prototype.updateUnitCache = function ()
+{
+	let roomCreeps = creepManager.getRoomCreeps(this.name);
+	let roomName = this.name;
+	global.cache.rooms[roomName] = {};
+	global.cache.rooms[roomName].units = _.groupBy(roomCreeps, (o) => {
+		return o.memory.unit;
+	} );
 
+	_.forEach(units, (v, k)=> {
+		if (lib.isNull(global.cache.rooms[roomName].units[k]))
+		{
+			global.cache.rooms[roomName].units[k] = [];
+		}
+	});
+	//console.log(JSON.stringify(global.cache.rooms[roomName].units));
+
+};
 
 
 

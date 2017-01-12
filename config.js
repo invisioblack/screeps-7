@@ -1,12 +1,12 @@
 "use strict";
 module.exports =
 {
-	"critWorkers": 4,
-	"minWorkers": 6,
-	"medWorkers": 10,
-	"maxWorkers": 14,
+	"critWorkers": 2,
+	"minWorkers": 4,
+	"medWorkers": 8,
+	"maxWorkers": 10,
 	"maxHaulers": 4,
-	"longRangeHarvestMinWorkers": 6,
+	"longRangeHarvestMinWorkers": 4,
 	"alertTime": 200,
 	"wallHP": [0, 5000, 10000, 100000, 300000, 500000, 1000000, 5000000, 10000000],
 	"claimTicks": 1000,
@@ -17,5 +17,6 @@ module.exports =
 	"cpuHistorySize": 1000,
 	"cpuThresholdThird": 1000,
 	"cpuThresholdHalf": 500,
-	"cpuThresholdQuarter": 200
+	"cpuThresholdQuarter": 200,
+	"harvesterPrespawnTicks": 150
 };

@@ -31,6 +31,16 @@ module.exports =
 		return result;
 	} ,
 
+	getRoomCreeps: function (roomName)
+	{
+		let result = _.filter(Game.creeps , function (creep)
+		{
+			return creep.memory.motive.room === roomName;
+		});
+		return result;
+	} ,
+
+
 	countRoomUnits: function (roomName , unitName)
 	{
 		//let result = this.getRoomUnits(roomName , unitName).length;
