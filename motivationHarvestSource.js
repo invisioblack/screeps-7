@@ -45,9 +45,9 @@ MotivationHarvestSource.prototype.getDesireSpawn = function (roomName, demands)
 	let result = true;
 	let room = Game.rooms[roomName];
 	let numContainers = lib.nullProtect(room.memory.cache.structures[STRUCTURE_CONTAINER], []).length;
-	let numHarvesters = strategyManager.countRoomUnits(roomName, "harvester");
+	let numHarvesters = creepManager.countRoomUnits(roomName, "harvester");
 	let demandedHarvesters = lib.nullProtect(demands.units["harvester"], 0);
-	let numWorkers = strategyManager.countRoomUnits(roomName, "worker");
+	let numWorkers = creepManager.countRoomUnits(roomName, "worker");
 
 	//console.log(`Room: ${roomName} #Containers: ${numContainers} Demanded Harvesters: ${demandedHarvesters}/${numHarvesters} Workers: ${numWorkers}`);
 

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// strategyManager
+// creepManager
 //------------------------------------------------------------------------------
 "use strict";
 
@@ -42,7 +42,7 @@ module.exports =
 		if (!useCache)
 			realResult = this.getRoomUnits(roomName , unitName).length;
 
-		let key = cacheManager.genKey("strategyManager.countRoomUnits" , arguments);
+		let key = cacheManager.genKey("creepManager.countRoomUnits" , arguments);
 		let cache = cacheManager.fetchMem("cacheFunction" , key);
 
 		if (!cache.valid || (Game.time - cache.time) > 0)
@@ -91,7 +91,7 @@ module.exports =
 		if (!useCache)
 			realResult = this.getRoomMotivationUnits(roomName, motivationName, unitName).length;
 
-		let key = cacheManager.genKey("strategyManager.countRoomMotivationUnits" , arguments);
+		let key = cacheManager.genKey("creepManager.countRoomMotivationUnits" , arguments);
 		let cache = cacheManager.fetchMem("cacheFunction" , key);
 
 		if (!cache.valid)

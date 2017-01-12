@@ -74,7 +74,7 @@ module.exports.loop = function ()
 		motivator.init();
 		motivator.motivate();
 	}
-	strategyManager.handleLostCreeps();
+	creepManager.handleLostCreeps();
 
 	//------------------------------------------------------------------------------------------------------------------
 	// END
@@ -99,7 +99,7 @@ function cleanupMemory ()
 		        && !lib.isNull(mem.motive)
 		        && !lib.isNull(mem.motive.room)
 		        && !lib.isNull(mem.motive.motivation))
-	        cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("strategyManager.countRoomMotivationUnits", [mem.motive.room, mem.motive.motivation, mem.unit]));
+	        cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("creepManager.countRoomMotivationUnits", [mem.motive.room, mem.motive.motivation, mem.unit]));
 	        delete Memory.creeps[i];
         }
     }

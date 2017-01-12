@@ -36,7 +36,7 @@ module.exports = function ()
 	Need.prototype.getUnitSupplyDemand = function (roomName, target, unitName, result)
 	{
 		let energy, energyCapacity, neededEnergy;
-		let unit = lib.nullProtect(strategyManager.getRoomUnits(roomName, unitName)[0], {});
+		let unit = lib.nullProtect(creepManager.getRoomUnits(roomName, unitName)[0], {});
 		let unitCapacity = lib.nullProtect(unit.carryCapacity, 50);
 
 		if (lib.isNull(target))
@@ -59,7 +59,7 @@ module.exports = function ()
 
 	Need.prototype.getUnitHaulToStorageDemand = function (roomName, unitName, result)
 	{
-		let unit = lib.nullProtect(strategyManager.getRoomUnits(roomName, unitName)[0], {});
+		let unit = lib.nullProtect(creepManager.getRoomUnits(roomName, unitName)[0], {});
 		let unitCapacity = lib.nullProtect(unit.carryCapacity, 50);
 		let containers = _.map(Memory.rooms[roomName].cache.structures[STRUCTURE_CONTAINER], function (cid) {
 			return Game.getObjectById(cid);

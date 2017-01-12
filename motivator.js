@@ -56,8 +56,8 @@ module.exports =
 
 
 			motivationSupplySpawn.init(room.name);
-			let numWorkers = strategyManager.countRoomUnits(roomName, "worker");
-			let numHarvesters = strategyManager.countRoomUnits(roomName, "harvester");
+			let numWorkers = creepManager.countRoomUnits(roomName, "worker");
+			let numHarvesters = creepManager.countRoomUnits(roomName, "harvester");
 			let numContainers = lib.nullProtect(room.memory.cache.structures[STRUCTURE_CONTAINER], []).length;
 
 			// normal priority
@@ -228,7 +228,7 @@ module.exports =
 					if (spawn.room.name === roomName)
 					{
 						let r = Game.rooms[roomName];
-						let countUnits = strategyManager.countRoomUnits(roomName, unitName);
+						let countUnits = creepManager.countRoomUnits(roomName, unitName);
 						//console.log(unitName + " " + countUnits);
 						if (unitName === "worker" && countUnits < 2)
 							spawn.spawnUnit(unitName , false);
@@ -452,7 +452,7 @@ module.exports =
 	{
 		let debug = false;
 		let room = Game.rooms[roomName];
-		let numWorkers = strategyManager.countRoomUnits(roomName, "worker");
+		let numWorkers = creepManager.countRoomUnits(roomName, "worker");
 		let storageIds = lib.nullProtect(room.memory.cache.structures[STRUCTURE_STORAGE], []);
 		let storages  = _.map(storageIds, (id) => { return Game.getObjectById(id) });
 
@@ -471,7 +471,7 @@ module.exports =
 				&& storages.length > 0
 				&& config.longRangeHarvestMinWorkers < numWorkers)
 			{
-				let unassignedWorker = strategyManager.findRoomUnassignedUnit(roomName, "worker");
+				let unassignedWorker = creepManager.findRoomUnassignedUnit(roomName, "worker");
 
 				if (!lib.isNull(unassignedWorker) && _.sum(unassignedWorker.carry) === 0)
 				{

@@ -30,11 +30,11 @@ NeedSupplyExtenders.prototype.getUnitDemands = function(roomName, memory, motiva
 	memory.demands = {};
 	let room = Game.rooms[roomName];
 	let energy, energyCapacity, neededEnergy;
-	let worker = lib.nullProtect(strategyManager.getRoomUnits(roomName, "worker")[0], {});
+	let worker = lib.nullProtect(creepManager.getRoomUnits(roomName, "worker")[0], {});
 	let workerCapacity = lib.nullProtect(worker.carryCapacity, 50);
 	let extenderEnergy = room.getExtenderEnergy();
-	let hauler = lib.nullProtect(strategyManager.getRoomUnits(roomName, "hauler")[0], {});
-	let numHaulers = strategyManager.countRoomUnits(roomName, "hauler");
+	let hauler = lib.nullProtect(creepManager.getRoomUnits(roomName, "hauler")[0], {});
+	let numHaulers = creepManager.countRoomUnits(roomName, "hauler");
 	//console.log(JSON.stringify(memory));
 
 	energy = extenderEnergy.energy;

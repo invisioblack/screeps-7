@@ -26,14 +26,14 @@ module.exports =
 				if (lib.isNull(room))
 				{
 					sortList[roomName] = {};
-					sortList[roomName].units = strategyManager.countRoomUnits(roomName, "worker");
+					sortList[roomName].units = creepManager.countRoomUnits(roomName, "worker");
 					sortList[roomName].maxUnits = 1;
 					sortList[roomName].room = roomName;
 
 				} else
 				{
 					sortList[roomName] = {};
-					sortList[roomName].units = strategyManager.countRoomUnits(roomName, "worker");
+					sortList[roomName].units = creepManager.countRoomUnits(roomName, "worker");
 					sortList[roomName].maxUnits = room.getMaxHarvesters();
 					sortList[roomName].room = roomName;
 				}

@@ -44,7 +44,7 @@ JobClaim.prototype.work = function (creep)
 		if (creep.memory.motive.room === creep.room.name)
 		{
 			_.forEach(Memory.claims, function (c) {
-				let countUnits = strategyManager.countRoomUnits(c.room, "claimer");
+				let countUnits = creepManager.countRoomUnits(c.room, "claimer");
 				if (!countUnits)
 				{
 					creep.deassignMotive(c.room);

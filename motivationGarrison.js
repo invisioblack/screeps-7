@@ -57,9 +57,9 @@ MotivationGarrison.prototype.getDesireSpawn = function (roomName, demands)
 MotivationGarrison.prototype.getDesiredSpawnUnit = function (roomName)
 {
 	let room = Game.rooms[roomName];
-	let numGuard = strategyManager.countRoomUnits(roomName, "guard");
-	let numRangedGuard = strategyManager.countRoomUnits("rangedGuard");
-	let numHeal = strategyManager.countRoomUnits("heal");
+	let numGuard = creepManager.countRoomUnits(roomName, "guard");
+	let numRangedGuard = creepManager.countRoomUnits("rangedGuard");
+	let numHeal = creepManager.countRoomUnits("heal");
 
 	if (numRangedGuard < numGuard)
 		return "rangedGuard";

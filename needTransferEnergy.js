@@ -29,7 +29,7 @@ NeedTransferEnergy.prototype.getUnitDemands = function(roomName, memory, motivat
 {
 	memory.demands = {};
 	let target = Game.getObjectById(memory.targetId);
-	let numHaulers = strategyManager.countRoomUnits(roomName, "hauler");
+	let numHaulers = creepManager.countRoomUnits(roomName, "hauler");
 
 	if (motivationName === "motivationSupplyController")
 	{

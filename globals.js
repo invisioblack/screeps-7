@@ -2,6 +2,7 @@
 global.C = require("C");
 global.cacheManager = require("cacheManager");
 global.cpuManager = require("cpuManager");
+global.creepManager = require("creepManager");
 global.diplomacyManager = require("diplomacyManager");
 global.lib = require("lib");
 global.jobBuild = require("jobBuild");
@@ -38,7 +39,6 @@ global.needRepair = require("needRepair");
 global.needSupplyExtenders = require("needSupplyExtenders");
 global.needTransferEnergy = require("needTransferEnergy");
 global.roomManager = require("roomManager");
-global.strategyManager = require("strategyManager");
 global.units = require("units");
 
 // settings

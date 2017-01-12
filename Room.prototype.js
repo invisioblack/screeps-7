@@ -151,14 +151,14 @@ Room.prototype.updateEnergyPickupMode = function ()
 			return c.store[RESOURCE_ENERGY];
 		});
 
-		if (numContainers >= this.memory.cache.sources.length && (containerEnergy > 0 || strategyManager.countRoomUnits(this.name, "harvester") > 0))
+		if (numContainers >= this.memory.cache.sources.length && (containerEnergy > 0 || creepManager.countRoomUnits(this.name, "harvester") > 0))
 		{
 			result = C.ROOM_ENERGYPICKUPMODE_CONTAINER;
 		}
 
 		if (numStorage > 0)
 		{
-			if (strategyManager.countRoomUnits(this.name, "harvester") > 0 && strategyManager.countRoomUnits(this.name, "hauler") > 0)
+			if (creepManager.countRoomUnits(this.name, "harvester") > 0 && creepManager.countRoomUnits(this.name, "hauler") > 0)
 				result = C.ROOM_ENERGYPICKUPMODE_STORAGE;
 			else
 			{
@@ -223,11 +223,11 @@ Room.prototype.updateResources = function ()
 	{
 
 		this.memory.resources.units[unitName] = {};
-		this.memory.resources.units[unitName].total = strategyManager.countRoomUnits(this.name, unitName);
+		this.memory.resources.units[unitName].total = creepManager.countRoomUnits(this.name, unitName);
 		this.memory.resources.units[unitName].allocated = 0;
 		this.memory.resources.units[unitName].unallocated = this.memory.resources.units[unitName].total;
-		this.memory.resources.units[unitName].unassigned = strategyManager.countRoomUnassignedUnits(this.name, unitName);
-		this.memory.resources.units[unitName].assigned = strategyManager.countRoomAssignedUnits(this.name, unitName);
+		this.memory.resources.units[unitName].unassigned = creepManager.countRoomUnassignedUnits(this.name, unitName);
+		this.memory.resources.units[unitName].assigned = creepManager.countRoomAssignedUnits(this.name, unitName);
 		lib.log("  " + unitName + " total: " + this.memory.resources.units[unitName].total
 			+ " Assigned/UnAssigned: " + this.memory.resources.units[unitName].assigned
 			+ "/" + this.memory.resources.units[unitName].unassigned, debug);

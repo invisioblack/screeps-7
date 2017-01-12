@@ -48,13 +48,13 @@ MotivationHaulToStorage.prototype.getDesireSpawn = function (roomName, demands)
 	let result = true;
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	let numWorkers = strategyManager.countRoomUnits(roomName, "worker");
+	let numWorkers = creepManager.countRoomUnits(roomName, "worker");
 
 	if (memory.active)
 	{
 		for (let unitName in units)
 		{
-			if ((!lib.isNull(demands.units[unitName]) && demands.units[unitName] <= strategyManager.countRoomUnits(roomName, unitName)) || numWorkers < config.critWorkers)
+			if ((!lib.isNull(demands.units[unitName]) && demands.units[unitName] <= creepManager.countRoomUnits(roomName, unitName)) || numWorkers < config.critWorkers)
 			{
 				result = false;
 			}

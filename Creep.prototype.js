@@ -117,7 +117,7 @@ Creep.prototype.initMotive = function()
 {
 	if (lib.isNull(this.memory.motive))
 	{
-		//cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("strategyManager.countRoomMotivationUnits", [this.memory.motive.room, this.memory.motive.motivation, this.memory.unit]));
+		//cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("creepManager.countRoomMotivationUnits", [this.memory.motive.room, this.memory.motive.motivation, this.memory.unit]));
 
 		this.memory.motive = {};
 		this.memory.motive.room = this.room.name;
@@ -129,8 +129,8 @@ Creep.prototype.initMotive = function()
 Creep.prototype.assignMotive = function (roomName, motivationName, needName)
 {
 	// dirty the cache for the before and after values
-	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("strategyManager.countRoomMotivationUnits", [this.memory.motive.room, this.memory.motive.motivation, this.memory.unit]));
-	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("strategyManager.countRoomMotivationUnits", [roomName, motivationName, this.memory.unit]));
+	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("creepManager.countRoomMotivationUnits", [this.memory.motive.room, this.memory.motive.motivation, this.memory.unit]));
+	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("creepManager.countRoomMotivationUnits", [roomName, motivationName, this.memory.unit]));
 
 
 	// assign the new motive
@@ -143,8 +143,8 @@ Creep.prototype.assignMotive = function (roomName, motivationName, needName)
 Creep.prototype.deassignMotive = function (roomName)
 {
 	// dirty the cache for the before and after values
-	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("strategyManager.countRoomMotivationUnits", [this.memory.motive.room, this.memory.motive.motivation, this.memory.unit]));
-	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("strategyManager.countRoomMotivationUnits", [roomName, "", this.memory.unit]));
+	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("creepManager.countRoomMotivationUnits", [this.memory.motive.room, this.memory.motive.motivation, this.memory.unit]));
+	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("creepManager.countRoomMotivationUnits", [roomName, "", this.memory.unit]));
 
 
 	this.say("Done!");
@@ -161,8 +161,8 @@ Creep.prototype.assignToLongDistanceHarvest = function ()
     
 	let room = roomManager.getLongDistanceHarvestTarget(this.memory.motive.room);
 	// dirty the cache for the before and after values
-	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("strategyManager.countRoomMotivationUnits", [this.memory.motive.room, this.memory.motive.motivation, this.memory.unit]));
-	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("strategyManager.countRoomMotivationUnits", [room, "", this.memory.unit]));
+	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("creepManager.countRoomMotivationUnits", [this.memory.motive.room, this.memory.motive.motivation, this.memory.unit]));
+	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("creepManager.countRoomMotivationUnits", [room, "", this.memory.unit]));
 
 	if (!lib.isNull(room) && room != "")
 	{

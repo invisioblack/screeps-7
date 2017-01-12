@@ -35,7 +35,7 @@ module.exports =
 		for (let unitName in units)
 		{
 			//cpuManager.timerStart("Unit: " + unitName, "manageNeeds." + unitName);
-			let assignedUnits = strategyManager.countRoomMotivationUnits(roomName, motivation.name , unitName);
+			let assignedUnits = creepManager.countRoomMotivationUnits(roomName, motivation.name , unitName);
 			let allocatedUnits = motivationMemory.allocatedUnits[unitName];
 
 			// if we have open allocations, we need to find if there is a creep to assign
@@ -51,8 +51,8 @@ module.exports =
 					// if there is a creep to assign, we need to assign it
 					let unitDemands = lib.nullProtect(motivationMemory.needs[need.name].demands, {});
 					let creepsDemanded = lib.nullProtect(unitDemands[unitName], 0);
-					let creepsAssigned = strategyManager.countRoomMotivationNeedUnits(roomName, motivation.name , need.name , unitName);
-					let creep = strategyManager.findRoomUnassignedUnit(roomName, unitName);
+					let creepsAssigned = creepManager.countRoomMotivationNeedUnits(roomName, motivation.name , need.name , unitName);
+					let creep = creepManager.findRoomUnassignedUnit(roomName, unitName);
 
 					if (creepsDemanded === 0)
 						outOfCreeps = true;
@@ -65,7 +65,7 @@ module.exports =
 						creep.assignMotive(roomName , motivation.name , need.name);
 
 						// update for iteration
-						creep = strategyManager.findRoomUnassignedUnit(roomName, unitName);
+						creep = creepManager.findRoomUnassignedUnit(roomName, unitName);
 						creepsAssigned++;
 						assignedUnits++;
 						allocatedUnits++;

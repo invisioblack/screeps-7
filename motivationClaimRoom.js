@@ -75,7 +75,7 @@ MotivationClaimRoom.prototype.getDesireSpawn = function (roomName, demands)
 	// if this room is specified as spawn for another room, and the demanded units don't exist, true
 
 	_.forEach(spawnClaims, function (c) {
-		let numClaimers = strategyManager.countRoomUnits(c.room, "claimer");
+		let numClaimers = creepManager.countRoomUnits(c.room, "claimer");
 		let claimRoom = Game.rooms[c.room];
 		let reservation;
 

@@ -119,7 +119,7 @@ module.exports = function()
 						let max = 1;
 						if (creep.memory.unit != "harvester")
 							max = s.getMaxHarvesters();
-						let on = strategyManager.countCreepsOnSource(s.id);
+						let on = creepManager.countCreepsOnSource(s.id);
 						return max > on && s.energy > 0;
 					}
 				});
@@ -230,7 +230,7 @@ module.exports = function()
 		let droppedEnergy = creep.room.memory.cache.dropped;
 		droppedEnergy.forEach(function (drop) {
 			//console.log("dropID: " + drop);
-			if (creep.memory.sourceType != this.JOB_SOURCETYPE_DROP && strategyManager.countCreepsOnSource(drop) === 0)
+			if (creep.memory.sourceType != this.JOB_SOURCETYPE_DROP && creepManager.countCreepsOnSource(drop) === 0)
 			{
 				//console.log("I'll get it! dropID: " + drop.id);
 				creep.memory.sourceId = drop;
@@ -281,7 +281,7 @@ module.exports = function()
 					let max = 1;
 					if (creep.memory.unit != "harvester")
 						max = s.getMaxHarvesters();
-					let on = strategyManager.countCreepsOnSource(s.id);
+					let on = creepManager.countCreepsOnSource(s.id);
 					return max > on && s.energy > 0;
 				}
 			});

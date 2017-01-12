@@ -49,12 +49,12 @@ MotivationSupplyController.prototype.getDesireSpawn = function (roomName, demand
 	let result = true;
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	let numWorkers = strategyManager.countRoomUnits(roomName, "worker");
+	let numWorkers = creepManager.countRoomUnits(roomName, "worker");
 	if (memory.active)
 	{
 		for (let unitName in units)
 		{
-			if (!lib.isNull(demands.units[unitName]) && demands.units[unitName] <= strategyManager.countRoomUnits(roomName, unitName))
+			if (!lib.isNull(demands.units[unitName]) && demands.units[unitName] <= creepManager.countRoomUnits(roomName, unitName))
 			{
 				result = false;
 			}
