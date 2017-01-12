@@ -373,13 +373,14 @@ Room.prototype.safeModeFailsafe = function ()
 		let safeModeAvailable = lib.nullProtect(controller.safeModeAvailable , 0);
 		//safeModeCooldown	number	During this period in ticks new safe mode activations will be blocked, undefined if cooldown is inactive.
 		let safeModeCooldown = lib.nullProtect(controller.safeModeCooldown , 0);
+		let hostiles = lib.nullProtect(lib.nullProtect(this.threat, {}).threats, []).length;
 
 		if (!safeMode && safeModeAvailable && !safeModeCooldown && (controller.level < 4 || this.memory.threat.breach))
 		{
 			lib.log("!!!!!!!!!!!!!!! ACTIVATING SAFE MODE !!!!!!!!!!!!!!!", debug);
 			controller.activateSafeMode();
 		}
-		lib.log(">>>> Safe Mode Status: Hostiles: " + hostiles.length
+		lib.log(">>>> Safe Mode Status: Hostiles: " + hostiles
 			+ " SafeMode: " + safeMode
 			+ " SafeModeAvailable: " + safeModeAvailable
 			+ " SafeModeCooldown: " + safeModeCooldown, debug);
@@ -441,12 +442,20 @@ Room.prototype.updateThreat = function ()
 	}
 
 	// based on threats, update our status
-	if (timeSinceSeen > config.alertTime && this.memory.threat.threats === 0)
+	if (timeSinceSeen > config.alertTime && this.memory.threat.threats.length === 0)
 	{
 		this.memory.threat.level = C.THREAT_STANDBY;
-	} else if (timeSinceSeen < config.alertTime && this.memory.threats === 0)
+		this.memory.threat.count = this.memory.threat.threats.length;
+	} else if (timeSinceSeen < config.alertTime && this.memory.threat.threats.length === 0)
 	{
 		this.memory.threat.level = C.THREAT_ALERT;
+		this.memory.threat.count = this.memory.threat.threats.length;
+	}
+    else if (this.memory.threat.threats.length > 0)
+	{
+		this.memory.threat.level = C.THREAT_NPC;
+		this.memory.threat.lastSeen = Game.time;
+		this.memory.threat.count = this.memory.threat.threats.length;
 	}
 };
 
@@ -455,10 +464,10 @@ Room.prototype.getThreats = function ()
 	let hostiles = this.find(FIND_HOSTILE_CREEPS);
 	let result = _.map(hostiles, (c) => {
 		let r = {};
-		r.id = c;
+		r.id = c.id;
 		r.status = diplomacyManager.status(c.owner.username);
 		console.log("getThreats: " + c.owner.username);
-		if (r.status === PLAYER_HOSTILE)
+		if (r.status === C.PLAYER_HOSTILE)
 			return r;
 	});
 	return result;

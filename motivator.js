@@ -128,7 +128,6 @@ module.exports =
 				room.safeModeFailsafe(roomName);
 			}
 
-
 			// long distance harvesters --------------------------------------------------------------------------------
 			this.sendOffLongDistanceHarvesters(roomName);
 
@@ -253,7 +252,7 @@ module.exports =
 		{
 			// -------------------------------------------------------------------------------------------------
 			// round 2, regular allocation ---------------------------------------------------------------------
-			let debug = true;
+			let debug = false;
 			let iteration = 1;
 			let totalShares;
 			let totalUnits;
