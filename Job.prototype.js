@@ -82,9 +82,6 @@ module.exports = function()
 		if (room.memory.energyPickupMode === C.ROOM_ENERGYPICKUPMODE_STORAGE && creep.memory.sourceId === "" && creep.memory.motive.motivation != "motivationHaulToStorage")
 		{
 			this.findEnergyStorage(creep);
-		} else if (creep.unit === "hauler")
-		{
-			this.findEnergyContainer(creep);
 		}
 
 		/**
@@ -98,7 +95,7 @@ module.exports = function()
 		}
 
 		// otherwise, only haulers get them out
-		if (room.memory.energyPickupMode === C.ROOM_ENERGYPICKUPMODE_STORAGE && creep.memory.sourceId === "" && creep.memory.motive.motivation === "motivationHaulToStorage")
+		if (room.memory.energyPickupMode === C.ROOM_ENERGYPICKUPMODE_STORAGE && creep.memory.sourceId === "" && creep.memory.unit === "hauler")
 		{
 			this.findEnergyContainer(creep);
 		}

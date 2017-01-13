@@ -72,6 +72,21 @@ Room.prototype.updateStructureCache = function (forceRefresh = false)
 				});
 			}
 		});
+
+		structures[STRUCTURE_ALL_NOWALL] = _.map(
+			room.find(FIND_STRUCTURES, {
+				filter: (s) => {
+					return s.structureType != STRUCTURE_WALL
+						&& s.structureType != STRUCTURE_RAMPART
+				}
+			}), (o) => { return o.id });
+		structures[STRUCTURE_ALL_WALL] = _.map(
+			room.find(FIND_STRUCTURES, {
+				filter: (s) => {
+					return s.structureType === STRUCTURE_WALL
+						|| s.structureType === STRUCTURE_RAMPART
+				}
+			}), (o) => { return o.id });
 	}
 };
 
@@ -133,6 +148,7 @@ Room.prototype.updateUnitCache = function ()
 	let roomCreeps = creepManager.getRoomCreeps(this.name);
 	let roomName = this.name;
 	global.cache.rooms[roomName] = {};
+	global.cache.rooms[roomName].creeps = roomCreeps;
 	global.cache.rooms[roomName].units = _.groupBy(roomCreeps, (o) => {
 		return o.memory.unit;
 	} );
@@ -411,12 +427,8 @@ Room.prototype.motivateTowers = function ()
 	if (this.controller.my)
 	{
 		// find all towers
-		let towers = this.find(FIND_STRUCTURES , {
-			filter: function (s)
-			{
-				return s.structureType === STRUCTURE_TOWER
-			}
-		});
+		let towers = _.map(this.memory.cache.structures[STRUCTURE_TOWER], (o) => { return Game.getObjectById(o)});
+
 		// for each tower
 		towers.forEach(function (tower)
 		{

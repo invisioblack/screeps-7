@@ -121,7 +121,8 @@ module.exports =
 			room.updateThreat();
 
 			// motivate defense towers -----------------------------------------------------------------------------
-			if (room.getIsMine() && room.memory.threat.level >= C.THREAT_NPC)
+			// TODO: Separate out healing from killing on the turrets
+			if (room.getIsMine())
 			{
 				room.motivateTowers(roomName);
 				// safeMode failsafe
