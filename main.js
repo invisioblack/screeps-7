@@ -1,6 +1,12 @@
 /**
- * TODO: figure out links
+ * TODO: figure out links - DO THIS NOW!
+ *          implement a new harvester that will manage a link next to it
+ *          assign specific containers and links to sources
+ * TODO: revamp haul to storage to make hauler smarter, don't use default energy finder
+ *          split loads better
+ *          manage links
  * TODO: create ally exemption
+ *          finish implementation
  * TODO: set rooms as defended, and send creeps to kill enemies there
  *          tie this to garrison
  *          set garrison to allow to pull units from elsewhere

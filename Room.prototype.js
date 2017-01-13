@@ -11,10 +11,25 @@
  */
 Room.prototype.init = function ()
 {
+	let reservation = {};
+	reservation.time = Game.time;
+
 	if(lib.isNull(this.memory.longDistanceHarvestTargets))
 	{
 		this.memory.longDistanceHarvestTargets = [];
 	}
+
+	if (!lib.isNull(this.controller) && !lib.isNull(this.controller.reservation)) {
+		if (this.controller.reservation.username === C.ME)
+		{
+			reservation.tickToEnd = this.controller.reservation.ticksToEnd;
+		} else
+			reservation.tickToEnd = 0;
+	} else {
+		reservation.tickToEnd = 0;
+	}
+
+	this.memory.reservation = reservation;
 };
 
 Room.prototype.initMemCache = function (forceRefresh = false)
@@ -177,6 +192,7 @@ Room.prototype.updateEnergyPickupMode = function ()
 	{
 		result = C.ROOM_ENERGYPICKUPMODE_HARVEST;
 
+		let roomName = this.name;
 		let numContainers = lib.nullProtect(this.memory.cache.structures[STRUCTURE_CONTAINER], []).length;
 		let numStorage = lib.nullProtect(this.memory.cache.structures[STRUCTURE_STORAGE], []).length;
 		let containers = _.map(this.memory.cache.structures[STRUCTURE_CONTAINER], function (cid) {
@@ -186,14 +202,17 @@ Room.prototype.updateEnergyPickupMode = function ()
 			return c.store[RESOURCE_ENERGY];
 		});
 
-		if (numContainers >= this.memory.cache.sources.length && (containerEnergy > 0 || creepManager.countRoomUnits(this.name, "harvester") > 0))
+		let numHarvesters = _.has(global, "cache.rooms." + roomName + ".units.harvester") ? global.cache.rooms[roomName].units["harvester"].length : 0;
+		let numHaulers = _.has(global, "cache.rooms." + roomName + ".units.hauler") ? global.cache.rooms[roomName].units["hauler"].length : 0;
+
+		if (numContainers >= this.memory.cache.sources.length && (containerEnergy > 0 || numHarvesters > 0))
 		{
 			result = C.ROOM_ENERGYPICKUPMODE_CONTAINER;
 		}
 
 		if (numStorage > 0)
 		{
-			if (creepManager.countRoomUnits(this.name, "harvester") > 0 && creepManager.countRoomUnits(this.name, "hauler") > 0)
+			if (numHarvesters > 0 && numHaulers > 0)
 				result = C.ROOM_ENERGYPICKUPMODE_STORAGE;
 			else
 			{
@@ -236,6 +255,7 @@ Room.prototype.getIsMine = function ()
 Room.prototype.updateResources = function ()
 {
 	let debug = false;
+	let roomName = this.name;
 	// determine room resources ----------------------------------------------------------------------------
 	// energy
 	this.memory.resources = {};
@@ -258,7 +278,7 @@ Room.prototype.updateResources = function ()
 	{
 
 		this.memory.resources.units[unitName] = {};
-		this.memory.resources.units[unitName].total = creepManager.countRoomUnits(this.name, unitName);
+		this.memory.resources.units[unitName].total = _.has(global, "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName].length : 0;
 		this.memory.resources.units[unitName].allocated = 0;
 		this.memory.resources.units[unitName].unallocated = this.memory.resources.units[unitName].total;
 		this.memory.resources.units[unitName].unassigned = creepManager.countRoomUnassignedUnits(this.name, unitName);
@@ -424,24 +444,42 @@ Room.prototype.safeModeFailsafe = function ()
 
 Room.prototype.motivateTowers = function ()
 {
-	if (this.controller.my)
+	if (this.getIsMine())
 	{
 		// find all towers
 		let towers = _.map(this.memory.cache.structures[STRUCTURE_TOWER], (o) => { return Game.getObjectById(o)});
 
-		// for each tower
-		towers.forEach(function (tower)
+
+		if (this.memory.threat.level >= C.THREAT_ALERT)
 		{
-			tower.autoAttack();
-			tower.autoCreepHeal();
-			tower.autoRepair();
-		} , this);
+			// for each tower
+			towers.forEach(function (tower)
+			{
+				tower.autoAttack();
+				tower.autoCreepHeal();
+				tower.autoRepair();
+			} , this);
+		} else if (Game.time % 5 === 0) {
+			// for each tower
+			towers.forEach(function (tower)
+			{
+				tower.autoCreepHeal();
+				tower.autoRepair();
+			} , this);
+		}
 	}
 };
 
 Room.prototype.updateThreat = function ()
 {
 	let timeSinceSeen;
+	let threatCounts;
+	let filteredThreats;
+	let threatsRaw;
+	let threats;
+
+	return;
+
 	// init memory if need be
 	if (lib.isNull(this.memory.threat))
 	{
@@ -472,21 +510,47 @@ Room.prototype.updateThreat = function ()
 		//this.memory.threat.breach = this.getBreach();
 	}
 
+	threatCounts = _.countBy(this.memory.threat.threats, (o) => { return o.status});
+
+	if (lib.isNull(threatCounts[C.PLAYER_HOSTILE]))
+		threatCounts[C.PLAYER_HOSTILE] = 0;
+
+	//console.log(`ThreatCounts: ${JSON.stringify(threatCounts)}`);
+	//console.log("ALERT: " + (timeSinceSeen < config.alertTime));
+
 	// based on threats, update our status
-	if (timeSinceSeen > config.alertTime && this.memory.threat.threats.length === 0)
+	if (timeSinceSeen > config.alertTime && threatCounts[C.PLAYER_HOSTILE] === 0)
 	{
+		//console.log("Standby");
 		this.memory.threat.level = C.THREAT_STANDBY;
 		this.memory.threat.count = this.memory.threat.threats.length;
-	} else if (timeSinceSeen < config.alertTime && this.memory.threat.threats.length === 0)
+	} else if (timeSinceSeen < config.alertTime && threatCounts[C.PLAYER_HOSTILE] === 0)
 	{
+		//console.log("Alert");
 		this.memory.threat.level = C.THREAT_ALERT;
-		this.memory.threat.count = this.memory.threat.threats.length;
+		this.memory.threat.count = threatCounts[C.PLAYER_HOSTILE].length;
 	}
-    else if (this.memory.threat.threats.length > 0)
+    else if (threatCounts[C.PLAYER_HOSTILE] > 0)
 	{
-		this.memory.threat.level = C.THREAT_NPC;
+		//console.log("Some threat!");
+		filteredThreats = _.filter(this.memory.threat.threats, (o) => { return o.status === C.PLAYER_HOSTILE});
+		threatsRaw = _.map(filteredThreats, (o) => { return Game.getObjectById(o.id) } );
+
+		//console.log(JSON.stringify(threatsRaw));
+		let isPlayer = _.some(threatsRaw, (o) => o.owner.username != "Invader");
+		let link = roomLink(this.name);
+
+		if (isPlayer)
+		{
+			this.memory.threat.level = C.THREAT_PLAYER;
+			console.log("!!!> PLAYER THREAT: " + link);
+		} else {
+			this.memory.threat.level = C.THREAT_NPC;
+			console.log("!!!> NPC THREAT! " + link);
+		}
+
 		this.memory.threat.lastSeen = Game.time;
-		this.memory.threat.count = this.memory.threat.threats.length;
+		this.memory.threat.count = threatCounts[C.PLAYER_HOSTILE];
 	}
 };
 
@@ -497,9 +561,8 @@ Room.prototype.getThreats = function ()
 		let r = {};
 		r.id = c.id;
 		r.status = diplomacyManager.status(c.owner.username);
-		console.log("getThreats: " + c.owner.username);
-		if (r.status === C.PLAYER_HOSTILE)
-			return r;
+		//console.log("getThreats: " + c.owner.username);
+		return r;
 	});
 	return result;
 };

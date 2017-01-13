@@ -58,8 +58,6 @@ Creep.prototype.moveAwayFromTarget = function (target)
 
 Creep.prototype.rendezvous = function (range)
 {
-	let flags = this.room.find(FIND_FLAGS, {'name': 'Flag1'});
-
 	//console.log(JSON.stringify(flags));
 	if (this.memory.rendezvous)
 	{

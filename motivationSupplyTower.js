@@ -54,14 +54,15 @@ MotivationSupplyTower.prototype.getDesireSpawn = function (roomName, demands)
 	let result = true;
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	let numWorkers = creepManager.countRoomUnits(roomName, "worker");
-	let numHaulers = creepManager.countRoomUnits(roomName, "hauler");
+	let numWorkers = _.has(global, "cache.rooms." + roomName + ".units.worker") ? global.cache.rooms[roomName].units["worker"].length : 0;
+	let numHaulers = _.has(global, "cache.rooms." + roomName + ".units.hauler") ? global.cache.rooms[roomName].units["hauler"].length : 0;
 
 	if (memory.active)
 	{
 		for (let unitName in units)
 		{
-			if (!lib.isNull(demands.units[unitName]) && demands.units[unitName] <= creepManager.countRoomUnits(roomName, unitName))
+			let numUnits = _.has(global, "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName].length : 0;
+			if (!lib.isNull(demands.units[unitName]) && demands.units[unitName] <= numUnits)
 			{
 				result = false;
 			}
@@ -81,7 +82,7 @@ MotivationSupplyTower.prototype.getDesireSpawn = function (roomName, demands)
 MotivationSupplyTower.prototype.getDesiredSpawnUnit = function (roomName)
 {
 	let energyPickupMode = lib.nullProtect(Memory.rooms[roomName].energyPickupMode, C.ROOM_ENERGYPICKUPMODE_NOENERGY);
-	let numWorkers = creepManager.countRoomUnits(roomName, "worker");
+	let numWorkers = _.has(global, "cache.rooms." + roomName + ".units.worker") ? global.cache.rooms[roomName].units["worker"].length : 0;
 
 	//console.log(config.critWorkers);
 

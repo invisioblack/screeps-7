@@ -61,12 +61,11 @@ MotivationMaintainInfrastructure.prototype.getDesireSpawn = function (roomName, 
 	let result = true;
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	let numWorkers = creepManager.countRoomUnits(roomName, "worker");
+	let numWorkers = _.has(global, "cache.rooms." + roomName + ".units.worker") ? global.cache.rooms[roomName].units["worker"].length : 0;
 
 	if (memory.active)
 	{
-		let workers = creepManager.countRoomUnits(roomName, "worker");
-		if (!lib.isNull(demands.units["worker"]) && demands.units["worker"] <= workers)
+		if (!lib.isNull(demands.units["worker"]) && demands.units["worker"] <= numWorkers)
 			result = false;
 	} else {
 		result = false;

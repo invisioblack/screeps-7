@@ -9,7 +9,7 @@ StructureTower.prototype.autoAttack = function ()
 	let targets = [];
 	let target;
 
-	if (Game.rooms[roomName].memory.threat.threats.length > 0)
+	if (Game.rooms[roomName].memory.threat.level >= C.THREAT_NPC)
 	{
 		targets = _.filter(Game.rooms[roomName].memory.threat.threats, (o) => {
 			return o.status === C.PLAYER_HOSTILE;
@@ -19,11 +19,11 @@ StructureTower.prototype.autoAttack = function ()
 		{
 			target = Game.getObjectById(targets[_.random(0, targets.length - 1)].id);
 		}
-	}
 
-	if (!lib.isNull(target))
-	{
-		this.attack(target);
+		if (!lib.isNull(target))
+		{
+			this.attack(target);
+		}
 	}
 };
 

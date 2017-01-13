@@ -44,10 +44,18 @@ JobClaim.prototype.work = function (creep)
 		if (creep.memory.motive.room === creep.room.name)
 		{
 			_.forEach(Memory.claims, function (c) {
-				let countUnits = creepManager.countRoomUnits(c.room, "claimer");
-				if (!countUnits)
-				{
-					creep.deassignMotive(c.room);
+				if (creep.memory.motive.room === creep.room.name) {
+					let countUnits = _.has(global, "cache.rooms." + c.room + ".units.claimer") ? global.cache.rooms[c.room].units["claimer"].length : 0;
+					if (!countUnits) {
+						let reservation = 0;
+						if (!lib.isNull(Memory.rooms[c.room].reservation)) {
+							let timeDiff = Game.time - Memory.rooms[c.room].reservation.time;
+							reservation = lib.nullProtect(Memory.rooms[c.room].reservation.reservation, 0) - timeDiff;
+						}
+
+						if (reservation < config.claimTicks)
+							creep.deassignMotive(c.room);
+					}
 				}
 			});
 

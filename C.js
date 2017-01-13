@@ -7,6 +7,7 @@
 //-------------------------------------------------------------------------
 module.exports =
 {
+	'ME': "Timendainum",
 	// priority
 	'PRIORITY_8': 1,
 	'PRIORITY_7': 2,

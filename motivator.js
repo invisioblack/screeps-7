@@ -25,6 +25,8 @@ module.exports =
 			room.initMemCache();
 			room.updateEnergyPickupMode();
 
+			//console.log(JSON.stringify(global.cache.rooms[roomName].units));
+
 			// init motivations in memory
 			if (lib.isNull(room.memory.motivations))
 			{
@@ -56,8 +58,8 @@ module.exports =
 
 
 			motivationSupplySpawn.init(room.name);
-			let numWorkers = creepManager.countRoomUnits(roomName, "worker");
-			let numHarvesters = creepManager.countRoomUnits(roomName, "harvester");
+			let numWorkers = _.has(global, "cache.rooms." + roomName + ".units.worker") ? global.cache.rooms[roomName].units["worker"].length : 0;
+			let numHarvesters = _.has(global, "cache.rooms." + roomName + ".units.harvester") ? global.cache.rooms[roomName].units["harvester"].length : 0;
 			let numContainers = lib.nullProtect(room.memory.cache.structures[STRUCTURE_CONTAINER], []).length;
 
 			// normal priority
@@ -229,7 +231,7 @@ module.exports =
 					if (spawn.room.name === roomName)
 					{
 						let r = Game.rooms[roomName];
-						let countUnits = creepManager.countRoomUnits(roomName, unitName);
+						let countUnits = _.has(global, "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName].length : 0;
 						//console.log(unitName + " " + countUnits);
 						if (unitName === "worker" && countUnits < config.critWorkers)
 							spawn.spawnUnit(unitName , false);
@@ -384,6 +386,7 @@ module.exports =
 							resources.units[unitName].unallocated -= 1;
 						}
 					}
+
 				} , this);
 
 				// update values for iteration
@@ -400,7 +403,6 @@ module.exports =
 				} , this);
 				//console.log("-------POSTALLOCATION: totalUnitsAvailable: " + totalUnitsAvailable + " totalUnitsDemanded: " + totalUnitsDemanded + " totalUnitsAllocated: " + totalUnitsAllocated);
 			}
-
 			lib.log(">>>>Final " + unitName + " Allocation: " + resources.units[unitName].allocated + "/" + resources.units[unitName].total + " Unallocated: " + resources.units[unitName].unallocated , debug);
 		}
 	},
@@ -453,7 +455,7 @@ module.exports =
 	{
 		let debug = false;
 		let room = Game.rooms[roomName];
-		let numWorkers = creepManager.countRoomUnits(roomName, "worker");
+		let numWorkers = _.has(global, "cache.rooms." + roomName + ".units.worker") ? global.cache.rooms[roomName].units["worker"].length : 0;
 		let storageIds = lib.nullProtect(room.memory.cache.structures[STRUCTURE_STORAGE], []);
 		let storages  = _.map(storageIds, (id) => { return Game.getObjectById(id) });
 

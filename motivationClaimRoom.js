@@ -75,13 +75,19 @@ MotivationClaimRoom.prototype.getDesireSpawn = function (roomName, demands)
 	// if this room is specified as spawn for another room, and the demanded units don't exist, true
 
 	_.forEach(spawnClaims, function (c) {
-		let numClaimers = creepManager.countRoomUnits(c.room, "claimer");
+		//console.log(c.room + ": " + _.has(global, "cache.rooms." + c.room + ".units.claimer"));
+		let numClaimers = _.has(global, "cache.rooms." + c.room + ".units.claimer") ? global.cache.rooms[c.room].units["claimer"].length : 0;
 		let claimRoom = Game.rooms[c.room];
 		let reservation;
 
 		if (!lib.isNull(claimRoom) && !lib.isNull(claimRoom.controller) && !lib.isNull(claimRoom.controller.reservation))
 		{
 			reservation = claimRoom.controller.reservation.ticksToEnd;
+		} else if (!lib.isNull(Memory.rooms[c.room].reservation))
+		{
+			let timeDiff = Game.time - Memory.rooms[c.room].reservation.time;
+			reservation = lib.nullProtect(Memory.rooms[c.room].reservation.reservation, 0) - timeDiff;
+			//console.log(timeDiff);
 		} else
 			reservation = 0;
 

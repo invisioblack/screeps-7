@@ -40,42 +40,6 @@ module.exports =
 		return result;
 	} ,
 
-
-	countRoomUnits: function (roomName , unitName)
-	{
-		//let result = this.getRoomUnits(roomName , unitName).length;
-		//return result;
-
-		let useCache = true;
-		let result, realResult;
-
-		if (!useCache)
-			realResult = this.getRoomUnits(roomName , unitName).length;
-
-		let key = cacheManager.genKey("creepManager.countRoomUnits" , arguments);
-		let cache = cacheManager.fetchMem("cacheFunction" , key);
-
-		if (!cache.valid || (Game.time - cache.time) > 0)
-		{
-			//console.log("-");
-			result = this.getRoomUnits(roomName , unitName).length;
-			cacheManager.storeMem("cacheFunction" , key , result , Game.time);
-		}
-		else
-		{
-			//console.log("+");
-			result = cache.value;
-		}
-
-		if (!useCache)
-		{
-			//lib.log(`Cache / result: ${result}/${realResult} --- ${key}` , realResult != result);
-			return realResult;
-		}
-		else
-			return result;
-	} ,
-
 	getRoomUnits: function (roomName , unitName)
 	{
 		let result = _.filter(Game.creeps , function (creep)

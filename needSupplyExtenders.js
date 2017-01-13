@@ -34,7 +34,7 @@ NeedSupplyExtenders.prototype.getUnitDemands = function(roomName, memory, motiva
 	let workerCapacity = lib.nullProtect(worker.carryCapacity, 50);
 	let extenderEnergy = room.getExtenderEnergy();
 	let hauler = lib.nullProtect(creepManager.getRoomUnits(roomName, "hauler")[0], {});
-	let numHaulers = creepManager.countRoomUnits(roomName, "hauler");
+	let numHaulers = _.has(global, "cache.rooms." + roomName + ".units.hauler") ? global.cache.rooms[roomName].units["hauler"].length : 0;
 	//console.log(JSON.stringify(memory));
 
 	energy = extenderEnergy.energy;
