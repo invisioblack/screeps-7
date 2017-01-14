@@ -12,7 +12,7 @@ StructureTower.prototype.autoAttack = function ()
 	if (Game.rooms[roomName].memory.threat.level >= C.THREAT_NPC)
 	{
 		targets = _.filter(Game.rooms[roomName].memory.threat.threats, (o) => {
-			return o.status === C.PLAYER_HOSTILE;
+			return o.status === C.RELATION_HOSTILE;
 		});
 
 		if (targets.length > 0)

@@ -45,6 +45,7 @@ Room.prototype.initMemCache = function (forceRefresh = false)
 	this.updateSourceCache(forceRefresh);
 	this.updateDroppedCache(forceRefresh);
 	this.updateUnitCache();
+	this.updateFlagCache(forceRefresh);
 };
 
 /**
@@ -193,6 +194,32 @@ Room.prototype.updateUnitCache = function ()
 	//console.log(JSON.stringify(global.cache.homeRooms[roomName].units));
 };
 
+Room.prototype.updateFlagCache = function (forceRefresh = false)
+{
+	// insure the memory object exists
+	if (lib.isNull(this.memory.cache.flags))
+	{
+		this.memory.cache.flags = {};
+		forceRefresh = true;
+	}
+
+	if (Game.time % 100 === 0)
+		forceRefresh = true;
+
+	if (forceRefresh)
+	{
+		let foundFlags = this.find(FIND_FLAGS);
+		//console.log(`Found: ${foundFlags}`);
+
+		// map structure ids to the memory object
+		this.memory.cache.flags = _.map(foundFlags, function (s) {
+			return s.id;
+		});
+		//console.log(`Result ${this.memory.cache.flags}`);
+	}
+};
+
+
 /**
  * This function updates the state of the energy pickup mode for this room. This is how creeps who need energy will go
  * about acquiring it.
@@ -236,7 +263,7 @@ Room.prototype.updateEnergyPickupMode = function ()
 			}
 		}
 
-		if (numLink > 1 && !lib.isNull(this.memory.sourceLinks) && _.size(this.memory.sourceLinks) > 0)
+		if (numLink > 1)
 		{
 			result = C.ROOM_ENERGYPICKUPMODE_LINK;
 		}
@@ -258,7 +285,7 @@ Room.prototype.motivateLinks = function ()
 		{
 			links.forEach(function (link)
 			{
-				if (link.id != this.memory.storageLinkId)
+				if (link.id != this.memory.storageLinkId && link.energy > 200)
 				{
 					link.transferEnergy(storageLink);
 				}
@@ -494,7 +521,7 @@ Room.prototype.safeModeFailsafe = function ()
 		let safeModeCooldown = lib.nullProtect(controller.safeModeCooldown , 0);
 		let hostiles = lib.nullProtect(lib.nullProtect(this.threat, {}).threats, []).length;
 
-		if (!safeMode && safeModeAvailable && !safeModeCooldown && (controller.level < 4 || this.memory.threat.breach))
+		if (!safeMode && safeModeAvailable && !safeModeCooldown && (this.memory.threat.level === C.THREAT_PANIC))
 		{
 			lib.log("!!!!!!!!!!!!!!! ACTIVATING SAFE MODE !!!!!!!!!!!!!!!", debug);
 			controller.activateSafeMode();
@@ -560,42 +587,42 @@ Room.prototype.updateThreat = function ()
 	{
 		this.memory.threat.threats = this.getThreats();
 		if (Game.time % 5 === 0)	{
-			//this.memory.threat.breach = this.getBreach();
+			this.memory.threat.breach = this.getBreach();
 		}
 	} else if (this.memory.threat.level >= C.THREAT_PLAYER)
 	{
 		this.memory.threat.threats = this.getThreats();
-		//this.memory.threat.breach = this.getBreach();
+		this.memory.threat.breach = this.getBreach();
 	} else if (Game.time % 5 === 0)
 	{
 		this.memory.threat.threats = this.getThreats();
-		//this.memory.threat.breach = this.getBreach();
+		this.memory.threat.breach = this.getBreach();
 	}
 
 	threatCounts = _.countBy(this.memory.threat.threats, (o) => { return o.status});
 
-	if (lib.isNull(threatCounts[C.PLAYER_HOSTILE]))
-		threatCounts[C.PLAYER_HOSTILE] = 0;
+	if (lib.isNull(threatCounts[C.RELATION_HOSTILE]))
+		threatCounts[C.RELATION_HOSTILE] = 0;
 
-	//console.log(`ThreatCounts: ${JSON.stringify(threatCounts)}`);
-	//console.log("ALERT: " + (timeSinceSeen < config.alertTime));
+	console.log(`ThreatCounts: ${JSON.stringify(threatCounts)}`);
+	console.log("ALERT: " + (timeSinceSeen < config.alertTime));
 
 	// based on threats, update our status
-	if (timeSinceSeen > config.alertTime && threatCounts[C.PLAYER_HOSTILE] === 0)
+	if (timeSinceSeen > config.alertTime && threatCounts[C.RELATION_HOSTILE] === 0)
 	{
 		//console.log("Standby");
 		this.memory.threat.level = C.THREAT_STANDBY;
-		this.memory.threat.count = this.memory.threat.threats.length;
-	} else if (timeSinceSeen < config.alertTime && threatCounts[C.PLAYER_HOSTILE] === 0)
+		this.memory.threat.count = lib.nullProtect(this.memory.threat.threats, []).length;
+	} else if (timeSinceSeen < config.alertTime && threatCounts[C.RELATION_HOSTILE] === 0)
 	{
 		//console.log("Alert");
 		this.memory.threat.level = C.THREAT_ALERT;
-		this.memory.threat.count = threatCounts[C.PLAYER_HOSTILE].length;
+		this.memory.threat.count = threatCounts[C.RELATION_HOSTILE].length;
 	}
-	else if (threatCounts[C.PLAYER_HOSTILE] > 0)
+	else if (threatCounts[C.RELATION_HOSTILE] > 0)
 	{
 		//console.log("Some threat!");
-		filteredThreats = _.filter(this.memory.threat.threats, (o) => { return o.status === C.PLAYER_HOSTILE});
+		filteredThreats = _.filter(this.memory.threat.threats, (o) => { return o.status === C.RELATION_HOSTILE});
 		threatsRaw = _.map(filteredThreats, (o) => { return Game.getObjectById(o.id) } );
 
 		//console.log(JSON.stringify(threatsRaw));
@@ -611,8 +638,14 @@ Room.prototype.updateThreat = function ()
 			console.log("!!!> NPC THREAT! " + link);
 		}
 
+		if (this.memory.threats >= C.THREAT_NPC && this.memory.threat.breach)
+		{
+			this.memory.threat.level = C.THREAT_PANIC;
+			console.log("!!!> WALL BREACH! " + link);
+		}
+
 		this.memory.threat.lastSeen = Game.time;
-		this.memory.threat.count = threatCounts[C.PLAYER_HOSTILE];
+		this.memory.threat.count = threatCounts[C.RELATION_HOSTILE];
 	}
 };
 
@@ -642,7 +675,7 @@ Room.prototype.getBreach = function ()
 	spawn = Game.getObjectById(spawnId);
 	if (!lib.isNull(spawn))
 	{
-		result = spawn.pos.isEnclosed();
+		result = !spawn.pos.isEnclosed();
 	}
 
 	return result;

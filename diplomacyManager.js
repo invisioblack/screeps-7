@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = {
-	set: function(name, state = C.PLAYER_HOSTILE) {
+	set: function(name, state = C.RELATION_HOSTILE) {
 		if(!Memory.players)
 			Memory.players = {};
 		Memory.players[name] = state;
@@ -10,7 +10,7 @@ module.exports = {
 
 	status: function(name) {
 		if(!Memory.players || !Memory.players[name])
-			return C.PLAYER_HOSTILE;
+			return C.RELATION_HOSTILE;
 		return Memory.players[name];
 	},
 

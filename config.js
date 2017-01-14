@@ -4,7 +4,7 @@ module.exports =
 	"critWorkers": 2,
 	"minWorkers": 3,
 	"medWorkers": 4,
-	"maxWorkers": 6,
+	"maxWorkers": 5,
 	"maxHaulers": 3,
 	"longRangeHarvestMinWorkers": 2,
 	"alertTime": 200,

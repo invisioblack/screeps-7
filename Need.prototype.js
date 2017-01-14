@@ -90,7 +90,7 @@ module.exports = function ()
 			preResult = Math.floor(preResult);
 		}
 
-		console.log(`Room: ${roomName} containerEnergy: ${containerEnergy} preResult: ${preResult}`);
+		//console.log(`Room: ${roomName} containerEnergy: ${containerEnergy} preResult: ${preResult}`);
 
 		result[unitName] = preResult;
 	};
