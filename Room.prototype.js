@@ -177,7 +177,8 @@ Room.prototype.updateUnitCache = function ()
 	});
 
 	roomCreeps = _.filter(Game.creeps, (c) => c.memory.homeRoom === roomName);
-	global.cache.homeRooms = {};
+	if (lib.isNull(global.cache.homeRooms))
+		global.cache.homeRooms = {};
 	global.cache.homeRooms[roomName] = {};
 	global.cache.homeRooms[roomName].creeps = roomCreeps;
 	global.cache.homeRooms[roomName].units = _.groupBy(roomCreeps, (o) => {
@@ -191,7 +192,17 @@ Room.prototype.updateUnitCache = function ()
 		}
 	});
 
-	//console.log(JSON.stringify(global.cache.homeRooms[roomName].units));
+	/*
+	let output = "";
+	_.forEach(global.cache.homeRooms, (v, k) => {
+		output += `\nRoom: ${k}`;
+		output += `\n\tCreeps: ${JSON.stringify(v)}`;
+		_.forEach(v.units, (sv, sk) => {
+			output += `\n\tUnit: ${sk}: ${sv}`;
+		});
+	});
+	console.log(output);
+	*/
 };
 
 Room.prototype.updateFlagCache = function (forceRefresh = false)
