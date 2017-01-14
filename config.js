@@ -13,7 +13,7 @@ module.exports =
 	'towerPowerFactor': 0.8,
 	'towerRepairFactor': 0.1,
 	"cpuDebug": true,
-	"cpuDetailDebug": false,
+	"cpuDetailDebug": true,
 	"cpuHistorySize": 1000,
 	"cpuThresholdThird": 1000,
 	"cpuThresholdHalf": 500,

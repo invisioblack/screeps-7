@@ -55,11 +55,11 @@ JobHarvestSource.prototype.work = function (creep)
 	if (creep.room.memory.energyPickupMode === C.ROOM_ENERGYPICKUPMODE_LINK)
 	{
 		let link = Game.getObjectById(need.linkId);
-		if (creep.carrying() === creep.carryCapacity && !lib.isNull(link) && link.energy < link.energyCapacity)
+		if (creep.carryCapacity > 0 && creep.carrying() >= 48 && !lib.isNull(link) && link.energy < link.energyCapacity)
 		{
 			let tResult = creep.transfer(link, RESOURCE_ENERGY);
 		}
-		else if (_.sum(container.store) < container.storeCapacity || creep.carrying() <= creep.carryCapacity)
+		else if (_.sum(container.store) < container.storeCapacity || (creep.carrying() < (creep.carryCapacity - 12)))
 		{
 
 			let result = creep.harvest(target);

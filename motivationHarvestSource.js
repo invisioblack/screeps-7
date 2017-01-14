@@ -125,7 +125,9 @@ MotivationHarvestSource.prototype.updateNeeds = function (roomName)
 		{
 
 			let link = container.pos.findInRange(FIND_STRUCTURES, 1,{ filter: function (s) { return s.structureType === STRUCTURE_LINK; }})[0];
-			need.linkId = link.id;
+			if (!lib.isNull(link)) {
+				need.linkId = link.id;
+			}
 		}
 
 		if (lib.isNull(container))

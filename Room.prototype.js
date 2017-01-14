@@ -220,7 +220,7 @@ Room.prototype.updateEnergyPickupMode = function ()
 			}
 		}
 
-		if (numLink > 0 && result >= C.ROOM_ENERGYPICKUPMODE_STORAGE)
+		if (numLink > 1)
 		{
 			result = C.ROOM_ENERGYPICKUPMODE_LINK;
 		}
