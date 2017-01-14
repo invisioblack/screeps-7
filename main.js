@@ -1,11 +1,9 @@
 /**
- * TODO: figure out links - DO THIS NOW!
- *      implement link funciton
+ * TODO: Mine resources!
  * TODO: revamp haul to storage to make hauler smarter, don't use default energy finder
-*       split loads better
+ *      split loads better
  *      manage links
  * TODO: if storage mode isn't on, let workers find energy on the ground
- * TODO: create motivate init and uninit, so motivations that will not be active, and don't need to be active to maintain need can be removed from processing
  * TODO: create ally exemption
  *      finish implementation
  * TODO: set rooms as defended, and send creeps to kill enemies there

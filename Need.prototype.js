@@ -64,10 +64,35 @@ module.exports = function ()
 		let containers = _.map(Memory.rooms[roomName].cache.structures[STRUCTURE_CONTAINER], function (cid) {
 			return Game.getObjectById(cid);
 		});
+		let linkId = Game.rooms[roomName].memory.storageLinkId;
+		let link;
 		let containerEnergy = _.sum(containers, function (c) {
 			return c.store[RESOURCE_ENERGY];
 		});
-		result[unitName] = Math.ceil(containerEnergy / unitCapacity);
+		let preResult = 0;
+		if (!lib.isNull(linkId))
+		{
+			link = Game.getObjectById(linkId);
+			containerEnergy += link.energy;
+		}
+
+		preResult = containerEnergy / unitCapacity;
+
+		if (preResult < 1)
+		{
+			if (preResult > 0.5)
+			{
+				preResult = 1;
+			} else {
+				preResult = 0;
+			}
+		} else {
+			preResult = Math.floor(preResult);
+		}
+
+		console.log(`Room: ${roomName} containerEnergy: ${containerEnergy} preResult: ${preResult}`);
+
+		result[unitName] = preResult;
 	};
 
 	return Need;

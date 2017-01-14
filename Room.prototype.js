@@ -174,7 +174,23 @@ Room.prototype.updateUnitCache = function ()
 			global.cache.rooms[roomName].units[k] = [];
 		}
 	});
-	//console.log(JSON.stringify(global.cache.rooms[roomName].units));
+
+	roomCreeps = _.filter(Game.creeps, (c) => c.memory.homeRoom === roomName);
+	global.cache.homeRooms = {};
+	global.cache.homeRooms[roomName] = {};
+	global.cache.homeRooms[roomName].creeps = roomCreeps;
+	global.cache.homeRooms[roomName].units = _.groupBy(roomCreeps, (o) => {
+		return o.memory.unit;
+	} );
+
+	_.forEach(units, (v, k)=> {
+		if (lib.isNull(global.cache.homeRooms[roomName].units[k]))
+		{
+			global.cache.homeRooms[roomName].units[k] = [];
+		}
+	});
+
+	//console.log(JSON.stringify(global.cache.homeRooms[roomName].units));
 };
 
 /**
@@ -220,7 +236,7 @@ Room.prototype.updateEnergyPickupMode = function ()
 			}
 		}
 
-		if (numLink > 1 && !lib.isNull(this.memory.sourceLinks) && this.memory.sourceLinks.length > 0)
+		if (numLink > 1 && !lib.isNull(this.memory.sourceLinks) && _.size(this.memory.sourceLinks) > 0)
 		{
 			result = C.ROOM_ENERGYPICKUPMODE_LINK;
 		}

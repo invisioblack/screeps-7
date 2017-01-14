@@ -20,6 +20,7 @@ module.exports = function()
 		//console.log(`${creep.name} M: ${creep.memory.motive.motivation} N: ${creep.memory.motive.need}`);
 		// declarations
 		let carry, source, room;
+		let numHaulers = _.has(global, "cache.homeRooms." + creep.room.name + ".units.hauler") ? global.cache.homeRooms[creep.room.name].units["hauler"].length : 0;
 
 		// confirm that creep can attempt this job
 		if (creep.carryCapacity === 0)
@@ -69,7 +70,7 @@ module.exports = function()
 		 * if we are only harvest mode, anyone will get energy off the ground, otherwise just haulers will
  		 */
 
-		if (room.memory.energyPickupMode <= C.ROOM_ENERGYPICKUPMODE_CONTAINER)
+		if (room.memory.energyPickupMode <= C.ROOM_ENERGYPICKUPMODE_CONTAINER || numHaulers === 0)
 		{
 			this.findEnergyPickup(creep);
 		} else if (creep.memory.unit === "hauler")
@@ -250,15 +251,17 @@ module.exports = function()
 	{
 		// look for energy laying on the ground
 		let droppedEnergy = creep.room.memory.cache.dropped;
-		droppedEnergy.forEach(function (drop) {
-			//console.log("dropID: " + drop);
-			if (creep.memory.sourceType != this.JOB_SOURCETYPE_DROP && creepManager.countCreepsOnSource(drop) === 0)
-			{
-				//console.log("I'll get it! dropID: " + drop.id);
-				creep.memory.sourceId = drop;
-				creep.memory.sourceType = this.JOB_SOURCETYPE_DROP;
-			}
-		}, this);
+
+		if (creep.room.memory.threat.level < C.THREAT_NPC) {
+			droppedEnergy.forEach(function (drop) {
+				//console.log("dropID: " + drop);
+				if (creep.memory.sourceType != this.JOB_SOURCETYPE_DROP && creepManager.countCreepsOnSource(drop) === 0) {
+					//console.log("I'll get it! dropID: " + drop.id);
+					creep.memory.sourceId = drop;
+					creep.memory.sourceType = this.JOB_SOURCETYPE_DROP;
+				}
+			}, this);
+		}
 	};
 
 	Job.prototype.findEnergyStorage = function (creep)

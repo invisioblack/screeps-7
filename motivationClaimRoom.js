@@ -53,7 +53,7 @@ MotivationClaimRoom.prototype.getDesireSpawn = function (roomName, demands)
 	let debug = false;
 	let result = false;
 	let room = Game.rooms[roomName];
-	let numWorkers = Memory.rooms[roomName].resources.units["worker"].total;
+	let numWorkers = _.has(global, "cache.homeRooms." + roomName + ".units.worker") ? global.cache.homeRooms[roomName].units["worker"].length : 0;
 
 	// filter this to only claims spawning in specified room
 	let spawnClaims = _.filter(Memory.claims, function (c){
