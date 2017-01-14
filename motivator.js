@@ -134,6 +134,9 @@ module.exports =
 			// long distance harvesters --------------------------------------------------------------------------------
 			this.sendOffLongDistanceHarvesters(roomName);
 
+			// long distance harvesters --------------------------------------------------------------------------------
+			room.motivateLinks();
+
 			//------------------------------------------------------------------------------------------------------
 			// motivate
 			lib.log('-------- motivator.motivate: ' + roomName , debug);

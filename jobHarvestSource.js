@@ -48,26 +48,49 @@ JobHarvestSource.prototype.work = function (creep)
 	creep.memory.sourceId = target.id;
 	creep.memory.sourceType = this.JOB_SOURCETYPE_SOURCE;
 
-	if (_.sum(container.store) < container.storeCapacity)
+
+	let moveResult = creep.moveTo(container , {"maxRooms": 1});
+
+
+	if (creep.room.memory.energyPickupMode === C.ROOM_ENERGYPICKUPMODE_LINK)
 	{
-		if (creep.pos != container.pos)
+		let link = Game.getObjectById(need.linkId);
+		if (creep.carrying() === creep.carryCapacity && !lib.isNull(link) && link.energy < link.energyCapacity)
 		{
-			let moveResult = creep.moveTo(container, {"maxRooms": 1});
-			//if (moveResult < 0 && moveResult != ERR_TIRED)
-			//	console.log(creep.name + " Can't move to container: " + moveResult);
+			let tResult = creep.transfer(link, RESOURCE_ENERGY);
 		}
-
-		let result = creep.harvest(target);
-
-		//console.log("harvest: " + container.storeCapacity);
-		if (result === ERR_NOT_ENOUGH_ENERGY)
+		else if (_.sum(container.store) < container.storeCapacity || creep.carrying() <= creep.carryCapacity)
 		{
-			creep.say("Source Empty!");
+
+			let result = creep.harvest(target);
+			if (result === ERR_NOT_ENOUGH_ENERGY)
+			{
+				creep.say("Source Empty!");
+			}
 		}
-	} else {
-		creep.say("Full!");
-		if(creep.pos.getRangeTo(container) != 0)
-			creep.moveTo(container, {"maxRooms": 1});
+		else
+		{
+			creep.say("Full!");
+			if (creep.pos.getRangeTo(container) != 0)
+				creep.moveTo(container , {"maxRooms": 1});
+		}
+	} else
+	{
+		if (_.sum(container.store) < container.storeCapacity)
+		{
+
+			let result = creep.harvest(target);
+			if (result === ERR_NOT_ENOUGH_ENERGY)
+			{
+				creep.say("Source Empty!");
+			}
+		}
+		else
+		{
+			creep.say("Full!");
+			if (creep.pos.getRangeTo(container) != 0)
+				creep.moveTo(container , {"maxRooms": 1});
+		}
 	}
 
 };

@@ -24,9 +24,8 @@ module.exports =
 
 		// create and update needs for motivation
 
-		//console.log("needManager.manageNeeds: motivation.name: " + motivation.name);
+		lib.log("needManager.manageNeeds: motivation.name: " + motivation.name, debug);
 		motivation.updateNeeds(roomName);
-
 
 		// read up needs sorted by priority
 		needs = _.sortByOrder(room.memory.motivations[motivation.name].needs , ['priority'], ['desc']);
@@ -34,16 +33,17 @@ module.exports =
 		// first we need to figure out if we have any open allocations
 		for (let unitName in units)
 		{
+			//console.log("unit: " + unitName);
 			//cpuManager.timerStart("Unit: " + unitName, "manageNeeds." + unitName);
 			let assignedUnits = creepManager.countRoomMotivationUnits(roomName, motivation.name , unitName);
 			let allocatedUnits = motivationMemory.allocatedUnits[unitName];
 
 			// if we have open allocations, we need to find if there is a creep to assign
 			let outOfCreeps = false;
+			let hasDemand = true;
 			//console.log("Preloop");
-			while (!outOfCreeps && assignedUnits < allocatedUnits)
+			while (!outOfCreeps && hasDemand && assignedUnits < allocatedUnits)
 			{
-
 				needs.forEach(function (need)
 				{
 					lib.log(`Need: ${need.name}`, debug);
@@ -74,6 +74,8 @@ module.exports =
 					// you think you can move this up into the while above, but don't it causes problems on rare iterations
 					if (lib.isNull(creep))
 						outOfCreeps = true;
+					if (creepsAssigned >= creepsDemanded)
+						hasDemand = false;
 				} , this);
 			}
 

@@ -49,7 +49,7 @@ module.exports =
 
 			//console.log("result: " + JSON.stringify(result));
 
-			if (result.room === "" || result.availUnits === 0)
+			if (result.room === "" || result.availUnits < 1)
 				return "";
 			else
 				return result.room;

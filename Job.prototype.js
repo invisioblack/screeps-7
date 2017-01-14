@@ -13,6 +13,7 @@ module.exports = function()
 	Job.prototype.JOB_SOURCETYPE_DROP = 1;
 	Job.prototype.JOB_SOURCETYPE_CONTAINER = 2;
 	Job.prototype.JOB_SOURCETYPE_SOURCE = 3;
+	Job.prototype.JOB_SOURCETYPE_LINK = 4;
 
 	Job.prototype.getEnergy = function (creep)
 	{
@@ -68,7 +69,7 @@ module.exports = function()
 		 * if we are only harvest mode, anyone will get energy off the ground, otherwise just haulers will
  		 */
 
-		if (room.memory.energyPickupMode <= C.ROOM_ENERGYPICKUPMODE_HARVEST)
+		if (room.memory.energyPickupMode <= C.ROOM_ENERGYPICKUPMODE_CONTAINER)
 		{
 			this.findEnergyPickup(creep);
 		} else if (creep.memory.unit === "hauler")
@@ -77,9 +78,17 @@ module.exports = function()
 		}
 
 		/**
+		 * handle finding energy in link
+		 */
+		if (room.memory.energyPickupMode >= C.ROOM_ENERGYPICKUPMODE_LINK && creep.memory.sourceId === "")
+		{
+			this.findEnergyLink(creep);
+		}
+
+		/**
 		 * handle finding energy in storage
 		 */
-		if (room.memory.energyPickupMode === C.ROOM_ENERGYPICKUPMODE_STORAGE && creep.memory.sourceId === "" && creep.memory.motive.motivation != "motivationHaulToStorage")
+		if (room.memory.energyPickupMode >= C.ROOM_ENERGYPICKUPMODE_STORAGE && creep.memory.sourceId === "" && creep.memory.motive.motivation != "motivationHaulToStorage")
 		{
 			this.findEnergyStorage(creep);
 		}
@@ -95,7 +104,7 @@ module.exports = function()
 		}
 
 		// otherwise, only haulers get them out
-		if (room.memory.energyPickupMode === C.ROOM_ENERGYPICKUPMODE_STORAGE && creep.memory.sourceId === "" && creep.memory.unit === "hauler")
+		if (room.memory.energyPickupMode >= C.ROOM_ENERGYPICKUPMODE_STORAGE && creep.memory.sourceId === "" && creep.memory.unit === "hauler")
 		{
 			this.findEnergyContainer(creep);
 		}
@@ -194,6 +203,22 @@ module.exports = function()
 						//	console.log(creep.name + " Can't move while harvesting: " + moveResult);
 					}
 					break;
+				case this.JOB_SOURCETYPE_LINK:
+					let link = Game.getObjectById(creep.memory.sourceId);
+					result = creep.withdraw(link, RESOURCE_ENERGY);
+					if (result === ERR_NOT_IN_RANGE)
+					{
+						let moveResult = creep.moveTo(link, {"maxRooms": 1});
+						//if (moveResult < 0 && moveResult != ERR_TIRED)
+						//	console.log(creep.name + " Can't move while getting from container: " + moveResult);
+					}
+					if (link.energy < 20)
+					{
+						creep.say("Empty!");
+						creep.memory.job.mode = this.JOB_MODE_WORK;
+						this.resetSource(creep);
+					}
+					break;
 			}
 		}
 	};
@@ -245,6 +270,17 @@ module.exports = function()
 		{
 			creep.memory.sourceId = storageId;
 			creep.memory.sourceType = this.JOB_SOURCETYPE_CONTAINER;
+		}
+	};
+
+	Job.prototype.findEnergyLink = function (creep)
+	{
+		let linkId = creep.room.memory.storageLinkId;
+		let link = Game.getObjectById(linkId);
+		if (!lib.isNull(link) && link.energy > 0)
+		{
+			creep.memory.sourceId = linkId;
+			creep.memory.sourceType = this.JOB_SOURCETYPE_LINK;
 		}
 	};
 

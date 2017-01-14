@@ -2,8 +2,8 @@
 module.exports =
 {
 	"critWorkers": 2,
-	"minWorkers": 4,
-	"medWorkers": 8,
+	"minWorkers": 3,
+	"medWorkers": 4,
 	"maxWorkers": 10,
 	"maxHaulers": 4,
 	"longRangeHarvestMinWorkers": 4,
@@ -13,7 +13,7 @@ module.exports =
 	'towerPowerFactor': 0.8,
 	'towerRepairFactor': 0.1,
 	"cpuDebug": true,
-	"cpuDetailDebug": true,
+	"cpuDetailDebug": false,
 	"cpuHistorySize": 1000,
 	"cpuThresholdThird": 1000,
 	"cpuThresholdHalf": 500,

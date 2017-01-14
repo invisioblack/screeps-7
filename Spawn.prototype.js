@@ -57,6 +57,11 @@ Spawn.prototype.generateName = function (name)
 	}
 };
 
+/**
+ * public function to spawn units
+ * @param unitName
+ * @param fullEnergy
+ */
 Spawn.prototype.spawnUnit = function (unitName, fullEnergy)
 {
 	let debug = false;
@@ -72,6 +77,11 @@ Spawn.prototype.spawnUnit = function (unitName, fullEnergy)
 	}
 };
 
+/**
+ * private function to spawn units, generally use spawnUnit
+ * @param unitName
+ * @param energy
+ */
 Spawn.prototype.spawnUnitByEnergy = function (unitName, energy)
 {
 	let debug = false;
@@ -88,33 +98,37 @@ Spawn.prototype.spawnUnitByEnergy = function (unitName, energy)
 
 	name = this.generateName(unitName);
 
-	if (units[unitName].mode === 1)
+	switch (units[unitName].mode)
 	{
-
-		units[unitName].parts.forEach(function (part)
-		{
-
-			let partEnergy = energy * part.weight;
-			let numberParts = Math.floor(partEnergy / this.costs[part.part]);
-
-			if (numberParts < part.minimum)
-				numberParts = part.minimum;
-			for (let x = 0; x < numberParts; x++)
+		case 1:
+			units[unitName].parts.forEach(function (part)
 			{
-				//console.log(energyLeft + "/" + this.costs[part.part]);
-			    if (energyLeft >= this.costs[part.part])
-			    {
-				    parts.push(part.part);
-				    energyLeft -= this.costs[part.part];
-			    }
-			}
-		} , this);
-	} else if (units[unitName].mode === 2)
-	{
-		parts = units[unitName].parts;
+
+				let partEnergy = energy * part.weight;
+				let numberParts = Math.floor(partEnergy / this.costs[part.part]);
+
+				if (numberParts < part.minimum)
+					numberParts = part.minimum;
+				for (let x = 0; x < numberParts; x++)
+				{
+					//console.log(energyLeft + "/" + this.costs[part.part]);
+					if (energyLeft >= this.costs[part.part])
+					{
+						parts.push(part.part);
+						energyLeft -= this.costs[part.part];
+					}
+				}
+			} , this);
+			break;
+		case 2:
+			parts = units[unitName].parts;
+			break;
+		case 3:
+			parts = units[unitName].parts[this.room.controller.level];
+			break;
 	}
 
-	//console.log(JSON.stringify(parts));
+	lib.log(JSON.stringify(parts), debug);
 	if (energy < 300)
 		lib.log('-------------------Failed creating creep ' + unitName + ' : ' + name + " energy: " + energy + " result: too little energy", debug);
 	else

@@ -3,7 +3,7 @@
 //-------------------------------------------------------------------------
 
 /***********************************************************************************************************************
- * functions
+ * management functions
  */
 
 /**
@@ -175,10 +175,7 @@ Room.prototype.updateUnitCache = function ()
 		}
 	});
 	//console.log(JSON.stringify(global.cache.rooms[roomName].units));
-
 };
-
-
 
 /**
  * This function updates the state of the energy pickup mode for this room. This is how creeps who need energy will go
@@ -195,6 +192,7 @@ Room.prototype.updateEnergyPickupMode = function ()
 		let roomName = this.name;
 		let numContainers = lib.nullProtect(this.memory.cache.structures[STRUCTURE_CONTAINER], []).length;
 		let numStorage = lib.nullProtect(this.memory.cache.structures[STRUCTURE_STORAGE], []).length;
+		let numLink = lib.nullProtect(this.memory.cache.structures[STRUCTURE_LINK], []).length;
 		let containers = _.map(this.memory.cache.structures[STRUCTURE_CONTAINER], function (cid) {
 			return Game.getObjectById(cid);
 		});
@@ -221,30 +219,36 @@ Room.prototype.updateEnergyPickupMode = function ()
 					result = C.ROOM_ENERGYPICKUPMODE_STORAGE;
 			}
 		}
+
+		if (numLink > 0 && result >= C.ROOM_ENERGYPICKUPMODE_STORAGE)
+		{
+			result = C.ROOM_ENERGYPICKUPMODE_LINK;
+		}
 	}
 
 	this.memory.energyPickupMode = result;
 	return result;
 };
 
-Room.prototype.getControllerLevel = function ()
+Room.prototype.motivateLinks = function ()
 {
-	let result = 0;
-	if (!lib.isNull(this.controller))
+	if (this.getIsMine())
 	{
-		result = this.controller.level;
+		// find all towers
+		let links = _.map(this.memory.cache.structures[STRUCTURE_LINK], (o) => { return Game.getObjectById(o)});
+		let storageLinkId = this.memory.storageLinkId;
+		let storageLink = Game.getObjectById(storageLinkId);
+		if (!lib.isNull(storageLink))
+		{
+			links.forEach(function (link)
+			{
+				if (link.id != this.memory.storageLinkId)
+				{
+					link.transferEnergy(storageLink);
+				}
+			} , this);
+		}
 	}
-	return result;
-};
-
-Room.prototype.getIsMine = function ()
-{
-	let result = false;
-	if (!lib.isNull(this.controller) && this.controller.my)
-	{
-		result = true;
-	}
-	return result;
 };
 
 /***********************************************************************************************************************
@@ -353,6 +357,32 @@ Room.prototype.updateControllerStatus = function ()
 	return this.memory.controllerStatus;
 };
 
+
+/***********************************************************************************************************************
+ * General info functions
+ *
+ */
+
+Room.prototype.getControllerLevel = function ()
+{
+	let result = 0;
+	if (!lib.isNull(this.controller))
+	{
+		result = this.controller.level;
+	}
+	return result;
+};
+
+Room.prototype.getIsMine = function ()
+{
+	let result = false;
+	if (!lib.isNull(this.controller) && this.controller.my)
+	{
+		result = true;
+	}
+	return result;
+};
+
 /***********************************************************************************************************************
  * Creep finding functions
  *
@@ -416,6 +446,24 @@ Room.prototype.handleLostCreeps = function()
 	}, this);
 };
 
+Room.prototype.getMaxHarvesters = function ()
+{
+	let sources = this.find(FIND_SOURCES);
+	let result = 0;
+	_.forEach(sources, function (s) {
+		result += s.getMaxHarvesters();
+	});
+
+	//console.log("MAX: " + result);
+	return result;
+};
+
+
+/***********************************************************************************************************************
+ * Military functions
+ *
+ */
+
 Room.prototype.safeModeFailsafe = function ()
 {
 	let debug = false;
@@ -478,8 +526,6 @@ Room.prototype.updateThreat = function ()
 	let threatsRaw;
 	let threats;
 
-	return;
-
 	// init memory if need be
 	if (lib.isNull(this.memory.threat))
 	{
@@ -530,7 +576,7 @@ Room.prototype.updateThreat = function ()
 		this.memory.threat.level = C.THREAT_ALERT;
 		this.memory.threat.count = threatCounts[C.PLAYER_HOSTILE].length;
 	}
-    else if (threatCounts[C.PLAYER_HOSTILE] > 0)
+	else if (threatCounts[C.PLAYER_HOSTILE] > 0)
 	{
 		//console.log("Some threat!");
 		filteredThreats = _.filter(this.memory.threat.threats, (o) => { return o.status === C.PLAYER_HOSTILE});
@@ -586,17 +632,7 @@ Room.prototype.getBreach = function ()
 	return result;
 };
 
-Room.prototype.getMaxHarvesters = function ()
-{
-	let sources = this.find(FIND_SOURCES);
-	let result = 0;
-	_.forEach(sources, function (s) {
-		result += s.getMaxHarvesters();
-	});
 
-	//console.log("MAX: " + result);
-	return result;
-};
 
 /*
  * NOTES: sentences are broken down using | to separate pieces

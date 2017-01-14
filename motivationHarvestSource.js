@@ -115,9 +115,20 @@ MotivationHarvestSource.prototype.updateNeeds = function (roomName)
 				need.containerId = "";
 			}
 			need.priority = C.PRIORITY_1;
+
+		} else {
+			need = memory.needs[needName];
 		}
 
-		if (lib.isNull(Game.getObjectById(memory.needs[needName].containerId)))
+		let container = Game.getObjectById(memory.needs[needName].containerId);
+		if (room.memory.energyPickupMode === C.ROOM_ENERGYPICKUPMODE_LINK && !lib.isNull(container) && lib.isNull(need.linkId))
+		{
+
+			let link = container.pos.findInRange(FIND_STRUCTURES, 1,{ filter: function (s) { return s.structureType === STRUCTURE_LINK; }})[0];
+			need.linkId = link.id;
+		}
+
+		if (lib.isNull(container))
 		{
 			delete memory.needs[needName];
 		}
