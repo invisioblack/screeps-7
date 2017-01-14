@@ -563,6 +563,7 @@ Room.prototype.motivateTowers = function ()
 
 Room.prototype.updateThreat = function ()
 {
+	let debug = false;
 	let timeSinceSeen;
 	let threatCounts;
 	let filteredThreats;
@@ -604,8 +605,8 @@ Room.prototype.updateThreat = function ()
 	if (lib.isNull(threatCounts[C.RELATION_HOSTILE]))
 		threatCounts[C.RELATION_HOSTILE] = 0;
 
-	console.log(`ThreatCounts: ${JSON.stringify(threatCounts)}`);
-	console.log("ALERT: " + (timeSinceSeen < config.alertTime));
+	lib.log(`ThreatCounts: ${JSON.stringify(threatCounts)}`, debug);
+	lib.log("ALERT: " + (timeSinceSeen < config.alertTime), debug);
 
 	// based on threats, update our status
 	if (timeSinceSeen > config.alertTime && threatCounts[C.RELATION_HOSTILE] === 0)
