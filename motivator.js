@@ -175,15 +175,14 @@ module.exports =
 			this.motivateRound4(sortedMotivations, room);
 			cpuManager.timerStop("motivate.r4");
 
-
-
-			// fulfill needs ---------------------------------------------------------------------------------------
-			cpuManager.timerStart("\t\tFulfill Needs", "motivate.fulfillNeeds");
-			needManager.fulfillNeeds(roomName);
-			cpuManager.timerStop("motivate.fulfillNeeds");
-
 			cpuManager.timerStop("motivate.room", 8, 10);
 		}
+
+		// fulfill needs ---------------------------------------------------------------------------------------
+		cpuManager.timerStart("\tFulfill Needs", "motivate.fulfillNeeds");
+		needManager.fulfillNeeds();
+		cpuManager.timerStop("motivate.fulfillNeeds");
+
 		cpuManager.timerStop("motivate", 20, 30);
 	},
 

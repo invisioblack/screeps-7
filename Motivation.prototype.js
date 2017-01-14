@@ -34,6 +34,23 @@ module.exports = function ()
 		}
 	};
 
+	Motivation.prototype.deInit = function (roomName)
+	{
+		delete Game.rooms[roomName].memory.motivations[this.name];
+
+		let creeps = creepManager.getRoomMotivationCreeps(roomName, this.name);
+		_.forEach(creeps, (c) => {
+			c.deassignMotive();
+			c.resetSource();
+		});
+
+	};
+
+	Motivation.prototype.isInit = function (roomName)
+	{
+		return !lib.isNull(Game.rooms[roomName].memory.motivations[this.name]) && Game.rooms[roomName].memory.motivations[this.name].init;
+	};
+
 	Motivation.prototype.getUnitDemands = function (roomName)
 	{
 		let debug = false; //roomName === "W8N2";

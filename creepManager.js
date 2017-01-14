@@ -98,6 +98,16 @@ module.exports =
 		return result;
 	},
 
+	getRoomMotivationCreeps: function (roomName, motivationName)
+	{
+		let result = _.filter(Game.creeps , function (creep)
+		{
+			return creep.memory.motive.room === roomName
+				&& creep.memory.motive.motivation === motivationName;
+		});
+		return result;
+	},
+
 	countRoomMotivationNeedCreeps: function (roomName, motivationName , needName)
 	{
 		let result = this.getRoomMotivationNeedCreeps(roomName, motivationName , needName).length;

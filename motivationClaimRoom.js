@@ -38,7 +38,7 @@ MotivationClaimRoom.prototype.getDemands = function (roomName, resources) {
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
 	//console.log(JSON.stringify(result.units));
-	lib.log("  Claim Room Demands : " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn, false);
+	lib.log(`  Claim Room Demands ${roomName} : ${unitName} : ${result.units[unitName]} Spawn: ${result.spawn}`, debug);
 	Memory.rooms[roomName].motivations[this.name].demands = result;
 	return result;
 };
@@ -66,7 +66,7 @@ MotivationClaimRoom.prototype.getDesireSpawn = function (roomName, demands)
 		, debug);
 
 	// if it isn't our room or we have a worker shortage, false
-	if (!room.getIsMine() || numWorkers <= config.minWorkers)
+	if (!room.getIsMine() || numWorkers <= config.medWorkers)
 	{
 		lib.log(">&>&>&>&>&>&> FAIL", debug);
 		return false;

@@ -85,14 +85,14 @@ module.exports =
 		}
 	},
 
-	"fulfillNeeds": function (roomName)
+	"fulfillNeeds": function ()
 	{
 		let debug = false;
 		for (let creepName in Game.creeps)
 		{
 			// @type {Creep}
 			let creep = Game.creeps[creepName];
-			if (creep.room.name === roomName && creep.memory.motive.room === roomName && creep.memory.motive.motivation != "" && creep.memory.motive.need != "")
+			if (creep.memory.motive.room === creep.room.name && creep.memory.motive.motivation != "" && creep.memory.motive.need != "")
 			{
 				lib.log("Creep executing need: " + creep.name + " : " + creep.memory.motive.motivation + " : " + creep.memory.motive.need, debug);
 

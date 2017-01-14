@@ -20,27 +20,28 @@ module.exports =
 			if (lib.isNull(Memory.rooms[roomName]) || lib.isNull(Memory.rooms[roomName].longDistanceHarvestTargets))
 				return "";
 
-			let numWorkers = _.has(global, "cache.rooms." + roomName + ".units.worker") ? global.cache.rooms[roomName].units["worker"].length : 0;
 
-			Memory.rooms[roomName].longDistanceHarvestTargets.forEach( function (roomName)
+
+			Memory.rooms[roomName].longDistanceHarvestTargets.forEach( function (targetRoomName)
 			{
-				let room = Game.rooms[roomName];
+				let room = Game.rooms[targetRoomName];
+				let numWorkers = _.has(global, "cache.rooms." + targetRoomName + ".units.worker") ? global.cache.rooms[targetRoomName].units["worker"].length : 0;
 				if (lib.isNull(room))
 				{
-					sortList[roomName] = {};
-					sortList[roomName].units = numWorkers;
-					sortList[roomName].maxUnits = 1;
-					sortList[roomName].room = roomName;
+					sortList[targetRoomName] = {};
+					sortList[targetRoomName].units = numWorkers;
+					sortList[targetRoomName].maxUnits = 1;
+					sortList[targetRoomName].room = targetRoomName;
 
 				} else
 				{
-					sortList[roomName] = {};
-					sortList[roomName].units = numWorkers;
-					sortList[roomName].maxUnits = room.getMaxHarvesters();
-					sortList[roomName].room = roomName;
+					sortList[targetRoomName] = {};
+					sortList[targetRoomName].units = numWorkers;
+					sortList[targetRoomName].maxUnits = room.getMaxHarvesters();
+					sortList[targetRoomName].room = targetRoomName;
 				}
 
-				sortList[roomName].availUnits = sortList[roomName].maxUnits - sortList[roomName].units;
+				sortList[targetRoomName].availUnits = sortList[targetRoomName].maxUnits - sortList[targetRoomName].units;
 			}, this);
 
 			//console.log("sortList: " + JSON.stringify(sortList));
