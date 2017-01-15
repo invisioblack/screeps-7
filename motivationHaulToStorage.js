@@ -49,13 +49,14 @@ MotivationHaulToStorage.prototype.getDesireSpawn = function (roomName, demands)
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
 	let numWorkers = _.has(global, "cache.rooms." + roomName + ".units.worker") ? global.cache.rooms[roomName].units["worker"].length : 0;
-
+	let numHaulers = _.has(global, "cache.rooms." + roomName + ".units.hauler") ? global.cache.rooms[roomName].units["hauler"].length : 0;
+	let spawnUnit = this.getDesiredSpawnUnit(roomName);
 	if (memory.active)
 	{
 		for (let unitName in units)
 		{
 			let numUnits = _.has(global, "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName].length : 0;
-			if ((!lib.isNull(demands.units[unitName]) && demands.units[unitName] <= numUnits) || numWorkers < config.critWorkers)
+			if ((!lib.isNull(demands.units[unitName]) && demands.units[unitName] <= numUnits))
 			{
 				result = false;
 			}
@@ -63,6 +64,11 @@ MotivationHaulToStorage.prototype.getDesireSpawn = function (roomName, demands)
 	} else {
 		result = false;
 	}
+
+	if (spawnUnit === "worker" && numWorkers > config.maxWorkers)
+		result = false;
+	if (spawnUnit === "hauler" && numHaulers > config.maxHaulers)
+		result = false;
 
 	return result;
 };
