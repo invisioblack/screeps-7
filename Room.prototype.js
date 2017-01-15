@@ -442,31 +442,6 @@ Room.prototype.getIsMine = function ()
  *
  */
 
-/**
- * returns number of creeps in room of a unit type
- * @param unitName
- */
-Room.prototype.countUnits = function (unitName)
-{
-	let result = this.getUnits(unitName).length;
-	return result;
-};
-
-/**
- * returns creeps in room of unit type
- * @param unitName
- */
-Room.prototype.getUnits = function (unitName)
-{
-	let roomName = this.name;
-	let result = _.filter(Game.creeps , function (creep)
-	{
-		return creep.room.name === roomName
-		&& creep.memory.unit === unitName;
-	});
-	return result;
-};
-
 Room.prototype.getLostCreeps = function ()
 {
 	let roomName = this.name;
@@ -692,8 +667,6 @@ Room.prototype.getBreach = function ()
 
 	return result;
 };
-
-
 
 /*
  * NOTES: sentences are broken down using | to separate pieces
