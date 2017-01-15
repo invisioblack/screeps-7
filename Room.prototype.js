@@ -207,6 +207,7 @@ Room.prototype.updateUnitCache = function ()
 
 Room.prototype.updateFlagCache = function (forceRefresh = false)
 {
+	let roomName = this.name;
 	// insure the memory object exists
 	if (lib.isNull(this.memory.cache.flags))
 	{
@@ -214,19 +215,18 @@ Room.prototype.updateFlagCache = function (forceRefresh = false)
 		forceRefresh = true;
 	}
 
-	if (Game.time % 100 === 0)
+	if (Game.time % 10 === 0)
 		forceRefresh = true;
 
 	if (forceRefresh)
 	{
-		let foundFlags = this.find(FIND_FLAGS);
+		let foundFlags = this.find(FIND_FLAGS, { filter: (f) => { return f.room.name === roomName;}});
+		let flagNames = _.map(foundFlags, (f) => { return f.name});
 		//console.log(`Found: ${foundFlags}`);
 
 		// map structure ids to the memory object
-		this.memory.cache.flags = _.map(foundFlags, function (s) {
-			return s.id;
-		});
-		//console.log(`Result ${this.memory.cache.flags}`);
+		this.memory.cache.flags = flagNames;
+		//console.log(`Result ${JSON.stringify(this.memory.cache.flags)}`);
 	}
 };
 

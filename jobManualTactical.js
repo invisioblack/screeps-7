@@ -43,14 +43,14 @@ JobManualTactical.prototype.work = function (creep)
 	}
 	else if (Game.flags.creep)
 	{
-		let target = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS);
+		let target = Game.flags.creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS);
 		let result = creep.attack(target);
 		if (result === ERR_NOT_IN_RANGE)
 			creep.moveTo(target, { maxRooms: 1});
 	}
 	else if (Game.flags.structure)
 	{
-		let target = creep.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES);
+		let target = Game.flags.structure.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES);
 		let result = creep.attack(target);
 		if (result === ERR_NOT_IN_RANGE)
 			creep.moveTo(target, { maxRooms: 1});

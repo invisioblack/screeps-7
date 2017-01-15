@@ -55,9 +55,29 @@ MotivationManualTactical.prototype.updateActive = function (roomName, demands)
 {
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
+	let flags = _.map(lib.nullProtect(room.memory.cache.flags), (f) => {
+		return Game.flags[f];
+	});
+	//console.log("Room: " + roomName + " " + JSON.stringify(flags));
+	let filteredFlags = _.filter(flags, (f) => {
+		if (!lib.isNull(f))
+			return f.name === "spawn"
+				|| f.name === "creep"
+				|| f.name === "wall"
+				|| f.name === "structure"
+				|| f.name === "move";
+		else
+		{
+			return false;
+			room.updateFlagCache(true);
+		}
+	});
+	//console.log("Room: " + roomName + " " + JSON.stringify(filteredFlags));
 
 	// mantac must be activated manually, by default in new rooms it will be off
-	if(lib.isNull(memory.active))
+	if(_.size(filteredFlags) > 0)
+		memory.active = true;
+	else
 		memory.active = false;
 };
 
