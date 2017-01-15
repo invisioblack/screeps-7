@@ -6,7 +6,7 @@ module.exports =
 	"medWorkers": 4,
 	"maxWorkers": 5,
 	"maxHaulers": 3,
-	"longRangeHarvestMinWorkers": 2,
+	"longRangeHarvestMinWorkers": 3,
 	"alertTime": 200,
 	"wallHP": [0, 5000, 10000, 100000, 300000, 500000, 1000000, 5000000, 10000000],
 	"claimTicks": 1000,

@@ -274,7 +274,7 @@ Room.prototype.updateEnergyPickupMode = function ()
 			}
 		}
 
-		if (numLink > 1)
+		if (numLink > 1 && numHaulers > 0)
 		{
 			result = C.ROOM_ENERGYPICKUPMODE_LINK;
 		}

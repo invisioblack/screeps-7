@@ -457,7 +457,7 @@ module.exports =
 	{
 		let debug = false;
 		let room = Game.rooms[roomName];
-		let numWorkers = _.has(global, "cache.homeRooms." + roomName + ".units.worker") ? global.cache.homeRooms[roomName].units["worker"].length : 0;
+		let numWorkers = _.has(global, "cache.rooms." + roomName + ".units.worker") ? global.cache.rooms[roomName].units["worker"].length : 0;
 		let storageIds = lib.nullProtect(room.memory.cache.structures[STRUCTURE_STORAGE], []);
 		let storages  = _.map(storageIds, (id) => { return Game.getObjectById(id) });
 
