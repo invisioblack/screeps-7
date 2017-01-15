@@ -81,7 +81,7 @@ module.exports = function()
 		/**
 		 * handle finding energy in link
 		 */
-		if (room.memory.energyPickupMode >= C.ROOM_ENERGYPICKUPMODE_LINK && creep.memory.sourceId === "")
+		if (room.memory.energyPickupMode >= C.ROOM_ENERGYPICKUPMODE_STORAGE && creep.memory.sourceId === "")
 		{
 			this.findEnergyLink(creep);
 		}
