@@ -32,8 +32,7 @@ JobHeal.prototype.work = function (creep)
 	}
 
 	//Find my creeps that are hurt. If they're hurt, heal them.
-	let healTarget = creep.pos.findClosestByPath(FIND_MY_CREEPS, { ignoreCreeps: true,
-		filter: function (t)
+	let healTarget = creep.pos.findClosestByPath(FIND_MY_CREEPS, { filter: function (t)
 		{
 			return t != creep && t.hits < t.hitsMax
 		}
@@ -72,7 +71,10 @@ JobHeal.prototype.work = function (creep)
 		} //go back home if it is boring
 		else
 		{
-			creep.rendezvous(creep, 3);
+			let flag = Game.flags.heal;
+			let result = creep.moveTo(flag, { maxRooms: 1});
+			if (result === ERR_NOT_IN_RANGE)
+				creep.rendezvous(flag, 2);
 		}
 	}
 };

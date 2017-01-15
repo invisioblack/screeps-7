@@ -65,7 +65,8 @@ MotivationManualTactical.prototype.updateActive = function (roomName, demands)
 				|| f.name === "creep"
 				|| f.name === "wall"
 				|| f.name === "structure"
-				|| f.name === "move";
+				|| f.name === "move"
+				|| f.name === "move1";
 		else
 		{
 			return false;

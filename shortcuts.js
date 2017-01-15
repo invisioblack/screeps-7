@@ -64,6 +64,10 @@ global.cList = function (roomName)
 // force spawn ---------------------------------------------------------------------------------------------------------
 global.fs = function (roomName, unit)
 {
+	if (lib.isNull(roomName) || lib.isNull(unit))
+		return "fs - forceSpawn arguments roomName, unit";
+	if (lib.isNull(Memory.rooms[roomName]))
+		return "Room " + roomName + " not found.";
 	if (!lib.isNull(unit))
 	{
 		Memory.rooms[roomName].forceSpawn = unit;

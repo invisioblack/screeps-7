@@ -17,6 +17,15 @@ module.exports = function ()
 
     Motivation.prototype.init = function (roomName)
 	{
+		if (lib.isNull(Game.rooms[roomName]))
+			return;
+
+		if (lib.isNull(Game.rooms[roomName].memory.motivations))
+			Game.rooms[roomName].memory.motivations = {};
+
+		if (lib.isNull(Game.rooms[roomName].memory.motivations[this.name]))
+			Game.rooms[roomName].memory.motivations[this.name] = {};
+
 		// if init has not been completed, then init
 		if (!Game.rooms[roomName].memory.motivations[this.name].init)
 		{

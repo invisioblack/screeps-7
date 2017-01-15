@@ -227,6 +227,31 @@ module.exports =
 		"memory": {
 			"unit": "heal"
 		}
+	},
+	"siege": {
+		"mode": 2,
+		"parts": [
+			TOUGH,
+			TOUGH,
+			WORK,
+			HEAL,
+			HEAL,
+			HEAL,
+			HEAL,
+			HEAL,
+			HEAL,
+			MOVE,
+			MOVE,
+			MOVE,
+			MOVE,
+			MOVE,
+			MOVE,
+			MOVE,
+			MOVE,
+			MOVE
+		],
+		"memory": {
+			"unit": "siege"
+		}
 	}
-
 };

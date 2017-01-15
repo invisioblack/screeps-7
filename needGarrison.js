@@ -31,7 +31,7 @@ NeedGarrison.prototype.getUnitDemands = function(roomName, memory, motivationNam
 	memory.demands = {};
 	memory.demands["guard"] = unitCount * 2;
 	memory.demands["rangedGuard"] = unitCount * 2;
-	memory.demands["healer"] = unitCount * 2;
+	memory.demands["heal"] = unitCount * 2;
 	return memory.demands;
 };
 

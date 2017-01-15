@@ -215,7 +215,7 @@ Room.prototype.updateFlagCache = function (forceRefresh = false)
 		forceRefresh = true;
 	}
 
-	if (Game.time % 10 === 0)
+	if (Game.time % 5 === 0)
 		forceRefresh = true;
 
 	if (forceRefresh)

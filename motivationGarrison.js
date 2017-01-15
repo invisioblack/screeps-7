@@ -45,21 +45,24 @@ MotivationGarrison.prototype.getDemands = function (roomName, resources)
 
 MotivationGarrison.prototype.getDesireSpawn = function (roomName, demands)
 {
-	let result = true;
+	// TODO: This needs to be reworked
+	let result = false;
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	if (!memory.active)
-		result = false;
 
+	if (room.memory.threat.level === C.THREAT_PANIC)
+	{
+		result = true;
+	}
 	return result;
 };
 
 MotivationGarrison.prototype.getDesiredSpawnUnit = function (roomName)
 {
 	let room = Game.rooms[roomName];
-	let numGuard = global.cache.rooms[roomName].units["guard"];
-	let numRangedGuard = global.cache.rooms[roomName].units["rangedGuard"];
-	let numHeal = global.cache.rooms[roomName].units["heal"];
+	let numGuard = global.cache.rooms[roomName].units["guard"].length;
+	let numRangedGuard = global.cache.rooms[roomName].units["rangedGuard"].length;
+	let numHeal = global.cache.rooms[roomName].units["heal"].length;
 
 	if (numRangedGuard < numGuard)
 		return "rangedGuard";
@@ -73,7 +76,14 @@ MotivationGarrison.prototype.updateActive = function (roomName, demands)
 {
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	if (room.getIsMine() && room.memory.threat.count > 0)
+	let numGuard = global.cache.rooms[roomName].units["guard"].length;
+	let numRangedGuard = global.cache.rooms[roomName].units["rangedGuard"].length;
+	let numHeal = global.cache.rooms[roomName].units["heal"].length;
+	let numCombatUnits = numGuard + numHeal + numRangedGuard;
+
+	//console.log(`Room: ${roomName} ${numCombatUnits}`);
+
+	if (numCombatUnits > 0)
 	{
 		memory.active = true;
 	} else {
