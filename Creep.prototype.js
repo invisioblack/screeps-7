@@ -136,6 +136,7 @@ Creep.prototype.assignMotive = function (roomName, motivationName, needName)
 	this.memory.motive.room = roomName;
 	this.memory.motive.motivation = motivationName;
 	this.memory.motive.need = needName;
+	this.resetSource();
 };
 
 Creep.prototype.deassignMotive = function (roomName)
@@ -150,6 +151,7 @@ Creep.prototype.deassignMotive = function (roomName)
 		this.memory.motive.room = roomName;
 	this.memory.motive.motivation = "";
 	this.memory.motive.need = "";
+	this.resetSource();
 };
 
 Creep.prototype.assignToLongDistanceHarvest = function ()

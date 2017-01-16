@@ -30,8 +30,7 @@ NeedManualTactical.prototype.getUnitDemands = function(roomName, memory, motivat
 	memory.demands = {};
 	memory.demands["guard"] = 99;
 	memory.demands["rangedGuard"] = 99;
-	//memory.demands["heal"] = 99;
-
+	memory.demands["heal"] = 99;
 	return memory.demands;
 };
 
