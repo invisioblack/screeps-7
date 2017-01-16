@@ -7,9 +7,12 @@
  */
 global.r1 = "W12S76";
 global.r2 = "W13S77";
-global.r3 = "W13S76";
-global.r4 = "W12S77";
-global.r5 = "W14S77";
+global.r3 = "W11S78";
+global.l1 = "W13S76";
+global.l2 = "W12S77";
+global.l3 = "W14S77";
+global.l4 = "W13S78";
+global.rM = "W12S78";
 
 global.rl = roomLevels;
 global.ws = wallStatus;

@@ -54,6 +54,7 @@ MotivationClaimRoom.prototype.getDesireSpawn = function (roomName, demands)
 	let result = false;
 	let room = Game.rooms[roomName];
 	let numWorkers = _.has(global, "cache.homeRooms." + roomName + ".units.worker") ? global.cache.homeRooms[roomName].units["worker"].length : 0;
+	let numClaimers = _.has(global, "cache.homeRooms." + roomName + ".units.claimer") ? global.cache.homeRooms[roomName].units["claimer"].length : 0;
 
 	// filter this to only claims spawning in specified room
 	let spawnClaims = _.filter(Memory.claims, function (c){
@@ -83,6 +84,12 @@ MotivationClaimRoom.prototype.getDesireSpawn = function (roomName, demands)
 	if (!room.getIsMine() || numWorkers <= config.medWorkers)
 	{
 		lib.log(">&>&>&>&>&>&> FAIL: Too Few Workers", debug);
+		return false;
+	}
+
+	if (numClaimers >= _.size(spawnClaims))
+	{
+		lib.log(">&>&>&>&>&>&> FAIL: Too many claimers", debug);
 		return false;
 	}
 

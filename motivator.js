@@ -181,9 +181,9 @@ module.exports =
 		// fulfill needs ---------------------------------------------------------------------------------------
 		cpuManager.timerStart("\tFulfill Needs", "motivate.fulfillNeeds");
 		needManager.fulfillNeeds();
-		cpuManager.timerStop("motivate.fulfillNeeds");
+		cpuManager.timerStop("motivate.fulfillNeeds", 5, 10);
 
-		cpuManager.timerStop("motivate", 20, 30);
+		cpuManager.timerStop("motivate", 25, 40);
 	},
 
 	/**
