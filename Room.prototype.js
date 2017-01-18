@@ -264,14 +264,7 @@ Room.prototype.updateEnergyPickupMode = function ()
 
 		if (numStorage > 0)
 		{
-			if (numHarvesters > 0 && numHaulers > 0)
-				result = C.ROOM_ENERGYPICKUPMODE_STORAGE;
-			else
-			{
-				let storage = Game.getObjectById(this.memory.cache.structures[STRUCTURE_STORAGE][0]);
-				if (storage.store[RESOURCE_ENERGY] > 0)
-					result = C.ROOM_ENERGYPICKUPMODE_STORAGE;
-			}
+			result = C.ROOM_ENERGYPICKUPMODE_STORAGE;
 		}
 
 		if (numLink > 1 && numHaulers > 0)
@@ -296,7 +289,7 @@ Room.prototype.motivateLinks = function ()
 		{
 			links.forEach(function (link)
 			{
-				if (link.id != this.memory.storageLinkId && link.energy > 200)
+				if (link.id != this.memory.storageLinkId && link.energy > 200 && storageLink.energy < (storageLink.energyCapacity - 50))
 				{
 					link.transferEnergy(storageLink);
 				}

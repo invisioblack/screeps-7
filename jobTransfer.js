@@ -28,7 +28,7 @@ JobTransfer.prototype.constructor = JobTransfer;
 //-------------------------------------------------------------------------
 JobTransfer.prototype.work = function (creep)
 {
-	let debug = creep.room.name === "W14S77";
+	let debug = false;
 	let need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
 	let target = Game.getObjectById(need.targetId);
 	let carry = creep.carry[RESOURCE_ENERGY];

@@ -73,7 +73,7 @@ module.exports = function()
 		if (room.memory.energyPickupMode <= C.ROOM_ENERGYPICKUPMODE_CONTAINER || numHaulers === 0)
 		{
 			this.findEnergyPickup(creep);
-		} else if (creep.memory.unit === "hauler")
+		} else if (creep.memory.motive.motivation === "motivationHaulToStorage")
 		{
 			this.findEnergyPickup(creep);
 		}

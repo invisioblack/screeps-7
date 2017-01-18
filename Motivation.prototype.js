@@ -50,7 +50,6 @@ module.exports = function ()
 		let creeps = creepManager.getRoomMotivationCreeps(roomName, this.name);
 		_.forEach(creeps, (c) => {
 			c.deassignMotive();
-			c.resetSource();
 		});
 
 	};

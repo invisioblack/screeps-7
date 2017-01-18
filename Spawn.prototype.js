@@ -144,7 +144,6 @@ Spawn.prototype.spawnUnitByEnergy = function (unitName, energy)
 			creep.memory.spawn = this.name;
 			creep.initMotive();
 			creep.deassignMotive(this.room.name);
-			creep.resetSource();
 		}
 		else
 		{

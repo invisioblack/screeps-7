@@ -45,7 +45,7 @@ NeedSupplyExtenders.prototype.getUnitDemands = function(roomName, memory, motiva
 	memory.demands["hauler"] = 999;
 
 
-	if (numHaulers > 2)
+	if (numHaulers > 0)
 	{
 		memory.demands["worker"] = 0;
 	}

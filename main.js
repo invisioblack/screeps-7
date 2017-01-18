@@ -1,5 +1,6 @@
 /**
  * TODO: Mine resources!
+ * TODO: Make claimers only claim rooms that they come from
  * TODO: revamp haul to storage to make hauler smarter, don't use default energy finder
  *      split loads better
  *      manage links

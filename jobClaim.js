@@ -43,7 +43,11 @@ JobClaim.prototype.work = function (creep)
 		// if we're in a room we own, then assign us to a room to take, if that doesn't work, complain
 		if (creep.memory.motive.room === creep.room.name)
 		{
-			_.forEach(Memory.claims, function (c) {
+			// filter this to only claims spawning in specified room
+			let spawnClaims = _.filter(Memory.claims, function (c){
+				return c.spawnRoom === creep.memory.motive.room;
+			});
+			_.forEach(spawnClaims, function (c) {
 				if (creep.memory.motive.room === creep.room.name) {
 					let countUnits = _.has(global, "cache.rooms." + c.room + ".units.claimer") ? global.cache.rooms[c.room].units["claimer"].length : 0;
 					if (!countUnits) {
@@ -90,7 +94,7 @@ JobClaim.prototype.work = function (creep)
 			}
 
 		} else {
-			creep.say("GetShwifty");
+			creep.say("Get Shwifty");
 		}
 	}
 };
