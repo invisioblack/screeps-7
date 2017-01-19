@@ -442,7 +442,7 @@ Room.prototype.getLostCreeps = function ()
 	let result = _.filter(Game.creeps , function (creep)
 	{
 		return creep.room.name === roomName
-			&& creep.memory.motive.room != roomName;
+			&& creep.memory.motive.room !== roomName;
 	});
 
 	return result;

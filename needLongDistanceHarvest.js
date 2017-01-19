@@ -26,10 +26,16 @@ NeedLongDistanceHarvest.prototype.constructor = NeedLongDistanceHarvest;
 
 NeedLongDistanceHarvest.prototype.getUnitDemands = function(roomName, memory, motivationName)
 {
+	let targetRoomMemory = Memory.rooms[memory.targetRoom];
 	memory.demands = {};
-	let source = Game.getObjectById(memory.targetId);
-	memory.demands["worker"] = source.getMaxHarvesters();
-	//console.log("-----------LDH: " + result["worker"]);
+	memory.demands["ldharvester"] = 0;
+
+	if (!lib.isNull(targetRoomMemory)) {
+		_.forEach(targetRoomMemory.motivations["motivationHarvestSource"].needs, (n) => {
+			memory.demands["ldharvester"] += n.demands["ldharvester"];
+		});
+	}
+
 	return memory.demands;
 };
 

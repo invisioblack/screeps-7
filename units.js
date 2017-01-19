@@ -123,6 +123,21 @@ module.exports =
 			"unit": "harvester"
 		}
 	},
+	"ldharvester": {
+		"mode": 2,
+		"parts": [
+				WORK,
+				WORK,
+				WORK,
+				WORK,
+				WORK,
+				MOVE
+		],
+		"memory": {
+			"unit": "ldharvester"
+		}
+	},
+
 	"hauler": {
 		"mode": 1,
 		"parts": [

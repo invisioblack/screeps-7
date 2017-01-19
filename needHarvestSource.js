@@ -26,20 +26,35 @@ NeedHarvestSource.prototype.constructor = NeedHarvestSource;
 
 NeedHarvestSource.prototype.getUnitDemands = function(roomName, memory, motivationName)
 {
+	let unitName = "";
+	let room = Game.rooms[roomName];
 	let ticksTillHarvesterDeath = this.getTicksTillHarvesterDeath(roomName, memory);
+
+	if (room.getIsMine())
+		unitName = "harvester";
+	else
+		unitName = "ldharvester";
+	// ---------------------------------------------------
 	memory.demands = {};
-	memory.demands["harvester"] = 1;
+	memory.demands[unitName] = 1;
 
 	if (ticksTillHarvesterDeath != 0 && ticksTillHarvesterDeath < config.harvesterPrespawnTicks)
 	{
-		memory.demands["harvester"] = 2;
+		memory.demands[unitName] = 2;
 	}
 	return memory.demands;
 };
 
 NeedHarvestSource.prototype.getTicksTillHarvesterDeath = function (roomName, memory)
 {
-	let harvester = _.find(global.cache.rooms[roomName].units["harvester"], (o) => { return o.memory.motive.need === memory.name; });
+	let unitName = "";
+	let room = Game.rooms[roomName];
+	if (room.getIsMine())
+		unitName = "harvester";
+	else
+		unitName = "ldharvester";
+
+	let harvester = _.find(global.cache.rooms[roomName].units[unitName], (o) => { return o.memory.motive.need === memory.name; });
 	if (lib.isNull(harvester))
 	{
 		return 0;

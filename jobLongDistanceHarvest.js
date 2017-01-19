@@ -40,37 +40,9 @@ JobLongDistanceHarvest.prototype.work = function (creep)
 		return;
 	}
 
-	// set up mode memory
-	if (lib.isNull(creep.memory.job))
-	{
-		creep.memory.job = {};
-	}
-	if (lib.isNull(creep.memory.job.mode))
-	{
-		creep.memory.job.mode = this.JOB_MODE_GETENERGY;
-	}
+	// TODO: This needs to figure out which ldh room needs a harvester and assign him there
 
-	//console.log(creep.name + " job/mode: " + creep.memory.job.mode);
 
-	// manage job
-	switch (creep.memory.job.mode)
-	{
-		case this.JOB_MODE_GETENERGY:
-			this.getEnergy(creep);
-			break;
-		case this.JOB_MODE_WORK:
-			if (carry === 0)
-			{
-				creep.memory.job.mode = this.JOB_MODE_GETENERGY;
-				creep.deassignMotive();
-			} else {
-				// once the creep is full of energy, deassign him and send him home
-				//console.log("return: " + target);
-				this.resetSource(creep);
-				creep.deassignMotive(creep.memory.homeRoom);
-			}
-			break;
-	}
 };
 
 //-------------------------------------------------------------------------

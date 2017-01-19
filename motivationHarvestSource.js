@@ -35,8 +35,15 @@ MotivationHarvestSource.prototype.getDemands = function (roomName, resources) {
 	return result;
 };
 
-MotivationHarvestSource.prototype.getDesiredSpawnUnit = function ()
+MotivationHarvestSource.prototype.getDesiredSpawnUnit = function (roomName)
 {
+	let unitName = "";
+	let room = Game.rooms[roomName];
+	if (room.getIsMine())
+		unitName = "harvester";
+	else
+		unitName = "ldharvester";
+
 	return "harvester";
 };
 

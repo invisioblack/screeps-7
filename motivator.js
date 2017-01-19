@@ -132,9 +132,6 @@ module.exports =
 			}
 
 			// long distance harvesters --------------------------------------------------------------------------------
-			this.sendOffLongDistanceHarvesters(roomName);
-
-			// long distance harvesters --------------------------------------------------------------------------------
 			room.motivateLinks();
 
 			//------------------------------------------------------------------------------------------------------
@@ -157,6 +154,11 @@ module.exports =
 			cpuManager.timerStart(`\t\tMotivate R1`, "motivate.r1");
 			this.motivateRound1(sortedMotivations, room, demands, resources);
 			cpuManager.timerStop("motivate.r1");
+
+
+			// TODO: this needs to be implemented differently, this is just a hack
+			// send off helpers for long distance harvest rooms
+			this.sendWorkersToLDHRooms(roomName);
 
 
 			// second and 3rd round motivation processing ----------------------------------------------------------
@@ -435,7 +437,7 @@ module.exports =
 	 * @param roomName
 	 * @returns {number}
 	 */
-	"countActiveMotivations": function (roomName)
+	countActiveMotivations: function (roomName)
 	{
 		let result = 0;
 		for (let motivationName in Game.rooms[roomName].memory.motivations)
@@ -449,42 +451,31 @@ module.exports =
 		return result;
 	},
 
-	/**
-	 *
-	 * @param roomName {string}
-	 */
-	"sendOffLongDistanceHarvesters": function (roomName)
-	{
-		let debug = false;
-		let room = Game.rooms[roomName];
+	sendWorkersToLDHRooms: function (roomName) {
+		let debug = true;
+		let spawnRoom = Game.rooms[roomName];
+
+		// don't do this in rooms I don't own
+		if (!spawnRoom.getIsMine())
+			return;
+
 		let numWorkers = _.has(global, "cache.rooms." + roomName + ".units.worker") ? global.cache.rooms[roomName].units["worker"].length : 0;
-		let storageIds = lib.nullProtect(room.memory.cache.structures[STRUCTURE_STORAGE], []);
-		let storages  = _.map(storageIds, (id) => { return Game.getObjectById(id) });
 
-		// do I have vis on room, does room have a controller
-		if (!lib.isNull(room) && !lib.isNull(room.controller))
-		{
-			lib.log("LR Harvest: " + roomName + " My: " + room.getIsMine()
-				+ " workers/min: " + numWorkers + "/" + config.longRangeHarvestMinWorkers
-				+ " storages: " + storages.length
-				+ " RCL: " + room.controller.level
-				, debug);
+		lib.log(`Spawn Room: ${roomName} workers: ${numWorkers}`, debug);
 
-			// if we have some workers to send off, do it
-			if (room.getIsMine()
-				&& room.controller.level >= 4
-				&& storages.length > 0
-				&& config.longRangeHarvestMinWorkers < numWorkers)
+		_.forEach(spawnRoom.memory.longDistanceHarvestTargets, (rN) => {
+			let numWorkersRoom = _.has(global, "cache.rooms." + rN + ".units.worker") ? global.cache.rooms[rN].units["worker"].length : 0;
+			lib.log(`Target Room: ${rN} workers: ${numWorkersRoom}`, debug);
+			if (numWorkers >= config.maxWorkers && numWorkersRoom < 1)
 			{
-				let unassignedWorker = creepManager.findRoomUnassignedUnit(roomName, "worker");
-
-				if (!lib.isNull(unassignedWorker) && _.sum(unassignedWorker.carry) === 0)
-				{
-					//lib.log(" Creep: " + JSON.stringify(unassignedWorker) , debug);
-					unassignedWorker.assignToLongDistanceHarvest();
+				lib.log(`Trying to allocate for target Room: ${rN}`, debug);
+				let creep = creepManager.findRoomUnassignedUnit(roomName, "worker");
+				if (!lib.isNull(creep)) {
+					lib.log(`Allocating ${creep.name} to target Room: ${rN}`, debug);
+					creep.deassignMotive(rN);
+					numWorkers--;
 				}
-
 			}
-		}
+		});
 	}
 };

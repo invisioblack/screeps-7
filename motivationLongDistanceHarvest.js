@@ -37,12 +37,25 @@ MotivationLongDistanceHarvest.prototype.getDemands = function (roomName, resourc
 
 MotivationLongDistanceHarvest.prototype.getDesiredSpawnUnit = function ()
 {
-	return "worker";
+	return "ldharvester";
 };
 
 MotivationLongDistanceHarvest.prototype.getDesireSpawn = function (roomName, demands)
 {
-	return false;
+	let result = false;
+	let spawnRoom = Game.rooms[roomName];
+	let numWorkers = _.has(global, "cache.rooms." + roomName + ".units.worker") ? global.cache.rooms[roomName].units["worker"].length : 0;
+
+	if (numWorkers >= config.critWorkers)
+	{
+		_.forEach(spawnRoom.memory.longDistanceHarvestTargets, (rN) => {
+			let roomMemory = Memory.rooms[rN];
+			if (roomMemory.motivations["motivationHarvestSource"].demands.spawn)
+				result = true;
+		});
+	}
+
+	return result;
 };
 
 MotivationLongDistanceHarvest.prototype.updateActive = function (roomName, demands)
@@ -50,32 +63,22 @@ MotivationLongDistanceHarvest.prototype.updateActive = function (roomName, deman
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
 
-	if (room.getIsMine())
-		memory.active = false;
-	else
+	if (room.getIsMine() && room.memory.longDistanceHarvestTargets.length > 0)
 		memory.active = true;
+	else
+		memory.active = false;
 };
 
 MotivationLongDistanceHarvest.prototype.updateNeeds = function (roomName)
 {
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-
 	// insure memory is initialized for needs
-	if (lib.isNull(memory.needs))
-	{
-		memory.needs = {};
-	}
+	memory.needs = {};
 
-	// Handle Harvest Energy Needs -------------------------------------------------------------------------------------
-	// look up sources and find out how many needs we should have for each one
-	let sources = room.memory.cache.sources;
-	sources.forEach(function (s) {
-		let needName = "ldharvest." + s;
+	_.forEach(room.memory.longDistanceHarvestTargets, (rN) => {
+		let needName = "ldh." + rN;
 		let need;
-
-		//console.log('Need Name: ' + needName);
-
 		// create new need if one doesn't exist
 		if (lib.isNull(memory.needs[needName]))
 		{
@@ -83,11 +86,13 @@ MotivationLongDistanceHarvest.prototype.updateNeeds = function (roomName)
 			need = memory.needs[needName];
 			need.name = needName;
 			need.type = "needLongDistanceHarvest";
-			need.targetId = s;
+			need.targetRoom = rN;
 			need.priority = C.PRIORITY_1;
+		} else {
+			need = memory.needs[needName];
 		}
+	});
 
-	}, this);
 };
 
 //-------------------------------------------------------------------------
