@@ -20,10 +20,6 @@ Source.prototype.getMaxHarvesters = function ()
 		}
     }, this);
 
-    // room hack
-    if (this.room.name === "W13S77")
-    	result--;
-
     return result;
 };
 

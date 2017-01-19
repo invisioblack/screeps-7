@@ -113,10 +113,14 @@ MotivationClaimRoom.prototype.getDesireSpawn = function (roomName, demands)
 			reservation = 0;
 
 		// don't request a spawn if somebody is already there, or we're not worried about degrade
-		if (!numClaimers && reservation < config.claimTicks)
+		if (!numClaimers && reservation < config.claimTicks) {
 			result = true;
+			lib.log(">&>&>&>&>&>&> SUCCESS", debug);
+		}
 
 		lib.log("Room: " + c.room + " COUNT: " + numClaimers + " TICKS: " + reservation, debug);
+
+
 	});
 
 	lib.log("Spawn claimer " + result, debug);

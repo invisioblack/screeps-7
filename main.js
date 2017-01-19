@@ -1,10 +1,11 @@
 /**
  * TODO: Mine resources!
- * TODO: Make claimers only claim rooms that they come from
+ * TODO: Revamp long range harvesting to use harvesters, containers and haulers
  * TODO: revamp haul to storage to make hauler smarter, don't use default energy finder
  *      split loads better
  *      manage links
- * TODO: if storage mode isn't on, let workers find energy on the ground
+ *      support picking up minerals
+ *      support picking up energy from long range harvest rooms
  * TODO: create ally exemption
  *      finish implementation
  * TODO: set rooms as defended, and send creeps to kill enemies there
@@ -15,14 +16,17 @@
  * TODO: create motivation to spawn units for other rooms, rewire claim to use this
  * TODO: should be able to set a motivation on a creep and have the need manager auto set a need on it
  *      this wil be used for things like periodically sending units places to do things
+ * TODO: Implement labs and making boosts
  * TODO: improve creep design
  *      allow for specify max parts
  *      allow to specify max/for other parts
- * TODO: create scout motivation
+ *      utilize boosts
+ * TODO: create scouts
+ * TODO: Implement market
  * TODO: create linked room manager for console
  *      creep details and manager
  *      storage details
- *       memory details
+ *      memory details
  *      motivator details
  * TODO: create data reporting system
  *      collect data, store it in Memory.reporting

@@ -37,7 +37,6 @@ JobClaim.prototype.work = function (creep)
 	{
 		return;
 	}
-
 	if (creep.room.getIsMine())
 	{
 		// if we're in a room we own, then assign us to a room to take, if that doesn't work, complain
@@ -52,6 +51,10 @@ JobClaim.prototype.work = function (creep)
 					let countUnits = _.has(global, "cache.rooms." + c.room + ".units.claimer") ? global.cache.rooms[c.room].units["claimer"].length : 0;
 					if (!countUnits) {
 						let reservation = 0;
+						if (lib.isNull(Memory.rooms[c.room]))
+						{
+							Memory.rooms[c.room] = {};
+						}
 						if (!lib.isNull(Memory.rooms[c.room].reservation)) {
 							let timeDiff = Game.time - Memory.rooms[c.room].reservation.time;
 							reservation = lib.nullProtect(Memory.rooms[c.room].reservation.reservation, 0) - timeDiff;
@@ -73,8 +76,10 @@ JobClaim.prototype.work = function (creep)
 		let claim = _.find(Memory.claims, function (c) {
 			return c.room === creep.memory.motive.room;
 		});
+
 		if (!lib.isNull(claim))
 		{
+
 			if (claim.type === "claim")
 			{
 				if(creep.room.controller) {
