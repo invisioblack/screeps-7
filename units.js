@@ -126,12 +126,14 @@ module.exports =
 	"ldharvester": {
 		"mode": 2,
 		"parts": [
-				WORK,
-				WORK,
-				WORK,
-				WORK,
-				WORK,
-				MOVE
+			WORK,
+			WORK,
+			WORK,
+			WORK,
+			WORK,
+			WORK,
+			MOVE,
+			MOVE
 		],
 		"memory": {
 			"unit": "ldharvester"

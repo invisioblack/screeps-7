@@ -257,7 +257,8 @@ Room.prototype.updateEnergyPickupMode = function ()
 		let numHarvesters = _.has(global, "cache.rooms." + roomName + ".units.harvester") ? global.cache.rooms[roomName].units["harvester"].length : 0;
 		let numHaulers = _.has(global, "cache.rooms." + roomName + ".units.hauler") ? global.cache.rooms[roomName].units["hauler"].length : 0;
 
-		if (numContainers >= this.memory.cache.sources.length && (containerEnergy > 0 || numHarvesters > 0))
+		//if (numContainers >= this.memory.cache.sources.length && (containerEnergy > 0 || numHarvesters > 0))
+		if (numContainers > 0)
 		{
 			result = C.ROOM_ENERGYPICKUPMODE_CONTAINER;
 		}

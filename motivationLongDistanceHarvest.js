@@ -46,6 +46,8 @@ MotivationLongDistanceHarvest.prototype.getDesireSpawn = function (roomName, dem
 	let spawnRoom = Game.rooms[roomName];
 	let numWorkers = _.has(global, "cache.rooms." + roomName + ".units.worker") ? global.cache.rooms[roomName].units["worker"].length : 0;
 
+	// TODO: look here next!
+
 	if (numWorkers >= config.critWorkers)
 	{
 		_.forEach(spawnRoom.memory.longDistanceHarvestTargets, (rN) => {

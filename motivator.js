@@ -452,7 +452,7 @@ module.exports =
 	},
 
 	sendWorkersToLDHRooms: function (roomName) {
-		let debug = true;
+		let debug = false
 		let spawnRoom = Game.rooms[roomName];
 
 		// don't do this in rooms I don't own
@@ -466,7 +466,7 @@ module.exports =
 		_.forEach(spawnRoom.memory.longDistanceHarvestTargets, (rN) => {
 			let numWorkersRoom = _.has(global, "cache.rooms." + rN + ".units.worker") ? global.cache.rooms[rN].units["worker"].length : 0;
 			lib.log(`Target Room: ${rN} workers: ${numWorkersRoom}`, debug);
-			if (numWorkers >= config.maxWorkers && numWorkersRoom < 1)
+			if (numWorkers > config.medWorkers && numWorkersRoom < 1)
 			{
 				lib.log(`Trying to allocate for target Room: ${rN}`, debug);
 				let creep = creepManager.findRoomUnassignedUnit(roomName, "worker");

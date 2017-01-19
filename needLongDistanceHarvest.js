@@ -24,19 +24,19 @@ let NeedLongDistanceHarvest = function ()
 NeedLongDistanceHarvest.prototype = Object.create(Need.prototype);
 NeedLongDistanceHarvest.prototype.constructor = NeedLongDistanceHarvest;
 
-NeedLongDistanceHarvest.prototype.getUnitDemands = function(roomName, memory, motivationName)
+NeedLongDistanceHarvest.prototype.getUnitDemands = function(roomName, needMemory, motivationName)
 {
-	let targetRoomMemory = Memory.rooms[memory.targetRoom];
-	memory.demands = {};
-	memory.demands["ldharvester"] = 0;
+	let targetRoomMemory = Memory.rooms[needMemory.targetRoom];
+	needMemory.demands = {};
+	needMemory.demands["ldharvester"] = 0;
 
 	if (!lib.isNull(targetRoomMemory)) {
-		_.forEach(targetRoomMemory.motivations["motivationHarvestSource"].needs, (n) => {
-			memory.demands["ldharvester"] += n.demands["ldharvester"];
-		});
+		//console.log();
+		needMemory.demands["ldharvester"] = lib.nullProtect(targetRoomMemory.motivations["motivationHarvestSource"].demands.units["ldharvester"], 0);
 	}
 
-	return memory.demands;
+	//console.log(`${roomName} ${JSON.stringify(needMemory.demands)}`);
+	return needMemory.demands;
 };
 
 
