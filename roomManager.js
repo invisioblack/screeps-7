@@ -12,7 +12,7 @@ module.exports =
 		//--------------------------------------------------------------------------
 		// top level functions
 		//--------------------------------------------------------------------------
-		"getLongDistanceHarvestTarget": function (roomName)
+		getLongDistanceHarvestTarget: function (roomName)
 		{
 			let sortList = {};
 			let result;
@@ -23,7 +23,8 @@ module.exports =
 			Memory.rooms[roomName].longDistanceHarvestTargets.forEach( function (targetRoomName)
 			{
 				let room = Game.rooms[targetRoomName];
-				let numWorkers = _.has(global, "cache.rooms." + targetRoomName + ".units.worker") ? global.cache.rooms[targetRoomName].units["worker"].length : 0;
+				let numWorkers = creepManager.countRoomUnits(targetRoomName, "worker");
+					//_.has(global, "cache.rooms." + targetRoomName + ".units.worker") ? global.cache.rooms[targetRoomName].units["worker"].length : 0;
 				if (lib.isNull(room))
 				{
 					sortList[targetRoomName] = {};
@@ -97,6 +98,26 @@ module.exports =
 			 });
 			 console.log(output);
 */
+		},
+
+		getStructureIds: function (roomName, structureType)
+		{
+			let result = _.has(Memory, "rooms[" + roomName + "].cache.structures[" + structureType + "]") ? Memory.rooms[roomName].cache.structures[structureType] : [];
+			return result;
+		},
+
+		getIsLongDistanceHarvestTarget: function (roomName)
+		{
+			return Memory.rooms[roomName].longDistanceHarvestParents.length > 0;
+		},
+
+		getIsMine: function (roomName)
+		{
+			let result = false;
+			let room = Game.rooms[roomName];
+			if (!lib.isNull(room))
+				result = room.getIsMine();
+			return result;
 		}
 
 	};

@@ -31,6 +31,7 @@ module.exports =
 		return result;
 	} ,
 
+	// this is used to build the unit cache
 	getRoomCreeps: function (roomName)
 	{
 		let result = _.filter(Game.creeps , function (creep)
@@ -40,15 +41,26 @@ module.exports =
 		return result;
 	} ,
 
+	countRoomUnits: function (roomName , unitName)
+	{
+		let unitIds = _.has(global, "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName] : [];
+		return unitIds.length;
+	},
+
+	countHomeRoomUnits: function (roomName , unitName)
+	{
+		let unitIds = _.has(global, "cache.homeRooms." + roomName + ".units." + unitName) ? global.cache.homeRooms[roomName].units[unitName] : [];
+		return unitIds.length;
+	},
+
 	getRoomUnits: function (roomName , unitName)
 	{
-		let result = _.filter(Game.creeps , function (creep)
-		{
-			return creep.memory.motive.room === roomName
-				&& creep.memory.unit === unitName;
+		let unitIds = _.has(global, "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName] : [];
+		let result = _.map(unitIds, (u) => {
+			return Game.getObjectById(u);
 		});
 		return result;
-	} ,
+	},
 
 	/**
 	 * returns the number of units assigned to the given motivationName

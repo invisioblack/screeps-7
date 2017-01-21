@@ -54,7 +54,8 @@ NeedHarvestSource.prototype.getTicksTillHarvesterDeath = function (roomName, mem
 	else
 		unitName = "ldharvester";
 
-	let harvester = _.has(global, "cache.rooms." + roomName + ".units." + unitName) ? _.find(global.cache.rooms[roomName].units[unitName], (o) => { return o.memory.motive.need === memory.name; }) : null;
+	let harvester = creepManager.countRoomUnits(roomName, unitName);
+		//_.has(global, "cache.rooms." + roomName + ".units." + unitName) ? _.find(global.cache.rooms[roomName].units[unitName], (o) => { return o.memory.motive.need === memory.name; }) : null;
 	if (lib.isNull(harvester))
 	{
 		return 0;

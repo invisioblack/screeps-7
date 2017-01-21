@@ -154,24 +154,10 @@ Creep.prototype.deassignMotive = function (roomName)
 	this.resetSource();
 };
 
-Creep.prototype.assignToLongDistanceHarvest = function ()
+Creep.prototype.assignToRoom = function (roomName)
 {
-    if (this.memory.unit != "worker")
-        return;
-    
-	let room = roomManager.getLongDistanceHarvestTarget(this.memory.motive.room);
-	// dirty the cache for the before and after values
-	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("creepManager.countRoomMotivationUnits", [this.memory.motive.room, this.memory.motive.motivation, this.memory.unit]));
-	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("creepManager.countRoomMotivationUnits", [room, "", this.memory.unit]));
-
-	if (!lib.isNull(room) && room != "")
-	{
-		this.memory.motive.room = room;
-		this.memory.sourceId = "";
-		this.memory.sourceType = 0;
-		this.deassignMotive();
-
-	}
+	this.memory.homeRoom = roomName;
+	this.deassignMotive(roomName);
 };
 
 /*

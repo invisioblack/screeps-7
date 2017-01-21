@@ -60,11 +60,18 @@ module.exports = function ()
 	Need.prototype.getUnitHaulToStorageDemand = function (roomName, unitName, result)
 	{
 		let unit = lib.nullProtect(creepManager.getRoomUnits(roomName, unitName)[0], {});
-		let unitCapacity = lib.nullProtect(unit.carryCapacity, 50);
+		let unitCapacity = lib.nullProtect(unit.carryCapacity, 500);
 		let containers = _.map(Memory.rooms[roomName].cache.structures[STRUCTURE_CONTAINER], function (cid) {
-			return Game.getObjectById(cid);
+			let result = Game.getObjectById(cid);
+			if (lib.isNull(result))
+			{
+				result = {};
+				result.store = [];
+				result.store[RESOURCE_ENERGY] = 0;
+			}
+			return result;
 		});
-		let linkId = Game.rooms[roomName].memory.storageLinkId;
+		let linkId = Memory.rooms[roomName].storageLinkId;
 		let link;
 		let containerEnergy = _.sum(containers, function (c) {
 			return c.store[RESOURCE_ENERGY];

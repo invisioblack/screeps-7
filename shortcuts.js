@@ -12,6 +12,7 @@ global.l1 = "W13S76";
 global.l2 = "W12S77";
 global.l3 = "W14S77";
 global.l4 = "W13S78";
+global.l5 = "W12S79";
 global.rM = "W12S78";
 
 global.rl = roomLevels;
@@ -177,6 +178,9 @@ global.lList = function ()
 	_.forEach(Memory.rooms, function (r, k) {
 		if (lib.isNull(r.longDistanceHarvestTargets))
 			r.longDistanceHarvestTargets = [];
+		if (lib.isNull(r.longDistanceHarvestParents))
+			r.longDistanceHarvestParents = [];
+
 
 		link = roomLink(k);
 		outputString += `\nSource Room: ${link}`;
@@ -203,6 +207,7 @@ global.lAdd = function (sourceRoomName, targetRoomName)
 		return "Missing source room: " + sourceRoomName;
 
 	let targets = Memory.rooms[sourceRoomName].longDistanceHarvestTargets;
+	let parents = Memory.rooms[targetRoomName].longDistanceHarvestParents;
 	let target = _.find(targets, function (c)
 	{
 		return c === targetRoomName;
@@ -211,6 +216,7 @@ global.lAdd = function (sourceRoomName, targetRoomName)
 	if (lib.isNull(target))
 	{
 		targets.push(targetRoomName);
+		parents.push(sourceRoomName);
 		return "New target added.";
 	} else {
 		return "Target exists."
@@ -219,25 +225,43 @@ global.lAdd = function (sourceRoomName, targetRoomName)
 
 global.lRemove = function (sourceRoomName, targetRoomName)
 {
+	let result = "";
 	if (lib.isNull(sourceRoomName) || lib.isNull(targetRoomName))
 		return "Missing argument(s). - sourceRoomName, targetRoomName";
 	if (lib.isNull(Memory.rooms[sourceRoomName]))
 		return "Missing source room: " + sourceRoomName;
 
 	let targets = Memory.rooms[sourceRoomName].longDistanceHarvestTargets;
+	let parents = Memory.rooms[targetRoomName].longDistanceHarvestParents;
 	let target = _.find(targets, function (c)
 	{
 		return c === targetRoomName;
 	});
 
+	let parent = _.find(parents, function (c)
+	{
+		return c === sourceRoomName;
+	});
+
 	if (lib.isNull(target))
 	{
-		return "Unable to find target to remove.";
+		result = "Unable to find target to remove.";
 	} else {
 		let index = targets.indexOf(target);
 		targets.splice(index, 1);
-		return "Target removed."
+		result = "Target removed."
 	}
+
+	if (lib.isNull(parent))
+	{
+		return "Unable to find parent to remove.";
+	} else {
+		let index = parents.indexOf(parent);
+		parents.splice(index, 1);
+		result = "Parent removed."
+	}
+
+	return result;
 };
 
 // manual tactical -----------------------------------------------------------------------------------------------------

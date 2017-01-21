@@ -45,7 +45,8 @@ MotivationLongDistanceHarvest.prototype.getDesireSpawn = function (roomName, dem
 	let debug = false;
 	let result = false;
 	let spawnRoom = Game.rooms[roomName];
-	let numWorkers = _.has(global, "cache.rooms." + roomName + ".units.worker") ? global.cache.rooms[roomName].units["worker"].length : 0;
+	let numWorkers = creepManager.countRoomUnits(roomName, "worker");
+		//_.has(global, "cache.rooms." + roomName + ".units.worker") ? global.cache.rooms[roomName].units["worker"].length : 0;
 
 	if (numWorkers >= config.critWorkers)
 	{

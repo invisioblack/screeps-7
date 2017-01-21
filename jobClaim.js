@@ -48,7 +48,8 @@ JobClaim.prototype.work = function (creep)
 			});
 			_.forEach(spawnClaims, function (c) {
 				if (creep.memory.motive.room === creep.room.name) {
-					let countUnits = _.has(global, "cache.rooms." + c.room + ".units.claimer") ? global.cache.rooms[c.room].units["claimer"].length : 0;
+					let countUnits = creepManager.countRoomUnits(c.room, "claimer");
+						//_.has(global, "cache.rooms." + c.room + ".units.claimer") ? global.cache.rooms[c.room].units["claimer"].length : 0;
 					if (!countUnits) {
 						let reservation = 0;
 						if (lib.isNull(Memory.rooms[c.room]))

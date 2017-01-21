@@ -42,12 +42,13 @@ JobLongDistanceHarvest.prototype.work = function (creep)
 	}
 
 	_.forEach(homeRoom.memory.longDistanceHarvestTargets, (rN) => {
-		if (Memory.rooms[rn].motivations["motivationHarvestSource"].active) {
+		if (Memory.rooms[rN].motivations["motivationHarvestSource"].active) {
 			if (!assigned) {
 
 				let roomMemory = Memory.rooms[rN];
 				let numSources = roomMemory.cache.sources.length;
-				let numHarvesters = _.has(global, "cache.rooms." + rN + ".units." + unitName) ? global.cache.rooms[rN].units[unitName].length : 0;
+				let numHarvesters = creepManager.countRoomUnits(rN, unitName);
+					//_.has(global, "cache.rooms." + rN + ".units." + unitName) ? global.cache.rooms[rN].units[unitName].length : 0;
 
 				//console.log(`${numSources} ${numHarvesters}`);
 				if (numSources > numHarvesters) {

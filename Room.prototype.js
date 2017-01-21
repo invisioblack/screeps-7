@@ -224,8 +224,10 @@ Room.prototype.updateEnergyPickupMode = function ()
 		    });
 		}
 
-		let numHarvesters = _.has(global, "cache.rooms." + roomName + ".units.harvester") ? global.cache.rooms[roomName].units["harvester"].length : 0;
-		let numHaulers = _.has(global, "cache.rooms." + roomName + ".units.hauler") ? global.cache.rooms[roomName].units["hauler"].length : 0;
+		let numHarvesters = creepManager.countRoomUnits(roomName, "harvester");
+			//_.has(global, "cache.rooms." + roomName + ".units.harvester") ? global.cache.rooms[roomName].units["harvester"].length : 0;
+		let numHaulers = creepManager.countRoomUnits(roomName, "hauler");
+			//_.has(global, "cache.rooms." + roomName + ".units.hauler") ? global.cache.rooms[roomName].units["hauler"].length : 0;
 
 		/** precontainer, or container setup mode, is when we have containers, but they are not properly manned, check
 		 * for energy in containers in this mode, but don't rely on it
@@ -309,7 +311,8 @@ Room.prototype.updateResources = function ()
 	{
 
 		this.memory.resources.units[unitName] = {};
-		this.memory.resources.units[unitName].total = _.has(global, "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName].length : 0;
+		this.memory.resources.units[unitName].total = creepManager.countRoomUnits(roomName, unitName);
+			//_.has(global, "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName].length : 0;
 		this.memory.resources.units[unitName].allocated = 0;
 		this.memory.resources.units[unitName].unallocated = this.memory.resources.units[unitName].total;
 		this.memory.resources.units[unitName].unassigned = creepManager.countRoomUnassignedUnits(this.name, unitName);
@@ -357,6 +360,25 @@ Room.prototype.getExtenderEnergy = function ()
 	{
 		result.energy += ex.energy;
 		result.energyCapacity += ex.energyCapacity;
+	} , this);
+
+	return result;
+};
+
+Room.prototype.getContainerEnergy = function ()
+{
+	let result = {};
+	result.energy = 0;
+	result.energyCapacity = 0;
+
+	let containerIds = this.memory.cache.structures[STRUCTURE_CONTAINER];
+	let containers = _.map(containerIds, (id) => {
+		return Game.getObjectById(id);
+	});
+	containers.forEach(function (ex)
+	{
+		result.energy += ex.store[RESOURCE_ENERGY];
+		result.energyCapacity += ex.storeCapacity;
 	} , this);
 
 	return result;

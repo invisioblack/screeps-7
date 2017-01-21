@@ -20,7 +20,8 @@ module.exports = function()
 		//console.log(`${creep.name} M: ${creep.memory.motive.motivation} N: ${creep.memory.motive.need}`);
 		// declarations
 		let carry, source, room;
-		let numHaulers = _.has(global, "cache.homeRooms." + creep.room.name + ".units.hauler") ? global.cache.homeRooms[creep.room.name].units["hauler"].length : 0;
+		let numHaulers = creepManager.countHomeRoomUnits(creep.room.name, "hauler");
+			//_.has(global, "cache.homeRooms." + creep.room.name + ".units.hauler") ? global.cache.homeRooms[creep.room.name].units["hauler"].length : 0;
 
 		// confirm that creep can attempt this job
 		if (creep.carryCapacity === 0)
@@ -29,7 +30,6 @@ module.exports = function()
 			creep.sing("NOCARRY!");
 			delete creep.memory.sourceId;
 			delete creep.memory.sourceType;
-
 			return;
 		}
 

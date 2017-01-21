@@ -50,15 +50,18 @@ MotivationSupplySpawn.prototype.getDesireSpawn = function (roomName, demands)
 	let result = true;
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	let numWorkers = _.has(global, "cache.homeRooms." + roomName + ".units.worker") ? global.cache.homeRooms[roomName].units["worker"].length : 0;
-	let numHaulers = _.has(global, "cache.homeRooms." + roomName + ".units.hauler") ? global.cache.homeRooms[roomName].units["hauler"].length : 0;
+	let numWorkers = creepManager.countHomeRoomUnits(roomName, "worker");
+		//_.has(global, "cache.homeRooms." + roomName + ".units.worker") ? global.cache.homeRooms[roomName].units["worker"].length : 0;
+	let numHaulers = creepManager.countHomeRoomUnits(roomName, "hauler");
+		//_.has(global, "cache.homeRooms." + roomName + ".units.hauler") ? global.cache.homeRooms[roomName].units["hauler"].length : 0;
 
 	if (memory.active)
 	{
 		for (let unitName in units)
 		{
 
-			let numUnits = _.has(global, "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName].length : 0;
+			let numUnits = creepManager.countRoomUnits(roomName, unitName);
+				//_.has(global, "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName].length : 0;
 			let numDemandedUnits = lib.nullProtect(demands.units[unitName], 0);
 			//console.log(`unitName: ${unitName} demand: ${numDemandedUnits}`);
 			if (numDemandedUnits < numUnits)
@@ -81,7 +84,8 @@ MotivationSupplySpawn.prototype.getDesireSpawn = function (roomName, demands)
 MotivationSupplySpawn.prototype.getDesiredSpawnUnit = function (roomName)
 {
 	let energyPickupMode = lib.nullProtect(Memory.rooms[roomName].energyPickupMode, C.ROOM_ENERGYPICKUPMODE_NOENERGY);
-	let numWorkers = _.has(global, "cache.rooms." + roomName + ".units.worker") ? global.cache.rooms[roomName].units["worker"].length : 0;
+	let numWorkers = creepManager.countRoomUnits(roomName, "worker");
+		//_.has(global, "cache.rooms." + roomName + ".units.worker") ? global.cache.rooms[roomName].units["worker"].length : 0;
 
 	//console.log(config.critWorkers);
 

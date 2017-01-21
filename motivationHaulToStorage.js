@@ -45,17 +45,23 @@ MotivationHaulToStorage.prototype.getDesiredSpawnUnit = function (roomName)
 
 MotivationHaulToStorage.prototype.getDesireSpawn = function (roomName, demands)
 {
+	if (roomManager.getIsLongDistanceHarvestTarget(roomName))
+		return false;
+
 	let result = true;
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	let numWorkers = _.has(global, "cache.rooms." + roomName + ".units.worker") ? global.cache.rooms[roomName].units["worker"].length : 0;
-	let numHaulers = _.has(global, "cache.rooms." + roomName + ".units.hauler") ? global.cache.rooms[roomName].units["hauler"].length : 0;
+	let numWorkers = creepManager.countRoomUnits(roomName, "worker");
+		//_.has(global, "cache.rooms." + roomName + ".units.worker") ? global.cache.rooms[roomName].units["worker"].length : 0;
+	let numHaulers = creepManager.countRoomUnits(roomName, "hauler");
+		//_.has(global, "cache.rooms." + roomName + ".units.hauler") ? global.cache.rooms[roomName].units["hauler"].length : 0;
 	let spawnUnit = this.getDesiredSpawnUnit(roomName);
 	if (memory.active)
 	{
 		for (let unitName in units)
 		{
-			let numUnits = _.has(global, "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName].length : 0;
+			let numUnits = creepManager.countRoomUnits(roomName, unitName);
+				//_.has(global, "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName].length : 0;
 			if ((!lib.isNull(demands.units[unitName]) && demands.units[unitName] <= numUnits))
 			{
 				result = false;
@@ -82,7 +88,7 @@ MotivationHaulToStorage.prototype.updateActive = function (roomName, demands)
 	let storageIds = lib.nullProtect(room.memory.cache.structures[STRUCTURE_STORAGE], []);
 	let storages  = _.map(storageIds, (id) => { return Game.getObjectById(id) });
 
-	if (room.getIsMine() && room.controller.level >= 4 && storages.length > 0)
+	if ((room.getIsMine() && room.controller.level >= 4 && storages.length > 0) || roomManager.getIsLongDistanceHarvestTarget(roomName))
 	{
 		memory.active = true;
 	} else {
@@ -101,33 +107,110 @@ MotivationHaulToStorage.prototype.updateNeeds = function (roomName)
 		memory.needs = {};
 	}
 
-	// Handle Harvest Energy Needs -------------------------------------------------------------------------------------
-	// look up sources and find out how many needs we should have for each one
-	let needName = "haulStorage." + room.name;
-	let need;
-	let towerIds = lib.nullProtect(room.memory.cache.structures[STRUCTURE_TOWER], []);
-	let storageIds = lib.nullProtect(room.memory.cache.structures[STRUCTURE_STORAGE], []);
-	let storages  = _.map(storageIds, (id) => { return Game.getObjectById(id) });
 
-	// create new need if one doesn't exist
-	if (lib.isNull(memory.needs[needName]) && storages.length)
-	{
-		memory.needs[needName] = {};
-		need = memory.needs[needName];
-		need.name = needName;
-		need.type = "needHaulToStorage";
-		need.targetId = room.memory.cache.structures[STRUCTURE_STORAGE][0];
-		need.priority = C.PRIORITY_1;
-	} else {
-		need = memory.needs[needName];
+	if (roomManager.getIsMine(roomName)) {
+
+		// pick up energy in room need -------------------------------------------------------------------------------------
+		let needName = "haulStorage." + room.name;
+		let need;
+		let storageIds = lib.nullProtect(room.memory.cache.structures[STRUCTURE_STORAGE], []);
+		let storages = _.map(storageIds, (id) => {
+			return Game.getObjectById(id)
+		});
+
+		// create new need if one doesn't exist
+		if (lib.isNull(memory.needs[needName]) && storages.length) {
+			memory.needs[needName] = {};
+			need = memory.needs[needName];
+			need.name = needName;
+			need.type = "needHaulToStorage";
+			need.targetId = room.memory.cache.structures[STRUCTURE_STORAGE][0];
+			need.priority = C.PRIORITY_1;
+		} else {
+			need = memory.needs[needName];
+		}
+
+		if (room.memory.energyPickupMode === C.ROOM_ENERGYPICKUPMODE_LINK && lib.isNull(need.linkId)) {
+			let storage = Game.getObjectById(room.memory.cache.structures[STRUCTURE_STORAGE][0]);
+			let link = storage.pos.findInRange(FIND_STRUCTURES, 1, {
+				filter: function (s) {
+					return s.structureType === STRUCTURE_LINK;
+				}
+			})[0];
+			need.linkId = link.id;
+			room.memory.storageLinkId = link.id;
+		}
+
+		// pick up in ldh rooms --------------------------------------------------------------------------------------------
+		_.forEach(room.memory.longDistanceHarvestTargets, (rN) => {
+			let ldhNeed;
+			needName = "ldhaulstorage." + rN;
+			let numContainers = roomManager.getStructureIds(rN, STRUCTURE_CONTAINER).length;
+
+			if (numContainers > 0) {
+				if (lib.isNull(memory.needs[needName]))
+					memory.needs[needName] = {};
+				ldhNeed = memory.needs[needName];
+				ldhNeed.name = needName;
+				ldhNeed.type = "needLongDistancePickup";
+				ldhNeed.targetRoom = rN;
+				need.priority = C.PRIORITY_6;
+			} else
+				delete memory.needs[needName];
+		});
+
+		_.forEach(room.memory.motivations[this.name].needs, (v, k) => {
+			let targetRoom = Game.rooms[v.targetRoom];
+			if (!lib.isNull(targetRoom))
+			{
+				let energy = targetRoom.getContainerEnergy();
+				//console.log(`Room: ${v.targetRoom} energy: ${JSON.stringify(energy)}`);
+				if (energy.energy > 2000)
+				{
+					v.priority = need.priority = C.PRIORITY_1;
+				} else if (energy.energy > 1700)
+				{
+					v.priority = need.priority = C.PRIORITY_2;
+				} else if (energy.energy > 1500)
+				{
+					v.priority = need.priority = C.PRIORITY_3;
+				} else if (energy.energy > 1000)
+				{
+					v.priority = need.priority = C.PRIORITY_4;
+				}
+				else
+				{
+					v.priority = need.priority = C.PRIORITY_5;
+				}
+			}
+			if (!_.some(room.memory.longDistanceHarvestTargets, (o) => { return v.targetRoom === o || v.type !== "needLongDistancePickup"; }))
+				delete memory.needs[k];
+		});
 	}
-
-	if (room.memory.energyPickupMode === C.ROOM_ENERGYPICKUPMODE_LINK && lib.isNull(need.linkId))
+	else if (roomManager.getIsLongDistanceHarvestTarget(roomName))
 	{
-		let storage = Game.getObjectById(room.memory.cache.structures[STRUCTURE_STORAGE][0]);
-		let link = storage.pos.findInRange(FIND_STRUCTURES, 1,{ filter: function (s) { return s.structureType === STRUCTURE_LINK; }})[0];
-		need.linkId = link.id;
-		room.memory.storageLinkId = link.id;
+		let needName = "ldpickup." + room.name;
+		let need;
+		let containerIds = roomManager.getStructureIds(roomName, STRUCTURE_CONTAINER);
+
+		// create new need if one doesn't exist
+		if (lib.isNull(memory.needs[needName]) && containerIds.length) {
+			memory.needs[needName] = {};
+			need = memory.needs[needName];
+			need.name = needName;
+			need.type = "needLongDistancePickup";
+			need.targetIds = containerIds;
+			need.priority = C.PRIORITY_1;
+		} else if (containerIds.length) {
+			need = memory.needs[needName];
+		} else
+		{
+			delete memory.needs[needName];
+		}
+
+	} else
+	{
+		memory.needs = {};
 	}
 };
 

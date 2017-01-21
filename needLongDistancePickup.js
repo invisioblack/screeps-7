@@ -1,5 +1,6 @@
+
 //-------------------------------------------------------------------------
-// needHaulToStorage
+// needLongDistancePickup
 //-------------------------------------------------------------------------
 "use strict";
 //-------------------------------------------------------------------------
@@ -15,20 +16,27 @@ let Need = require('Need.prototype')();
 //-------------------------------------------------------------------------
 // function
 //-------------------------------------------------------------------------
-let NeedHaulToStorage = function ()
+let NeedLongDistancePickup = function ()
 {
 	Need.call(this);
-	this.name = "needHaulToStorage";
+	this.name = "needLongDistancePickup";
 };
 
-NeedHaulToStorage.prototype = Object.create(Need.prototype);
-NeedHaulToStorage.prototype.constructor = NeedHaulToStorage;
+NeedLongDistancePickup.prototype = Object.create(Need.prototype);
+NeedLongDistancePickup.prototype.constructor = NeedLongDistancePickup;
 
-NeedHaulToStorage.prototype.getUnitDemands = function(roomName, memory, motivationName)
+NeedLongDistancePickup.prototype.getUnitDemands = function(roomName, memory, motivationName)
 {
 	memory.demands = {};
-	this.getUnitHaulToStorageDemand(roomName, "hauler", memory.demands);
 
+	if (roomManager.getIsLongDistanceHarvestTarget(roomName))
+	{
+		this.getUnitHaulToStorageDemand(roomName, "hauler", memory.demands);
+	}
+	else
+	{
+		this.getUnitHaulToStorageDemand(memory.targetRoom, "hauler", memory.demands);
+	}
 
 	//console.log(JSON.stringify(memory));
 	//console.log("getUnitDemands: " + energy + "/" + energyCapacity + "/" + neededEnergy);
@@ -36,8 +44,11 @@ NeedHaulToStorage.prototype.getUnitDemands = function(roomName, memory, motivati
 
 	//console.log(`NeedTransferEnergy.prototype.getUnitDemands: ${motivationName}\t${JSON.stringify(result)}`);
 
+	if (memory.demands["hauler"] > 1)
+		memory.demands["hauler"];
+
 	return memory.demands;
 };
 
 
-module.exports = new NeedHaulToStorage();
+module.exports = new NeedLongDistancePickup();

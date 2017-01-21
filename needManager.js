@@ -167,6 +167,11 @@ module.exports =
 					lib.log("Creep: " + creep.name + " Working needSupplyExtenders", debug);
 					jobSupplyExtenders.work(creep);
 				}
+				else if (need.type === "needLongDistancePickup")
+				{
+					lib.log("Creep: " + creep.name + " Working needLongDistancePickup", debug);
+					jobLongDistancePickup.work(creep);
+				}
 			}
 		}
 	}
