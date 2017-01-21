@@ -87,7 +87,7 @@ module.exports = function ()
 
 		if (preResult < 1)
 		{
-			if (preResult > 0.5)
+			if (preResult > 0.75)
 			{
 				preResult = 1;
 			} else {

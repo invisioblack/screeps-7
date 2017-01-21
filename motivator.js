@@ -62,10 +62,11 @@ module.exports =
 				//_.has(global, "cache.homeRooms." + roomName + ".units.worker") ? global.cache.homeRooms[roomName].units["worker"].length : 0;
 			let numHarvesters = creepManager.countRoomUnits(roomName, "harvester");
 				//_.has(global, "cache.homeRooms." + roomName + ".units.harvester") ? global.cache.homeRooms[roomName].units["harvester"].length : 0;
+			let numHaulers = creepManager.countRoomUnits(roomName, "hauler");
 			let numContainers = lib.nullProtect(room.memory.cache.structures[STRUCTURE_CONTAINER], []).length;
 
 			// normal priority
-			if (numWorkers < config.minWorkers)
+			if (numWorkers < config.minWorkers || numHaulers < 1)
 				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
 			else if (numWorkers < config.medWorkers)
 				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_6;

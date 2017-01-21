@@ -11,10 +11,12 @@ Current Status:
     Builds construction sites.
     Repairs infrastructure.
     Simple tower defense.
-    Long range harvesting.
+    Long range harvesting - improved
     Haulers.
     Manual Tactical.
     Console interaction with the AI including buttons for config
+    Links move energy to storage
+    Wall breach detection and safe mode activation
 
 Behavior model
 ===============================================================================
@@ -37,15 +39,16 @@ Motivations:
     room.
     
     Motivations:
+        Claiming Rooms
         Garrison
         Harvest Source
         Haul to Storage
         Long Distance Harvesting
         Maintain Infrastructure
+        Manual Tactical
         Supply Controller
         Supply Spawn
         Supply Tower
-        Claiming Rooms
 
 Need Manager:
 
