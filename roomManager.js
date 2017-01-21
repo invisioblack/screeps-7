@@ -20,8 +20,6 @@ module.exports =
 			if (lib.isNull(Memory.rooms[roomName]) || lib.isNull(Memory.rooms[roomName].longDistanceHarvestTargets))
 				return "";
 
-
-
 			Memory.rooms[roomName].longDistanceHarvestTargets.forEach( function (targetRoomName)
 			{
 				let room = Game.rooms[targetRoomName];
@@ -54,5 +52,51 @@ module.exports =
 				return "";
 			else
 				return result.room;
+		},
+
+		updateUnitCache: function (roomName)
+		{
+			let roomCreeps = creepManager.getRoomCreeps(roomName);
+			global.cache.rooms[roomName] = {};
+			global.cache.rooms[roomName].creeps = roomCreeps;
+			global.cache.rooms[roomName].units = _.groupBy(roomCreeps, (o) => {
+				return o.memory.unit;
+			} );
+
+			_.forEach(units, (v, k)=> {
+				if (lib.isNull(global.cache.rooms[roomName].units[k]))
+				{
+					global.cache.rooms[roomName].units[k] = [];
+				}
+			});
+
+			roomCreeps = _.filter(Game.creeps, (c) => c.memory.homeRoom === roomName);
+			if (lib.isNull(global.cache.homeRooms))
+				global.cache.homeRooms = {};
+			global.cache.homeRooms[roomName] = {};
+			global.cache.homeRooms[roomName].creeps = roomCreeps;
+			global.cache.homeRooms[roomName].units = _.groupBy(roomCreeps, (o) => {
+				return o.memory.unit;
+			} );
+
+			_.forEach(units, (v, k)=> {
+				if (lib.isNull(global.cache.homeRooms[roomName].units[k]))
+				{
+					global.cache.homeRooms[roomName].units[k] = [];
+				}
+			});
+
+/*
+			 let output = "";
+			 _.forEach(global.cache.homeRooms, (v, k) => {
+			 output += `\nRoom: ${k}`;
+			 output += `\n\tCreeps: ${JSON.stringify(v)}`;
+			 _.forEach(v.units, (sv, sk) => {
+			 output += `\n\tUnit: ${sk}: ${sv}`;
+			 });
+			 });
+			 console.log(output);
+*/
 		}
+
 	};

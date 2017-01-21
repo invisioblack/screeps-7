@@ -73,7 +73,7 @@ module.exports = function()
 		if (room.memory.energyPickupMode <= C.ROOM_ENERGYPICKUPMODE_CONTAINER || numHaulers === 0)
 		{
 			this.findEnergyPickup(creep);
-		} else if (creep.memory.motive.motivation === "motivationHaulToStorage")
+		} else if (creep.unit === "hauler")
 		{
 			this.findEnergyPickup(creep);
 		}
@@ -99,7 +99,7 @@ module.exports = function()
 		 */
 
 		// in container mode, everyone looks for energy in containers
-		if (room.memory.energyPickupMode === C.ROOM_ENERGYPICKUPMODE_CONTAINER && creep.memory.sourceId === "")
+		if (room.memory.energyPickupMode >= C.ROOM_ENERGYPICKUPMODE_PRECONTAINER && creep.memory.sourceId === "")
 		{
 			this.findEnergyContainer(creep);
 		}

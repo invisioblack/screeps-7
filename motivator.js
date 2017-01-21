@@ -112,6 +112,17 @@ module.exports =
 		let room;
 		let cpuUsed = 0;
 
+		/***************************************************************************************************************
+		 * update unloaded rooms
+		 */
+
+		_.forEach(Memory.rooms, (v, k) => {
+			if (lib.isNull(Game.rooms[k]))
+			{
+				roomManager.updateUnitCache(k);
+			}
+		});
+
 		// motivate in each room we control ----------------------------------------------------------------------------
 		for (let roomName in Game.rooms)
 		{
@@ -168,7 +179,7 @@ module.exports =
 
 			// process round 2 and 3 for each unit type ------------------------------------------------------------
 			cpuManager.timerStart(`\t\tMotivate R2&R3`, "motivate.r2");
-			this.motivateRound2n3(sortedMotivations, demands, resources);
+			this.motivateRound2n3(roomName, sortedMotivations, demands, resources);
 			cpuManager.timerStop("motivate.r2");
 
 
@@ -253,7 +264,7 @@ module.exports =
 	 * @param demands
 	 * @param resources
 	 */
-	motivateRound2n3: function (sortedMotivations, demands, resources)
+	motivateRound2n3: function (roomName, sortedMotivations, demands, resources)
 	{
 		for (let unitName in units)
 		{
@@ -282,7 +293,6 @@ module.exports =
 				// allocate units ------------------------------------------------------------------------------
 				if (motivationMemory.active)
 				{
-
 					let unitsAvailable;
 					let unitsTotalAllocated;
 					let unitsDemanded;

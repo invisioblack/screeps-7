@@ -161,48 +161,7 @@ Room.prototype.updateDroppedCache = function (forceRefresh = false)
  */
 Room.prototype.updateUnitCache = function ()
 {
-	let roomCreeps = creepManager.getRoomCreeps(this.name);
-	let roomName = this.name;
-	global.cache.rooms[roomName] = {};
-	global.cache.rooms[roomName].creeps = roomCreeps;
-	global.cache.rooms[roomName].units = _.groupBy(roomCreeps, (o) => {
-		return o.memory.unit;
-	} );
-
-	_.forEach(units, (v, k)=> {
-		if (lib.isNull(global.cache.rooms[roomName].units[k]))
-		{
-			global.cache.rooms[roomName].units[k] = [];
-		}
-	});
-
-	roomCreeps = _.filter(Game.creeps, (c) => c.memory.homeRoom === roomName);
-	if (lib.isNull(global.cache.homeRooms))
-		global.cache.homeRooms = {};
-	global.cache.homeRooms[roomName] = {};
-	global.cache.homeRooms[roomName].creeps = roomCreeps;
-	global.cache.homeRooms[roomName].units = _.groupBy(roomCreeps, (o) => {
-		return o.memory.unit;
-	} );
-
-	_.forEach(units, (v, k)=> {
-		if (lib.isNull(global.cache.homeRooms[roomName].units[k]))
-		{
-			global.cache.homeRooms[roomName].units[k] = [];
-		}
-	});
-
-	/*
-	let output = "";
-	_.forEach(global.cache.homeRooms, (v, k) => {
-		output += `\nRoom: ${k}`;
-		output += `\n\tCreeps: ${JSON.stringify(v)}`;
-		_.forEach(v.units, (sv, sk) => {
-			output += `\n\tUnit: ${sk}: ${sv}`;
-		});
-	});
-	console.log(output);
-	*/
+	roomManager.updateUnitCache(this.name);
 };
 
 Room.prototype.updateFlagCache = function (forceRefresh = false)
@@ -250,15 +209,35 @@ Room.prototype.updateEnergyPickupMode = function ()
 		let containers = _.map(this.memory.cache.structures[STRUCTURE_CONTAINER], function (cid) {
 			return Game.getObjectById(cid);
 		});
-		let containerEnergy = _.sum(containers, function (c) {
-			return c.store[RESOURCE_ENERGY];
-		});
+		let containerEnergy;
+		if (lib.isNull(containers) || containers.length === 0)
+		{
+		    containerEnergy = 0;
+		}
+		else
+		{
+		    containerEnergy = _.sum(containers, function (c) {
+			    if (lib.isNull(c))
+			    	return 0;
+			    else
+		    	    return c.store[RESOURCE_ENERGY];
+		    });
+		}
 
 		let numHarvesters = _.has(global, "cache.rooms." + roomName + ".units.harvester") ? global.cache.rooms[roomName].units["harvester"].length : 0;
 		let numHaulers = _.has(global, "cache.rooms." + roomName + ".units.hauler") ? global.cache.rooms[roomName].units["hauler"].length : 0;
 
-		//if (numContainers >= this.memory.cache.sources.length && (containerEnergy > 0 || numHarvesters > 0))
+		/** precontainer, or container setup mode, is when we have containers, but they are not properly manned, check
+		 * for energy in containers in this mode, but don't rely on it
+		 */
+
 		if (numContainers > 0)
+		{
+			result = C.ROOM_ENERGYPICKUPMODE_PRECONTAINER;
+		}
+
+		if (numContainers >= this.memory.cache.sources.length && (containerEnergy > 0 || numHarvesters > 0))
+		//if (numContainers > 0)
 		{
 			result = C.ROOM_ENERGYPICKUPMODE_CONTAINER;
 		}
@@ -424,7 +403,7 @@ Room.prototype.getControllerLevel = function ()
 Room.prototype.getIsMine = function ()
 {
 	let result = false;
-	if (!lib.isNull(this.controller) && this.controller.my)
+	if (!lib.isNull(this.controller) && this.controller.my && this.controller.level > 0)
 	{
 		result = true;
 	}
@@ -451,22 +430,31 @@ Room.prototype.getLostCreeps = function ()
 
 Room.prototype.handleLostCreeps = function()
 {
+	let debug = false;
 	let lostCreeps = this.getLostCreeps();
 	lostCreeps.forEach(function (creep)
 	{
 		let room = Game.rooms[creep.memory.motive.room];
-
+        let moveResult;
 		if (!lib.isNull(room) && !lib.isNull(room.controller))
 		{
-			creep.moveTo(room.controller);
+			moveResult = creep.moveTo(room.controller);
 			creep.say("Exit!");
+			lib.log(`EXIT creep: ${creep.name} room: ${creep.room.name} dest: ${creep.memory.motive.room} move: ${moveResult}`, debug);
 		} else {
 			let exit = creep.room.findExitTo(creep.memory.motive.room);
+			lib.log(JSON.stringify(exit), debug);
 			// and move to exit
-			creep.moveTo(creep.pos.findClosestByPath(exit, { ignoreCreeps: true }));
+			let door = creep.pos.findClosestByPath(exit, { maxRooms: 2 });
+			//console.log(JSON.stringify(door));
+			moveResult = creep.moveTo(door);
+			
 			creep.say("Leave!");
+			lib.log(`LEAVE creep: ${creep.name} room: ${creep.room.name} dest: ${creep.memory.motive.room} move: ${moveResult}`, debug);
 		}
+		
 	}, this);
+	
 };
 
 Room.prototype.getMaxHarvesters = function ()

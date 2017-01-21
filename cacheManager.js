@@ -17,9 +17,6 @@ module.exports = {
 			global.cache.rooms = {};
 		}
 
-		// cleanup room memcache
-		this.memCacheCleanUp();
-
 		// init function memCache
 		if (lib.isNull(Memory.cacheFunction))
 		{
@@ -70,13 +67,5 @@ module.exports = {
 	flushMem: function (cache)
 	{
 		Memory[cache] = {};
-	},
-
-	memCacheCleanUp: function()
-	{
-		_.forEach(Memory.rooms, (roomMemory, roomName) => {
-			global.cache.rooms[roomName] = {};
-		});
-
 	}
 };

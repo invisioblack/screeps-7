@@ -24,7 +24,7 @@ module.exports =
 
 		// create and update needs for motivation
 
-		lib.log("needManager.manageNeeds: motivation.name: " + motivation.name, debug);
+		lib.log("ROOM: " + roomName + " needManager.manageNeeds: motivation.name: " + motivation.name, debug);
 		motivation.updateNeeds(roomName);
 
 		// read up needs sorted by priority

@@ -63,18 +63,17 @@ module.exports = function ()
 	{
 		let debug = false; //roomName === "W8N2";
 		let result = {};
-		let room = Game.rooms[roomName];
+		let roomMemory = Memory.rooms[roomName];
 
-		lib.log(room.name, debug);
-		for (let needName in room.memory.motivations[this.name].needs)
+		lib.log(roomName, debug);
+		for (let needName in roomMemory.motivations[this.name].needs)
 		{
 
-			let need = room.memory.motivations[this.name].needs[needName];
+			let need = roomMemory.motivations[this.name].needs[needName];
 			//console.log("!!!!!!!!!!!!---:" + need.type);
 			let demands = global[need.type].getUnitDemands(roomName, need, this.name);
 
-
-			lib.log("----------- demands: " + JSON.stringify(demands), room.name === "W8N2", debug);
+			lib.log("----------- demands: " + JSON.stringify(demands), debug);
 			for (let unitName in demands)
 			{
 				if (lib.isNull(result[unitName]))

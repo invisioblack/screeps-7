@@ -56,6 +56,12 @@ JobHarvestSource.prototype.work = function (creep)
 	if (!lib.isNull(link))
 		creep.room.memory.sourceLinks[need.targetId] = link.id;
 
+
+	if (creep.carryCapacity > 0 && creep.carrying() >= 10 && container.hits < container.hitsMax)
+	{
+		creep.repair(container);
+	}
+
 	if (creep.carryCapacity > 0 && creep.carrying() >= 38 && !lib.isNull(link) && link.energy < link.energyCapacity)
 	{
 		let tResult = creep.transfer(link, RESOURCE_ENERGY);

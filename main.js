@@ -1,4 +1,6 @@
 /**
+ * TODO: Claimers keep getting stuck
+ * TODO: worker assignment hack needs to no send workers if they are no needed, and pull them somewhere else if they are done
  * TODO: Mine resources!
  * TODO: Revamp long range harvesting to use harvesters, containers and haulers
  * TODO: revamp haul to storage to make hauler smarter, don't use default energy finder

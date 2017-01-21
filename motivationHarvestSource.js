@@ -39,30 +39,40 @@ MotivationHarvestSource.prototype.getDesiredSpawnUnit = function (roomName)
 {
 	let unitName = "";
 	let room = Game.rooms[roomName];
-	if (room.getIsMine())
+	if (!lib.isNull(room) && room.getIsMine())
 		unitName = "harvester";
 	else
 		unitName = "ldharvester";
 
-	return "harvester";
+	return unitName;
 };
 
 MotivationHarvestSource.prototype.getDesireSpawn = function (roomName, demands)
 {
+	let debug = false;
 	let result = true;
 	let room = Game.rooms[roomName];
-	let numContainers = lib.nullProtect(room.memory.cache.structures[STRUCTURE_CONTAINER], []).length;
-	let numHarvesters = _.has(global, "cache.rooms." + roomName + ".units.harvester") ? global.cache.rooms[roomName].units["harvester"].length : 0;
+	let roomMemory = Memory.rooms[roomName];
+	let unitName = this.getDesiredSpawnUnit(roomName);
+	let numContainers = lib.nullProtect(roomMemory.cache.structures[STRUCTURE_CONTAINER], []).length;
+	let numHarvesters = _.has(global, "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName].length : 0;
 		//creepManager.countRoomUnits(roomName, "harvester");
-	let demandedHarvesters = lib.nullProtect(demands.units["harvester"], 0);
+	let demandedHarvesters = lib.nullProtect(demands.units[unitName], 0);
 	let numWorkers = _.has(global, "cache.rooms." + roomName + ".units.worker") ? global.cache.rooms[roomName].units["worker"].length : 0;
+	let critWorkers = config.critWorkers;
 
-	//console.log(`Room: ${roomName} #Containers: ${numContainers} Demanded Harvesters: ${demandedHarvesters}/${numHarvesters} Workers: ${numWorkers}/${config.critWorkers}`);
+	// if we not in one of my owned rooms then we don't need to respect the crit workers limitation
+	if (lib.isNull(room) || !room.getIsMine())
+	{
+		critWorkers = 0;
+	}
 
-	if (numContainers === 0 || numHarvesters >= demandedHarvesters || numWorkers < config.critWorkers)
+	if (numContainers === 0 || numHarvesters >= demandedHarvesters || numWorkers < critWorkers)
 	{
 		result = false;
 	}
+
+	lib.log(`Room: ${roomName} Desire Spawn: ${result} Unit: ${unitName} #Containers: ${numContainers} Demanded Harvesters: ${demandedHarvesters}/${numHarvesters} Workers: ${numWorkers}/${critWorkers}`, debug);
 
 	return result;
 };
@@ -72,7 +82,7 @@ MotivationHarvestSource.prototype.updateActive = function (roomName, demands)
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
 
-	if (room.memory.energyPickupMode >= C.ROOM_ENERGYPICKUPMODE_CONTAINER)
+	if (room.memory.energyPickupMode >= C.ROOM_ENERGYPICKUPMODE_PRECONTAINER)
 	{
 		memory.active = true;
 	} else {

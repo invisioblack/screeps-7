@@ -31,8 +31,9 @@ JobLongDistanceHarvest.prototype.work = function (creep)
 	let need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
 	let target = Game.getObjectById(need.targetId);
 	let carry = _.sum(creep.carry);
-
-
+	let homeRoom = Game.rooms[creep.memory.homeRoom];
+	let unitName = "ldharvester";
+	let assigned = false;
 
 	//avoid hostiles
 	if (creep.avoidHostile(creep))
@@ -40,8 +41,22 @@ JobLongDistanceHarvest.prototype.work = function (creep)
 		return;
 	}
 
-	// TODO: This needs to figure out which ldh room needs a harvester and assign him there
+	_.forEach(homeRoom.memory.longDistanceHarvestTargets, (rN) => {
+		if (Memory.rooms[rn].motivations["motivationHarvestSource"].active) {
+			if (!assigned) {
 
+				let roomMemory = Memory.rooms[rN];
+				let numSources = roomMemory.cache.sources.length;
+				let numHarvesters = _.has(global, "cache.rooms." + rN + ".units." + unitName) ? global.cache.rooms[rN].units[unitName].length : 0;
+
+				//console.log(`${numSources} ${numHarvesters}`);
+				if (numSources > numHarvesters) {
+					creep.deassignMotive(rN);
+					assigned = true;
+				}
+			}
+		}
+	});
 
 };
 
