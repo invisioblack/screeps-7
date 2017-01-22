@@ -61,6 +61,11 @@ JobHaulMinerals.prototype.work = function (creep)
 		case this.JOB_MODE_GETENERGY:
 			lib.log(creep.name + " getting minerals ", debug);
 			let result = creep.withdraw(mineralContainer, RESOURCES_ALL);
+			_.forEach(mineralContainer.store, (v, k) => {
+				result = creep.withdraw(mineralContainer, k);
+				lib.log(creep.name + " withdraw result: " + result, true);
+			});
+
 			if (result === ERR_NOT_IN_RANGE)
 			{
 				let moveResult = creep.moveTo(mineralContainer, {"maxRooms": 1});
@@ -71,7 +76,7 @@ JobHaulMinerals.prototype.work = function (creep)
 				creep.memory.job.mode = this.JOB_MODE_WORK;
 				return;
 			}
-			console.log(result);
+			//console.log(result);
 			break;
 		case this.JOB_MODE_WORK:
 			if (carry === 0)

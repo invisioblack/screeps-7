@@ -30,6 +30,44 @@ Room.prototype.init = function ()
 	}
 
 	this.memory.reservation = reservation;
+
+	if (this.getIsMine() && !lib.isNull(this.memory.cache))
+	{
+		let numExtensions = lib.nullProtect(this.memory.cache.structures[STRUCTURE_EXTENSION], []).length;
+		if (numExtensions < 5)
+		{
+			this.memory.rsl = 1;
+			this.memory.spawnEnergy = 300;
+		} else if (numExtensions < 10)
+		{
+			this.memory.rsl = 2;
+			this.memory.spawnEnergy = 550;
+		} else if (numExtensions < 20)
+		{
+			this.memory.rsl = 3;
+			this.memory.spawnEnergy = 800;
+		} else if (numExtensions < 30)
+		{
+			this.memory.rsl = 4;
+			this.memory.spawnEnergy = 1300;
+		} else if (numExtensions < 40)
+		{
+			this.memory.rsl = 5;
+			this.memory.spawnEnergy = 1800;
+		} else if (numExtensions < 50)
+		{
+			this.memory.rsl = 6;
+			this.memory.spawnEnergy = 2300;
+		} else if (numExtensions < 60)
+		{
+			this.memory.rsl = 7;
+			this.memory.spawnEnergy = 5300;
+		} else
+		{
+			this.memory.rsl = 8;
+			this.memory.spawnEnergy = 12300;
+		}
+	}
 };
 
 Room.prototype.initMemCache = function (forceRefresh = false)
