@@ -108,7 +108,7 @@ module.exports =
 
 		getIsLongDistanceHarvestTarget: function (roomName)
 		{
-			return Memory.rooms[roomName].longDistanceHarvestParents.length > 0;
+			return lib.nullProtect(Memory.rooms[roomName].longDistanceHarvestParents, []).length > 0;
 		},
 
 		getIsMine: function (roomName)

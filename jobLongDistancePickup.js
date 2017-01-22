@@ -68,7 +68,6 @@ JobLongDistancePickup.prototype.work = function (creep)
 				{
 					creep.memory.job.mode = this.JOB_MODE_WORK;
 					creep.deassignMotive(creep.memory.homeRoom);
-					console.log("done?");
 				}
 
 				container = Game.getObjectById(creep.memory.sourceId);

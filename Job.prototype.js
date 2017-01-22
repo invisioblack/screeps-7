@@ -70,10 +70,10 @@ module.exports = function()
 		 * if we are only harvest mode, anyone will get energy off the ground, otherwise just haulers will
  		 */
 
-		if (room.memory.energyPickupMode <= C.ROOM_ENERGYPICKUPMODE_CONTAINER || numHaulers === 0)
+		if (creep.memory.sourceId === "" && (room.memory.energyPickupMode <= C.ROOM_ENERGYPICKUPMODE_CONTAINER || numHaulers === 0))
 		{
 			this.findEnergyPickup(creep);
-		} else if (creep.unit === "hauler")
+		} else if (creep.memory.sourceId === "" && creep.memory.unit === "hauler")
 		{
 			this.findEnergyPickup(creep);
 		}

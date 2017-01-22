@@ -14,8 +14,7 @@ module.exports =
 	{
 		cpuManager.timerStart("motivate init", "motivate.init");
 		// init motivations in each room we control
-		for (let roomName in Game.rooms)
-		{
+		for (let roomName in Game.rooms) {
 			let room = Game.rooms[roomName];
 
 			if (lib.isNull(room))
@@ -28,8 +27,7 @@ module.exports =
 			//console.log(JSON.stringify(global.cache.rooms[roomName].units));
 
 			// init motivations in memory
-			if (lib.isNull(room.memory.motivations))
-			{
+			if (lib.isNull(room.memory.motivations)) {
 				room.memory.motivations = {};
 			}
 
@@ -37,70 +35,107 @@ module.exports =
 			motivationManualTactical.init(room.name);
 			room.memory.motivations[motivationManualTactical.name].priority = C.PRIORITY_1;
 
-			motivationHarvestSource.init(room.name);
-			room.memory.motivations[motivationHarvestSource.name].priority = C.PRIORITY_1;
+			// should only be init in my room, or a ldh target
+			if (room.getIsMine() || roomManager.getIsLongDistanceHarvestTarget(room.name)) {
+				motivationHarvestSource.init(room.name);
+				room.memory.motivations[motivationHarvestSource.name].priority = C.PRIORITY_1;
+			} else if (motivationHarvestSource.isInit(room.name)) {
+				motivationHarvestSource.deInit(room.name);
+			}
 
-			motivationHaulToStorage.init(room.name);
-			room.memory.motivations[motivationHaulToStorage.name].priority = C.PRIORITY_2;
+			// should only be init in my room, or a ldh target
+			if (room.getIsMine() || roomManager.getIsLongDistanceHarvestTarget(room.name)) {
+				motivationHaulToStorage.init(room.name);
+				room.memory.motivations[motivationHaulToStorage.name].priority = C.PRIORITY_2;
+			} else if (motivationHaulToStorage.isInit(room.name)) {
+				motivationHaulToStorage.deInit(room.name);
+			}
 
-			motivationSupplyTower.init(room.name);
-			room.memory.motivations[motivationSupplyTower.name].priority = C.PRIORITY_2;
+			// only active in my rooms with towers
+			if (room.getIsMine() && room.memory.cache.structures[STRUCTURE_TOWER].length > 0) {
+				motivationSupplyTower.init(room.name);
+				room.memory.motivations[motivationSupplyTower.name].priority = C.PRIORITY_2;
+			} else if (motivationSupplyTower.isInit(room.name)) {
+				motivationSupplyTower.deInit(room.name);
+			}
 
+			// this one should only be active in rooms with a claim
 			motivationClaimRoom.init(room.name);
 			room.memory.motivations[motivationClaimRoom.name].priority = C.PRIORITY_4;
 
 			motivationGarrison.init(room.name);
 			room.memory.motivations[motivationGarrison.name].priority = C.PRIORITY_2;
 
-			motivationLongDistanceHarvest.init(room.name);
-			room.memory.motivations[motivationLongDistanceHarvest.name].priority = C.PRIORITY_3;
+			// should only be init in my room
+			if (room.getIsMine()) {
+				motivationLongDistanceHarvest.init(room.name);
+				room.memory.motivations[motivationLongDistanceHarvest.name].priority = C.PRIORITY_3;
+			} else if (motivationLongDistanceHarvest.isInit(room.name)) {
+				motivationLongDistanceHarvest.deInit(room.name);
+			}
 
 
 
-			motivationSupplySpawn.init(room.name);
-			let numWorkers = creepManager.countRoomUnits(roomName, "worker");
-				//_.has(global, "cache.homeRooms." + roomName + ".units.worker") ? global.cache.homeRooms[roomName].units["worker"].length : 0;
-			let numHarvesters = creepManager.countRoomUnits(roomName, "harvester");
-				//_.has(global, "cache.homeRooms." + roomName + ".units.harvester") ? global.cache.homeRooms[roomName].units["harvester"].length : 0;
-			let numHaulers = creepManager.countRoomUnits(roomName, "hauler");
-			let numContainers = lib.nullProtect(room.memory.cache.structures[STRUCTURE_CONTAINER], []).length;
+			// only in my rooms
+			if (room.getIsMine()) {
+				motivationSupplySpawn.init(room.name);
+				let numWorkers = creepManager.countRoomUnits(roomName, "worker");
+					//_.has(global, "cache.homeRooms." + roomName + ".units.worker") ? global.cache.homeRooms[roomName].units["worker"].length : 0;
+				let numHarvesters = creepManager.countRoomUnits(roomName, "harvester");
+					//_.has(global, "cache.homeRooms." + roomName + ".units.harvester") ? global.cache.homeRooms[roomName].units["harvester"].length : 0;
+				let numHaulers = creepManager.countRoomUnits(roomName, "hauler");
+				let numContainers = lib.nullProtect(room.memory.cache.structures[STRUCTURE_CONTAINER], []).length;
 
-			// normal priority
-			if (numWorkers < config.minWorkers || numHaulers < 1)
-				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
-			else if (numWorkers < config.medWorkers)
-				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_6;
-			else
-				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_8;
+				// normal priority
+				if (numWorkers < config.minWorkers || numHaulers < 1)
+					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
+				else if (numWorkers < config.medWorkers)
+					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_6;
+				else
+					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_8;
 
-			// harvester override
-			if (numWorkers >= config.critWorkers && numContainers >= 1 && numHarvesters < numContainers)
-				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
+				// harvester override
+				if (numWorkers >= config.critWorkers && numContainers >= 1 && numHarvesters < numContainers)
+					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
 
-			// defense override
-			if (numWorkers >= config.critWorkers && !lib.isNull(room.memory.threat) && room.memory.threat.count > 0)
-				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
+				// defense override
+				if (numWorkers >= config.critWorkers && !lib.isNull(room.memory.threat) && room.memory.threat.count > 0)
+					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
 
-			// claim override
-			if (numWorkers >= config.minWorkers && room.memory.motivations[motivationClaimRoom.name].spawnAllocated)
-				room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
+				// claim override
+				if (numWorkers >= config.minWorkers && room.memory.motivations[motivationClaimRoom.name].spawnAllocated)
+					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
+			} else if (motivationSupplySpawn.isInit(room.name)) {
+				motivationSupplySpawn.deInit(room.name);
+			}
 
 
-			motivationMaintainInfrastructure.init(room.name);
-			room.memory.motivations[motivationMaintainInfrastructure.name].priority = C.PRIORITY_5;
+			// should only be init in my room, or a ldh target
+			if (room.getIsMine() || roomManager.getIsLongDistanceHarvestTarget(room.name)) {
+				motivationMaintainInfrastructure.init(room.name);
+				room.memory.motivations[motivationMaintainInfrastructure.name].priority = C.PRIORITY_5;
+			} else if (motivationMaintainInfrastructure.isInit(room.name)) {
+				motivationMaintainInfrastructure.deInit(room.name);
+			}
 
-			motivationSupplyController.init(room.name);
-			let roomController = room.controller;
-			let ticksToDowngrade;
-			if (!lib.isNull(roomController))
-				ticksToDowngrade = roomController.ticksToDowngrade;
-			else
-				ticksToDowngrade = 0;
 
-			if (ticksToDowngrade > config.claimTicks)
-				room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_7;
-			else
-				room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_2;
+			// only in my rooms
+			if (room.getIsMine()) {
+				motivationSupplyController.init(room.name);
+				let roomController = room.controller;
+				let ticksToDowngrade;
+				if (!lib.isNull(roomController))
+					ticksToDowngrade = roomController.ticksToDowngrade;
+				else
+					ticksToDowngrade = 0;
+
+				if (ticksToDowngrade > config.claimTicks)
+					room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_7;
+				else
+					room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_2;
+			} else if (motivationSupplyController.isInit(room.name)) {
+				motivationSupplyController.deInit(room.name);
+			}
 		}
 		cpuManager.timerStop("motivate.init", 1, 2);
 	},

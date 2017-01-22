@@ -73,9 +73,9 @@ MotivationHaulToStorage.prototype.getDesireSpawn = function (roomName, demands)
 
 	if (numWorkers < config.minWorkers)
 		result = false;
-	if (spawnUnit === "worker" && numWorkers > config.maxWorkers)
+	if (spawnUnit === "worker" && numWorkers >= config.maxWorkers)
 		result = false;
-	if (spawnUnit === "hauler" && numHaulers > config.maxHaulers)
+	if (spawnUnit === "hauler" && numHaulers >= config.maxHaulers)
 		result = false;
 
 	return result;

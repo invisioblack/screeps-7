@@ -83,7 +83,7 @@ MotivationClaimRoom.prototype.getDesireSpawn = function (roomName, demands)
 	}
 
 	// if it isn't our room or we have a worker shortage, false
-	if (!room.getIsMine() || numWorkers <= config.medWorkers)
+	if (!room.getIsMine() || numWorkers < config.medWorkers)
 	{
 		lib.log(">&>&>&>&>&>&> FAIL: Too Few Workers", debug);
 		return false;
