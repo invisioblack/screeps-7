@@ -136,6 +136,14 @@ module.exports =
 			} else if (motivationSupplyController.isInit(room.name)) {
 				motivationSupplyController.deInit(room.name);
 			}
+
+			// only in my room with extractor
+			if (room.getIsMine() && room.memory.cache.structures[STRUCTURE_EXTRACTOR].length > 0) {
+				motivationHarvestMinerals.init(room.name);
+				room.memory.motivations[motivationHarvestMinerals.name].priority = C.PRIORITY_8;
+			} else if (motivationHarvestMinerals.isInit(room.name)) {
+				motivationHarvestMinerals.deInit(room.name);
+			}
 		}
 		cpuManager.timerStop("motivate.init", 1, 2);
 	},

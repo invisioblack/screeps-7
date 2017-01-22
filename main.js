@@ -10,8 +10,6 @@
  *      tie this to garrison
  *      set garrison to allow to pull units from elsewhere
  *      create specific spawn profiles based on threat
- * TODO: send maintainers to maintain roads in ldh rooms
- * TODO: create motivation to spawn units for other rooms, rewire claim to use this
  * TODO: should be able to set a motivation on a creep and have the need manager auto set a need on it
  *      this wil be used for things like periodically sending units places to do things
  * TODO: Implement labs and making boosts
