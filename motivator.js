@@ -139,10 +139,23 @@ module.exports =
 
 			// only in my room with extractor
 			if (room.getIsMine() && room.memory.cache.structures[STRUCTURE_EXTRACTOR].length > 0) {
+				let mineralContainer = Game.getObjectById(room.memory.mineralContainerId);
+				let containerTotal = 0;
+
 				motivationHarvestMinerals.init(room.name);
-				room.memory.motivations[motivationHarvestMinerals.name].priority = C.PRIORITY_8;
+				motivationHaulMinerals.init(room.name);
+				room.memory.motivations[motivationHarvestMinerals.name].priority = C.PRIORITY_6;
+				room.memory.motivations[motivationHaulMinerals.name].priority = C.PRIORITY_6;
+
+				if (!lib.isNull(mineralContainer))
+				{
+					containerTotal = _.sum(mineralContainer.store);
+				}
+				if (containerTotal > 1000)
+					room.memory.motivations[motivationHaulMinerals.name].priority = C.PRIORITY_1;
 			} else if (motivationHarvestMinerals.isInit(room.name)) {
 				motivationHarvestMinerals.deInit(room.name);
+				motivationHaulMinerals.deInit(room.name);
 			}
 		}
 		cpuManager.timerStop("motivate.init", 1, 2);

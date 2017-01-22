@@ -125,6 +125,11 @@ module.exports =
 					lib.log("Creep: " + creep.name + " Working needHarvestSource", debug);
 					jobHarvestSource.work(creep);
 				}
+				else if (need.type === "needHarvestMinerals")
+				{
+					lib.log("Creep: " + creep.name + " Working needHarvestMinerals", debug);
+					jobHarvestMinerals.work(creep);
+				}
 				else if (need.type === "needLongDistanceHarvest")
 				{
 					lib.log("Creep: " + creep.name + " Working needLongDistanceHarvest", debug);
@@ -146,6 +151,11 @@ module.exports =
 							break;
 					}
 
+				}
+				else if (need.type === "needHaulMinerals")
+				{
+					lib.log("Creep: " + creep.name + " Working needHaulMinerals", debug);
+					jobHaulMinerals.work(creep);
 				}
 				else if (need.type === "needHaulToStorage")
 				{

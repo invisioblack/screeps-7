@@ -1,6 +1,3 @@
-//-------------------------------------------------------------------------
-// jobHarvest
-//-------------------------------------------------------------------------
 "use strict";
 //-------------------------------------------------------------------------
 // modules
@@ -14,24 +11,25 @@ let Job = require("Job.prototype")();
 //-------------------------------------------------------------------------
 // constructor
 //-------------------------------------------------------------------------
-let JobTransfer = function ()
+let JobHaulMinerals = function ()
 {
 	Job.call(this);
-	this.name = "jobTransfer";
+	this.name = "jobHaulMinerals";
 };
 
-JobTransfer.prototype = Object.create(Job.prototype);
-JobTransfer.prototype.constructor = JobTransfer;
+JobHaulMinerals.prototype = Object.create(Job.prototype);
+JobHaulMinerals.prototype.constructor = JobHaulMinerals;
 
 //-------------------------------------------------------------------------
 // implementation
 //-------------------------------------------------------------------------
-JobTransfer.prototype.work = function (creep)
+JobHaulMinerals.prototype.work = function (creep)
 {
 	let debug = false;
 	let need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
-	let target = Game.getObjectById(need.targetId);
-	let carry = creep.carry[RESOURCE_ENERGY];
+	let target = Game.getObjectById(need.targetId); // this is the storage
+	let mineralContainer = Game.getObjectById(creep.room.memory.mineralContainerId);
+	let carry = creep.carrying();
 
 	//avoid hostiles
 	if (creep.avoidHostile(creep))
@@ -51,34 +49,45 @@ JobTransfer.prototype.work = function (creep)
 
 	lib.log(creep.name + " job/mode: " + creep.memory.job.mode, debug);
 
+	if (lib.isNull(mineralContainer))
+	{
+		creep.say("No container");
+		return;
+	}
+
 	// manage job
 	switch (creep.memory.job.mode)
 	{
 		case this.JOB_MODE_GETENERGY:
-			lib.log(creep.name + " getting energy ", debug);
-			this.getEnergy(creep);
+			lib.log(creep.name + " getting minerals ", debug);
+			let result = creep.withdraw(mineralContainer, RESOURCES_ALL);
+			if (result === ERR_NOT_IN_RANGE)
+			{
+				let moveResult = creep.moveTo(mineralContainer, {"maxRooms": 1});
+			}
+			if (carry === creep.carryCapacity)
+			{
+				creep.say("Full!");
+				creep.memory.job.mode = this.JOB_MODE_WORK;
+				return;
+			}
+			console.log(result);
 			break;
 		case this.JOB_MODE_WORK:
-			this.resetSource(creep);
 			if (carry === 0)
 			{
 				creep.memory.job.mode = this.JOB_MODE_GETENERGY;
 				creep.deassignMotive();
 			} else {
-
-				//console.log("return: " + target);
-				this.resetSource(creep);
 				let result;
 				_.forEach(creep.carry, (v, k) => {
 					result = creep.transfer(target, k);
 					lib.log(creep.name + " transfer result: " + result, false);
 				});
+
 				if (result === ERR_NOT_IN_RANGE)
 				{
-
 					let moveResult = creep.moveTo(target, {"maxRooms": 1});
-					//if (moveResult < 0 && moveResult != ERR_TIRED)
-					//	console.log(creep.name + " Can't move while transferring: " + moveResult);
 				} else if (result === ERR_FULL) {
 					lib.log("---- RESET", debug);
 					creep.deassignMotive();
@@ -91,4 +100,4 @@ JobTransfer.prototype.work = function (creep)
 //-------------------------------------------------------------------------
 // export
 //-------------------------------------------------------------------------
-module.exports = new JobTransfer();
+module.exports = new JobHaulMinerals();
