@@ -25,26 +25,18 @@ JobRangedGuard.prototype.constructor = JobRangedGuard;
 //-------------------------------------------------------------------------
 JobRangedGuard.prototype.work = function (creep)
 {
-	let targets = creep.room.find(FIND_HOSTILE_CREEPS);
+	let target = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS, { ignoreCreeps: true});
 
-	if (targets.length) {
-		let target = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS, { ignoreCreeps: true});
-
-		if (target)
-		{
-			if (target.pos.inRangeTo(creep.pos, 2)) {
-				creep.moveTo(creep.pos.x + creep.pos.x - target.pos.x, creep.pos.y + creep.pos.y - target.pos.y );
-			} else if (target.pos.inRangeTo(creep.pos, 3)) {
-				creep.rangedAttack(target);
-			}
-			else {
-				creep.moveTo(target);
-			}
-		}
-	}
-	else
+	if (target && diplomacyManager.status(target.owner.username) === C.RELATION_HOSTILE)
 	{
-		creep.rendezvous(creep, 4);
+		if (target.pos.inRangeTo(creep.pos, 2)) {
+			creep.moveTo(creep.pos.x + creep.pos.x - target.pos.x, creep.pos.y + creep.pos.y - target.pos.y );
+		} else if (target.pos.inRangeTo(creep.pos, 3)) {
+			creep.rangedAttack(target);
+		}
+		else {
+			creep.moveTo(target);
+		}
 	}
 };
 //-------------------------------------------------------------------------

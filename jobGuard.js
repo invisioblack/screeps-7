@@ -26,23 +26,12 @@ JobGuard.prototype.constructor = JobGuard;
 //-------------------------------------------------------------------------
 JobGuard.prototype.work = function (creep)
 {
-	let targets = creep.room.find(FIND_HOSTILE_CREEPS);
-	//console.log(JSON.stringify(targets));
+	let target = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS, { ignoreCreeps: true});
 
-	creep.sing("For the glory to the empire!", true);
-
-	if (targets.length)
+	if (target && diplomacyManager.status(target.owner.username) === C.RELATION_HOSTILE)
 	{
-		let target = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS, { ignoreCreeps: true});
-		if (target)
-		{
-			creep.moveTo(target);
-			creep.attack(target);
-		}
-	}
-	else
-	{
-		creep.rendezvous(creep, 5);
+		creep.moveTo(target);
+		creep.attack(target);
 	}
 };
 

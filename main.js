@@ -6,8 +6,6 @@
  *      manage links
  *      support picking up minerals
  *      support picking up energy from long range harvest rooms
- * TODO: create ally exemption
- *      finish implementation
  * TODO: set rooms as defended, and send creeps to kill enemies there
  *      tie this to garrison
  *      set garrison to allow to pull units from elsewhere

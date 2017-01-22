@@ -52,10 +52,13 @@ JobManualTactical.prototype.work = function (creep)
 	}
 	else if (Game.flags.creep && Game.flags.creep.room === creep.room)
 	{
-		let target = Game.flags.creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS);
-		let result = creep.attack(target);
-		if (result === ERR_NOT_IN_RANGE)
-			creep.moveTo(target, { maxRooms: 1});
+		let target = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS, { ignoreCreeps: true});
+
+		if (target && diplomacyManager.status(target.owner.username) === C.RELATION_HOSTILE)
+		{
+			creep.moveTo(target);
+			creep.attack(target);
+		}
 	}
 	else if (Game.flags.wall && Game.flags.wall.room === creep.room)
 	{
@@ -67,16 +70,23 @@ JobManualTactical.prototype.work = function (creep)
 	else if (Game.flags.spawn && Game.flags.spawn.room === creep.room)
 	{
 		let spawn = creep.room.find(FIND_HOSTILE_SPAWNS)[0];
-		let result = creep.attack(spawn);
-		if (result === ERR_NOT_IN_RANGE)
-			creep.moveTo(spawn, { maxRooms: 1});
-	}
+
+		if (spawn && diplomacyManager.status(spawn.owner.username) === C.RELATION_HOSTILE)
+		{
+			let result = creep.attack(spawn);
+			if (result === ERR_NOT_IN_RANGE)
+				creep.moveTo(spawn, { maxRooms: 1});
+		}
+		}
+
 	else if (Game.flags.structure && Game.flags.structure.room === creep.room)
 	{
 		let target = Game.flags.structure.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES);
-		let result = creep.attack(target);
-		if (result === ERR_NOT_IN_RANGE)
-			creep.moveTo(target, { maxRooms: 1});
+		if (target && diplomacyManager.status(target.owner.username) === C.RELATION_HOSTILE) {
+			let result = creep.attack(target);
+			if (result === ERR_NOT_IN_RANGE)
+				creep.moveTo(target, {maxRooms: 1});
+		}
 	}
 };
 
