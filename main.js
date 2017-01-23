@@ -1,6 +1,4 @@
 /**
- * TODO: Claimers keep getting stuck
- * TODO: Mine resources!
  * TODO: revamp haul to storage to make hauler smarter, don't use default energy finder
  *      split loads better
  *      manage links
@@ -29,6 +27,8 @@
  *      allow turing entire system on and off
  *      use this to pull and track historical data
  *      store data by tick, auto cull old data
+ * TODO: implement standard validation on every function
+ *      check to make sure every reference exists, and handle at the begenning
   */
 "use strict";
 

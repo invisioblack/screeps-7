@@ -7,7 +7,7 @@
  */
 global.r1 = "W12S76";
 global.r2 = "W13S77";
-global.r3 = "W11S78";
+global.r3 = "W11S79";
 global.l1 = "W13S76";
 global.l2 = "W12S77";
 global.l3 = "W14S77";
@@ -205,6 +205,11 @@ global.lAdd = function (sourceRoomName, targetRoomName)
 		return "Missing argument(s). - sourceRoomName, targetRoomName";
 	if (lib.isNull(Memory.rooms[sourceRoomName]))
 		return "Missing source room: " + sourceRoomName;
+
+	if (lib.isNull(Memory.rooms[targetRoomName].longDistanceHarvestTargets))
+		Memory.rooms[targetRoomName].longDistanceHarvestTargets = [];
+	if (lib.isNull(Memory.rooms[targetRoomName].longDistanceHarvestParents))
+		Memory.rooms[targetRoomName].longDistanceHarvestParents = [];
 
 	let targets = Memory.rooms[sourceRoomName].longDistanceHarvestTargets;
 	let parents = Memory.rooms[targetRoomName].longDistanceHarvestParents;

@@ -145,7 +145,6 @@ Creep.prototype.deassignMotive = function (roomName)
 	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("creepManager.countRoomMotivationUnits", [this.memory.motive.room, this.memory.motive.motivation, this.memory.unit]));
 	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("creepManager.countRoomMotivationUnits", [roomName, "", this.memory.unit]));
 
-
 	this.say("Done!");
 	if (!lib.isNull(roomName) && roomName != "")
 		this.memory.motive.room = roomName;

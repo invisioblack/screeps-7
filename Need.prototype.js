@@ -59,6 +59,9 @@ module.exports = function ()
 
 	Need.prototype.getUnitHaulToStorageDemand = function (roomName, unitName, result)
 	{
+		if (lib.isNull(Memory.rooms[roomName]) || !_.has(Memory.rooms[roomName], `cache.structures[${STRUCTURE_CONTAINER}]`))
+			return {};
+
 		let unit = lib.nullProtect(creepManager.getRoomUnits(roomName, unitName)[0], {});
 		let unitCapacity = lib.nullProtect(unit.carryCapacity, 500);
 		let containers = _.map(Memory.rooms[roomName].cache.structures[STRUCTURE_CONTAINER], function (cid) {

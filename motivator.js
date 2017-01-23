@@ -308,10 +308,7 @@ module.exports =
 						let countUnits = creepManager.countRoomUnits(roomName, unitName);
 							//_.has(global, "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName].length : 0;
 						//console.log(unitName + " " + countUnits);
-						if (unitName === "worker" && countUnits < config.critWorkers)
-							spawn.spawnUnit(unitName , false);
-						else
-							spawn.spawnUnit(unitName , true);
+						spawn.spawnUnit(unitName);
 					}
 				}
 			}
@@ -531,24 +528,25 @@ module.exports =
 
 		let numWorkers = creepManager.countRoomUnits(roomName, "worker");
 			//_.has(global, "cache.rooms." + roomName + ".units.worker") ? global.cache.rooms[roomName].units["worker"].length : 0;
-
+		let targets = lib.nullProtect(spawnRoom.memory.longDistanceHarvestTargets, []);
 		lib.log(`Spawn Room: ${roomName} workers: ${numWorkers}`, debug);
 
-		_.forEach(spawnRoom.memory.longDistanceHarvestTargets, (rN) => {
-			let numWorkersRoom = creepManager.countRoomUnits(rN, "worker");
+		_.forEach(targets, (rN) => {
+			if (!lib.isNull(Memory.rooms[rN]) && !lib.isNull(Memory.rooms[rN].motivations) && !lib.isNull(Memory.rooms[rN].motivations["motivationMaintainInfrastructure"]) && !lib.isNull(Memory.rooms[rN].motivations["motivationMaintainInfrastructure"].demands)) {
+				let numWorkersRoom = creepManager.countRoomUnits(rN, "worker");
 				//_.has(global, "cache.rooms." + rN + ".units.worker") ? global.cache.rooms[rN].units["worker"].length : 0;
-			let demandedWorkers = Memory.rooms[rN].motivations["motivationMaintainInfrastructure"].demands.units["worker"];
+				let demandedWorkers = Memory.rooms[rN].motivations["motivationMaintainInfrastructure"].demands.units["worker"];
 
-			lib.log(`Target Room: ${rN} workers: ${numWorkersRoom}`, debug);
+				lib.log(`Target Room: ${rN} workers: ${numWorkersRoom}`, debug);
 
-			if (numWorkers > config.medWorkers && numWorkersRoom < 1 && demandedWorkers > 0)
-			{
-				lib.log(`Trying to allocate for target Room: ${rN}`, debug);
-				let creep = creepManager.findRoomUnassignedUnit(roomName, "worker");
-				if (!lib.isNull(creep)) {
-					lib.log(`Allocating ${creep.name} to target Room: ${rN}`, debug);
-					creep.assignToRoom(rN);
-					numWorkers--;
+				if (numWorkers > config.medWorkers && numWorkersRoom < 1 && demandedWorkers > 1) {
+					lib.log(`Trying to allocate for target Room: ${rN}`, debug);
+					let creep = creepManager.findRoomUnassignedUnit(roomName, "worker");
+					if (!lib.isNull(creep)) {
+						lib.log(`Allocating ${creep.name} to target Room: ${rN}`, debug);
+						creep.assignToRoom(rN);
+						numWorkers--;
+					}
 				}
 			}
 		});

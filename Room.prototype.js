@@ -67,6 +67,8 @@ Room.prototype.init = function ()
 			this.memory.rsl = 8;
 			this.memory.spawnEnergy = 12300;
 		}
+
+		this.memory.lastSeen = Game.time;
 	}
 };
 
@@ -667,7 +669,7 @@ Room.prototype.updateThreat = function ()
 			console.log("!!!> NPC THREAT! " + link);
 		}
 
-		if (this.memory.threats >= C.THREAT_NPC && this.memory.threat.breach)
+		if (this.memory.threat.level >= C.THREAT_NPC && this.memory.threat.breach)
 		{
 			this.memory.threat.level = C.THREAT_PANIC;
 			console.log("!!!> WALL BREACH! " + link);

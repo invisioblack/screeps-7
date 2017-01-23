@@ -55,7 +55,7 @@ MotivationHarvestSource.prototype.getDesireSpawn = function (roomName, demands)
 	let roomMemory = Memory.rooms[roomName];
 	let unitName = this.getDesiredSpawnUnit(roomName);
 	let numContainers = lib.nullProtect(roomMemory.cache.structures[STRUCTURE_CONTAINER], []).length;
-	let numHarvesters = creepManager.countRoomMotivationUnits(roomName, "motivationHarvestSource", unitName);
+	let numHarvesters = creepManager.countRoomUnits(roomName, unitName);
 		//_.has(global, "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName].length : 0;
 	let demandedHarvesters = lib.nullProtect(demands.units[unitName], 0);
 	let numWorkers = creepManager.countRoomUnits(roomName, "worker");

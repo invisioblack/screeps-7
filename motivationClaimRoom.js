@@ -98,6 +98,10 @@ MotivationClaimRoom.prototype.getDesireSpawn = function (roomName, demands)
 	// if this room is specified as spawn for another room, and the demanded units don't exist, true
 
 	_.forEach(spawnClaims, function (c) {
+		if (lib.isNull(Memory.rooms[c.room]))
+		{
+			Memory.rooms[c.room] = {};
+		}
 		//console.log(c.room + ": " + _.has(global, "cache.rooms." + c.room + ".units.claimer"));
 		let numClaimers = creepManager.countRoomUnits(c.room, "claimer");
 			//_.has(global, "cache.rooms." + c.room + ".units.claimer") ? global.cache.rooms[c.room].units["claimer"].length : 0;
@@ -122,8 +126,6 @@ MotivationClaimRoom.prototype.getDesireSpawn = function (roomName, demands)
 		}
 
 		lib.log("Room: " + c.room + " COUNT: " + numClaimers + " TICKS: " + reservation, debug);
-
-
 	});
 
 	lib.log("Spawn claimer " + result, debug);

@@ -1,81 +1,295 @@
 // TODO: implement max property
 "use strict";
 module.exports =
-{
-	"worker": {
-		"mode": 1,
-		"parts": [
-			{
-				"part" : WORK,
-				"weight" : 0.4,
-				"minimum" : 1
-			},
-			{
-				"part" : CARRY,
-				"weight" : 0.3,
-				"minimum" : 1
-			},
-			{
-				"part" : MOVE,
-				"weight" : 0.3,
-				"minimum" : 1
+	{
+		"worker": {
+			"mode": 3,
+			"parts": [
+				//0
+				[
+					WORK,
+					CARRY,
+					MOVE
+				],
+				//1
+				[
+					WORK,
+					CARRY,
+					MOVE
+				],
+				//2
+				[
+					WORK,
+					WORK,
+					CARRY,
+					CARRY,
+					CARRY,
+					MOVE,
+					MOVE,
+					MOVE,
+				],
+				//3
+				[
+					WORK,
+					WORK,
+					WORK,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE
+				],
+				//4
+				[
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE
+				],
+				//5
+				[
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE
+				],
+				//6
+				[
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE
+				],
+				//7
+				[
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE
+				],
+				//8
+				[
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE
+				]
+			],
+			"memory": {
+				"unit": "worker"
 			}
-		],
-		"memory": {
-			"unit": "worker"
-		}
-	},
+		},
 
-	"harvester": {
-		"mode": 3,
-		"parts": [
-			//0
-			[
-				WORK,
-				WORK,
-				WORK,
-				WORK,
-				WORK,
-				MOVE
+		"harvester": {
+			"mode": 3,
+			"parts": [
+				//0
+				[
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					MOVE
+				],
+				//1
+				[
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					MOVE
+				],
+				//2
+				[
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					MOVE
+				],
+				//3
+				[
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					MOVE
+				],
+				//4
+				[
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					MOVE
+				],
+				//5
+				[
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					CARRY,
+					MOVE
+				],
+				//6
+				[
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					CARRY,
+					MOVE
+				],
+				//7
+				[
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					CARRY,
+					MOVE
+				],
+				//8
+				[
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					WORK,
+					CARRY,
+					MOVE
+				],
 			],
-			//1
-			[
-				WORK,
-				WORK,
-				WORK,
-				WORK,
-				WORK,
-				MOVE
-			],
-			//2
-			[
-				WORK,
-				WORK,
-				WORK,
-				WORK,
-				WORK,
-				MOVE
-			],
-			//3
-			[
-				WORK,
-				WORK,
-				WORK,
-				WORK,
-				WORK,
-				MOVE
-			],
-			//4
-			[
-				WORK,
-				WORK,
-				WORK,
-				WORK,
-				WORK,
-				MOVE
-			],
-			//5
-			[
+			"memory": {
+				"unit": "harvester"
+			}
+		},
+		"ldharvester": {
+			"mode": 2,
+			"parts": [
 				WORK,
 				WORK,
 				WORK,
@@ -83,193 +297,399 @@ module.exports =
 				WORK,
 				WORK,
 				CARRY,
+				MOVE,
 				MOVE
 			],
-			//6
-			[
-				WORK,
-				WORK,
-				WORK,
-				WORK,
-				WORK,
-				WORK,
-				CARRY,
-				MOVE
-			],
-			//7
-			[
-				WORK,
-				WORK,
-				WORK,
-				WORK,
-				WORK,
-				WORK,
-				CARRY,
-				MOVE
-			],
-			//8
-			[
-				WORK,
-				WORK,
-				WORK,
-				WORK,
-				WORK,
-				WORK,
-				CARRY,
-				MOVE
-			],
-		],
-		"memory": {
-			"unit": "harvester"
-		}
-	},
-	"ldharvester": {
-		"mode": 2,
-		"parts": [
-			WORK,
-			WORK,
-			WORK,
-			WORK,
-			WORK,
-			WORK,
-			CARRY,
-			MOVE,
-			MOVE
-		],
-		"memory": {
-			"unit": "ldharvester"
-		}
-	},
+			"memory": {
+				"unit": "ldharvester"
+			}
+		},
 
-	"hauler": {
-		"mode": 1,
-		"parts": [
-			{
-				"part" : CARRY,
-				"weight" : 0.5,
-				"minimum" : 1
-			},
-			{
-				"part" : MOVE,
-				"weight" : 0.5,
-				"minimum" : 1
+		"hauler": {
+			"mode": 3,
+			"parts": [
+				// 0
+				[
+					CARRY,
+					CARRY,
+					CARRY,
+					MOVE,
+					MOVE
+				],
+				// 1
+				[
+					CARRY,
+					CARRY,
+					CARRY,
+					MOVE,
+					MOVE
+				],
+				// 2
+				[
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE
+				],
+				// 3
+				[
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE
+				],
+				// 4
+				[
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE
+				],
+				// 5
+				[
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE
+				],
+				// 6
+				[
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE
+				],
+				// 7
+				[
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE
+				],
+				// 8
+				[
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					CARRY,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE,
+					MOVE
+				]
+			],
+			"memory": {
+				"unit": "hauler"
 			}
-		],
-		"memory": {
-			"unit": "hauler"
-		}
-	},
-	"claimer": {
-		"mode": 1,
-		"parts": [
-			{
-				"part" : CLAIM,
-				"weight" : 0.8,
-				"minimum" : 2
-			},
-			{
-				"part" : MOVE,
-				"weight" : 0.2,
-				"minimum" : 1
+		},
+		"claimer": {
+			"mode": 3,
+			"parts": [
+				// 0
+				[
+					CLAIM,
+					CLAIM,
+					MOVE,
+					MOVE
+				],
+				// 1
+				[
+					CLAIM,
+					CLAIM,
+					MOVE,
+					MOVE
+				],
+				// 2
+				[
+					CLAIM,
+					CLAIM,
+					MOVE,
+					MOVE
+				],
+				// 3
+				[
+					CLAIM,
+					CLAIM,
+					MOVE,
+					MOVE
+				],
+				// 4
+				[
+					CLAIM,
+					CLAIM,
+					MOVE,
+					MOVE
+				],
+				// 5
+				[
+					CLAIM,
+					CLAIM,
+					MOVE,
+					MOVE
+				],
+				// 6
+				[
+					CLAIM,
+					CLAIM,
+					CLAIM,
+					MOVE,
+					MOVE,
+					MOVE
+				],
+				// 7
+				[
+					CLAIM,
+					CLAIM,
+					CLAIM,
+					MOVE,
+					MOVE,
+					MOVE
+				],
+				// 8
+				[
+					CLAIM,
+					CLAIM,
+					CLAIM,
+					MOVE,
+					MOVE,
+					MOVE
+				]
+			],
+			"memory": {
+				"unit": "claimer"
 			}
-		],
-		"memory": {
-			"unit": "claimer"
-		}
-	},
-	"guard": {
-		"mode": 1,
-		"parts": [
-			{
-				"part" : TOUGH,
-				"weight" : 0.05,
-				"minimum" : 0
-			},
-			{
-				"part" : ATTACK,
-				"weight" : 0.45,
-				"minimum" : 1
-			},
-			{
-				"part" : MOVE,
-				"weight" : 0.5,
-				"minimum" : 1
+		},
+		"guard": {
+			"mode": 1,
+			"parts": [
+				{
+					"part": TOUGH,
+					"weight": 0.05,
+					"minimum": 0
+				},
+				{
+					"part": ATTACK,
+					"weight": 0.45,
+					"minimum": 1
+				},
+				{
+					"part": MOVE,
+					"weight": 0.5,
+					"minimum": 1
+				}
+			],
+			"memory": {
+				"unit": "guard"
 			}
-		],
-		"memory": {
-			"unit": "guard"
-		}
-	},
-	"rangedGuard": {
-		"mode": 1,
-		"parts": [
-			{
-				"part" : TOUGH,
-				"weight" : 0.1,
-				"minimum" : 0
-			},
-			{
-				"part" : ATTACK,
-				"weight" : 0.6,
-				"minimum" : 1
-			},
-			{
-				"part" : MOVE,
-				"weight" : 0.3,
-				"minimum" : 1
+		},
+		"rangedGuard": {
+			"mode": 1,
+			"parts": [
+				{
+					"part": TOUGH,
+					"weight": 0.1,
+					"minimum": 0
+				},
+				{
+					"part": ATTACK,
+					"weight": 0.6,
+					"minimum": 1
+				},
+				{
+					"part": MOVE,
+					"weight": 0.3,
+					"minimum": 1
+				}
+			],
+			"memory": {
+				"unit": "rangedGuard"
 			}
-		],
-		"memory": {
-			"unit": "rangedGuard"
-		}
-	},
-	"heal": {
-		"mode": 1,
-		"parts": [
-			{
-				"part" : TOUGH,
-				"weight" : 0.1,
-				"minimum" : 0
-			},
-			{
-				"part" : HEAL,
-				"weight" : 0.6,
-				"minimum" : 1
-			},
-			{
-				"part" : MOVE,
-				"weight" : 0.3,
-				"minimum" : 1
+		},
+		"heal": {
+			"mode": 1,
+			"parts": [
+				{
+					"part": TOUGH,
+					"weight": 0.1,
+					"minimum": 0
+				},
+				{
+					"part": HEAL,
+					"weight": 0.6,
+					"minimum": 1
+				},
+				{
+					"part": MOVE,
+					"weight": 0.3,
+					"minimum": 1
+				}
+			],
+			"memory": {
+				"unit": "heal"
 			}
-		],
-		"memory": {
-			"unit": "heal"
+		},
+		"siege": {
+			"mode": 2,
+			"parts": [
+				TOUGH,
+				TOUGH,
+				WORK,
+				HEAL,
+				HEAL,
+				HEAL,
+				HEAL,
+				HEAL,
+				HEAL,
+				MOVE,
+				MOVE,
+				MOVE,
+				MOVE,
+				MOVE,
+				MOVE,
+				MOVE,
+				MOVE,
+				MOVE
+			],
+			"memory": {
+				"unit": "siege"
+			}
 		}
-	},
-	"siege": {
-		"mode": 2,
-		"parts": [
-			TOUGH,
-			TOUGH,
-			WORK,
-			HEAL,
-			HEAL,
-			HEAL,
-			HEAL,
-			HEAL,
-			HEAL,
-			MOVE,
-			MOVE,
-			MOVE,
-			MOVE,
-			MOVE,
-			MOVE,
-			MOVE,
-			MOVE,
-			MOVE
-		],
-		"memory": {
-			"unit": "siege"
-		}
-	}
-};
+	};

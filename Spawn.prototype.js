@@ -13,7 +13,7 @@ Spawn.prototype.costs[RANGED_ATTACK] = 150;
 Spawn.prototype.costs[HEAL] = 250;
 Spawn.prototype.costs[TOUGH] = 10;
 Spawn.prototype.costs[CLAIM] = 600;
-
+Spawn.prototype.rsl = [0,300,550,800,1300,1800,2300,5300,12300];
 
     // returns cost for an array of parts
 Spawn.prototype.getCostParts = function (parts)
@@ -24,7 +24,7 @@ Spawn.prototype.getCostParts = function (parts)
 		for (let x in parts)
 		{
 		    //console.log("P: " + parts[x]);
-			result += Spawn.prototype.getCostParts.costs[parts[x]];
+			result += this.costs[parts[x]];
 		}
 	}
 	return result;
@@ -62,41 +62,48 @@ Spawn.prototype.generateName = function (name)
  * @param unitName
  * @param fullEnergy
  */
-Spawn.prototype.spawnUnit = function (unitName, fullEnergy)
+Spawn.prototype.spawnUnit = function (unitName)
 {
-	let debug = false;
-	let energy = this.room.getSpawnEnergy();
+	let debug = true;
+	let spawnEnergy = this.room.getSpawnEnergy();
+	let energyBudget = 0;
+	let numWorkers = creepManager.getRoomUnits(this.room.name, "worker");
+	let forceSpawn = false;
 
-	lib.log("  Spawn Status: " + energy.energy + "/" + energy.energyCapacity + " full energy: " + fullEnergy, debug);
-
-	if (fullEnergy)
+	// hijack if forceSpawn is enabled
+	if (!lib.isNull(this.room.memory.forceSpawn) && this.room.memory.forceSpawn != "")
 	{
-		return this.spawnUnitByEnergy(unitName , energy.energyCapacity);
-	} else {
-		return this.spawnUnitByEnergy(unitName, energy.energy);
+		forceSpawn = true;
+		unitName = this.room.memory.forceSpawn;
 	}
+
+	// panic worker override
+	if (numWorkers < config.critWorkers && unitName === "worker")
+	{
+		energyBudget = spawnEnergy.energy;
+	} else {
+		energyBudget = spawnEnergy.energyCapacity;
+	}
+
+	lib.log(`Spawn Status Room: ${roomLink(this.room.name)} Unit: ${unitName} Energy Availability: ${spawnEnergy.energy}/${spawnEnergy.energyCapacity} Budget: ${energyBudget} FS: ${forceSpawn}`, debug);
+	return this.spawnUnitByEnergy(unitName , spawnEnergy.energyCapacity);
 };
 
 /**
  * private function to spawn units, generally use spawnUnit
  * @param unitName
- * @param energy
+ * @param energyBudget
  */
-Spawn.prototype.spawnUnitByEnergy = function (unitName, energy)
+Spawn.prototype.spawnUnitByEnergy = function (unitName, energyBudget)
 {
-	let debug = false;
+	let debug = true;
 	let parts = [];
 	let name;
 	let result;
-	let energyLeft = energy;
-
-	// hijack if forceSpawn is enabled
-	if (!lib.isNull(this.room.memory.forceSpawn) && this.room.memory.forceSpawn != "")
-	{
-		unitName = this.room.memory.forceSpawn;
-	}
-
-	name = this.generateName(unitName);
+	let energyLeft = energyBudget;
+	let rsl = this.room.memory.rsl;
+	let spawnEnergy = this.room.getSpawnEnergy();
+	let partCost = 0;
 
 	switch (units[unitName].mode)
 	{
@@ -104,7 +111,7 @@ Spawn.prototype.spawnUnitByEnergy = function (unitName, energy)
 			units[unitName].parts.forEach(function (part)
 			{
 
-				let partEnergy = energy * part.weight;
+				let partEnergy = energyBudget * part.weight;
 				let numberParts = Math.floor(partEnergy / this.costs[part.part]);
 
 				if (numberParts < part.minimum)
@@ -124,20 +131,23 @@ Spawn.prototype.spawnUnitByEnergy = function (unitName, energy)
 			parts = units[unitName].parts;
 			break;
 		case 3:
-			parts = units[unitName].parts[this.room.controller.level];
+			parts = units[unitName].parts[rsl];
 			break;
 	}
 
-	lib.log(JSON.stringify(parts), debug);
-	if (energy < 300)
-		lib.log('-------------------Failed creating creep ' + unitName + ' : ' + name + " energy: " + energy + " result: too little energy", debug);
+	// attempt to spawn creep ------------------------------------------------------------------------------------------
+	name = this.generateName(unitName);
+	partCost = this.getCostParts(parts);
+	lib.log(`Spawn Status Room: ${roomLink(this.room.name)} RSL: ${rsl} Spawning: ${name} Energy Budget: ${energyBudget} Cost: ${partCost} Avail/Max: ${spawnEnergy.energy}/${spawnEnergy.energyCapacity} Parts: ${parts.length}`, debug);
+	if (energyBudget < 300)
+		lib.log('Spawn Status -- Failed creating creep ' + name + ' : ' + name + " energyBudget: " + energyBudget + " result: too little energyBudget", debug);
 	else
 	{
 		parts = this.shuffle(parts);
 		result = this.createCreep(parts , name , units[unitName].memory);
 		if (_.isString(result))
 		{
-			lib.log('+++++++++++++++++++Creating creep ' + unitName + ' : ' + name + " energy: " + energy + " result: " + result, debug);
+			lib.log('Spawn Status ++ Creating creep ' + name + ' : ' + name + " energyBudget: " + energyBudget + " result: " + result, debug);
 			// @type {Creep}
 			let creep = Game.creeps[name];
 			creep.memory.homeRoom = this.room.name;
@@ -147,7 +157,7 @@ Spawn.prototype.spawnUnitByEnergy = function (unitName, energy)
 		}
 		else
 		{
-			lib.log('-------------------Failed creating creep ' + unitName + ' : ' + name + " energy: " + energy + " result: " + result, debug);
+			lib.log('Spawn Status -- Failed creating creep ' + name + ' : ' + name + " energyBudget: " + energyBudget + " result: " + result, debug);
 		}
 	}
 };
@@ -166,4 +176,5 @@ Spawn.prototype.shuffle = function(body) {
 		})
 		.value();
 };
+
 module.exports = function() {};

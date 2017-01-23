@@ -46,23 +46,23 @@ MotivationLongDistanceHarvest.prototype.getDesireSpawn = function (roomName, dem
 	let result = false;
 	let spawnRoom = Game.rooms[roomName];
 	let numWorkers = creepManager.countRoomUnits(roomName, "worker");
-		//_.has(global, "cache.rooms." + roomName + ".units.worker") ? global.cache.rooms[roomName].units["worker"].length : 0;
 
 	if (numWorkers >= config.critWorkers)
 	{
-
 		_.forEach(spawnRoom.memory.longDistanceHarvestTargets, (rN) => {
 
 			let room = Game.rooms[rN];
 			let roomMemory = Memory.rooms[rN];
-			if (lib.isNull(room))
-			{
-				roomMemory.motivations["motivationHarvestSource"].demands = motivationHarvestSource.getDemands(rN);
-			}
+			if (!lib.isNull(roomMemory) && !lib.isNull(roomMemory.motivations) && !lib.isNull(roomMemory.motivations["motivationHarvestSource"]) && !lib.isNull(roomMemory.motivations["motivationHarvestSource"].demands)) {
+				if (lib.isNull(room)) {
+					roomMemory.motivations["motivationHarvestSource"].demands = motivationHarvestSource.getDemands(rN);
+				}
 
-			if (roomMemory.motivations["motivationHarvestSource"].demands.spawn)
-				result = true;
-			lib.log(`Room: ${roomName} Target: ${rN} Result: ${result} ${JSON.stringify(roomMemory.motivations["motivationHarvestSource"].demands)}`, debug);
+				if (!lib.isNull(roomMemory) && roomMemory.motivations["motivationHarvestSource"].demands.spawn)
+					result = true;
+				if (!lib.isNull(roomMemory))
+					lib.log(`Room: ${roomName} Target: ${rN} Result: ${result} ${JSON.stringify(roomMemory.motivations["motivationHarvestSource"].demands)}`, debug);
+			}
 		});
 	}
 
