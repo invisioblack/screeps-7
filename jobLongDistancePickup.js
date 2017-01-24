@@ -113,7 +113,7 @@ JobLongDistancePickup.prototype.work = function (creep)
 
 		if (carry === 0) {
 			let numHaulers = creepManager.countRoomUnits(target, "hauler");
-			if (numHaulers < 1) {
+			if (numHaulers < 2) {
 				creep.deassignMotive(target);
 				creep.say("LDH!");
 			} else {

@@ -68,11 +68,12 @@ JobSupplyExtenders.prototype.work = function (creep)
 				creep.deassignMotive();
 			} else {
 				this.resetSource(creep);
-				let target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+				let extensions = _.map(creep.room.memory.cache.structures[STRUCTURE_EXTENSION], (o) => { return Game.getObjectById(o)});
+				let target = creep.pos.findClosestByRange(extensions, {
 					ignoreCreeps: true,
 					filter: function (e)
 					{
-						return e.structureType === STRUCTURE_EXTENSION && e.energy < e.energyCapacity;
+						return e.energy < e.energyCapacity;
 					}
 				});
 

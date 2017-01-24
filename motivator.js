@@ -158,7 +158,7 @@ module.exports =
 				motivationHaulMinerals.deInit(room.name);
 			}
 		}
-		cpuManager.timerStop("motivate.init", 1, 2);
+		cpuManager.timerStop("motivate.init", config.cpuInitDebug, 1, 2);
 	},
 
 	/*******************************************************************************************************************
@@ -223,7 +223,7 @@ module.exports =
 
 			cpuManager.timerStart(`\t\tMotivate R1`, "motivate.r1");
 			this.motivateRound1(sortedMotivations, room, demands, resources);
-			cpuManager.timerStop("motivate.r1");
+			cpuManager.timerStop("motivate.r1", config.cpuMotivateDebug);
 
 
 			// TODO: this needs to be implemented differently, this is just a hack
@@ -239,23 +239,23 @@ module.exports =
 			// process round 2 and 3 for each unit type ------------------------------------------------------------
 			cpuManager.timerStart(`\t\tMotivate R2&R3`, "motivate.r2");
 			this.motivateRound2n3(roomName, sortedMotivations, demands, resources);
-			cpuManager.timerStop("motivate.r2");
+			cpuManager.timerStop("motivate.r2", config.cpuMotivateDebug);
 
 
 			// motivation round 4 ----------------------------------------------------------------------------------
 			cpuManager.timerStart(`\t\tManage Needs`, "motivate.r4");
 			this.motivateRound4(sortedMotivations, room);
-			cpuManager.timerStop("motivate.r4");
+			cpuManager.timerStop("motivate.r4", config.cpuMotivateDebug);
 
-			cpuManager.timerStop("motivate.room", 8, 10);
+			cpuManager.timerStop("motivate.room", config.cpuRoomDebug, 8, 10);
 		}
 
 		// fulfill needs ---------------------------------------------------------------------------------------
 		cpuManager.timerStart("\tFulfill Needs", "motivate.fulfillNeeds");
 		needManager.fulfillNeeds();
-		cpuManager.timerStop("motivate.fulfillNeeds", 5, 10);
+		cpuManager.timerStop("motivate.fulfillNeeds", config.cpuNeedsDebug, 5, 10);
 
-		cpuManager.timerStop("motivate", 25, 40);
+		cpuManager.timerStop("motivate", config.cpuMotivateDebug, 25, 40);
 	},
 
 	/**
@@ -296,7 +296,7 @@ module.exports =
 
 			// spawn units if allocated spawn ------------------------------------------------------------------
 			let unitName = global[motivationMemory.name].getDesiredSpawnUnit(roomName);
-			if (motivationMemory.spawnAllocated)
+			if (motivationMemory.spawnAllocated && room.getIsMine())
 			{
 				for (let spawnName in Game.spawns)
 				{

@@ -64,10 +64,10 @@ Spawn.prototype.generateName = function (name)
  */
 Spawn.prototype.spawnUnit = function (unitName)
 {
-	let debug = true;
+	let debug = false;
 	let spawnEnergy = this.room.getSpawnEnergy();
 	let energyBudget = 0;
-	let numWorkers = creepManager.getRoomUnits(this.room.name, "worker");
+	let numWorkers = creepManager.countRoomUnits(this.room.name, "worker");
 	let forceSpawn = false;
 
 	// hijack if forceSpawn is enabled
@@ -86,7 +86,7 @@ Spawn.prototype.spawnUnit = function (unitName)
 	}
 
 	lib.log(`Spawn Status Room: ${roomLink(this.room.name)} Unit: ${unitName} Energy Availability: ${spawnEnergy.energy}/${spawnEnergy.energyCapacity} Budget: ${energyBudget} FS: ${forceSpawn}`, debug);
-	return this.spawnUnitByEnergy(unitName , spawnEnergy.energyCapacity);
+	return this.spawnUnitByEnergy(unitName , energyBudget);
 };
 
 /**
@@ -96,14 +96,24 @@ Spawn.prototype.spawnUnit = function (unitName)
  */
 Spawn.prototype.spawnUnitByEnergy = function (unitName, energyBudget)
 {
-	let debug = true;
+	let debug = false;
 	let parts = [];
 	let name;
 	let result;
 	let energyLeft = energyBudget;
-	let rsl = this.room.memory.rsl;
+	let roomSpawnLevel = this.room.memory.rsl;
 	let spawnEnergy = this.room.getSpawnEnergy();
 	let partCost = 0;
+
+	// check rsl
+	let x = -1;
+	_.forEach(this.rsl, (en) =>
+	{
+		//console.log("en: " + en + " x: " + x);
+		if (energyBudget > en)
+			x++;
+	});
+	roomSpawnLevel = x;
 
 	switch (units[unitName].mode)
 	{
@@ -131,14 +141,14 @@ Spawn.prototype.spawnUnitByEnergy = function (unitName, energyBudget)
 			parts = units[unitName].parts;
 			break;
 		case 3:
-			parts = units[unitName].parts[rsl];
+			parts = units[unitName].parts[roomSpawnLevel];
 			break;
 	}
 
 	// attempt to spawn creep ------------------------------------------------------------------------------------------
 	name = this.generateName(unitName);
 	partCost = this.getCostParts(parts);
-	lib.log(`Spawn Status Room: ${roomLink(this.room.name)} RSL: ${rsl} Spawning: ${name} Energy Budget: ${energyBudget} Cost: ${partCost} Avail/Max: ${spawnEnergy.energy}/${spawnEnergy.energyCapacity} Parts: ${parts.length}`, debug);
+	lib.log(`Spawn Status Room: ${roomLink(this.room.name)} RSL: ${roomSpawnLevel} Spawning: ${name} Energy Budget: ${energyBudget} Cost: ${partCost} Avail/Max: ${spawnEnergy.energy}/${spawnEnergy.energyCapacity} Parts: ${parts.length}`, debug);
 	if (energyBudget < 300)
 		lib.log('Spawn Status -- Failed creating creep ' + name + ' : ' + name + " energyBudget: " + energyBudget + " result: too little energyBudget", debug);
 	else

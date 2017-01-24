@@ -29,12 +29,14 @@
  *      store data by tick, auto cull old data
  * TODO: implement standard validation on every function
  *      check to make sure every reference exists, and handle at the begenning
-  */
+ */
 "use strict";
 
 //----------------------------------------------------------------------------------------------------------------------
 // Modules
 //----------------------------------------------------------------------------------------------------------------------
+const profiler = require('screeps-profiler');
+profiler.enable();
 // game prototypes
 require('Creep.prototype');
 require('Source.prototype');
@@ -47,69 +49,66 @@ require('StructureLink.prototype');
 require("globals");
 require("logging");
 require("shortcuts");
+
+// global --------------------------------------------------------------------------------------------------------------
 global.cpuUsedLast = 0;
 cpuManager.log(">>>> Global Start <<<<");
 
 
-// global -------------------------------------------------------------------------------------------------------------
-// modules
-
 // main loop -----------------------------------------------------------------------------------------------------------
-module.exports.loop = function ()
-{
-	cpuManager.timerStart("++++ Loop ++++", "loop");
-	delete Memory.rooms[undefined]; // WTF WHY IS THIS HAPPENING!!!
-	//------------------------------------------------------------------------------------------------------------------
-	// Declarations
-	//------------------------------------------------------------------------------------------------------------------
-	let active = true;
-	let debug = false;
-	let cpuMode = cpuManager.getThrottleMode();
+module.exports.loop = function () {
+	profiler.wrap(function () {
+		cpuManager.timerStart("++++ Loop ++++", "loop");
+		delete Memory.rooms[undefined]; // WTF WHY IS THIS HAPPENING!!!
+		//------------------------------------------------------------------------------------------------------------------
+		// Declarations
+		//------------------------------------------------------------------------------------------------------------------
+		let active = true;
+		let debug = false;
+		let cpuMode = cpuManager.getThrottleMode();
 
-	// cpu throttle
-	active = cpuManager.getCPUActive(cpuMode);
+		// cpu throttle
+		active = cpuManager.getCPUActive(cpuMode);
 
-	//------------------------------------------------------------------------------------------------------------------
-	// Do stuffs
-	//------------------------------------------------------------------------------------------------------------------
-	lib.log("<b>+++++++++++++++++++++++ new tick +++++++++++++++++++++++</b>", debug);
-	cleanupMemory();
-	if (active)
-	{
-		cacheManager.init();
-		motivator.init();
-		motivator.motivate();
-	}
-	creepManager.handleLostCreeps();
+		//------------------------------------------------------------------------------------------------------------------
+		// Do stuffs
+		//------------------------------------------------------------------------------------------------------------------
+		lib.log("<b>+++++++++++++++++++++++ new tick +++++++++++++++++++++++</b>", debug);
+		cleanupMemory();
+		if (active) {
+			cacheManager.init();
+			motivator.init();
+			motivator.motivate();
+		}
+		creepManager.handleLostCreeps();
 
-	//------------------------------------------------------------------------------------------------------------------
-	// END
-	//------------------------------------------------------------------------------------------------------------------
-	lib.log("<b>+++++++++++++++++++++++ end tick +++++++++++++++++++++++</b>", debug);
+		//------------------------------------------------------------------------------------------------------------------
+		// END
+		//------------------------------------------------------------------------------------------------------------------
+		lib.log("<b>+++++++++++++++++++++++ end tick +++++++++++++++++++++++</b>", debug);
 
-	if (Game.time % 100 === 0)
-		cacheManager.flushMem("cacheFunction");
+		if (Game.time % 100 === 0)
+			cacheManager.flushMem("cacheFunction");
 
-	cpuManager.timerStop("loop", 30, 38);
-	cpuManager.tickTrack();
+		cpuManager.timerStop("loop", config.cpuLoopDebug, 30, 38);
+		cpuManager.tickTrack();
+	});
 };
 
-function cleanupMemory ()
-{
-    for(let i in Memory.creeps) {
-        if(!Game.creeps[i])
-        {
-        	let mem = Memory.creeps[i];
-        	if (!lib.isNull(mem)
-		        && !lib.isNull(mem.unit)
-		        && !lib.isNull(mem.motive)
-		        && !lib.isNull(mem.motive.room)
-		        && !lib.isNull(mem.motive.motivation))
-	        cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("creepManager.countRoomMotivationUnits", [mem.motive.room, mem.motive.motivation, mem.unit]));
-	        delete Memory.creeps[i];
-        }
-    }
-}
+function cleanupMemory() {
+	for (let i in Memory.creeps) {
+		if (!Game.creeps[i]) {
+			let mem = Memory.creeps[i];
+			if (!lib.isNull(mem)
+				&& !lib.isNull(mem.unit)
+				&& !lib.isNull(mem.motive)
+				&& !lib.isNull(mem.motive.room)
+				&& !lib.isNull(mem.motive.motivation))
+				cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("creepManager.countRoomMotivationUnits", [mem.motive.room, mem.motive.motivation, mem.unit]));
+			delete Memory.creeps[i];
+		}
+	}
+};
 
 
 

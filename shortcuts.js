@@ -442,6 +442,20 @@ global.total = function(){
 	return Object.keys(Game.creeps).length;
 };
 
+//profiler
+//global.p = Game.profiler;
+//global.pp = Game.profiler.profile;
+//global.ps = Game.profiler.stream;
+//global.pe = Game.profiler.email;
+//global.pb = Game.profiler.background;
+
+// Output current profile data.
+//global.po = Game.profiler.output;
+
+// Reset the profiler, disabling any profiling in the process.
+//global.pr = Game.profiler.reset;
+//global.prs = Game.profiler.restart;
+
 // to be used after you respawn into a new location
 //   but before you spawn your first creep...
 global.respawn = function(){

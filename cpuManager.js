@@ -93,7 +93,7 @@ module.exports =
 		//lib.log(`>START: ${message}\t CPU Used Total: ${_.round(cpuUsed, 1)}`, config.cpuDetailDebug);
 	},
 
-	timerStop: function (key, yellow = 1, red = 5)
+	timerStop: function (key, output = true, yellow = 1, red = 5)
 	{
 		this.initMem();
 		let color = C.COLOR_GREEN;
@@ -113,7 +113,7 @@ module.exports =
 		if (result.cpuDiff >= red)
 			color = C.COLOR_RED;
 
-		lib.log(`${result.message}\t CPU Used Total: ${_.round(result.cpuStop, 1)}\tCPU Used Diff: <span style=color:${color}>${_.round(result.cpuDiff, 1)}</span>`, config.cpuDetailDebug);
+		lib.log(`${result.message}\t CPU Used Total: ${_.round(result.cpuStop, 1)}\tCPU Used Diff: <span style=color:${color}>${_.round(result.cpuDiff, 1)}</span>`, output);
 	},
 	
 	getThrottleMode: function ()

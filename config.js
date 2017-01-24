@@ -1,7 +1,7 @@
 "use strict";
 module.exports =
 {
-	"critWorkers": 1,
+	"critWorkers": 2,
 	"minWorkers": 2,
 	"medWorkers": 3,
 	"maxWorkers": 4,
@@ -11,8 +11,13 @@ module.exports =
 	"claimTicks": 1000,
 	'towerPowerFactor': 0.8,
 	'towerRepairFactor': 0.1,
-	"cpuDebug": false,
+	"cpuDebug": true,
 	"cpuDetailDebug": false,
+	"cpuInitDebug": false,
+	"cpuLoopDebug": false,
+	"cpuRoomDebug": false,
+	"cpuMotivateDebug": false,
+	"cpuNeedsDebug": false,
 	"cpuHistorySize": 1000,
 	"cpuThresholdThird": 1000,
 	"cpuThresholdHalf": 500,

@@ -95,7 +95,7 @@ Creep.prototype.percentFull = function()
 
 Creep.prototype.getSpawn = function()
 {
-	let creepSpawn = lib.nullProtect(Game.spawns[this.memory.spawn], this.pos.findClosestByPath(FIND_MY_SPAWNS, { ignoreCreeps: true }));
+	let creepSpawn = Game.spawns[creep.memory.spawn];
 	return creepSpawn;
 };
 
@@ -141,9 +141,12 @@ Creep.prototype.assignMotive = function (roomName, motivationName, needName)
 
 Creep.prototype.deassignMotive = function (roomName)
 {
+	let debug = false;
 	// dirty the cache for the before and after values
 	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("creepManager.countRoomMotivationUnits", [this.memory.motive.room, this.memory.motive.motivation, this.memory.unit]));
 	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("creepManager.countRoomMotivationUnits", [roomName, "", this.memory.unit]));
+
+	lib.log(`Creep: ${this.name} Room/target: ${roomLink(this.room.name)}/${roomName} Motive: ${this.memory.motive.motivation}/${this.memory.motive.need}`, debug);
 
 	this.say("Done!");
 	if (!lib.isNull(roomName) && roomName != "")

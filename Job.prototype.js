@@ -291,7 +291,7 @@ module.exports = function()
 		let containers = _.map(containerIds, function (c) { return Game.getObjectById(c)});
 		let container = _.max(containers, function (o) { return o.store[RESOURCE_ENERGY]});
 
-		//console.log("containers: " + container.store[RESOURCE_ENERGY]);
+		//console.log(`room: ${creep.room.name} creep: ${creep.name} container: ${JSON.stringify(container)}/${container}`);
 
 		// second pass check and assign
 		if (!lib.isNull(container) && container.store[RESOURCE_ENERGY] > 0)

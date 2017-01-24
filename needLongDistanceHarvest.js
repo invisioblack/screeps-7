@@ -37,9 +37,11 @@ NeedLongDistanceHarvest.prototype.getUnitDemands = function(roomName, needMemory
 	needMemory.demands = {};
 	needMemory.demands["ldharvester"] = 0;
 
-	if (!lib.isNull(targetRoomMemory) && !lib.isNull(targetRoomMemory.motivations) && !lib.isNull(targetRoomMemory.motivations["motivationHarvestSource"])) {
+	if (!lib.isNull(targetRoomMemory) && !lib.isNull(targetRoomMemory.motivations) && !lib.isNull(targetRoomMemory.motivations["motivationHarvestSource"]) && !lib.isNull(targetRoomMemory.motivations["motivationHarvestSource"].demands)) {
 		//console.log();
 		needMemory.demands["ldharvester"] = lib.nullProtect(targetRoomMemory.motivations["motivationHarvestSource"].demands.units["ldharvester"], 0);
+	} else {
+	    needMemory.demands["ldharvester"] = 0;
 	}
 
 	//console.log(`${roomName} ${JSON.stringify(needMemory.demands)}`);

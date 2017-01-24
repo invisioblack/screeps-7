@@ -284,12 +284,12 @@ Room.prototype.updateEnergyPickupMode = function ()
 			result = C.ROOM_ENERGYPICKUPMODE_CONTAINER;
 		}
 
-		if (numStorage > 0)
+		if (numStorage > 0 && this.getIsMine())
 		{
 			result = C.ROOM_ENERGYPICKUPMODE_STORAGE;
 		}
 
-		if (numLink > 1 && numHaulers > 0)
+		if (numLink > 1 && numHaulers > 0 && this.getIsMine())
 		{
 			result = C.ROOM_ENERGYPICKUPMODE_LINK;
 		}
@@ -507,7 +507,7 @@ Room.prototype.handleLostCreeps = function()
 			let exit = creep.room.findExitTo(creep.memory.motive.room);
 			lib.log(JSON.stringify(exit), debug);
 			// and move to exit
-			let door = creep.pos.findClosestByPath(exit, { maxRooms: 2 });
+			let door = creep.pos.findClosestByRange(exit, { maxRooms: 2 });
 			//console.log(JSON.stringify(door));
 			moveResult = creep.moveTo(door);
 			

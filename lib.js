@@ -7,7 +7,7 @@ module.exports =
 {
 	"isNull": function (value)
 	{
-        if (typeof value === "undefined" || value === null)
+        if (typeof value === "undefined" || value === undefined || value === null || value === Infinity || value === -Infinity)
             return true;
         else
             return false;
