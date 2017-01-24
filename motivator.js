@@ -7,548 +7,510 @@
 //----------------------------------------------------------------------------------------------------------------------
 "use strict";
 module.exports =
-{
-	//------------------------------------------------------------------------------------------------------------------
-	// init, should be called before motivate
-	"init": function ()
 	{
-		cpuManager.timerStart("motivate init", "motivate.init");
-		// init motivations in each room we control
-		for (let roomName in Game.rooms) {
-			let room = Game.rooms[roomName];
+		//------------------------------------------------------------------------------------------------------------------
+		// init, should be called before motivate
+		"init": function () {
+			cpuManager.timerStart("motivate init", "motivate.init");
+			// init motivations in each room we control
+			_.forEach(Game.rooms, (room, roomName) => {
+				room.init();
+				room.initMemCache();
+				room.updateEnergyPickupMode();
 
-			if (lib.isNull(room))
-				console.log("NULL ROOM");
+				//console.log(JSON.stringify(global.cache.rooms[roomName].units));
 
-			room.init();
-			room.initMemCache();
-			room.updateEnergyPickupMode();
+				// init motivations in memory
+				if (lib.isNull(room.memory.motivations)) {
+					room.memory.motivations = {};
+				}
 
-			//console.log(JSON.stringify(global.cache.rooms[roomName].units));
+				// init each motivation for this room
+				motivationManualTactical.init(room.name);
+				room.memory.motivations[motivationManualTactical.name].priority = C.PRIORITY_1;
 
-			// init motivations in memory
-			if (lib.isNull(room.memory.motivations)) {
-				room.memory.motivations = {};
-			}
+				// should only be init in my room, or a ldh target
+				if (room.getIsMine() || roomManager.getIsLongDistanceHarvestTarget(room.name)) {
+					motivationHarvestSource.init(room.name);
+					room.memory.motivations[motivationHarvestSource.name].priority = C.PRIORITY_1;
+				} else if (motivationHarvestSource.isInit(room.name)) {
+					motivationHarvestSource.deInit(room.name);
+				}
 
-			// init each motivation for this room
-			motivationManualTactical.init(room.name);
-			room.memory.motivations[motivationManualTactical.name].priority = C.PRIORITY_1;
+				// should only be init in my room, or a ldh target
+				if (room.getIsMine() || roomManager.getIsLongDistanceHarvestTarget(room.name)) {
+					motivationHaulToStorage.init(room.name);
+					room.memory.motivations[motivationHaulToStorage.name].priority = C.PRIORITY_2;
+				} else if (motivationHaulToStorage.isInit(room.name)) {
+					motivationHaulToStorage.deInit(room.name);
+				}
 
-			// should only be init in my room, or a ldh target
-			if (room.getIsMine() || roomManager.getIsLongDistanceHarvestTarget(room.name)) {
-				motivationHarvestSource.init(room.name);
-				room.memory.motivations[motivationHarvestSource.name].priority = C.PRIORITY_1;
-			} else if (motivationHarvestSource.isInit(room.name)) {
-				motivationHarvestSource.deInit(room.name);
-			}
+				// only active in my rooms with towers
+				if (room.getIsMine() && room.memory.cache.structures[STRUCTURE_TOWER].length > 0) {
+					motivationSupplyTower.init(room.name);
+					room.memory.motivations[motivationSupplyTower.name].priority = C.PRIORITY_2;
+				} else if (motivationSupplyTower.isInit(room.name)) {
+					motivationSupplyTower.deInit(room.name);
+				}
 
-			// should only be init in my room, or a ldh target
-			if (room.getIsMine() || roomManager.getIsLongDistanceHarvestTarget(room.name)) {
-				motivationHaulToStorage.init(room.name);
-				room.memory.motivations[motivationHaulToStorage.name].priority = C.PRIORITY_2;
-			} else if (motivationHaulToStorage.isInit(room.name)) {
-				motivationHaulToStorage.deInit(room.name);
-			}
+				// this one should only be active in rooms with a claim
+				motivationClaimRoom.init(room.name);
+				room.memory.motivations[motivationClaimRoom.name].priority = C.PRIORITY_4;
 
-			// only active in my rooms with towers
-			if (room.getIsMine() && room.memory.cache.structures[STRUCTURE_TOWER].length > 0) {
-				motivationSupplyTower.init(room.name);
-				room.memory.motivations[motivationSupplyTower.name].priority = C.PRIORITY_2;
-			} else if (motivationSupplyTower.isInit(room.name)) {
-				motivationSupplyTower.deInit(room.name);
-			}
+				motivationGarrison.init(room.name);
+				room.memory.motivations[motivationGarrison.name].priority = C.PRIORITY_2;
 
-			// this one should only be active in rooms with a claim
-			motivationClaimRoom.init(room.name);
-			room.memory.motivations[motivationClaimRoom.name].priority = C.PRIORITY_4;
-
-			motivationGarrison.init(room.name);
-			room.memory.motivations[motivationGarrison.name].priority = C.PRIORITY_2;
-
-			// should only be init in my room
-			if (room.getIsMine()) {
-				motivationLongDistanceHarvest.init(room.name);
-				room.memory.motivations[motivationLongDistanceHarvest.name].priority = C.PRIORITY_3;
-			} else if (motivationLongDistanceHarvest.isInit(room.name)) {
-				motivationLongDistanceHarvest.deInit(room.name);
-			}
+				// should only be init in my room
+				if (room.getIsMine()) {
+					motivationLongDistanceHarvest.init(room.name);
+					room.memory.motivations[motivationLongDistanceHarvest.name].priority = C.PRIORITY_3;
+				} else if (motivationLongDistanceHarvest.isInit(room.name)) {
+					motivationLongDistanceHarvest.deInit(room.name);
+				}
 
 
-
-			// only in my rooms
-			if (room.getIsMine()) {
-				motivationSupplySpawn.init(room.name);
-				let numWorkers = creepManager.countRoomUnits(roomName, "worker");
+				// only in my rooms
+				if (room.getIsMine()) {
+					motivationSupplySpawn.init(room.name);
+					let numWorkers = creepManager.countRoomUnits(roomName, "worker");
 					//_.has(global, "cache.homeRooms." + roomName + ".units.worker") ? global.cache.homeRooms[roomName].units["worker"].length : 0;
-				let numHarvesters = creepManager.countRoomUnits(roomName, "harvester");
+					let numHarvesters = creepManager.countRoomUnits(roomName, "harvester");
 					//_.has(global, "cache.homeRooms." + roomName + ".units.harvester") ? global.cache.homeRooms[roomName].units["harvester"].length : 0;
-				let numHaulers = creepManager.countRoomUnits(roomName, "hauler");
-				let numContainers = lib.nullProtect(room.memory.cache.structures[STRUCTURE_CONTAINER], []).length;
+					let numHaulers = creepManager.countRoomUnits(roomName, "hauler");
+					let numContainers = lib.nullProtect(room.memory.cache.structures[STRUCTURE_CONTAINER], []).length;
 
-				// normal priority
-				if (numWorkers < config.minWorkers || numHaulers < 1)
-					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
-				else if (numWorkers < config.medWorkers)
-					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_6;
-				else
-					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_8;
-
-				// harvester override
-				if (numWorkers >= config.critWorkers && numContainers >= 1 && numHarvesters < numContainers)
-					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
-
-				// defense override
-				if (numWorkers >= config.critWorkers && !lib.isNull(room.memory.threat) && room.memory.threat.count > 0)
-					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
-
-				// claim override
-				if (numWorkers >= config.minWorkers && room.memory.motivations[motivationClaimRoom.name].spawnAllocated)
-					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
-			} else if (motivationSupplySpawn.isInit(room.name)) {
-				motivationSupplySpawn.deInit(room.name);
-			}
-
-
-			// should only be init in my room, or a ldh target
-			if (room.getIsMine() || roomManager.getIsLongDistanceHarvestTarget(room.name)) {
-				motivationMaintainInfrastructure.init(room.name);
-				room.memory.motivations[motivationMaintainInfrastructure.name].priority = C.PRIORITY_5;
-			} else if (motivationMaintainInfrastructure.isInit(room.name)) {
-				motivationMaintainInfrastructure.deInit(room.name);
-			}
-
-
-			// only in my rooms
-			if (room.getIsMine()) {
-				motivationSupplyController.init(room.name);
-				let roomController = room.controller;
-				let ticksToDowngrade;
-				if (!lib.isNull(roomController))
-					ticksToDowngrade = roomController.ticksToDowngrade;
-				else
-					ticksToDowngrade = 0;
-
-				if (ticksToDowngrade > config.claimTicks)
-					room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_7;
-				else
-					room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_2;
-			} else if (motivationSupplyController.isInit(room.name)) {
-				motivationSupplyController.deInit(room.name);
-			}
-
-			// only in my room with extractor
-			if (room.getIsMine() && room.memory.cache.structures[STRUCTURE_EXTRACTOR].length > 0) {
-				let mineralContainer = Game.getObjectById(room.memory.mineralContainerId);
-				let containerTotal = 0;
-
-				motivationHarvestMinerals.init(room.name);
-				motivationHaulMinerals.init(room.name);
-				room.memory.motivations[motivationHarvestMinerals.name].priority = C.PRIORITY_6;
-				room.memory.motivations[motivationHaulMinerals.name].priority = C.PRIORITY_6;
-
-				if (!lib.isNull(mineralContainer))
-				{
-					containerTotal = _.sum(mineralContainer.store);
-				}
-				if (containerTotal > 1000)
-					room.memory.motivations[motivationHaulMinerals.name].priority = C.PRIORITY_1;
-			} else if (motivationHarvestMinerals.isInit(room.name)) {
-				motivationHarvestMinerals.deInit(room.name);
-				motivationHaulMinerals.deInit(room.name);
-			}
-		}
-		cpuManager.timerStop("motivate.init", config.cpuInitDebug, 1, 2);
-	},
-
-	/*******************************************************************************************************************
-	 * Main motivator function, should be called first from main
-	 */
-	"motivate": function ()
-	{
-		cpuManager.timerStart("motivate", "motivate");
-		let debug = false;
-		let room;
-		let cpuUsed = 0;
-
-		/***************************************************************************************************************
-		 * update unloaded rooms
-		 */
-
-		_.forEach(Memory.rooms, (v, k) => {
-			if (lib.isNull(Game.rooms[k]))
-			{
-				roomManager.updateUnitCache(k);
-			}
-		});
-
-		// motivate in each room we control ----------------------------------------------------------------------------
-		for (let roomName in Game.rooms)
-		{
-			cpuManager.timerStart(`\tRoom: ${roomLink(roomName)}`, "motivate.room");
-			room = Game.rooms[roomName];
-			//debug = room.name === "W8N3";
-
-			// update defenses -----------------------------------------------------------------------------------------
-			room.updateThreat();
-
-			// motivate defense towers -----------------------------------------------------------------------------
-			// TODO: Separate out healing from killing on the turrets
-			if (room.getIsMine())
-			{
-				room.motivateTowers(roomName);
-				// safeMode failsafe
-				room.safeModeFailsafe(roomName);
-			}
-
-			// links ---------------------------------------------------------------------------------------------------
-			room.motivateLinks();
-
-			//------------------------------------------------------------------------------------------------------
-			// motivate
-			lib.log('-------- motivator.motivate: ' + roomName , debug);
-
-
-
-			// declarations ----------------------------------------------------------------------------------------
-			let resources = room.updateResources(); // get room resources
-			let demands = {};
-			let sortedMotivations;
-			let countActiveMotivations = 0;
-
-			// -----------------------------------------------------------------------------------------------------
-			// process motivations in order of priority ------------------------------------------------------------
-			// get sorted motivations
-			sortedMotivations = _.sortByOrder(room.memory.motivations , ['priority'] , ['desc']);
-
-			cpuManager.timerStart(`\t\tMotivate R1`, "motivate.r1");
-			this.motivateRound1(sortedMotivations, room, demands, resources);
-			cpuManager.timerStop("motivate.r1", config.cpuMotivateDebug);
-
-
-			// TODO: this needs to be implemented differently, this is just a hack
-			// send off helpers for long distance harvest rooms
-			this.sendWorkersToLDHRooms(roomName);
-
-
-			// second and 3rd round motivation processing ----------------------------------------------------------
-			// unit allocation and need processing
-			countActiveMotivations = this.countActiveMotivations(roomName);
-			lib.log("--: Active Motivations: " + countActiveMotivations , debug);
-
-			// process round 2 and 3 for each unit type ------------------------------------------------------------
-			cpuManager.timerStart(`\t\tMotivate R2&R3`, "motivate.r2");
-			this.motivateRound2n3(roomName, sortedMotivations, demands, resources);
-			cpuManager.timerStop("motivate.r2", config.cpuMotivateDebug);
-
-
-			// motivation round 4 ----------------------------------------------------------------------------------
-			cpuManager.timerStart(`\t\tManage Needs`, "motivate.r4");
-			this.motivateRound4(sortedMotivations, room);
-			cpuManager.timerStop("motivate.r4", config.cpuMotivateDebug);
-
-			cpuManager.timerStop("motivate.room", config.cpuRoomDebug, 8, 10);
-		}
-
-		// fulfill needs ---------------------------------------------------------------------------------------
-		cpuManager.timerStart("\tFulfill Needs", "motivate.fulfillNeeds");
-		needManager.fulfillNeeds();
-		cpuManager.timerStop("motivate.fulfillNeeds", config.cpuNeedsDebug, 5, 10);
-
-		cpuManager.timerStop("motivate", config.cpuMotivateDebug, 25, 40);
-	},
-
-	/**
-	 *
-	 * @param sortedMotivations
-	 * @param room {Room}
-	 * @param demands
-	 * @param resources
-	 */
-	motivateRound1: function (sortedMotivations, room, demands, resources)
-	{
-		// first round motivation processing--------------------------------------------------------------------
-		// set up demands, active and spawning
-		let roomName = room.name;
-		let isSpawnAllocated = false;
-		let debug = false;
-
-		sortedMotivations.forEach(function (motivationMemory)
-		{
-			// set up demands ----------------------------------------------------------------------------------
-			demands[motivationMemory.name] = global[motivationMemory.name].getDemands(roomName , resources);
-
-			// decide which motivations should be active -------------------------------------------------------
-			global[motivationMemory.name].updateActive(roomName , demands[motivationMemory.name]);
-
-			// allocate spawn ----------------------------------------------------------------------------------
-			if (!isSpawnAllocated && demands[motivationMemory.name].spawn)
-			{
-				motivationMemory.spawnAllocated = true;
-				isSpawnAllocated = true;
-			}
-			else
-			{
-				motivationMemory.spawnAllocated = false;
-			}
-
-			lib.log("---- Motivating round 1 - demands/spawn/active: " + motivationMemory.name + " Spawn allocated: " + motivationMemory.spawnAllocated , debug);
-
-			// spawn units if allocated spawn ------------------------------------------------------------------
-			let unitName = global[motivationMemory.name].getDesiredSpawnUnit(roomName);
-			if (motivationMemory.spawnAllocated && room.getIsMine())
-			{
-				for (let spawnName in Game.spawns)
-				{
-					let spawn = Game.spawns[spawnName];
-					// this probably isn't handling multiple spawns well
-					if (spawn.room.name === roomName)
-					{
-						let r = Game.rooms[roomName];
-						let countUnits = creepManager.countRoomUnits(roomName, unitName);
-							//_.has(global, "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName].length : 0;
-						//console.log(unitName + " " + countUnits);
-						spawn.spawnUnit(unitName);
-					}
-				}
-			}
-		} , this);
-	},
-
-	/**
-	 *
-	 * @param sortedMotivations
-	 * @param demands
-	 * @param resources
-	 */
-	motivateRound2n3: function (roomName, sortedMotivations, demands, resources)
-	{
-		for (let unitName in units)
-		{
-			// -------------------------------------------------------------------------------------------------
-			// round 2, regular allocation ---------------------------------------------------------------------
-			let debug = false;
-			let iteration = 1;
-			let totalShares;
-			let totalUnits;
-			let activeDemandingMotivations = 0;
-
-			// count how many motivations are active, and demanding units of this type
-			sortedMotivations.forEach(function (motivationMemory)
-			{
-				if (motivationMemory.active && lib.nullProtect(demands[motivationMemory.name].units[unitName] , 0) > 0)
-					activeDemandingMotivations++;
-			} , this);
-
-			lib.log("++++Motivating unit: " + unitName + " for " + activeDemandingMotivations + " motivation(s)" , debug);
-
-			totalShares = activeDemandingMotivations * (activeDemandingMotivations + 1) / 2;
-			totalUnits = resources.units[unitName].unallocated;
-
-			sortedMotivations.forEach(function (motivationMemory)
-			{
-				// allocate units ------------------------------------------------------------------------------
-				if (motivationMemory.active)
-				{
-					let unitsAvailable;
-					let unitsTotalAllocated;
-					let unitsDemanded;
-					let unitsToAllocate;
-					let sharesThisIteration;
-					let unitsPerShare;
-
-					unitsDemanded = lib.nullProtect(demands[motivationMemory.name].units[unitName] , 0);
-
-					if (unitsDemanded > 0)
-					{
-						lib.log("---- Motivating round 2 - regular allocation: " + unitName + " : " + motivationMemory.name , debug);
-						unitsAvailable = lib.nullProtect(resources.units[unitName].unallocated , 0);
-						unitsTotalAllocated = lib.nullProtect(resources.units[unitName].allocated , 0);
-
-						if (unitsDemanded < 0)
-							unitsDemanded = 0;
-						sharesThisIteration = activeDemandingMotivations - (iteration - 1);
-						unitsPerShare = totalUnits / totalShares;
-
-						// Determine how many units to allocate to this motivation
-						unitsToAllocate = Math.floor(unitsPerShare * sharesThisIteration);
-						if (unitsToAllocate <= 0)
-							unitsToAllocate = 1;
-						if (unitsDemanded < unitsToAllocate)
-							unitsToAllocate = unitsDemanded;
-						if (unitsAvailable < unitsToAllocate)
-							unitsToAllocate = unitsAvailable;
-						if (unitsToAllocate > unitsAvailable)
-							unitsToAllocate = unitsAvailable;
-
-						// allocate units
-						motivationMemory.allocatedUnits[unitName] = unitsToAllocate;
-
-						// output status ---------------------------------------------------------------------------
-						lib.log("    Total Allocated/Total: " + unitsTotalAllocated + '/' + resources.units[unitName].total
-							+ ' Unallocated: ' + resources.units[unitName].unallocated , debug);
-						lib.log("    Units Available: " + unitsAvailable
-							+ " Units Allocated/Demanded: " + unitsToAllocate + "/" + unitsDemanded , debug);
-						lib.log("    Iteration: " + iteration
-							+ " Shares this iteration " + sharesThisIteration
-							+ " Units/Share: " + unitsPerShare , debug);
-
-						// update resources.units["worker"].unallocated
-						resources.units[unitName].allocated += motivationMemory.allocatedUnits[unitName];
-						resources.units[unitName].unallocated -= motivationMemory.allocatedUnits[unitName];
-						lib.log('    Allocation/Total: ' + resources.units[unitName].allocated
-							+ '/' + resources.units[unitName].total
-							+ ' Unallocated: ' + resources.units[unitName].unallocated , debug);
-					}
+					// normal priority
+					if (numWorkers < config.minWorkers || numHaulers < 1)
+						room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
+					else if (numWorkers < config.medWorkers)
+						room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_6;
 					else
-					{ // handle no demands
+						room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_8;
+
+					// harvester override
+					if (numWorkers >= config.critWorkers && numContainers >= 1 && numHarvesters < numContainers)
+						room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
+
+					// defense override
+					if (numWorkers >= config.critWorkers && !lib.isNull(room.memory.threat) && room.memory.threat.count > 0)
+						room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
+
+					// claim override
+					if (numWorkers >= config.minWorkers && room.memory.motivations[motivationClaimRoom.name].spawnAllocated)
+						room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
+				} else if (motivationSupplySpawn.isInit(room.name)) {
+					motivationSupplySpawn.deInit(room.name);
+				}
+
+
+				// should only be init in my room, or a ldh target
+				if (room.getIsMine() || roomManager.getIsLongDistanceHarvestTarget(room.name)) {
+					motivationMaintainInfrastructure.init(room.name);
+					room.memory.motivations[motivationMaintainInfrastructure.name].priority = C.PRIORITY_5;
+				} else if (motivationMaintainInfrastructure.isInit(room.name)) {
+					motivationMaintainInfrastructure.deInit(room.name);
+				}
+
+
+				// only in my rooms
+				if (room.getIsMine()) {
+					motivationSupplyController.init(room.name);
+					let roomController = room.controller;
+					let ticksToDowngrade;
+					if (!lib.isNull(roomController))
+						ticksToDowngrade = roomController.ticksToDowngrade;
+					else
+						ticksToDowngrade = 0;
+
+					if (ticksToDowngrade > config.claimTicks)
+						room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_7;
+					else
+						room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_2;
+				} else if (motivationSupplyController.isInit(room.name)) {
+					motivationSupplyController.deInit(room.name);
+				}
+
+				// only in my room with extractor
+				if (room.getIsMine() && room.memory.cache.structures[STRUCTURE_EXTRACTOR].length > 0) {
+					let mineralContainer = Game.getObjectById(room.memory.mineralContainerId);
+					let containerTotal = 0;
+
+					motivationHarvestMinerals.init(room.name);
+					motivationHaulMinerals.init(room.name);
+					room.memory.motivations[motivationHarvestMinerals.name].priority = C.PRIORITY_6;
+					room.memory.motivations[motivationHaulMinerals.name].priority = C.PRIORITY_6;
+
+					if (!lib.isNull(mineralContainer)) {
+						containerTotal = _.sum(mineralContainer.store);
+					}
+					if (containerTotal > 1000)
+						room.memory.motivations[motivationHaulMinerals.name].priority = C.PRIORITY_1;
+				} else if (motivationHarvestMinerals.isInit(room.name)) {
+					motivationHarvestMinerals.deInit(room.name);
+					motivationHaulMinerals.deInit(room.name);
+				}
+			});
+			cpuManager.timerStop("motivate.init", config.cpuInitDebug, 1, 2);
+		},
+
+		/*******************************************************************************************************************
+		 * Main motivator function, should be called first from main
+		 */
+		"motivate": function () {
+			cpuManager.timerStart("motivate", "motivate");
+			let debug = false;
+			let room;
+			let cpuUsed = 0;
+
+			/***************************************************************************************************************
+			 * update unloaded rooms
+			 */
+
+			_.forEach(Memory.rooms, (v, k) => {
+				if (lib.isNull(Game.rooms[k])) {
+					roomManager.updateUnitCache(k);
+					roomManager.updateUnitMotiveCache(k);
+				}
+			});
+
+			// motivate in each room we control ----------------------------------------------------------------------------
+			for (let roomName in Game.rooms) {
+				cpuManager.timerStart(`\tRoom: ${roomLink(roomName)}`, "motivate.room");
+				room = Game.rooms[roomName];
+				//debug = room.name === "W8N3";
+
+				// update defenses -----------------------------------------------------------------------------------------
+				room.updateThreat();
+
+				// motivate defense towers -----------------------------------------------------------------------------
+				// TODO: Separate out healing from killing on the turrets
+				if (room.getIsMine()) {
+					room.motivateTowers(roomName);
+					// safeMode failsafe
+					room.safeModeFailsafe(roomName);
+				}
+
+				// links ---------------------------------------------------------------------------------------------------
+				room.motivateLinks();
+
+				//------------------------------------------------------------------------------------------------------
+				// motivate
+				lib.log('-------- motivator.motivate: ' + roomName, debug);
+
+
+				// declarations ----------------------------------------------------------------------------------------
+				let resources = room.updateResources(); // get room resources
+				let demands = {};
+				let sortedMotivations;
+				let countActiveMotivations = 0;
+
+				// -----------------------------------------------------------------------------------------------------
+				// process motivations in order of priority ------------------------------------------------------------
+				// get sorted motivations
+				sortedMotivations = _.sortByOrder(room.memory.motivations, ['priority'], ['desc']);
+
+				cpuManager.timerStart(`\t\tMotivate R1`, "motivate.r1");
+				this.motivateRound1(sortedMotivations, room, demands, resources);
+				cpuManager.timerStop("motivate.r1", config.cpuMotivateDebug);
+
+
+				// TODO: this needs to be implemented differently, this is just a hack
+				// send off helpers for long distance harvest rooms
+				this.sendWorkersToLDHRooms(roomName);
+
+
+				// second and 3rd round motivation processing ----------------------------------------------------------
+				// unit allocation and need processing
+				countActiveMotivations = this.countActiveMotivations(roomName);
+				lib.log("--: Active Motivations: " + countActiveMotivations, debug);
+
+				// process round 2 and 3 for each unit type ------------------------------------------------------------
+				cpuManager.timerStart(`\t\tMotivate R2&R3`, "motivate.r2");
+				this.motivateRound2n3(roomName, sortedMotivations, demands, resources);
+				cpuManager.timerStop("motivate.r2", config.cpuMotivateDebug);
+
+
+				// motivation round 4 ----------------------------------------------------------------------------------
+				cpuManager.timerStart(`\t\tManage Needs`, "motivate.r4");
+				this.motivateRound4(sortedMotivations, room);
+				cpuManager.timerStop("motivate.r4", config.cpuMotivateDebug);
+
+				cpuManager.timerStop("motivate.room", config.cpuRoomDebug, 8, 10);
+			}
+
+			// fulfill needs ---------------------------------------------------------------------------------------
+			cpuManager.timerStart("\tFulfill Needs", "motivate.fulfillNeeds");
+			needManager.fulfillNeeds();
+			cpuManager.timerStop("motivate.fulfillNeeds", config.cpuNeedsDebug, 5, 10);
+
+			cpuManager.timerStop("motivate", config.cpuMotivateDebug, 25, 40);
+		},
+
+		/**
+		 *
+		 * @param sortedMotivations
+		 * @param room {Room}
+		 * @param demands
+		 * @param resources
+		 */
+		motivateRound1: function (sortedMotivations, room, demands, resources) {
+			// first round motivation processing--------------------------------------------------------------------
+			// set up demands, active and spawning
+			let roomName = room.name;
+			let isSpawnAllocated = false;
+			let debug = false;
+
+			sortedMotivations.forEach(function (motivationMemory) {
+				// set up demands ----------------------------------------------------------------------------------
+				demands[motivationMemory.name] = global[motivationMemory.name].getDemands(roomName, resources);
+
+				// decide which motivations should be active -------------------------------------------------------
+				global[motivationMemory.name].updateActive(roomName, demands[motivationMemory.name]);
+
+				// allocate spawn ----------------------------------------------------------------------------------
+				if (!isSpawnAllocated && demands[motivationMemory.name].spawn) {
+					motivationMemory.spawnAllocated = true;
+					isSpawnAllocated = true;
+				}
+				else {
+					motivationMemory.spawnAllocated = false;
+				}
+
+				lib.log("---- Motivating round 1 - demands/spawn/active: " + motivationMemory.name + " Spawn allocated: " + motivationMemory.spawnAllocated, debug);
+
+				// spawn units if allocated spawn ------------------------------------------------------------------
+				let unitName = global[motivationMemory.name].getDesiredSpawnUnit(roomName);
+				if (motivationMemory.spawnAllocated && room.getIsMine()) {
+					for (let spawnName in Game.spawns) {
+						let spawn = Game.spawns[spawnName];
+						// this probably isn't handling multiple spawns well
+						if (spawn.room.name === roomName) {
+							let r = Game.rooms[roomName];
+							let countUnits = creepManager.countRoomUnits(roomName, unitName);
+							//_.has(global, "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName].length : 0;
+							//console.log(unitName + " " + countUnits);
+							spawn.spawnUnit(unitName);
+						}
+					}
+				}
+			}, this);
+		},
+
+		/**
+		 *
+		 * @param sortedMotivations
+		 * @param demands
+		 * @param resources
+		 */
+		motivateRound2n3: function (roomName, sortedMotivations, demands, resources) {
+			_.forEach(units, (units, unitName) => {
+				// -------------------------------------------------------------------------------------------------
+				// round 2, regular allocation ---------------------------------------------------------------------
+				let debug = false;
+				let iteration = 1;
+				let totalShares;
+				let totalUnits;
+				let activeDemandingMotivations = 0;
+
+				// count how many motivations are active, and demanding units of this type
+				sortedMotivations.forEach(function (motivationMemory) {
+					if (motivationMemory.active && lib.nullProtect(demands[motivationMemory.name].units[unitName], 0) > 0)
+						activeDemandingMotivations++;
+				}, this);
+
+				//lib.log("++++Motivating unit: " + unitName + " for " + activeDemandingMotivations + " motivation(s)", debug);
+
+				totalShares = activeDemandingMotivations * (activeDemandingMotivations + 1) / 2;
+				totalUnits = resources.units[unitName].unallocated;
+
+				sortedMotivations.forEach(function (motivationMemory) {
+					// allocate units ------------------------------------------------------------------------------
+					if (motivationMemory.active) {
+						let unitsAvailable;
+						let unitsTotalAllocated;
+						let unitsDemanded;
+						let unitsToAllocate;
+						let sharesThisIteration;
+						let unitsPerShare;
+
+						unitsDemanded = lib.nullProtect(demands[motivationMemory.name].units[unitName], 0);
+
+						if (unitsDemanded > 0) {
+							//lib.log("---- Motivating round 2 - regular allocation: " + unitName + " : " + motivationMemory.name, debug);
+							unitsAvailable = lib.nullProtect(resources.units[unitName].unallocated, 0);
+							unitsTotalAllocated = lib.nullProtect(resources.units[unitName].allocated, 0);
+
+							if (unitsDemanded < 0)
+								unitsDemanded = 0;
+							sharesThisIteration = activeDemandingMotivations - (iteration - 1);
+							unitsPerShare = totalUnits / totalShares;
+
+							// Determine how many units to allocate to this motivation
+							unitsToAllocate = Math.floor(unitsPerShare * sharesThisIteration);
+							if (unitsToAllocate <= 0)
+								unitsToAllocate = 1;
+							if (unitsDemanded < unitsToAllocate)
+								unitsToAllocate = unitsDemanded;
+							if (unitsAvailable < unitsToAllocate)
+								unitsToAllocate = unitsAvailable;
+							if (unitsToAllocate > unitsAvailable)
+								unitsToAllocate = unitsAvailable;
+
+							// allocate units
+							motivationMemory.allocatedUnits[unitName] = unitsToAllocate;
+
+							// output status ---------------------------------------------------------------------------
+							//lib.log("    Total Allocated/Total: " + unitsTotalAllocated + '/' + resources.units[unitName].total
+							//	+ ' Unallocated: ' + resources.units[unitName].unallocated, debug);
+							//lib.log("    Units Available: " + unitsAvailable
+							//	+ " Units Allocated/Demanded: " + unitsToAllocate + "/" + unitsDemanded, debug);
+							//lib.log("    Iteration: " + iteration
+							//	+ " Shares this iteration " + sharesThisIteration
+							//	+ " Units/Share: " + unitsPerShare, debug);
+
+							// update resources.units["worker"].unallocated
+							resources.units[unitName].allocated += motivationMemory.allocatedUnits[unitName];
+							resources.units[unitName].unallocated -= motivationMemory.allocatedUnits[unitName];
+							//lib.log('    Allocation/Total: ' + resources.units[unitName].allocated
+							//	+ '/' + resources.units[unitName].total
+							//	+ ' Unallocated: ' + resources.units[unitName].unallocated, debug);
+						}
+						else { // handle no demands
+							iteration--;
+							motivationMemory.allocatedUnits[unitName] = 0;
+						}
+					}
+					else {
 						iteration--;
 						motivationMemory.allocatedUnits[unitName] = 0;
 					}
+
+					iteration++;
+				}, this);
+
+				// motivation round 3 ------------------------------------------------------------------------------
+				let totalUnitsAvailable = lib.nullProtect(resources.units[unitName].unallocated, 0);
+				let totalUnitsDemanded = 0;
+				let totalUnitsAllocated = 0;
+
+				sortedMotivations.forEach(function (motivationMemory) {
+					if (motivationMemory.active) {
+						totalUnitsDemanded += lib.nullProtect(demands[motivationMemory.name].units[unitName], 0);
+						totalUnitsAllocated += lib.nullProtect(motivationMemory.allocatedUnits[unitName], 0);
+					}
+				}, this);
+
+
+				//console.log("-------PREALLOCATION: totalUnitsAvailable: " + totalUnitsAvailable + " totalUnitsDemanded: " + totalUnitsDemanded + " totalUnitsAllocated: " + totalUnitsAllocated);
+				let z = 0;
+				while (totalUnitsAvailable > 0 && (totalUnitsDemanded - totalUnitsAllocated) > 0) {
+					sortedMotivations.forEach(function (motivationMemory) {
+						if (motivationMemory.active) {
+							//lib.log("---- Motivating round 3 - surplus allocation: " + unitName + " : " + motivationMemory.name, debug);
+							let unitsAvailable = lib.nullProtect(resources.units[unitName].unallocated, 0);
+							let unitsAllocated = lib.nullProtect(motivationMemory.allocatedUnits[unitName], 0);
+							let unitsDemanded = lib.nullProtect(demands[motivationMemory.name].units[unitName], 0) - unitsAllocated;
+
+							if (unitsDemanded < 0)
+								unitsDemanded = 0;
+
+							//lib.log(`    ${motivationMemory.name}\t\t${unitName} Available/Demanded-Allocated/Allocated units: ${unitsAvailable}/${unitsDemanded}/${unitsAllocated}`, debug);
+
+							// allocate an additional unit if it is needed
+							if (unitsAvailable > 0 && unitsDemanded > 0) {
+								//lib.log("    +Allocating additional unit:" + unitName, debug);
+								motivationMemory.allocatedUnits[unitName] += 1;
+								resources.units[unitName].allocated += 1;
+								resources.units[unitName].unallocated -= 1;
+							}
+						}
+
+					}, this);
+
+					// update values for iteration
+					totalUnitsAvailable = resources.units[unitName].unallocated;
+					totalUnitsDemanded = 0;
+					totalUnitsAllocated = 0;
+					sortedMotivations.forEach(function (motivationMemory) {
+						if (motivationMemory.active) {
+							totalUnitsDemanded += lib.nullProtect(demands[motivationMemory.name].units[unitName], 0);
+							totalUnitsAllocated += lib.nullProtect(motivationMemory.allocatedUnits[unitName], 0);
+						}
+					}, this);
+					//console.log("-------POSTALLOCATION: totalUnitsAvailable: " + totalUnitsAvailable + " totalUnitsDemanded: " + totalUnitsDemanded + " totalUnitsAllocated: " + totalUnitsAllocated);
+					z++;
+					lib.log(`WHOAH Z: ${z}`, z > 5);
 				}
-				else
-				{
-					iteration--;
-					motivationMemory.allocatedUnits[unitName] = 0;
+				//lib.log(">>>>Final " + unitName + " Allocation: " + resources.units[unitName].allocated + "/" + resources.units[unitName].total + " Unallocated: " + resources.units[unitName].unallocated, debug);
+			});
+		},
+
+		/**
+		 *
+		 * @param sortedMotivations
+		 * @param room
+		 */
+		motivateRound4: function (sortedMotivations, room) {
+			let debug = false;
+			let roomName = room.name;
+			lib.log(">>>> Final Motivation Round - Manage Needs <<<<", debug);
+			sortedMotivations.forEach(function (motivationMemory) {
+				if (motivationMemory.active) {
+					lib.log("---- Motivating round 4 - manage needs: " + motivationMemory.name + " Active: " + motivationMemory.active, debug);
+					// processes needs for motivation ------------------------------------------------------------------
+					needManager.manageNeeds(roomName, global[motivationMemory.name], motivationMemory);
 				}
+			}, this);
+		},
 
-				iteration++;
-			} , this);
-
-			// motivation round 3 ------------------------------------------------------------------------------
-			let totalUnitsAvailable = lib.nullProtect(resources.units[unitName].unallocated , 0);
-			let totalUnitsDemanded = 0;
-			let totalUnitsAllocated = 0;
-
-			sortedMotivations.forEach(function (motivationMemory)
-			{
-				if (motivationMemory.active)
-				{
-					totalUnitsDemanded += lib.nullProtect(demands[motivationMemory.name].units[unitName] , 0);
-					totalUnitsAllocated += lib.nullProtect(motivationMemory.allocatedUnits[unitName] , 0);
+		// helper functions ------------------------------------------------------------------------------------------------
+		/**
+		 *
+		 * @param roomName
+		 * @returns {number}
+		 */
+		countActiveMotivations: function (roomName) {
+			let result = 0;
+			for (let motivationName in Game.rooms[roomName].memory.motivations) {
+				if (Game.rooms[roomName].memory.motivations[motivationName].active) {
+					result++;
 				}
-			} , this);
+			}
 
+			return result;
+		},
 
+		sendWorkersToLDHRooms: function (roomName) {
+			let debug = false
+			let spawnRoom = Game.rooms[roomName];
 
-			//console.log("-------PREALLOCATION: totalUnitsAvailable: " + totalUnitsAvailable + " totalUnitsDemanded: " + totalUnitsDemanded + " totalUnitsAllocated: " + totalUnitsAllocated);
-			while (totalUnitsAvailable > 0 && (totalUnitsDemanded - totalUnitsAllocated) > 0)
-			{
-				sortedMotivations.forEach(function (motivationMemory)
-				{
-					if (motivationMemory.active)
-					{
-						lib.log("---- Motivating round 3 - surplus allocation: " + unitName + " : " + motivationMemory.name , debug);
-						let unitsAvailable = lib.nullProtect(resources.units[unitName].unallocated , 0);
-						let unitsAllocated = lib.nullProtect(motivationMemory.allocatedUnits[unitName] , 0);
-						let unitsDemanded = lib.nullProtect(demands[motivationMemory.name].units[unitName] , 0) - unitsAllocated;
+			// don't do this in rooms I don't own
+			if (!spawnRoom.getIsMine())
+				return;
 
-						if (unitsDemanded < 0)
-							unitsDemanded = 0;
+			let numWorkers = creepManager.countRoomUnits(roomName, "worker");
+			//_.has(global, "cache.rooms." + roomName + ".units.worker") ? global.cache.rooms[roomName].units["worker"].length : 0;
+			let targets = lib.nullProtect(spawnRoom.memory.longDistanceHarvestTargets, []);
+			lib.log(`Spawn Room: ${roomName} workers: ${numWorkers}`, debug);
 
-						lib.log(`    ${motivationMemory.name}\t\t${unitName} Available/Demanded-Allocated/Allocated units: ${unitsAvailable}/${unitsDemanded}/${unitsAllocated}` , debug);
+			_.forEach(targets, (rN) => {
+				if (!lib.isNull(Memory.rooms[rN]) && !lib.isNull(Memory.rooms[rN].motivations) && !lib.isNull(Memory.rooms[rN].motivations["motivationMaintainInfrastructure"]) && !lib.isNull(Memory.rooms[rN].motivations["motivationMaintainInfrastructure"].demands)) {
+					let numWorkersRoom = creepManager.countRoomUnits(rN, "worker");
+					//_.has(global, "cache.rooms." + rN + ".units.worker") ? global.cache.rooms[rN].units["worker"].length : 0;
+					let demandedWorkers = Memory.rooms[rN].motivations["motivationMaintainInfrastructure"].demands.units["worker"];
 
-						// allocate an additional unit if it is needed
-						if (unitsAvailable > 0 && unitsDemanded > 0)
-						{
-							lib.log("    +Allocating additional unit:" + unitName , debug);
-							motivationMemory.allocatedUnits[unitName] += 1;
-							resources.units[unitName].allocated += 1;
-							resources.units[unitName].unallocated -= 1;
+					lib.log(`Target Room: ${rN} workers: ${numWorkersRoom}`, debug);
+
+					if (numWorkers > config.medWorkers && numWorkersRoom < 1 && demandedWorkers > 1) {
+						lib.log(`Trying to allocate for target Room: ${rN}`, debug);
+						let creep = creepManager.findRoomUnassignedUnit(roomName, "worker");
+						if (!lib.isNull(creep)) {
+							lib.log(`Allocating ${creep.name} to target Room: ${rN}`, debug);
+							creep.assignToRoom(rN);
+							numWorkers--;
 						}
 					}
-
-				} , this);
-
-				// update values for iteration
-				totalUnitsAvailable = resources.units[unitName].unallocated;
-				totalUnitsDemanded = 0;
-				totalUnitsAllocated = 0;
-				sortedMotivations.forEach(function (motivationMemory)
-				{
-					if (motivationMemory.active)
-					{
-						totalUnitsDemanded += lib.nullProtect(demands[motivationMemory.name].units[unitName] , 0);
-						totalUnitsAllocated += lib.nullProtect(motivationMemory.allocatedUnits[unitName] , 0);
-					}
-				} , this);
-				//console.log("-------POSTALLOCATION: totalUnitsAvailable: " + totalUnitsAvailable + " totalUnitsDemanded: " + totalUnitsDemanded + " totalUnitsAllocated: " + totalUnitsAllocated);
-			}
-			lib.log(">>>>Final " + unitName + " Allocation: " + resources.units[unitName].allocated + "/" + resources.units[unitName].total + " Unallocated: " + resources.units[unitName].unallocated , debug);
-		}
-	},
-
-	/**
-	 *
-	 * @param sortedMotivations
-	 * @param room
-	 */
-	motivateRound4: function (sortedMotivations, room)
-	{
-		let debug = false;
-		let roomName = room.name;
-		lib.log(">>>> Final Motivation Round - Manage Needs <<<<" , debug);
-		sortedMotivations.forEach(function (motivationMemory)
-		{
-			if (motivationMemory.active) {
-				lib.log("---- Motivating round 4 - manage needs: " + motivationMemory.name + " Active: " + motivationMemory.active, debug);
-				// processes needs for motivation ------------------------------------------------------------------
-				needManager.manageNeeds(roomName, global[motivationMemory.name], motivationMemory);
-			}
-		} , this);
-	},
-
-	// helper functions ------------------------------------------------------------------------------------------------
-	/**
-	 *
-	 * @param roomName
-	 * @returns {number}
-	 */
-	countActiveMotivations: function (roomName)
-	{
-		let result = 0;
-		for (let motivationName in Game.rooms[roomName].memory.motivations)
-		{
-			if (Game.rooms[roomName].memory.motivations[motivationName].active)
-			{
-				result++;
-			}
-		}
-
-		return result;
-	},
-
-	sendWorkersToLDHRooms: function (roomName) {
-		let debug = false
-		let spawnRoom = Game.rooms[roomName];
-
-		// don't do this in rooms I don't own
-		if (!spawnRoom.getIsMine())
-			return;
-
-		let numWorkers = creepManager.countRoomUnits(roomName, "worker");
-			//_.has(global, "cache.rooms." + roomName + ".units.worker") ? global.cache.rooms[roomName].units["worker"].length : 0;
-		let targets = lib.nullProtect(spawnRoom.memory.longDistanceHarvestTargets, []);
-		lib.log(`Spawn Room: ${roomName} workers: ${numWorkers}`, debug);
-
-		_.forEach(targets, (rN) => {
-			if (!lib.isNull(Memory.rooms[rN]) && !lib.isNull(Memory.rooms[rN].motivations) && !lib.isNull(Memory.rooms[rN].motivations["motivationMaintainInfrastructure"]) && !lib.isNull(Memory.rooms[rN].motivations["motivationMaintainInfrastructure"].demands)) {
-				let numWorkersRoom = creepManager.countRoomUnits(rN, "worker");
-				//_.has(global, "cache.rooms." + rN + ".units.worker") ? global.cache.rooms[rN].units["worker"].length : 0;
-				let demandedWorkers = Memory.rooms[rN].motivations["motivationMaintainInfrastructure"].demands.units["worker"];
-
-				lib.log(`Target Room: ${rN} workers: ${numWorkersRoom}`, debug);
-
-				if (numWorkers > config.medWorkers && numWorkersRoom < 1 && demandedWorkers > 1) {
-					lib.log(`Trying to allocate for target Room: ${rN}`, debug);
-					let creep = creepManager.findRoomUnassignedUnit(roomName, "worker");
-					if (!lib.isNull(creep)) {
-						lib.log(`Allocating ${creep.name} to target Room: ${rN}`, debug);
-						creep.assignToRoom(rN);
-						numWorkers--;
-					}
 				}
-			}
-		});
-	}
-};
+			});
+		}
+	};

@@ -30,11 +30,11 @@ MotivationSupplyController.prototype.constructor = MotivationSupplyController;
 MotivationSupplyController.prototype.getDemands = function (roomName, resources) {
 	let debug = false;
 	let result = {};
-	let unitName = this.getDesiredSpawnUnit(roomName);
+	//let unitName = this.getDesiredSpawnUnit(roomName);
 	result.energy = resources.controllerStatus.progressTotal - resources.controllerStatus.progress;
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
-	lib.log('  Supply Controller Demands: e: ' + result.energy + " " + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn, debug);
+	//lib.log('  Supply Controller Demands: e: ' + result.energy + " " + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn, debug);
 	Memory.rooms[roomName].motivations[this.name].demands = result;
 	return result;
 };

@@ -26,11 +26,11 @@ MotivationHarvestSource.prototype.constructor = MotivationHarvestSource;
 MotivationHarvestSource.prototype.getDemands = function (roomName, resources) {
 	let debug = false;
 	let result = {};
-	let unitName = this.getDesiredSpawnUnit(roomName);
+	//let unitName = this.getDesiredSpawnUnit(roomName);
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
 	//console.log(JSON.stringify(result.units));
-	lib.log("  Harvest Source Demands : " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn, debug);
+	//lib.log("  Harvest Source Demands : " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn, debug);
 	Memory.rooms[roomName].motivations[this.name].demands = result;
 	return result;
 };
@@ -121,7 +121,8 @@ MotivationHarvestSource.prototype.updateNeeds = function (roomName)
 		// create new need if one doesn't exist
 		if (lib.isNull(memory.needs[needName]))
 		{
-			let container = s.pos.findInRange(FIND_STRUCTURES, 1,{ filter: function (s) { return s.structureType === STRUCTURE_CONTAINER; }})[0];
+			let containers = _.map(room.memory.cache.structures[STRUCTURE_CONTAINER], (id) => { return Game.getObjectById(id); });
+			let container = s.pos.findInRange(containers, 1)[0];
 			memory.needs[needName] = {};
 			need = memory.needs[needName];
 			need.name = needName;
@@ -143,7 +144,8 @@ MotivationHarvestSource.prototype.updateNeeds = function (roomName)
 		if (room.memory.energyPickupMode === C.ROOM_ENERGYPICKUPMODE_LINK && !lib.isNull(container) && lib.isNull(need.linkId))
 		{
 
-			let link = container.pos.findInRange(FIND_STRUCTURES, 1,{ filter: function (s) { return s.structureType === STRUCTURE_LINK; }})[0];
+			let links = _.map(room.memory.cache.structures[STRUCTURE_LINK], (id) => { return Game.getObjectById(id); });
+			let link = container.pos.findInRange(links, 1)[0];
 			if (!lib.isNull(link)) {
 				need.linkId = link.id;
 			}

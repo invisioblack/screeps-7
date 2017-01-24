@@ -126,10 +126,15 @@ Creep.prototype.initMotive = function()
 
 Creep.prototype.assignMotive = function (roomName, motivationName, needName)
 {
-	// dirty the cache for the before and after values
-	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("creepManager.countRoomMotivationUnits", [this.memory.motive.room, this.memory.motive.motivation, this.memory.unit]));
-	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("creepManager.countRoomMotivationUnits", [roomName, motivationName, this.memory.unit]));
-
+	// if the creep is assigned, remove him from the cache
+	if (this.memory.motive.motivation !== "")
+	{
+		if (!lib.isNull(this.room.memory.cache.unitMotive[this.memory.motive.motivation])) {
+			this.room.memory.cache.unitMotive[this.memory.motive.motivation].units[this.memory.unit]--;
+			if (!lib.isNull(this.room.memory.cache.unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need]))
+				this.room.memory.cache.unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need].units[this.memory.unit]--;
+		}
+	}
 
 	// assign the new motive
 	this.say(needName);
@@ -137,18 +142,43 @@ Creep.prototype.assignMotive = function (roomName, motivationName, needName)
 	this.memory.motive.motivation = motivationName;
 	this.memory.motive.need = needName;
 	this.resetSource();
+
+	// add to the cache
+	if (this.memory.motive.motivation !== "")
+	{
+		if (lib.isNull(this.room.memory.cache.unitMotive[this.memory.motive.motivation])) {
+			this.room.memory.cache.unitMotive[this.memory.motive.motivation] = {};
+			this.room.memory.cache.unitMotive[this.memory.motive.motivation].units = {};
+			this.room.memory.cache.unitMotive[this.memory.motive.motivation].needs = {};
+			this.room.memory.cache.unitMotive[this.memory.motive.motivation].units[this.memory.unit] = 0;
+		}
+		this.room.memory.cache.unitMotive[this.memory.motive.motivation].units[this.memory.unit]++;
+
+		if (lib.isNull(this.room.memory.cache.unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need])) {
+			this.room.memory.cache.unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need] = {};
+			this.room.memory.cache.unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need].units = {};
+			this.room.memory.cache.unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need].units[this.memory.unit] = 0;
+		}
+		this.room.memory.cache.unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need].units[this.memory.unit]++;
+	}
 };
 
 Creep.prototype.deassignMotive = function (roomName)
 {
 	let debug = false;
-	// dirty the cache for the before and after values
-	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("creepManager.countRoomMotivationUnits", [this.memory.motive.room, this.memory.motive.motivation, this.memory.unit]));
-	cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("creepManager.countRoomMotivationUnits", [roomName, "", this.memory.unit]));
-
 	lib.log(`Creep: ${this.name} Room/target: ${roomLink(this.room.name)}/${roomName} Motive: ${this.memory.motive.motivation}/${this.memory.motive.need}`, debug);
-
 	this.say("Done!");
+
+	// if the creep is assigned, remove him from the cache
+	if (this.memory.motive.motivation !== "")
+	{
+		if (!lib.isNull(this.room.memory.cache.unitMotive[this.memory.motive.motivation])) {
+			this.room.memory.cache.unitMotive[this.memory.motive.motivation].units[this.memory.unit]--;
+			if (!lib.isNull(this.room.memory.cache.unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need]))
+				this.room.memory.cache.unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need].units[this.memory.unit]--;
+		}
+	}
+
 	if (!lib.isNull(roomName) && roomName != "")
 		this.memory.motive.room = roomName;
 	this.memory.motive.motivation = "";

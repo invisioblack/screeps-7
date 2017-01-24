@@ -30,10 +30,10 @@ MotivationHaulToStorage.prototype.constructor = MotivationHaulToStorage;
 MotivationHaulToStorage.prototype.getDemands = function (roomName, resources) {
 	let debug = false;
 	let result = {};
-	let unitName = this.getDesiredSpawnUnit(roomName);
+	//let unitName = this.getDesiredSpawnUnit(roomName);
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
-	lib.log("  Haul to Storage Demands: " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn, debug);
+	//lib.log("  Haul to Storage Demands: " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn, debug);
 	Memory.rooms[roomName].motivations[this.name].demands = result;
 	return result;
 };
@@ -132,11 +132,9 @@ MotivationHaulToStorage.prototype.updateNeeds = function (roomName)
 
 		if (room.memory.energyPickupMode === C.ROOM_ENERGYPICKUPMODE_LINK && lib.isNull(need.linkId)) {
 			let storage = Game.getObjectById(room.memory.cache.structures[STRUCTURE_STORAGE][0]);
-			let link = storage.pos.findInRange(FIND_STRUCTURES, 1, {
-				filter: function (s) {
-					return s.structureType === STRUCTURE_LINK;
-				}
-			})[0];
+			let links = _.map(room.memory.cache.structures[STRUCTURE_LINK], (id) => { return Game.getObjectById(id); });
+			let link = storage.pos.findInRange(links, 1)[0];
+
 			need.linkId = link.id;
 			room.memory.storageLinkId = link.id;
 		}

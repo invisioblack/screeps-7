@@ -31,12 +31,12 @@ MotivationManualTactical.prototype.getDemands = function (roomName, resources)
 {
 	let debug = false;
 	let result = {};
-	let unitName = this.getDesiredSpawnUnit(roomName);
+	//let unitName = this.getDesiredSpawnUnit(roomName);
 
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
 	// TODO: improve this output, it is in the same in all of them, only shows the first unit demanded
-	lib.log('  Manual Tactical Demands: ' + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn, debug);
+	//lib.log('  Manual Tactical Demands: ' + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn, debug);
 	Memory.rooms[roomName].motivations[this.name].demands = result;
 	return result;
 };

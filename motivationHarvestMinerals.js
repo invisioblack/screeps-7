@@ -26,11 +26,11 @@ MotivationHarvestMinerals.prototype.constructor = MotivationHarvestMinerals;
 MotivationHarvestMinerals.prototype.getDemands = function (roomName, resources) {
 	let debug = false;
 	let result = {};
-	let unitName = this.getDesiredSpawnUnit(roomName);
+	//let unitName = this.getDesiredSpawnUnit(roomName);
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
 	//console.log(JSON.stringify(result.units));
-	lib.log("  Harvest Minerals Demands : " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn, debug);
+	//lib.log("  Harvest Minerals Demands : " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn, debug);
 	Memory.rooms[roomName].motivations[this.name].demands = result;
 	return result;
 };
@@ -123,7 +123,8 @@ MotivationHarvestMinerals.prototype.updateNeeds = function (roomName)
 		// create new need if one doesn't exist
 		if (lib.isNull(memory.needs[needName]))
 		{
-			let container = s.pos.findInRange(FIND_STRUCTURES, 1,{ filter: function (s) { return s.structureType === STRUCTURE_CONTAINER; }})[0];
+			let containers = _.map(room.memory.cache.structures[STRUCTURE_CONTAINER], (o) => { return Game.getObjectById(o); });
+			let container = s.pos.findInRange(containers, 1)[0];
 			let mineral = s.pos.findInRange(FIND_MINERALS, 1)[0];
 			room.memory.mineralContainerId = container.id;
 			memory.needs[needName] = {};

@@ -16,23 +16,12 @@ module.exports =
 	// these functions differ than the ones in Room in that these do not require visibility of the room
 	// and they do not require the unit to be in the room, just assigned to whatever is specified
 
-	countUnits: function (unitName)
-	{
-		let result = this.getUnits(unitName).length;
-		return result;
-	} ,
-
-	getUnits: function (unitName)
-	{
-		let result = _.filter(Game.creeps , function (creep)
-		{
-			return creep.memory.unit === unitName;
-		});
-		return result;
-	} ,
-
-	// this is used to build the unit cache
-	getRoomCreeps: function (roomName)
+	/**
+	 * Returns an array of creeps assigned to that room.
+	 * NOTE: This function is used in cache building, don't cache it.
+	 * @param roomName
+	 */
+	getRoomCreepsRaw: function (roomName)
 	{
 		let result = _.filter(Game.creeps , function (creep)
 		{
@@ -43,23 +32,20 @@ module.exports =
 
 	countRoomUnits: function (roomName , unitName)
 	{
-		let unitIds = _.has(global, "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName] : [];
-		return unitIds.length;
+		let units = _.has(global, "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName] : [];
+		return units.length;
 	},
 
 	countHomeRoomUnits: function (roomName , unitName)
 	{
-		let unitIds = _.has(global, "cache.homeRooms." + roomName + ".units." + unitName) ? global.cache.homeRooms[roomName].units[unitName] : [];
-		return unitIds.length;
+		let units = _.has(global, "cache.homeRooms." + roomName + ".units." + unitName) ? global.cache.homeRooms[roomName].units[unitName] : [];
+		return units.length;
 	},
 
 	getRoomUnits: function (roomName , unitName)
 	{
-		let unitIds = _.has(global, "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName] : [];
-		let result = _.map(unitIds, (u) => {
-			return Game.getObjectById(u);
-		});
-		return result;
+		let units = _.has(global, "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName] : [];
+		return units;
 	},
 
 	/**
@@ -71,88 +57,25 @@ module.exports =
 	 */
 	countRoomMotivationUnits: function (roomName , motivationName , unitName)
 	{
-		let useCache = true;
-		let result, realResult;
-
-		if (!useCache)
-			realResult = this.getRoomMotivationUnits(roomName, motivationName, unitName).length;
-
-		let key = cacheManager.genKey("creepManager.countRoomMotivationUnits" , arguments);
-		let cache = cacheManager.fetchMem("cacheFunction" , key);
-
-		if (!cache.valid)
-		{
-			result = this.getRoomMotivationUnits(roomName, motivationName, unitName).length;
-			cacheManager.storeMem("cacheFunction" , key , result , Game.time);
-		}
-		else
-		{
-			result = cache.value;
-		}
-
-		if (!useCache)
-		{
-			lib.log(`Cache / result: ${result}/${realResult} --- ${key}` , realResult != result);
-			return realResult;
-		}
-		else
-			return result;
-	},
-
-	getRoomMotivationUnits: function (roomName, motivationName , unitName)
-	{
-		let result = _.filter(Game.creeps , function (creep)
-		{
-			return creep.memory.motive.room === roomName
-				&& creep.memory.motive.motivation === motivationName
-				&& creep.memory.unit === unitName;
-		});
-		return result;
+		// new cache
+		return Memory.rooms[roomName].cache.unitMotive[motivationName].units[unitName];
 	},
 
 	getRoomMotivationCreeps: function (roomName, motivationName)
 	{
-		let result = _.filter(Game.creeps , function (creep)
+		let result = _.filter(global.cache.rooms[roomName].creeps , function (creep)
 		{
-			return creep.memory.motive.room === roomName
-				&& creep.memory.motive.motivation === motivationName;
-		});
-		return result;
-	},
-
-	countRoomMotivationNeedCreeps: function (roomName, motivationName , needName)
-	{
-		let result = this.getRoomMotivationNeedCreeps(roomName, motivationName , needName).length;
-		return result;
-	},
-
-	getRoomMotivationNeedCreeps: function (roomName, motivationName , needName)
-	{
-		let result = _.filter(Game.creeps , function (creep)
-		{
-			return creep.memory.motive.room === roomName
-				&& creep.memory.motive.motivation === motivationName
-				&& creep.memory.motive.need === needName;
+			return creep.memory.motive.motivation === motivationName;
 		});
 		return result;
 	},
 
 	countRoomMotivationNeedUnits: function (roomName, motivationName , needName , unitName)
 	{
-		let result = this.getRoomMotivationNeedUnits(roomName, motivationName , needName , unitName).length;
-		return result;
-	},
-
-	getRoomMotivationNeedUnits: function (roomName, motivationName , needName , unitName)
-	{
-		let result = _.filter(Game.creeps , function (creep)
-		{
-			return creep.memory.motive.room === roomName
-				&& creep.memory.motive.motivation === motivationName
-				&& creep.memory.motive.need === needName
-				&& creep.memory.unit === unitName;
-		});
-		return result;
+		if (!lib.isNull(Memory.rooms[roomName].cache.unitMotive[motivationName].needs[needName]))
+			return Memory.rooms[roomName].cache.unitMotive[motivationName].needs[needName].units[unitName];
+		else
+			return 0;
 	},
 
 	countRoomAssignedUnits: function (roomName, unitName)
@@ -163,12 +86,9 @@ module.exports =
 
 	getRoomAssignedUnits: function (roomName, unitName)
 	{
-		let result = _.filter(Game.creeps , function (creep)
+		let result = _.filter(global.cache.rooms[roomName].units[unitName] , function (creep)
 		{
-			return creep.memory.motive.room === roomName
-				&& creep.memory.motive.motivation != ""
-				&& creep.memory.motive.need != ""
-				&& creep.memory.unit === unitName;
+			return creep.memory.motive.motivation != "";
 		});
 		return result;
 	},
@@ -182,12 +102,9 @@ module.exports =
 
 	getRoomUnassignedUnits: function (roomName, unitName)
 	{
-		let result = _.filter(Game.creeps , function (creep)
+		let result = _.filter(global.cache.rooms[roomName].units[unitName] , function (creep)
 		{
-			return creep.memory.motive.room === roomName
-				&& creep.memory.motive.motivation === ""
-				&& creep.memory.motive.need === ""
-				&& creep.memory.unit === unitName;
+			return creep.memory.motive.motivation === "";
 		});
 
 		return result;

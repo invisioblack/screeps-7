@@ -86,6 +86,7 @@ Room.prototype.initMemCache = function (forceRefresh = false)
 	this.updateDroppedCache(forceRefresh);
 	this.updateUnitCache();
 	this.updateFlagCache(forceRefresh);
+	roomManager.updateUnitMotiveCache(this.name);
 };
 
 /**

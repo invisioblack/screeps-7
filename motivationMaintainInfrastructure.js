@@ -32,20 +32,10 @@ MotivationMaintainInfrastructure.prototype.getDemands = function (roomName, reso
 {
 	let debug = false;
 	let result = {};
-	let unitName = this.getDesiredSpawnUnit(roomName);
-	let constructionSites = Game.rooms[roomName].find(FIND_CONSTRUCTION_SITES);
-	let repairSites = Game.rooms[roomName].find(FIND_STRUCTURES, {
-		filter: function (s) {
-			return s.hits < s.hitsMax;
-		}
-	});
-	let progress = _.sum(constructionSites, "progress");
-	let progressTotal = _.sum(constructionSites, "progressTotal");
 
-	result.energy = progressTotal - progress + Object.keys(repairSites).length;
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
-	lib.log('  Maintain Infrastructure Demands: ' + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn, debug);
+	//lib.log('  Maintain Infrastructure Demands: ' + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn, debug);
 	Memory.rooms[roomName].motivations[this.name].demands = result;
 	return result;
 };
@@ -121,9 +111,10 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 
 	// Handle Repair Needs -------------------------------------------------------------------------------------
 	// look up sources and find out how many needs we should have for each one
-	let repairSites = room.find(FIND_STRUCTURES, {
+	let sites = _.map(room.memory.cache.structures[STRUCTURE_ALL_NOWALL], (id) => { return Game.getObjectById(id); });
+	let repairSites = room.find(sites, {
 		filter: function (s) {
-			return s.hits < s.hitsMax && s.structureType != STRUCTURE_WALL && s.structureType != STRUCTURE_RAMPART;
+			return s.hits < s.hitsMax;
 		}
 	});
 	repairSites.forEach(function (rs) {
@@ -145,9 +136,10 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 	// Handle WALLRepair Needs -------------------------------------------------------------------------------------
 	// look up sources and find out how many needs we should have for each one
 	let wallHP = config.wallHP[lib.isNull(room.controller) ? 0 : room.controller.level];
-	let wallRepairSites = room.find(FIND_STRUCTURES, {
+	let wallSites = _.map(room.memory.cache.structures[STRUCTURE_ALL_WALL], (id) => { return Game.getObjectById(id); });
+	let wallRepairSites = room.find(wallSites, {
 		filter: function (s) {
-			return (s.structureType === STRUCTURE_WALL || s.structureType === STRUCTURE_RAMPART) && s.hits < wallHP;
+			return s.hits < wallHP;
 		}
 	});
 	wallRepairSites.forEach(function (rs) {
@@ -170,7 +162,7 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 		}
 	}, this);
 
-	for (let needName in memory.needs)
+	_.forEach(memory.needs, function (need, needName)
 	{
 		//console.log("Need: " + needName);
 
@@ -230,7 +222,7 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 				}
 			}
 		}
-	}
+	});
 
 	// prioritize needs
 	for (let needName in memory.needs)

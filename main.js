@@ -36,7 +36,7 @@
 // Modules
 //----------------------------------------------------------------------------------------------------------------------
 const profiler = require('screeps-profiler');
-profiler.enable();
+//profiler.enable();
 // game prototypes
 require('Creep.prototype');
 require('Source.prototype');
@@ -87,9 +87,6 @@ module.exports.loop = function () {
 		//------------------------------------------------------------------------------------------------------------------
 		lib.log("<b>+++++++++++++++++++++++ end tick +++++++++++++++++++++++</b>", debug);
 
-		if (Game.time % 100 === 0)
-			cacheManager.flushMem("cacheFunction");
-
 		cpuManager.timerStop("loop", config.cpuLoopDebug, 30, 38);
 		cpuManager.tickTrack();
 	});
@@ -104,8 +101,8 @@ function cleanupMemory() {
 				&& !lib.isNull(mem.motive)
 				&& !lib.isNull(mem.motive.room)
 				&& !lib.isNull(mem.motive.motivation))
-				cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("creepManager.countRoomMotivationUnits", [mem.motive.room, mem.motive.motivation, mem.unit]));
-			delete Memory.creeps[i];
+
+				delete Memory.creeps[i];
 		}
 	}
 };

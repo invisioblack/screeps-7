@@ -25,16 +25,20 @@ module.exports =
 		// create and update needs for motivation
 
 		lib.log("ROOM: " + roomName + " needManager.manageNeeds: motivation.name: " + motivation.name, debug);
+
+		//cpuManager.timerStart(`need.update Room: ${roomName} Motive: ${motivation.name}`, "manageNeeds.update");
 		motivation.updateNeeds(roomName);
+		//cpuManager.timerStop("manageNeeds.update", config.cpuNeedsUpdateDebug, 0.2, 0.3);
 
 		// read up needs sorted by priority
 		needs = _.sortByOrder(room.memory.motivations[motivation.name].needs , ['priority'], ['desc']);
 
 		// first we need to figure out if we have any open allocations
-		for (let unitName in units)
+		//cpuManager.timerStart(`need.unit Room: ${roomName} Motive: ${motivation.name}`, "manageNeeds.unit");
+		_.forEach(units, (unit, unitName) =>
 		{
 			//console.log("unit: " + unitName);
-			//cpuManager.timerStart("Unit: " + unitName, "manageNeeds." + unitName);
+
 			let assignedUnits = creepManager.countRoomMotivationUnits(roomName, motivation.name , unitName);
 			let allocatedUnits = motivationMemory.allocatedUnits[unitName];
 
@@ -42,9 +46,10 @@ module.exports =
 			let outOfCreeps = false;
 			let hasDemand = true;
 			//console.log("Preloop");
+			let y = 0;
 			while (!outOfCreeps && hasDemand && assignedUnits < allocatedUnits)
 			{
-				needs.forEach(function (need)
+				_.forEach(needs, (need) =>
 				{
 					lib.log(`Need: ${need.name}`, debug);
 
@@ -60,6 +65,7 @@ module.exports =
 					lib.log("unit: " + unitName + " outOfCreeps: " + outOfCreeps + " assignedUnits: " + assignedUnits + " allocatedUnits " + allocatedUnits, debug);
 					lib.log("creepsAssigned: " + creepsAssigned + " creepsDemanded: " + creepsDemanded, debug);
 
+					let x = 0;
 					while (!lib.isNull(creep) && creepsAssigned < creepsDemanded && assignedUnits < allocatedUnits)
 					{
 						creep.assignMotive(roomName , motivation.name , need.name);
@@ -69,6 +75,8 @@ module.exports =
 						creepsAssigned++;
 						assignedUnits++;
 						allocatedUnits++;
+						x++;
+						lib.log(`WHOAH X: ${x}`, x > 5);
 					}
 
 					// you think you can move this up into the while above, but don't it causes problems on rare iterations
@@ -76,13 +84,15 @@ module.exports =
 						outOfCreeps = true;
 					if (creepsAssigned >= creepsDemanded)
 						hasDemand = false;
-				} , this);
+				});
+				y++;
+				lib.log(`WHOAH Y: ${y}`, y > 5);
 			}
 
 			if (assignedUnits || allocatedUnits)
 				lib.log("    " + motivation.name + ": Assigned/Allocated " + unitName + ": " + assignedUnits + "/" + allocatedUnits, debug);
-			//cpuManager.timerStop("manageNeeds." + unitName, 0.5, 1);
-		}
+		});
+		//cpuManager.timerStop("manageNeeds.unit", config.cpuNeedsUnitDebug, 0.1, 0.2);
 	},
 
 	"fulfillNeeds": function ()

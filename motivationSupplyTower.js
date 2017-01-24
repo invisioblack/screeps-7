@@ -32,7 +32,7 @@ MotivationSupplyTower.prototype.getDemands = function (roomName, resources)
 	let debug = false;
 	let room = Game.rooms[roomName];
 	let result = {};
-	let unitName = this.getDesiredSpawnUnit(roomName);
+	//let unitName = this.getDesiredSpawnUnit(roomName);
 	let towerIds = lib.nullProtect(room.memory.cache.structures[STRUCTURE_TOWER], []);
 	let towers = _.map(towerIds, (o) => { return Game.getObjectById(o)});
 
@@ -44,7 +44,7 @@ MotivationSupplyTower.prototype.getDemands = function (roomName, resources)
 	if (lib.isNull(result.units["worker"]))
 		result.units["worker"] = 0;
 	result.spawn = this.getDesireSpawn(roomName, result);
-	lib.log('  Supply Tower Demands: e: ' + result.energy + ' ' + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn, debug);
+	//lib.log('  Supply Tower Demands: e: ' + result.energy + ' ' + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn, debug);
 	Memory.rooms[roomName].motivations[this.name].demands = result;
 	return result;
 };
