@@ -30,11 +30,10 @@ MotivationSupplyController.prototype.constructor = MotivationSupplyController;
 MotivationSupplyController.prototype.getDemands = function (roomName, resources) {
 	let debug = false;
 	let result = {};
-	//let unitName = this.getDesiredSpawnUnit(roomName);
-	result.energy = resources.controllerStatus.progressTotal - resources.controllerStatus.progress;
+	let unitName = this.getDesiredSpawnUnit(roomName);
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
-	//lib.log('  Supply Controller Demands: e: ' + result.energy + " " + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn, debug);
+	lib.log('  Supply Controller Demands: e: ' + result.energy + " " + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn, debug);
 	Memory.rooms[roomName].motivations[this.name].demands = result;
 	return result;
 };
@@ -50,23 +49,14 @@ MotivationSupplyController.prototype.getDesireSpawn = function (roomName, demand
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
 	let numWorkers = creepManager.countHomeRoomUnits(roomName, "worker");
-		//_.has(global, "cache.homeRooms." + roomName + ".units.worker") ? global.cache.homeRooms[roomName].units["worker"].length : 0;
-	if (memory.active)
+
+	if (!memory.active || lib.isNull(demands.units["worker"]) || demands.units["worker"] <= numWorkers)
 	{
-		for (let unitName in units)
-		{
-			let numUnits = creepManager.countRoomUnits(roomName, unitName);
-				//_.has(global, "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName].length : 0;
-			if (!lib.isNull(demands.units[unitName]) && demands.units[unitName] <= numUnits)
-			{
-				result = false;
-			}
-		}
-	} else {
 		result = false;
 	}
 
-	if (this.getDesiredSpawnUnit(roomName) === "worker" && numWorkers >= config.maxWorkers)
+    // enforce worker max
+	if (this.getDesiredSpawnUnit(roomName) === "worker" && numWorkers >= config.maxWorkers[room.getControllerLevel()])
 		result = false;
 
 	return result;
@@ -76,7 +66,7 @@ MotivationSupplyController.prototype.updateActive = function (roomName, demands)
 {
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	if (room.getIsMine() && demands.energy > 0)
+	if (room.getIsMine())
 	{
 		memory.active = true;
 	} else {
@@ -95,12 +85,8 @@ MotivationSupplyController.prototype.updateNeeds = function (roomName)
 		memory.needs = {};
 	}
 
-	// Handle Harvest Energy Needs -------------------------------------------------------------------------------------
-	// look up sources and find out how many needs we should have for each one
 	let needName = "supplyController." + room.name;
 	let need;
-
-	//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
 
 	// create new need if one doesn't exist
 	if (lib.isNull(memory.needs[needName]))

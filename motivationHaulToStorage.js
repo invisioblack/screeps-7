@@ -30,10 +30,10 @@ MotivationHaulToStorage.prototype.constructor = MotivationHaulToStorage;
 MotivationHaulToStorage.prototype.getDemands = function (roomName, resources) {
 	let debug = false;
 	let result = {};
-	//let unitName = this.getDesiredSpawnUnit(roomName);
+	let unitName = this.getDesiredSpawnUnit(roomName);
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
-	//lib.log("  Haul to Storage Demands: " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn, debug);
+	lib.log("  Haul to Storage Demands: " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn, debug);
 	Memory.rooms[roomName].motivations[this.name].demands = result;
 	return result;
 };
@@ -48,34 +48,28 @@ MotivationHaulToStorage.prototype.getDesireSpawn = function (roomName, demands)
 	if (roomManager.getIsLongDistanceHarvestTarget(roomName))
 		return false;
 
-	let result = true;
+	let result = false;
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	let numWorkers = creepManager.countRoomUnits(roomName, "worker");
-		//_.has(global, "cache.rooms." + roomName + ".units.worker") ? global.cache.rooms[roomName].units["worker"].length : 0;
-	let numHaulers = creepManager.countRoomUnits(roomName, "hauler");
-		//_.has(global, "cache.rooms." + roomName + ".units.hauler") ? global.cache.rooms[roomName].units["hauler"].length : 0;
-	let spawnUnit = this.getDesiredSpawnUnit(roomName);
+	let unitName = this.getDesiredSpawnUnit(roomName);
+	let units = {};
+	units.worker = creepManager.countRoomUnits(roomName, "worker");
+	units.hauler = creepManager.countRoomUnits(roomName, "hauler");
+
+	//
+
 	if (memory.active)
 	{
-		for (let unitName in units)
-		{
-			let numUnits = creepManager.countRoomUnits(roomName, unitName);
-				//_.has(global, "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName].length : 0;
-			if ((!lib.isNull(demands.units[unitName]) && demands.units[unitName] <= numUnits))
-			{
-				result = false;
-			}
-		}
-	} else {
-		result = false;
+	    if (units[unitName] < lib.nullProtect(demands.units[unitName], 0))
+	        result = true;
 	}
 
-	if (numWorkers < config.minWorkers)
+    // enforce max spawns
+	if (units.worker < config.minWorkers)
 		result = false;
-	if (spawnUnit === "worker" && numWorkers >= config.maxWorkers)
+	if (unitName === "worker" && units.worker >= config.maxWorkers[room.getControllerLevel()])
 		result = false;
-	if (spawnUnit === "hauler" && numHaulers >= config.maxHaulers)
+	else if (unitName === "hauler" && units.hauler >= config.maxHaulers)
 		result = false;
 
 	return result;
@@ -86,9 +80,8 @@ MotivationHaulToStorage.prototype.updateActive = function (roomName, demands)
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
 	let storageIds = lib.nullProtect(room.memory.cache.structures[STRUCTURE_STORAGE], []);
-	let storages  = _.map(storageIds, (id) => { return Game.getObjectById(id) });
 
-	if ((room.getIsMine() && room.controller.level >= 4 && storages.length > 0) || roomManager.getIsLongDistanceHarvestTarget(roomName))
+	if ((room.getIsMine() && room.controller.level >= 4 && storageIds.length > 0) || roomManager.getIsLongDistanceHarvestTarget(roomName))
 	{
 		memory.active = true;
 	} else {

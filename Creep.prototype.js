@@ -179,8 +179,10 @@ Creep.prototype.deassignMotive = function (roomName)
 		}
 	}
 
-	if (!lib.isNull(roomName) && roomName != "")
+	if (!lib.isNull(roomName) && roomName != "") {
+		roomManager.updateUnitCache(this.memory.motive.room);
 		this.memory.motive.room = roomName;
+	}
 	this.memory.motive.motivation = "";
 	this.memory.motive.need = "";
 	this.resetSource();

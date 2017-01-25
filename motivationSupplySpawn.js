@@ -13,10 +13,6 @@ let Motivation = require("Motivation.prototype")();
 // Declarations
 //-------------------------------------------------------------------------
 
-// TODO: rework this so that there is 2 needs, one for the spawn, one for
-// the extenders, then make the movement pattern on filling the extenders
-// better, like keep filling till out of evergy instead of resetting
-
 //-------------------------------------------------------------------------
 // constructor
 //-------------------------------------------------------------------------
@@ -36,46 +32,38 @@ MotivationSupplySpawn.prototype.getDemands = function (roomName, resources)
 {
 	let debug = false;
 	let result = {};
-	//let unitName = this.getDesiredSpawnUnit(roomName);
-	result.energy = resources.spawnEnergy.energyCapacity - resources.spawnEnergy.energy;
+	let unitName = this.getDesiredSpawnUnit(roomName);
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
-	//lib.log('  Supply Spawn Demands: e: ' + result.energy + ' ' + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn, debug);
+	lib.log('  Supply Spawn Demands: e: ' + result.energy + ' ' + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn, debug);
 	Memory.rooms[roomName].motivations[this.name].demands = result;
 	return result;
 };
 
 MotivationSupplySpawn.prototype.getDesireSpawn = function (roomName, demands)
 {
-	let result = true;
+	let result = false;
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	let numWorkers = creepManager.countHomeRoomUnits(roomName, "worker");
-		//_.has(global, "cache.homeRooms." + roomName + ".units.worker") ? global.cache.homeRooms[roomName].units["worker"].length : 0;
-	let numHaulers = creepManager.countHomeRoomUnits(roomName, "hauler");
-		//_.has(global, "cache.homeRooms." + roomName + ".units.hauler") ? global.cache.homeRooms[roomName].units["hauler"].length : 0;
+	let unitName = this.getDesiredSpawnUnit(roomName);
+	let units = {};
+	units.worker = creepManager.countRoomUnits(roomName, "worker");
+	units.hauler = creepManager.countRoomUnits(roomName, "hauler");
+
+	//
 
 	if (memory.active)
 	{
-		for (let unitName in units)
-		{
-
-			let numUnits = creepManager.countRoomUnits(roomName, unitName);
-				//_.has(global, "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName].length : 0;
-			let numDemandedUnits = lib.nullProtect(demands.units[unitName], 0);
-			//console.log(`unitName: ${unitName} demand: ${numDemandedUnits}`);
-			if (numDemandedUnits < numUnits)
-			{
-				result = false;
-			}
-		}
-	} else {
-		result = false;
+	    if (units[unitName] < lib.nullProtect(demands.units[unitName], 0))
+	        result = true;
 	}
 
-	if (this.getDesiredSpawnUnit(roomName) === "worker" && numWorkers >= config.maxWorkers)
+    // enforce max spawns
+	if (units.worker < config.minWorkers)
 		result = false;
-	if (this.getDesiredSpawnUnit(roomName) === "hauler" && numHaulers >= config.maxHaulers)
+	if (unitName === "worker" && units.worker >= config.maxWorkers[room.getControllerLevel()])
+		result = false;
+	else if (unitName === "hauler" && units.hauler >= config.maxHaulers)
 		result = false;
 
 	return result;
@@ -83,14 +71,9 @@ MotivationSupplySpawn.prototype.getDesireSpawn = function (roomName, demands)
 
 MotivationSupplySpawn.prototype.getDesiredSpawnUnit = function (roomName)
 {
-	let energyPickupMode = lib.nullProtect(Memory.rooms[roomName].energyPickupMode, C.ROOM_ENERGYPICKUPMODE_NOENERGY);
-	let numWorkers = creepManager.countRoomUnits(roomName, "worker");
-		//_.has(global, "cache.rooms." + roomName + ".units.worker") ? global.cache.rooms[roomName].units["worker"].length : 0;
+	let energyPickupMode = lib.nullProtect(Memory.rooms[roomName].energyPickupMode, C.ROOM_ENERGYPICKUPMODE_NOENERGY, C.ROOM_ENERGYPICKUPMODE_NOENERGY);
 
-	//console.log(config.critWorkers);
-
-
-	if (energyPickupMode < C.ROOM_ENERGYPICKUPMODE_CONTAINER || numWorkers <= config.critWorkers)
+	if (energyPickupMode < C.ROOM_ENERGYPICKUPMODE_CONTAINER)
 		return "worker";
 	else
 		return "hauler";
@@ -100,7 +83,7 @@ MotivationSupplySpawn.prototype.updateActive = function (roomName, demands)
 {
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	if (room.getIsMine() && demands.energy > 0)
+	if (room.getIsMine())
 	{
 		memory.active = true;
 	} else {
@@ -130,8 +113,6 @@ MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
 		{
 			let needName = "supplySpawn." + spawn.id;
 			let need;
-
-			//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
 
 			// create needs if we need energy, cull needs if not
 			if ((spawn.energyCapacity - spawn.energy) > 0)

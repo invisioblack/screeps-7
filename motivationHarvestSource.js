@@ -26,11 +26,10 @@ MotivationHarvestSource.prototype.constructor = MotivationHarvestSource;
 MotivationHarvestSource.prototype.getDemands = function (roomName, resources) {
 	let debug = false;
 	let result = {};
-	//let unitName = this.getDesiredSpawnUnit(roomName);
+	let unitName = this.getDesiredSpawnUnit(roomName);
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
-	//console.log(JSON.stringify(result.units));
-	//lib.log("  Harvest Source Demands : " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn, debug);
+	lib.log("  Harvest Source Demands : " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn, debug);
 	Memory.rooms[roomName].motivations[this.name].demands = result;
 	return result;
 };
@@ -54,7 +53,6 @@ MotivationHarvestSource.prototype.getDesireSpawn = function (roomName, demands)
 	let room = Game.rooms[roomName];
 	let roomMemory = Memory.rooms[roomName];
 	let unitName = this.getDesiredSpawnUnit(roomName);
-	let numContainers = lib.nullProtect(roomMemory.cache.structures[STRUCTURE_CONTAINER], []).length;
 	let numHarvesters = 0;
 	let demandedHarvesters = lib.nullProtect(demands.units[unitName], 0);
 	let numWorkers = creepManager.countRoomUnits(roomName, "worker");
@@ -69,12 +67,12 @@ MotivationHarvestSource.prototype.getDesireSpawn = function (roomName, demands)
 	    numHarvesters = creepManager.countRoomMotivationUnits(roomName, "motivationHarvestSource",unitName);
 	}
 
-	if (numContainers === 0 || numHarvesters >= demandedHarvesters || numWorkers < critWorkers)
+	if (roomMemory.energyPickupMode < C.ROOM_ENERGYPICKUPMODE_PRECONTAINER || numHarvesters >= demandedHarvesters || numWorkers < critWorkers)
 	{
 		result = false;
 	}
 
-	lib.log(`Room: ${roomName} Desire Spawn: ${result} Unit: ${unitName} #Containers: ${numContainers} Demanded Harvesters: ${demandedHarvesters}/${numHarvesters} Workers: ${numWorkers}/${critWorkers}`, debug);
+	lib.log(`Room: ${roomName} Desire Spawn: ${result} Unit: ${unitName} #Pickup: ${roomMemory.energyPickupMode} Demanded Harvesters: ${demandedHarvesters}/${numHarvesters} Workers: ${numWorkers}/${critWorkers}`, debug);
 
 	return result;
 };
@@ -109,14 +107,15 @@ MotivationHarvestSource.prototype.updateNeeds = function (roomName)
 	let sources = _.map(sourceIds, (id) => { return Game.getObjectById(id) });
 
 	// if the room doesn't have containers, we don't even try
-	if (room.memory.cache.structures[STRUCTURE_CONTAINER].length === 0)
+	if (room.memory.energyPickupMode < C.ROOM_ENERGYPICKUPMODE_PRECONTAINER)
+	{
+		memory.needs = {};
 		return;
+	}
 
 	sources.forEach(function (s) {
 		let needName = "harvest." + s.id;
 		let need;
-
-		//console.log('Need Name: ' + needName);
 
 		// create new need if one doesn't exist
 		if (lib.isNull(memory.needs[needName]))
@@ -151,6 +150,7 @@ MotivationHarvestSource.prototype.updateNeeds = function (roomName)
 			}
 		}
 
+        // cull need is container is missing
 		if (lib.isNull(container))
 		{
 			delete memory.needs[needName];

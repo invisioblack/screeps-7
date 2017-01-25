@@ -26,11 +26,10 @@ MotivationHarvestMinerals.prototype.constructor = MotivationHarvestMinerals;
 MotivationHarvestMinerals.prototype.getDemands = function (roomName, resources) {
 	let debug = false;
 	let result = {};
-	//let unitName = this.getDesiredSpawnUnit(roomName);
+	let unitName = this.getDesiredSpawnUnit(roomName);
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
-	//console.log(JSON.stringify(result.units));
-	//lib.log("  Harvest Minerals Demands : " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn, debug);
+	lib.log("  Harvest Minerals Demands : " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn, debug);
 	Memory.rooms[roomName].motivations[this.name].demands = result;
 	return result;
 };
@@ -54,8 +53,8 @@ MotivationHarvestMinerals.prototype.getDesireSpawn = function (roomName, demands
 	let room = Game.rooms[roomName];
 	let roomMemory = Memory.rooms[roomName];
 	let unitName = this.getDesiredSpawnUnit(roomName);
-	let numContainers = lib.nullProtect(roomMemory.cache.structures[STRUCTURE_CONTAINER], []).length;
 	let numHarvesters = 0;
+	let numContainers = lib.nullProtect(roomMemory.cache.structures[STRUCTURE_CONTAINER], []).length;
 	let demandedHarvesters = lib.nullProtect(demands.units[unitName], 0);
 	let numWorkers = creepManager.countRoomUnits(roomName, "worker");
 	let critWorkers = config.critWorkers;
@@ -69,13 +68,12 @@ MotivationHarvestMinerals.prototype.getDesireSpawn = function (roomName, demands
 	    numHarvesters = creepManager.countRoomMotivationUnits(roomName, "motivationHarvestSource", unitName);
 	}
 	    
-
 	if (numContainers === 0 || numHarvesters >= demandedHarvesters || numWorkers < critWorkers)
 	{
 		result = false;
 	}
 
-	lib.log(`Room: ${roomName} Desire Spawn: ${result} Unit: ${unitName} #Containers: ${numContainers} Demanded Harvesters: ${demandedHarvesters}/${numHarvesters} Workers: ${numWorkers}/${critWorkers}`, debug);
+	lib.log(`Room: ${roomName} Desire Spawn: ${result} Unit: ${unitName} #PickUp: ${roomMemory.energyPickupMode} Demanded Harvesters: ${demandedHarvesters}/${numHarvesters} Workers: ${numWorkers}/${critWorkers}`, debug);
 
 	return result;
 };
@@ -109,16 +107,18 @@ MotivationHarvestMinerals.prototype.updateNeeds = function (roomName)
 
 	// build Needs -------------------------------------------------------------------------------------
 	let extractorIds = lib.nullProtect(room.memory.cache.structures[STRUCTURE_EXTRACTOR], []);
-	let extrators = _.map(extractorIds, (id) => { return Game.getObjectById(id) });
+	let extractors = _.map(extractorIds, (id) => { return Game.getObjectById(id) });
 
 	// if the room doesn't have containers, we don't even try
 	if (room.memory.cache.structures[STRUCTURE_CONTAINER].length === 0)
+	{
+	    memory.needs = {};
 		return;
+	}
 
-	extrators.forEach(function (s) {
+	extractors.forEach(function (s) {
 		let needName = "harvestMinerals." + s.id;
 		let need;
-		//console.log('Need Name: ' + needName);
 
 		// create new need if one doesn't exist
 		if (lib.isNull(memory.needs[needName]))
@@ -140,10 +140,9 @@ MotivationHarvestMinerals.prototype.updateNeeds = function (roomName)
 			}
 			need.priority = C.PRIORITY_1;
 
-		} else {
-			need = memory.needs[needName];
 		}
 
+        // cull need if the container is gone
 		let container = Game.getObjectById(memory.needs[needName].containerId);
 		if (lib.isNull(container))
 		{

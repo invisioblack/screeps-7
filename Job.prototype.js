@@ -115,7 +115,7 @@ module.exports = function()
 		 */
 
 		// harvest my own energy
-		if (creep.memory.sourceId === "" && creep.getHasPart(WORK) && room.memory.energyPickupMode === C.ROOM_ENERGYPICKUPMODE_HARVEST)
+		if (creep.memory.sourceId === "" && creep.getHasPart(WORK) && room.memory.energyPickupMode <= C.ROOM_ENERGYPICKUPMODE_PRECONTAINER)
 		{
 			let source = creep.pos.findClosestByPath(FIND_SOURCES,
 				{

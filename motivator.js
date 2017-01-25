@@ -53,7 +53,7 @@ module.exports =
 					motivationSupplyTower.deInit(room.name);
 				}
 
-				// this one should only be active in rooms with a claim
+				// TODO: this one should only be active in rooms with a claim
 				motivationClaimRoom.init(room.name);
 				room.memory.motivations[motivationClaimRoom.name].priority = C.PRIORITY_4;
 
@@ -72,17 +72,19 @@ module.exports =
 				// only in my rooms
 				if (room.getIsMine()) {
 					motivationSupplySpawn.init(room.name);
-					let numWorkers = creepManager.countRoomUnits(roomName, "worker");
+					let numWorkers = creepManager.countHomeRoomUnits(roomName, "worker");
 					//_.has(global, "cache.homeRooms." + roomName + ".units.worker") ? global.cache.homeRooms[roomName].units["worker"].length : 0;
-					let numHarvesters = creepManager.countRoomUnits(roomName, "harvester");
+					let numHarvesters = creepManager.countHomeRoomUnits(roomName, "harvester");
 					//_.has(global, "cache.homeRooms." + roomName + ".units.harvester") ? global.cache.homeRooms[roomName].units["harvester"].length : 0;
-					let numHaulers = creepManager.countRoomUnits(roomName, "hauler");
+					let numHaulers = creepManager.countHomeRoomUnits(roomName, "hauler");
 					let numContainers = lib.nullProtect(room.memory.cache.structures[STRUCTURE_CONTAINER], []).length;
+					let unitCount = numWorkers + numHaulers + numHarvesters;
+
 
 					// normal priority
-					if (numWorkers < config.minWorkers || numHaulers < 1)
+					if (numWorkers <= config.minWorkers || numHaulers < 1 || unitCount < 6)
 						room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
-					else if (numWorkers < config.medWorkers)
+					else if (numWorkers <= config.medWorkers)
 						room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_6;
 					else
 						room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_8;
@@ -262,7 +264,11 @@ module.exports =
 
 			sortedMotivations.forEach(function (motivationMemory) {
 				// set up demands ----------------------------------------------------------------------------------
-				demands[motivationMemory.name] = global[motivationMemory.name].getDemands(roomName, resources);
+				// only update demands once every few ticks
+				if (lib.isNull(demands[motivationMemory.name]) || Game.time % 3 === 3)
+				{
+					demands[motivationMemory.name] = global[motivationMemory.name].getDemands(roomName, resources);
+				}
 
 				// decide which motivations should be active -------------------------------------------------------
 				global[motivationMemory.name].updateActive(roomName, demands[motivationMemory.name]);
@@ -285,10 +291,6 @@ module.exports =
 						let spawn = Game.spawns[spawnName];
 						// this probably isn't handling multiple spawns well
 						if (spawn.room.name === roomName) {
-							let r = Game.rooms[roomName];
-							let countUnits = creepManager.countRoomUnits(roomName, unitName);
-							//_.has(global, "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName].length : 0;
-							//console.log(unitName + " " + countUnits);
 							spawn.spawnUnit(unitName);
 						}
 					}
@@ -439,7 +441,7 @@ module.exports =
 					}, this);
 					//console.log("-------POSTALLOCATION: totalUnitsAvailable: " + totalUnitsAvailable + " totalUnitsDemanded: " + totalUnitsDemanded + " totalUnitsAllocated: " + totalUnitsAllocated);
 					z++;
-					lib.log(`WHOAH Z: ${z}`, z > 5);
+					lib.log(`WHOAH Z: ${z}`, z > 10);
 				}
 				//lib.log(">>>>Final " + unitName + " Allocation: " + resources.units[unitName].allocated + "/" + resources.units[unitName].total + " Unallocated: " + resources.units[unitName].unallocated, debug);
 			});
@@ -481,27 +483,27 @@ module.exports =
 		},
 
 		sendWorkersToLDHRooms: function (roomName) {
-			let debug = false
+			let debug = false;
 			let spawnRoom = Game.rooms[roomName];
 
 			// don't do this in rooms I don't own
 			if (!spawnRoom.getIsMine())
 				return;
 
-			let numWorkers = creepManager.countRoomUnits(roomName, "worker");
+			let numWorkers = creepManager.countHomeRoomUnits(roomName, "worker");
 			//_.has(global, "cache.rooms." + roomName + ".units.worker") ? global.cache.rooms[roomName].units["worker"].length : 0;
 			let targets = lib.nullProtect(spawnRoom.memory.longDistanceHarvestTargets, []);
 			lib.log(`Spawn Room: ${roomName} workers: ${numWorkers}`, debug);
 
 			_.forEach(targets, (rN) => {
 				if (!lib.isNull(Memory.rooms[rN]) && !lib.isNull(Memory.rooms[rN].motivations) && !lib.isNull(Memory.rooms[rN].motivations["motivationMaintainInfrastructure"]) && !lib.isNull(Memory.rooms[rN].motivations["motivationMaintainInfrastructure"].demands)) {
-					let numWorkersRoom = creepManager.countRoomUnits(rN, "worker");
+					let numWorkersRoom = creepManager.countHomeRoomUnits(rN, "worker");
 					//_.has(global, "cache.rooms." + rN + ".units.worker") ? global.cache.rooms[rN].units["worker"].length : 0;
-					let demandedWorkers = Memory.rooms[rN].motivations["motivationMaintainInfrastructure"].demands.units["worker"];
+					let demandedWorkers = lib.nullProtect(Memory.rooms[rN].motivations["motivationMaintainInfrastructure"].demands.units["worker"], 0);
 
-					lib.log(`Target Room: ${rN} workers: ${numWorkersRoom}`, debug);
+					lib.log(`Target Room: ${rN} workers: ${numWorkersRoom}/${demandedWorkers}`, debug);
 
-					if (numWorkers > config.medWorkers && numWorkersRoom < 1 && demandedWorkers > 1) {
+					if (numWorkers >= config.medWorkers && numWorkersRoom < 1 && demandedWorkers > 1) {
 						lib.log(`Trying to allocate for target Room: ${rN}`, debug);
 						let creep = creepManager.findRoomUnassignedUnit(roomName, "worker");
 						if (!lib.isNull(creep)) {

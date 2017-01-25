@@ -33,6 +33,22 @@ JobGuard.prototype.work = function (creep)
 		creep.moveTo(target);
 		creep.attack(target);
 	}
+
+	if (creep.room.memory.threat.level < C.THREAT_NPC)
+	{
+		let assigned = false;
+		_.forEach(creep.room.memory.longDistanceHarvestTargets, (r) => {
+			if (!assigned) {
+				let numGuards = creepManager.countRoomUnits(r, "guard");
+				let threatLevel = Memory.rooms[r].threat.level;
+
+				if (numGuards < 1 && threatLevel >= C.THREAT_NPC) {
+					assigned = true;
+					creep.deassignMotive(r);
+				}
+			}
+		});
+	}
 };
 
 //-------------------------------------------------------------------------

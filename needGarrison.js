@@ -28,10 +28,24 @@ NeedGarrison.prototype.getUnitDemands = function(roomName, memory, motivationNam
 {
 	let room = Game.rooms[roomName];
 	let unitCount = room.memory.threat.count;
+	
 	memory.demands = {};
 	memory.demands["guard"] = unitCount * 2;
 	memory.demands["rangedGuard"] = unitCount * 2;
 	memory.demands["heal"] = unitCount * 2;
+	
+	
+	_.forEach(room.memory.longDistanceHarvestTargets, (r) => {
+		let numGuards = creepManager.countRoomUnits(r, "guard");
+		let threatLevel = Memory.rooms[r].threat.level;
+
+		if (numGuards < 1 && threatLevel >= C.THREAT_NPC)
+		{
+			memory.demands["guard"] = 1;
+		}
+	});
+	
+	
 	return memory.demands;
 };
 

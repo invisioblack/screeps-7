@@ -84,8 +84,8 @@ Room.prototype.initMemCache = function (forceRefresh = false)
 	this.updateStructureCache(forceRefresh);
 	this.updateSourceCache(forceRefresh);
 	this.updateDroppedCache(forceRefresh);
-	this.updateUnitCache();
 	this.updateFlagCache(forceRefresh);
+	this.updateUnitCache();
 	roomManager.updateUnitMotiveCache(this.name);
 };
 
@@ -181,7 +181,7 @@ Room.prototype.updateDroppedCache = function (forceRefresh = false)
 		forceRefresh = true;
 	}
 
-	if (Game.time % 2 === 0)
+	if (Game.time % 5 === 0)
 		forceRefresh = true;
 
 	if (forceRefresh)
@@ -237,6 +237,8 @@ Room.prototype.updateFlagCache = function (forceRefresh = false)
  */
 Room.prototype.updateEnergyPickupMode = function ()
 {
+	if (Game.time % 10 !== 0)
+		return;
 
 	result = C.ROOM_ENERGYPICKUPMODE_NOENERGY;
 	if (this.memory.cache.sources.length > 0)
@@ -577,16 +579,16 @@ Room.prototype.motivateTowers = function ()
 			// for each tower
 			towers.forEach(function (tower)
 			{
-				tower.autoAttack();
+				//tower.autoRepair();
 				tower.autoCreepHeal();
-				tower.autoRepair();
+				tower.autoAttack();
 			} , this);
-		} else if (Game.time % 5 === 0) {
+		} else if (Game.time % 2 === 0) {
 			// for each tower
 			towers.forEach(function (tower)
 			{
-				tower.autoCreepHeal();
 				tower.autoRepair();
+				tower.autoCreepHeal();
 			} , this);
 		}
 	}
@@ -658,7 +660,7 @@ Room.prototype.updateThreat = function ()
 		threatsRaw = _.map(filteredThreats, (o) => { return Game.getObjectById(o.id) } );
 
 		//console.log(JSON.stringify(threatsRaw));
-		let isPlayer = _.some(threatsRaw, (o) => o.owner.username != "Invader");
+		let isPlayer = _.some(threatsRaw, (o) => o.owner.username !== "Invader" && o.owner.username !== "Source Keeper");
 		let link = roomLink(this.name);
 
 		if (isPlayer)

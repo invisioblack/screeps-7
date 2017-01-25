@@ -37,7 +37,6 @@ MotivationClaimRoom.prototype.getDemands = function (roomName, resources) {
 	let unitName = this.getDesiredSpawnUnit(roomName);
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
-	//console.log(JSON.stringify(result.units));
 	lib.log(`  Claim Room Demands ${roomName} : ${unitName} : ${result.units[unitName]} Spawn: ${result.spawn}`, debug);
 	Memory.rooms[roomName].motivations[this.name].demands = result;
 	return result;
@@ -54,9 +53,7 @@ MotivationClaimRoom.prototype.getDesireSpawn = function (roomName, demands)
 	let result = false;
 	let room = Game.rooms[roomName];
 	let numWorkers = creepManager.countHomeRoomUnits(roomName, "worker");
-		//_.has(global, "cache.homeRooms." + roomName + ".units.worker") ? global.cache.homeRooms[roomName].units["worker"].length : 0;
 	let numClaimers = creepManager.countHomeRoomUnits(roomName, "claimer");
-		//_.has(global, "cache.homeRooms." + roomName + ".units.claimer") ? global.cache.homeRooms[roomName].units["claimer"].length : 0;
 
 	// filter this to only claims spawning in specified room
 	let spawnClaims = _.filter(Memory.claims, function (c){
@@ -67,8 +64,6 @@ MotivationClaimRoom.prototype.getDesireSpawn = function (roomName, demands)
 		+ " workers: " + numWorkers
 		+ " spawn claims: " + _.size(spawnClaims)
 		, debug);
-
-
 
 	if (_.size(spawnClaims) === 0)
 	{
@@ -104,7 +99,6 @@ MotivationClaimRoom.prototype.getDesireSpawn = function (roomName, demands)
 		}
 		//console.log(c.room + ": " + _.has(global, "cache.rooms." + c.room + ".units.claimer"));
 		let numClaimers = creepManager.countRoomUnits(c.room, "claimer");
-			//_.has(global, "cache.rooms." + c.room + ".units.claimer") ? global.cache.rooms[c.room].units["claimer"].length : 0;
 		let claimRoom = Game.rooms[c.room];
 		let reservation;
 

@@ -88,17 +88,7 @@ module.exports = function ()
 
 		preResult = containerEnergy / unitCapacity;
 
-		if (preResult < 1)
-		{
-			if (preResult > 0.75)
-			{
-				preResult = 1;
-			} else {
-				preResult = 0;
-			}
-		} else {
-			preResult = Math.floor(preResult);
-		}
+		preResult = Math.ceil(preResult);
 
 		//console.log(`Room: ${roomName} containerEnergy: ${containerEnergy} preResult: ${preResult}`);
 

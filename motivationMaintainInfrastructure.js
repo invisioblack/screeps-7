@@ -32,17 +32,16 @@ MotivationMaintainInfrastructure.prototype.getDemands = function (roomName, reso
 {
 	let debug = false;
 	let result = {};
-
+    let unitName = this.getDesiredSpawnUnit();
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
-	//lib.log('  Maintain Infrastructure Demands: ' + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn, debug);
+	lib.log('  Maintain Infrastructure Demands: ' + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn, debug);
 	Memory.rooms[roomName].motivations[this.name].demands = result;
 	return result;
 };
 
 MotivationMaintainInfrastructure.prototype.getDesiredSpawnUnit = function ()
 {
-	// repairing and building require WORK and CARRY, so always workers
 	return "worker";
 };
 
@@ -52,16 +51,14 @@ MotivationMaintainInfrastructure.prototype.getDesireSpawn = function (roomName, 
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
 	let numWorkers = creepManager.countHomeRoomUnits(roomName, "worker");
-		//_.has(global, "cache.homeRooms." + roomName + ".units.worker") ? global.cache.homeRooms[roomName].units["worker"].length : 0;
-	if (memory.active)
+
+	if (!memory.active || lib.isNull(demands.units["worker"]) || demands.units["worker"] <= numWorkers)
 	{
-		if (!lib.isNull(demands.units["worker"]) && demands.units["worker"] <= numWorkers)
-			result = false;
-	} else {
 		result = false;
 	}
 
-	if (this.getDesiredSpawnUnit(roomName) === "worker" && numWorkers >= config.maxWorkers)
+    // enforce worker max
+	if (this.getDesiredSpawnUnit(roomName) === "worker" && numWorkers >= config.maxWorkers[room.getControllerLevel()])
 		result = false;
 
 	return result;
@@ -76,11 +73,14 @@ MotivationMaintainInfrastructure.prototype.updateActive = function (roomName, de
 
 MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 {
+    /** TODO: This needs to be completely revamped, it is way too cpu heavy.
+     *      Only create one need each for repair, and one for construction
+     *      Then have units determine repair/build site when looking for it
+     *      rather than rebuilding these lists constantly.
+    */
 	let debug = false;
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	let sortedNeedsByDistance, x;
-
 	// insure memory is initialized for needs
 	if (lib.isNull(memory.needs))
 	{
@@ -112,16 +112,12 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 	// Handle Repair Needs -------------------------------------------------------------------------------------
 	// look up sources and find out how many needs we should have for each one
 	let sites = _.map(room.memory.cache.structures[STRUCTURE_ALL_NOWALL], (id) => { return Game.getObjectById(id); });
-	let repairSites = room.find(sites, {
-		filter: function (s) {
-			return s.hits < s.hitsMax;
-		}
-	});
+
+	let repairSites = _.filter(sites, (s) => { return s.hits < s.hitsMax; });
+	lib.log(`Room: ${roomName} ${repairSites}`, debug);
 	repairSites.forEach(function (rs) {
 		let needName = "repair." + rs.id;
 
-		//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
-		//console.log(rs.id + " HP/Threshold: " + rs.hits + "/" + (rs.hitsMax * REPAIR_FACTOR));
 		// create new need if one doesn't exist
 		if (lib.isNull(memory.needs[needName]) && rs.hits < (rs.hitsMax * REPAIR_FACTOR))
 		{

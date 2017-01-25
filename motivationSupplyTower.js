@@ -32,19 +32,18 @@ MotivationSupplyTower.prototype.getDemands = function (roomName, resources)
 	let debug = false;
 	let room = Game.rooms[roomName];
 	let result = {};
-	//let unitName = this.getDesiredSpawnUnit(roomName);
+	let unitName = this.getDesiredSpawnUnit(roomName);
 	let towerIds = lib.nullProtect(room.memory.cache.structures[STRUCTURE_TOWER], []);
 	let towers = _.map(towerIds, (o) => { return Game.getObjectById(o)});
 
 	let energy = _.sum(towers, "energy");
 	let energyTotal = _.sum(towers, "energyCapacity");
-	//console.log("e: " + energy + " et: " + energyTotal);
 	result.energy = energyTotal - energy;
 	result.units = this.getUnitDemands(roomName);
 	if (lib.isNull(result.units["worker"]))
 		result.units["worker"] = 0;
 	result.spawn = this.getDesireSpawn(roomName, result);
-	//lib.log('  Supply Tower Demands: e: ' + result.energy + ' ' + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn, debug);
+	lib.log('  Supply Tower Demands: e: ' + result.energy + ' ' + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn, debug);
 	Memory.rooms[roomName].motivations[this.name].demands = result;
 	return result;
 };
@@ -55,9 +54,7 @@ MotivationSupplyTower.prototype.getDesireSpawn = function (roomName, demands)
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
 	let numWorkers = creepManager.countRoomUnits(roomName, "worker");
-		//_.has(global, "cache.homeRooms." + roomName + ".units.worker") ? global.cache.homeRooms[roomName].units["worker"].length : 0;
 	let numHaulers = creepManager.countRoomUnits(roomName, "hauler");
-		//_.has(global, "cache.homeRooms." + roomName + ".units.hauler") ? global.cache.homeRooms[roomName].units["hauler"].length : 0;
 
 	if (memory.active)
 	{
@@ -74,7 +71,7 @@ MotivationSupplyTower.prototype.getDesireSpawn = function (roomName, demands)
 		result = false;
 	}
 
-	if (this.getDesiredSpawnUnit(roomName) === "worker" && numWorkers >= config.maxWorkers)
+	if (this.getDesiredSpawnUnit(roomName) === "worker" && numWorkers >= config.maxWorkers[room.getControllerLevel()])
 		result = false;
 	if (this.getDesiredSpawnUnit(roomName) === "hauler" && numHaulers >= config.maxHaulers)
 		result = false;
@@ -86,10 +83,6 @@ MotivationSupplyTower.prototype.getDesiredSpawnUnit = function (roomName)
 {
 	let energyPickupMode = lib.nullProtect(Memory.rooms[roomName].energyPickupMode, C.ROOM_ENERGYPICKUPMODE_NOENERGY);
 	let numWorkers = creepManager.countRoomUnits(roomName, "worker");
-		//_.has(global, "cache.rooms." + roomName + ".units.worker") ? global.cache.rooms[roomName].units["worker"].length : 0;
-
-	//console.log(config.critWorkers);
-
 
 	if (energyPickupMode < C.ROOM_ENERGYPICKUPMODE_CONTAINER || numWorkers <= config.critWorkers)
 		return "worker";
@@ -114,7 +107,6 @@ MotivationSupplyTower.prototype.updateNeeds = function (roomName)
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
 	let towerIds = lib.nullProtect(room.memory.cache.structures[STRUCTURE_TOWER], []);
-	let towers = _.map(towerIds, (o) => { return Game.getObjectById(o)});
 
 	// insure memory is initialized for needs
 	if (lib.isNull(memory.needs))
@@ -122,34 +114,18 @@ MotivationSupplyTower.prototype.updateNeeds = function (roomName)
 		memory.needs = {};
 	}
 
-	// towers ----------------------------------------------------------------------------------------------------------
-
-	towers.forEach(function (tower){
-		//console.log(towers);
-		// loop over spawns in room
-		if (tower.room.name === roomName)
+	towerIds.forEach(function (id){
+		let needName = "supplyTower." + id;
+		let need;
+			// create new need if one doesn't exist
+		if (lib.isNull(memory.needs[needName]))
 		{
-			let needName = "supplyTower." + tower.id;
-			let need;
-
-			//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
-
-			// create needs if we need energy, cull needs if not
-			if ((tower.energyCapacity - tower.energy) > 0)
-			{
-				// create new need if one doesn't exist
-				if (lib.isNull(memory.needs[needName]))
-				{
-					memory.needs[needName] = {};
-					need = memory.needs[needName];
-					need.type = "needTransferEnergy";
-					need.name = needName;
-					need.targetId = tower.id;
-					need.priority = C.PRIORITY_2;
-				}
-			} else { // cull need if we don't need energy
-				delete memory.needs[needName];
-			}
+			memory.needs[needName] = {};
+			need = memory.needs[needName];
+			need.type = "needTransferEnergy";
+			need.name = needName;
+			need.targetId = id;
+			need.priority = C.PRIORITY_2;
 		}
 	}, this);
 };

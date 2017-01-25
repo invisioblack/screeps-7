@@ -5,10 +5,6 @@
 let Motivation = require('Motivation.prototype')();
 
 //-------------------------------------------------------------------------
-// Declarations
-//-------------------------------------------------------------------------
-
-//-------------------------------------------------------------------------
 // constructor
 //-------------------------------------------------------------------------
 let MotivationLongDistanceHarvest = function ()
@@ -26,11 +22,10 @@ MotivationLongDistanceHarvest.prototype.constructor = MotivationLongDistanceHarv
 MotivationLongDistanceHarvest.prototype.getDemands = function (roomName, resources) {
 	let debug = false;
 	let result = {};
-	//let unitName = this.getDesiredSpawnUnit(roomName);
+	let unitName = this.getDesiredSpawnUnit(roomName);
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
-	//console.log(JSON.stringify(result.units));
-	//lib.log("Room: " + roomName + "  Long Distance Harvest Demands : " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn, debug);
+	lib.log("Room: " + roomName + "  Long Distance Harvest Demands : " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn, debug);
 	Memory.rooms[roomName].motivations[this.name].demands = result;
 	return result;
 };
@@ -50,10 +45,10 @@ MotivationLongDistanceHarvest.prototype.getDesireSpawn = function (roomName, dem
 	if (numWorkers >= config.critWorkers)
 	{
 		_.forEach(spawnRoom.memory.longDistanceHarvestTargets, (rN) => {
-
 			let room = Game.rooms[rN];
 			let roomMemory = Memory.rooms[rN];
 			if (!lib.isNull(roomMemory) && !lib.isNull(roomMemory.motivations) && !lib.isNull(roomMemory.motivations["motivationHarvestSource"]) && !lib.isNull(roomMemory.motivations["motivationHarvestSource"].demands)) {
+				// TODO: does this really need to happen?
 				if (lib.isNull(room)) {
 					roomMemory.motivations["motivationHarvestSource"].demands = motivationHarvestSource.getDemands(rN);
 				}
@@ -100,8 +95,6 @@ MotivationLongDistanceHarvest.prototype.updateNeeds = function (roomName)
 			need.type = "needLongDistanceHarvest";
 			need.targetRoom = rN;
 			need.priority = C.PRIORITY_1;
-		} else {
-			need = memory.needs[needName];
 		}
 	});
 
@@ -109,8 +102,6 @@ MotivationLongDistanceHarvest.prototype.updateNeeds = function (roomName)
 		if (!_.some(room.memory.longDistanceHarvestTargets, (o) => { return v.targetRoom === o; }))
 			delete memory.needs[k];
 	});
-
-
 };
 
 //-------------------------------------------------------------------------

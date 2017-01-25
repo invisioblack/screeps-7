@@ -61,7 +61,7 @@ module.exports = function ()
 
 	Motivation.prototype.getUnitDemands = function (roomName)
 	{
-		let debug = false; //roomName === "W8N2";
+		let debug = false;
 		let result = {};
 		let roomMemory = Memory.rooms[roomName];
 

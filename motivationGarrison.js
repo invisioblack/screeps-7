@@ -9,10 +9,6 @@
 let Motivation = require("Motivation.prototype")();
 
 //-------------------------------------------------------------------------
-// Declarations
-//-------------------------------------------------------------------------
-
-//-------------------------------------------------------------------------
 // constructor
 //-------------------------------------------------------------------------
 let MotivationGarrison = function ()
@@ -32,10 +28,6 @@ MotivationGarrison.prototype.getDemands = function (roomName, resources)
 	let debug = false;
 	let result = {};
 	let unitName = this.getDesiredSpawnUnit(roomName);
-	let energy = 0;
-	let energyTotal = 0;
-	//console.log("e: " + energy + " et: " + energyTotal);
-	result.energy = energyTotal - energy;
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
 	lib.log('  Garrison Demands: e: ' + result.energy + ' ' + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn, debug);
@@ -45,15 +37,25 @@ MotivationGarrison.prototype.getDemands = function (roomName, resources)
 
 MotivationGarrison.prototype.getDesireSpawn = function (roomName, demands)
 {
-	// TODO: This needs to be reworked
 	let result = false;
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
 
-	if (room.memory.threat.level === C.THREAT_PANIC)
+	if (room.memory.threat.level >= C.THREAT_PLAYER || (roomManager.getIsLongDistanceHarvestTarget(roomName) && room.memory.threat.level >= C.THREAT_NPC))
 	{
 		result = true;
 	}
+
+	_.forEach(room.memory.longDistanceHarvestTargets, (r) => {
+		let numGuards = creepManager.countRoomUnits(r, "guard");
+		let threatLevel = Memory.rooms[r].threat.level;
+
+		if (numGuards < 1 && threatLevel >= C.THREAT_NPC)
+		{
+			result = true;
+		}
+	});
+
 	return result;
 };
 
@@ -68,7 +70,7 @@ MotivationGarrison.prototype.getDesiredSpawnUnit = function (roomName)
 		return "rangedGuard";
 	else if (numGuard <= numRangedGuard || numGuard <= numHeal)
 		return "guard";
-	else if (numHeal < numRangedGuard)
+	else if (numHeal <= numRangedGuard)
 		return "rangedGuard";
 };
 

@@ -27,7 +27,8 @@ module.exports =
 		lib.log("ROOM: " + roomName + " needManager.manageNeeds: motivation.name: " + motivation.name, debug);
 
 		//cpuManager.timerStart(`need.update Room: ${roomName} Motive: ${motivation.name}`, "manageNeeds.update");
-		motivation.updateNeeds(roomName);
+		if (Game.time % 2 === 0)
+			motivation.updateNeeds(roomName);
 		//cpuManager.timerStop("manageNeeds.update", config.cpuNeedsUpdateDebug, 0.2, 0.3);
 
 		// read up needs sorted by priority
@@ -76,7 +77,7 @@ module.exports =
 						assignedUnits++;
 						allocatedUnits++;
 						x++;
-						lib.log(`WHOAH X: ${x}`, x > 5);
+						lib.log(`WHOAH X: ${x}`, x > 10);
 					}
 
 					// you think you can move this up into the while above, but don't it causes problems on rare iterations
@@ -86,7 +87,7 @@ module.exports =
 						hasDemand = false;
 				});
 				y++;
-				lib.log(`WHOAH Y: ${y}`, y > 5);
+				lib.log(`WHOAH Y: ${y}`, y > 10);
 			}
 
 			if (assignedUnits || allocatedUnits)

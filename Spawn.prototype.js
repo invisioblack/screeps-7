@@ -62,7 +62,7 @@ Spawn.prototype.generateName = function (name)
  * @param unitName
  * @param fullEnergy
  */
-Spawn.prototype.spawnUnit = function (unitName)
+Spawn.prototype.spawnUnit = function (unitName, forceRsl = 0)
 {
 	let debug = false;
 	let spawnEnergy = this.room.getSpawnEnergy();
@@ -86,7 +86,7 @@ Spawn.prototype.spawnUnit = function (unitName)
 	}
 
 	lib.log(`Spawn Status Room: ${roomLink(this.room.name)} Unit: ${unitName} Energy Availability: ${spawnEnergy.energy}/${spawnEnergy.energyCapacity} Budget: ${energyBudget} FS: ${forceSpawn}`, debug);
-	return this.spawnUnitByEnergy(unitName , energyBudget);
+	return this.spawnUnitByEnergy(unitName , energyBudget, forceRsl);
 };
 
 /**
@@ -94,7 +94,7 @@ Spawn.prototype.spawnUnit = function (unitName)
  * @param unitName
  * @param energyBudget
  */
-Spawn.prototype.spawnUnitByEnergy = function (unitName, energyBudget)
+Spawn.prototype.spawnUnitByEnergy = function (unitName, energyBudget, forceRsl = 0)
 {
 	let debug = false;
 	let parts = [];
@@ -114,6 +114,13 @@ Spawn.prototype.spawnUnitByEnergy = function (unitName, energyBudget)
 			x++;
 	});
 	roomSpawnLevel = x;
+
+	// use forceRsl to override the spawn level, but don't let it over try
+	if (forceRsl !== 0)
+	{
+		if (forceRsl < roomSpawnLevel)
+			roomSpawnLevel = forceRsl;
+	}
 
 	switch (units[unitName].mode)
 	{

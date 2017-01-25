@@ -71,7 +71,6 @@ MotivationHaulMinerals.prototype.updateActive = function (roomName, demands)
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
 	let storageIds = lib.nullProtect(room.memory.cache.structures[STRUCTURE_STORAGE], []);
-	let storages  = _.map(storageIds, (id) => { return Game.getObjectById(id) });
 	let mineralContainer = Game.getObjectById(room.memory.mineralContainerId);
 	let containerTotal = 0;
 	if (!lib.isNull(mineralContainer))
@@ -79,7 +78,7 @@ MotivationHaulMinerals.prototype.updateActive = function (roomName, demands)
 		containerTotal = _.sum(mineralContainer.store);
 	}
 
-	if ((room.getIsMine() && room.controller.level >= 4 && storages.length > 0) && !lib.isNull(mineralContainer) && containerTotal > 500)
+	if ((room.getIsMine() && room.controller.level >= 4 && storageIds.length > 0) && !lib.isNull(mineralContainer) && containerTotal > 500)
 	{
 		memory.active = true;
 	} else {
