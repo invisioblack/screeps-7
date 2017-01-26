@@ -28,7 +28,7 @@ MotivationSupplySpawn.prototype.constructor = MotivationSupplySpawn;
 //-------------------------------------------------------------------------
 // implementation
 //-------------------------------------------------------------------------
-MotivationSupplySpawn.prototype.getDemands = function (roomName, resources)
+MotivationSupplySpawn.prototype.getDemands = function (roomName)
 {
 	let debug = false;
 	let result = {};
@@ -79,7 +79,18 @@ MotivationSupplySpawn.prototype.getDesiredSpawnUnit = function (roomName)
 		return "hauler";
 };
 
-MotivationSupplySpawn.prototype.updateActive = function (roomName, demands)
+MotivationSupplySpawn.prototype.getAssignableUnitNames = function ()
+{
+	return ["worker", "hauler"];
+};
+
+/**
+ * updateActive - this updates the active state of a motivation.
+ * Make sure not to base anything on active state on something that is not updated for an inactive motivation. Like
+ * demands.
+ * @param roomName
+ */
+MotivationSupplySpawn.prototype.updateActive = function (roomName)
 {
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];

@@ -23,7 +23,7 @@ MotivationHarvestMinerals.prototype.constructor = MotivationHarvestMinerals;
 //-------------------------------------------------------------------------
 // implementation
 //-------------------------------------------------------------------------
-MotivationHarvestMinerals.prototype.getDemands = function (roomName, resources) {
+MotivationHarvestMinerals.prototype.getDemands = function (roomName) {
 	let debug = false;
 	let result = {};
 	let unitName = this.getDesiredSpawnUnit(roomName);
@@ -78,7 +78,18 @@ MotivationHarvestMinerals.prototype.getDesireSpawn = function (roomName, demands
 	return result;
 };
 
-MotivationHarvestMinerals.prototype.updateActive = function (roomName, demands)
+MotivationHarvestMinerals.prototype.getAssignableUnitNames = function ()
+{
+	return ["harvester", "ldharvester"];
+};
+
+/**
+ * updateActive - this updates the active state of a motivation.
+ * Make sure not to base anything on active state on something that is not updated for an inactive motivation. Like
+ * demands.
+ * @param roomName
+ */
+MotivationHarvestMinerals.prototype.updateActive = function (roomName)
 {
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];

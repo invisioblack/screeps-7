@@ -27,7 +27,7 @@ MotivationHaulToStorage.prototype.constructor = MotivationHaulToStorage;
 //-------------------------------------------------------------------------
 // implementation
 //-------------------------------------------------------------------------
-MotivationHaulToStorage.prototype.getDemands = function (roomName, resources) {
+MotivationHaulToStorage.prototype.getDemands = function (roomName) {
 	let debug = false;
 	let result = {};
 	let unitName = this.getDesiredSpawnUnit(roomName);
@@ -75,7 +75,18 @@ MotivationHaulToStorage.prototype.getDesireSpawn = function (roomName, demands)
 	return result;
 };
 
-MotivationHaulToStorage.prototype.updateActive = function (roomName, demands)
+MotivationHaulToStorage.prototype.getAssignableUnitNames = function ()
+{
+	return ["worker", "hauler"];
+};
+
+/**
+ * updateActive - this updates the active state of a motivation.
+ * Make sure not to base anything on active state on something that is not updated for an inactive motivation. Like
+ * demands.
+ * @param roomName
+ */
+MotivationHaulToStorage.prototype.updateActive = function (roomName)
 {
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];

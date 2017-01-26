@@ -23,7 +23,7 @@ MotivationHarvestSource.prototype.constructor = MotivationHarvestSource;
 //-------------------------------------------------------------------------
 // implementation
 //-------------------------------------------------------------------------
-MotivationHarvestSource.prototype.getDemands = function (roomName, resources) {
+MotivationHarvestSource.prototype.getDemands = function (roomName) {
 	let debug = false;
 	let result = {};
 	let unitName = this.getDesiredSpawnUnit(roomName);
@@ -77,7 +77,13 @@ MotivationHarvestSource.prototype.getDesireSpawn = function (roomName, demands)
 	return result;
 };
 
-MotivationHarvestSource.prototype.updateActive = function (roomName, demands)
+/**
+ * updateActive - this updates the active state of a motivation.
+ * Make sure not to base anything on active state on something that is not updated for an inactive motivation. Like
+ * demands.
+ * @param roomName
+ */
+MotivationHarvestSource.prototype.updateActive = function (roomName)
 {
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
@@ -88,6 +94,11 @@ MotivationHarvestSource.prototype.updateActive = function (roomName, demands)
 	} else {
 		memory.active = false;
 	}
+};
+
+MotivationHarvestSource.prototype.getAssignableUnitNames = function ()
+{
+	return ["harvester", "ldharvester"];
 };
 
 MotivationHarvestSource.prototype.updateNeeds = function (roomName)

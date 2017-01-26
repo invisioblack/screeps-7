@@ -28,7 +28,7 @@ MotivationMaintainInfrastructure.prototype.constructor = MotivationMaintainInfra
 //-------------------------------------------------------------------------
 // implementation
 //-------------------------------------------------------------------------
-MotivationMaintainInfrastructure.prototype.getDemands = function (roomName, resources)
+MotivationMaintainInfrastructure.prototype.getDemands = function (roomName)
 {
 	let debug = false;
 	let result = {};
@@ -64,7 +64,19 @@ MotivationMaintainInfrastructure.prototype.getDesireSpawn = function (roomName, 
 	return result;
 };
 
-MotivationMaintainInfrastructure.prototype.updateActive = function (roomName, demands)
+MotivationMaintainInfrastructure.prototype.getAssignableUnitNames = function ()
+{
+	return ["worker"];
+};
+
+
+/**
+ * updateActive - this updates the active state of a motivation.
+ * Make sure not to base anything on active state on something that is not updated for an inactive motivation. Like
+ * demands.
+ * @param roomName
+ */
+MotivationMaintainInfrastructure.prototype.updateActive = function (roomName)
 {
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];

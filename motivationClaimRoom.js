@@ -31,7 +31,7 @@ MotivationClaimRoom.prototype.constructor = MotivationClaimRoom;
 //-------------------------------------------------------------------------
 // implementation
 //-------------------------------------------------------------------------
-MotivationClaimRoom.prototype.getDemands = function (roomName, resources) {
+MotivationClaimRoom.prototype.getDemands = function (roomName) {
 	let debug = false;
 	let result = {};
 	let unitName = this.getDesiredSpawnUnit(roomName);
@@ -45,6 +45,11 @@ MotivationClaimRoom.prototype.getDemands = function (roomName, resources) {
 MotivationClaimRoom.prototype.getDesiredSpawnUnit = function ()
 {
 	return "claimer";
+};
+
+MotivationClaimRoom.prototype.getAssignableUnitNames = function ()
+{
+	return ["claimer"];
 };
 
 MotivationClaimRoom.prototype.getDesireSpawn = function (roomName, demands)
@@ -126,7 +131,13 @@ MotivationClaimRoom.prototype.getDesireSpawn = function (roomName, demands)
 	return result;
 };
 
-MotivationClaimRoom.prototype.updateActive = function (roomName, demands)
+/**
+ * updateActive - this updates the active state of a motivation.
+ * Make sure not to base anything on active state on something that is not updated for an inactive motivation. Like
+ * demands.
+ * @param roomName
+ */
+MotivationClaimRoom.prototype.updateActive = function (roomName)
 {
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
@@ -161,7 +172,6 @@ MotivationClaimRoom.prototype.updateActive = function (roomName, demands)
 		else
 			memory.active = false;
 	}
-
 };
 
 MotivationClaimRoom.prototype.updateNeeds = function (roomName)

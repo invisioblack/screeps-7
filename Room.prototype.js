@@ -327,47 +327,6 @@ Room.prototype.motivateLinks = function ()
  * Resource related functions
  *
  */
-
-Room.prototype.updateResources = function ()
-{
-	let debug = false;
-	let roomName = this.name;
-	// determine room resources ----------------------------------------------------------------------------
-	// energy
-	this.memory.resources = {};
-	this.memory.resources.spawnEnergy = this.getSpawnEnergy();
-
-	// get room collector status
-	this.memory.resources.controllerStatus = this.updateControllerStatus();
-
-	// output info
-	lib.log("---- Room Resources: " + this.name, debug);
-	lib.log('  Spawn Energy: ' + this.memory.resources.spawnEnergy.energy + '/'
-		+ this.memory.resources.spawnEnergy.energyCapacity
-		+ ' Controller Level: ' + this.memory.resources.controllerStatus.level + ' '
-		+ this.memory.resources.controllerStatus.progress + '/' + this.memory.resources.controllerStatus.progressTotal
-		+ ' Downgrade: ' + this.memory.resources.controllerStatus.ticksToDowngrade, debug);
-
-	// get unit resources
-	this.memory.resources.units = {};
-	for (let unitName in units)
-	{
-
-		this.memory.resources.units[unitName] = {};
-		this.memory.resources.units[unitName].total = creepManager.countRoomUnits(roomName, unitName);
-			//_.has(global, "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName].length : 0;
-		this.memory.resources.units[unitName].allocated = 0;
-		this.memory.resources.units[unitName].unallocated = this.memory.resources.units[unitName].total;
-		this.memory.resources.units[unitName].unassigned = creepManager.countRoomUnassignedUnits(this.name, unitName);
-		this.memory.resources.units[unitName].assigned = creepManager.countRoomAssignedUnits(this.name, unitName);
-		lib.log("  " + unitName + " total: " + this.memory.resources.units[unitName].total
-			+ " Assigned/UnAssigned: " + this.memory.resources.units[unitName].assigned
-			+ "/" + this.memory.resources.units[unitName].unassigned, debug);
-	}
-
-	return this.memory.resources;
-};
-
 Room.prototype.getSpawnEnergy = function ()
 {
 	let result = {};

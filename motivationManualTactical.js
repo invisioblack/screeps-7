@@ -27,7 +27,7 @@ MotivationManualTactical.prototype.constructor = MotivationManualTactical;
 //-------------------------------------------------------------------------
 // implementation
 //-------------------------------------------------------------------------
-MotivationManualTactical.prototype.getDemands = function (roomName, resources)
+MotivationManualTactical.prototype.getDemands = function (roomName)
 {
 	let debug = false;
 	let result = {};
@@ -49,7 +49,18 @@ MotivationManualTactical.prototype.getDesiredSpawnUnit = function (roomName)
 	return "guard";
 };
 
-MotivationManualTactical.prototype.updateActive = function (roomName, demands)
+MotivationManualTactical.prototype.getAssignableUnitNames = function ()
+{
+	return ["guard", "rangedGuard", "healer"];
+};
+
+/**
+ * updateActive - this updates the active state of a motivation.
+ * Make sure not to base anything on active state on something that is not updated for an inactive motivation. Like
+ * demands.
+ * @param roomName
+ */
+MotivationManualTactical.prototype.updateActive = function (roomName)
 {
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];

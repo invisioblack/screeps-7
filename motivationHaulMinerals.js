@@ -27,7 +27,7 @@ MotivationHaulMinerals.prototype.constructor = MotivationHaulMinerals;
 //-------------------------------------------------------------------------
 // implementation
 //-------------------------------------------------------------------------
-MotivationHaulMinerals.prototype.getDemands = function (roomName, resources) {
+MotivationHaulMinerals.prototype.getDemands = function (roomName) {
 	let debug = false;
 	let result = {};
 	//let unitName = this.getDesiredSpawnUnit(roomName);
@@ -66,7 +66,18 @@ MotivationHaulMinerals.prototype.getDesireSpawn = function (roomName, demands)
 	return result;
 };
 
-MotivationHaulMinerals.prototype.updateActive = function (roomName, demands)
+MotivationHaulMinerals.prototype.getAssignableUnitNames = function ()
+{
+	return ["hauler"];
+};
+
+/**
+ * updateActive - this updates the active state of a motivation.
+ * Make sure not to base anything on active state on something that is not updated for an inactive motivation. Like
+ * demands.
+ * @param roomName
+ */
+MotivationHaulMinerals.prototype.updateActive = function (roomName)
 {
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];

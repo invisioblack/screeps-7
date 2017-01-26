@@ -26,11 +26,6 @@ module.exports =
 
 		lib.log("ROOM: " + roomName + " needManager.manageNeeds: motivation.name: " + motivation.name, debug);
 
-		//cpuManager.timerStart(`need.update Room: ${roomName} Motive: ${motivation.name}`, "manageNeeds.update");
-		if (Game.time % 2 === 0)
-			motivation.updateNeeds(roomName);
-		//cpuManager.timerStop("manageNeeds.update", config.cpuNeedsUpdateDebug, 0.2, 0.3);
-
 		// read up needs sorted by priority
 		needs = _.sortByOrder(room.memory.motivations[motivation.name].needs , ['priority'], ['desc']);
 

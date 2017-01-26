@@ -19,7 +19,7 @@ MotivationLongDistanceHarvest.prototype.constructor = MotivationLongDistanceHarv
 //-------------------------------------------------------------------------
 // implementation
 //-------------------------------------------------------------------------
-MotivationLongDistanceHarvest.prototype.getDemands = function (roomName, resources) {
+MotivationLongDistanceHarvest.prototype.getDemands = function (roomName) {
 	let debug = false;
 	let result = {};
 	let unitName = this.getDesiredSpawnUnit(roomName);
@@ -64,7 +64,18 @@ MotivationLongDistanceHarvest.prototype.getDesireSpawn = function (roomName, dem
 	return result;
 };
 
-MotivationLongDistanceHarvest.prototype.updateActive = function (roomName, demands)
+MotivationLongDistanceHarvest.prototype.getAssignableUnitNames = function ()
+{
+	return ["ldharvester"];
+};
+
+/**
+ * updateActive - this updates the active state of a motivation.
+ * Make sure not to base anything on active state on something that is not updated for an inactive motivation. Like
+ * demands.
+ * @param roomName
+ */
+MotivationLongDistanceHarvest.prototype.updateActive = function (roomName)
 {
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];

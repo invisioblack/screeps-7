@@ -23,7 +23,7 @@ MotivationGarrison.prototype.constructor = MotivationGarrison;
 //-------------------------------------------------------------------------
 // implementation
 //-------------------------------------------------------------------------
-MotivationGarrison.prototype.getDemands = function (roomName, resources)
+MotivationGarrison.prototype.getDemands = function (roomName)
 {
 	let debug = false;
 	let result = {};
@@ -74,7 +74,18 @@ MotivationGarrison.prototype.getDesiredSpawnUnit = function (roomName)
 		return "rangedGuard";
 };
 
-MotivationGarrison.prototype.updateActive = function (roomName, demands)
+MotivationGarrison.prototype.getAssignableUnitNames = function ()
+{
+	return ["guard", "rangedGuard", "healer"];
+};
+
+/**
+ * updateActive - this updates the active state of a motivation.
+ * Make sure not to base anything on active state on something that is not updated for an inactive motivation. Like
+ * demands.
+ * @param roomName
+ */
+MotivationGarrison.prototype.updateActive = function (roomName)
 {
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];

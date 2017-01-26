@@ -93,6 +93,17 @@ module.exports =
 		return result;
 	},
 
+
+	getRoomUnassignedCreeps: function (roomName)
+	{
+		let result = _.filter(global.cache.rooms[roomName].creeps , function (creep)
+		{
+			return creep.memory.motive.motivation === "";
+		});
+
+		return result;
+	},
+
 	countRoomUnassignedUnits: function (roomName, unitName)
 	{
 		let result = this.getRoomUnassignedUnits(roomName, unitName).length;
