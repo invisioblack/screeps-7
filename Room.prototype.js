@@ -587,8 +587,8 @@ Room.prototype.motivateTowers = function ()
 			// for each tower
 			towers.forEach(function (tower)
 			{
-				tower.autoRepair();
-				tower.autoCreepHeal();
+				if (!tower.autoRepair())
+					tower.autoCreepHeal();
 			} , this);
 		}
 	}

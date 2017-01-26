@@ -66,21 +66,19 @@ module.exports = function ()
 		let roomMemory = Memory.rooms[roomName];
 
 		lib.log(roomName, debug);
-		for (let needName in roomMemory.motivations[this.name].needs)
+		_.forEach(roomMemory.motivations[this.name].needs, (need, needName) =>
 		{
-
-			let need = roomMemory.motivations[this.name].needs[needName];
 			//console.log("!!!!!!!!!!!!---:" + need.type);
 			let demands = global[need.type].getUnitDemands(roomName, need, this.name);
 
 			lib.log("----------- demands: " + JSON.stringify(demands), debug);
-			for (let unitName in demands)
+			_.forEach(demands, (demand, unitName) =>
 			{
 				if (lib.isNull(result[unitName]))
 					result[unitName] = 0;
-				result[unitName] += demands[unitName];
-			}
-		}
+				result[unitName] += demand;
+			});
+		});
 
 		return result;
 	};

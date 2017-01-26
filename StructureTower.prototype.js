@@ -3,34 +3,31 @@
 //-------------------------------------------------------------------------
 "use strict";
 
-StructureTower.prototype.autoAttack = function ()
-{
+StructureTower.prototype.autoAttack = function () {
 	let roomName = this.room.name;
 	let targets = [];
 	let target;
 
-	if (Game.rooms[roomName].memory.threat.level >= C.THREAT_NPC)
-	{
+	if (Game.rooms[roomName].memory.threat.level >= C.THREAT_NPC) {
 		targets = _.filter(Game.rooms[roomName].memory.threat.threats, (o) => {
 			return o.status === C.RELATION_HOSTILE;
 		});
 
-		if (targets.length > 0)
-		{
+		if (targets.length > 0) {
 			target = Game.getObjectById(targets[_.random(0, targets.length - 1)].id);
 		}
 
-		if (!lib.isNull(target))
-		{
+		if (!lib.isNull(target)) {
 			this.attack(target);
 		}
 	}
 };
 
-StructureTower.prototype.autoCreepHeal = function ()
-{
+StructureTower.prototype.autoCreepHeal = function () {
 	let roomName = this.room.name;
-	let woundedCreep = _.min(global.cache.rooms[roomName].creeps, (o) => { return o.hitsMax - o.hits});
+	let woundedCreep = _.min(global.cache.rooms[roomName].creeps, (o) => {
+		return o.hitsMax - o.hits
+	});
 	let wounds = woundedCreep.hitsMax - woundedCreep.hits;
 
 	//console.log(":::::::::::::::::::::" + JSON.stringify(woundedCreep));
@@ -41,31 +38,45 @@ StructureTower.prototype.autoCreepHeal = function ()
 };
 
 // don't use this yet, it will go crazy on the walls
-StructureTower.prototype.autoRepair = function ()
-{
+StructureTower.prototype.autoRepair = function () {
 	let wallHP = config.wallHP[this.room.controller.level];
 	// non walls/ramparts
-	let structures = _.map(this.room.memory.cache.structures[STRUCTURE_ALL_NOWALL], (o) => { return Game.getObjectById(o)});
+	let structures = _.map(this.room.memory.cache.structures[STRUCTURE_ALL_NOWALL], (o) => {
+		return Game.getObjectById(o)
+	});
 	let damagedBuildings = _.filter(structures, (object) => {
 		return (object.hits < (object.hitsMax * config.towerRepairFactor));
 	});
 
 	//console.log(JSON.stringify(damagedBuildings));
 
-	if (!lib.isNull(damagedBuildings[0]) && this.energy > (this.energyCapacity * config.towerPowerFactor))
+	if (!lib.isNull(damagedBuildings[0]) && this.energy > (this.energyCapacity * config.towerPowerFactor)) {
 		this.repair(damagedBuildings[0]);
+		return true;
+	}
+	else {
 
-	// walls and ramparts
-	structures = _.map(this.room.memory.cache.structures[STRUCTURE_ALL_WALL], (o) => { return Game.getObjectById(o)});
-	damagedBuildings = _.filter(structures, (object) => {
-		return (object.hits < (wallHP * config.towerRepairFactor));
-	});
+		// walls and ramparts
+		structures = _.map(this.room.memory.cache.structures[STRUCTURE_ALL_WALL], (o) => {
+			return Game.getObjectById(o)
+		});
+		damagedBuildings = _.filter(structures, (object) => {
+			return (object.hits < (wallHP * config.towerRepairFactor));
+		});
 
-	//console.log(JSON.stringify((wallHP * config.towerRepairFactor)));
-	//console.log(JSON.stringify(damagedBuildings));
+		//console.log(JSON.stringify((wallHP * config.towerRepairFactor)));
+		//console.log(JSON.stringify(damagedBuildings));
 
-	if (!lib.isNull(damagedBuildings[0]) && this.energy > (this.energyCapacity * config.towerPowerFactor))
-		this.repair(damagedBuildings[0]);
+		if (!lib.isNull(damagedBuildings[0]) && this.energy > (this.energyCapacity * config.towerPowerFactor)) {
+			this.repair(damagedBuildings[0]);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 };
 
-module.exports = function() {};
+module.exports = function () {
+};
