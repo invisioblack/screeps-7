@@ -34,7 +34,7 @@ NeedTransferEnergy.prototype.getUnitDemands = function(roomName, memory, motivat
 
 	if (motivationName === "motivationSupplyController")
 	{
-		memory.demands["worker"] = 999;
+		memory.demands["worker"] = 2;
 	}
 	else
 	{

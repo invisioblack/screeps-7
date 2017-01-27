@@ -302,6 +302,25 @@ Room.prototype.updateEnergyPickupMode = function ()
 	return result;
 };
 
+Room.prototype.updateUnitDemands = function ()
+{
+	// init memory
+	this.memory.demands = {};
+	_.forEach(units, (unit, unitName) => {
+		this.memory.demands[unitName] = 0;
+	});
+
+	// add in demands
+	_.forEach(this.memory.motivations, (motivation, motivationName) =>
+	{
+		_.forEach(motivation.demands.units, (demand, unitName) =>
+		{
+			this.memory.demands[unitName] += demand;
+		});
+	});
+
+};
+
 Room.prototype.motivateLinks = function ()
 {
 	if (this.getIsMine())

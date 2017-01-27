@@ -40,26 +40,22 @@ MotivationLongDistanceHarvest.prototype.getDesireSpawn = function (roomName, dem
 	let debug = false;
 	let result = false;
 	let spawnRoom = Game.rooms[roomName];
-	let numWorkers = creepManager.countRoomUnits(roomName, "worker");
 
-	if (numWorkers >= config.critWorkers)
-	{
-		_.forEach(spawnRoom.memory.longDistanceHarvestTargets, (rN) => {
-			let room = Game.rooms[rN];
-			let roomMemory = Memory.rooms[rN];
-			if (!lib.isNull(roomMemory) && !lib.isNull(roomMemory.motivations) && !lib.isNull(roomMemory.motivations["motivationHarvestSource"]) && !lib.isNull(roomMemory.motivations["motivationHarvestSource"].demands)) {
-				// TODO: does this really need to happen?
-				if (lib.isNull(room)) {
-					roomMemory.motivations["motivationHarvestSource"].demands = motivationHarvestSource.getDemands(rN);
-				}
-
-				if (!lib.isNull(roomMemory) && roomMemory.motivations["motivationHarvestSource"].demands.spawn)
-					result = true;
-				if (!lib.isNull(roomMemory))
-					lib.log(`Room: ${roomName} Target: ${rN} Result: ${result} ${JSON.stringify(roomMemory.motivations["motivationHarvestSource"].demands)}`, debug);
+	_.forEach(spawnRoom.memory.longDistanceHarvestTargets, (rN) => {
+		let room = Game.rooms[rN];
+		let roomMemory = Memory.rooms[rN];
+		if (!lib.isNull(roomMemory) && !lib.isNull(roomMemory.motivations) && !lib.isNull(roomMemory.motivations["motivationHarvestSource"]) && !lib.isNull(roomMemory.motivations["motivationHarvestSource"].demands)) {
+			// TODO: does this really need to happen?
+			if (lib.isNull(room)) {
+				roomMemory.motivations["motivationHarvestSource"].demands = motivationHarvestSource.getDemands(rN);
 			}
-		});
-	}
+
+			if (!lib.isNull(roomMemory) && roomMemory.motivations["motivationHarvestSource"].demands.spawn)
+				result = true;
+			if (!lib.isNull(roomMemory))
+				lib.log(`Room: ${roomName} Target: ${rN} Result: ${result} ${JSON.stringify(roomMemory.motivations["motivationHarvestSource"].demands)}`, debug);
+		}
+	});
 
 	return result;
 };

@@ -55,10 +55,6 @@ MotivationSupplyController.prototype.getDesireSpawn = function (roomName, demand
 		result = false;
 	}
 
-    // enforce worker max
-	if (this.getDesiredSpawnUnit(roomName) === "worker" && numWorkers >= config.maxWorkers[room.getControllerLevel()])
-		result = false;
-
 	return result;
 };
 

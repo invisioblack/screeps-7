@@ -57,10 +57,6 @@ MotivationMaintainInfrastructure.prototype.getDesireSpawn = function (roomName, 
 		result = false;
 	}
 
-    // enforce worker max
-	if (this.getDesiredSpawnUnit(roomName) === "worker" && numWorkers >= config.maxWorkers[room.getControllerLevel()])
-		result = false;
-
 	return result;
 };
 
@@ -123,15 +119,16 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 
 	// Handle Repair Needs -------------------------------------------------------------------------------------
 	// look up sources and find out how many needs we should have for each one
-	let sites = _.map(room.memory.cache.structures[STRUCTURE_ALL_NOWALL], (id) => { return Game.getObjectById(id); });
+	let sitesRaw = _.map(room.memory.cache.structures[STRUCTURE_ALL_NOWALL], (id) => { return Game.getObjectById(id); });
+	let sites = _.filter(sitesRaw, (o) => { return !lib.isNull(o)});
 
-	let repairSites = _.filter(sites, (s) => { return s.hits < s.hitsMax; });
-	lib.log(`Room: ${roomName} ${repairSites}`, debug);
+	let repairSites = _.filter(sites, (s) => { return s.hits < (s.hitsMax * REPAIR_FACTOR); });
+	lib.log(`Room: ${roomName} ${sites}`, debug);
 	repairSites.forEach(function (rs) {
 		let needName = "repair." + rs.id;
 
 		// create new need if one doesn't exist
-		if (lib.isNull(memory.needs[needName]) && rs.hits < (rs.hitsMax * REPAIR_FACTOR))
+		if (lib.isNull(memory.needs[needName]))
 		{
 			memory.needs[needName] = {};
 			memory.needs[needName].type = "needRepair";

@@ -53,15 +53,11 @@ MotivationSupplyTower.prototype.getDesireSpawn = function (roomName, demands)
 	let result = true;
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	let numWorkers = creepManager.countRoomUnits(roomName, "worker");
-	let numHaulers = creepManager.countRoomUnits(roomName, "hauler");
-
 	if (memory.active)
 	{
 		for (let unitName in units)
 		{
 			let numUnits = creepManager.countRoomUnits(roomName, unitName);
-				//_.has(global, "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName].length : 0;
 			if (!lib.isNull(demands.units[unitName]) && demands.units[unitName] <= numUnits)
 			{
 				result = false;
@@ -70,11 +66,6 @@ MotivationSupplyTower.prototype.getDesireSpawn = function (roomName, demands)
 	} else {
 		result = false;
 	}
-
-	if (this.getDesiredSpawnUnit(roomName) === "worker" && numWorkers >= config.maxWorkers[room.getControllerLevel()])
-		result = false;
-	if (this.getDesiredSpawnUnit(roomName) === "hauler" && numHaulers >= config.maxHaulers)
-		result = false;
 
 	return result;
 };

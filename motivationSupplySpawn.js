@@ -42,29 +42,29 @@ MotivationSupplySpawn.prototype.getDemands = function (roomName)
 
 MotivationSupplySpawn.prototype.getDesireSpawn = function (roomName, demands)
 {
+	let debug = true;
 	let result = false;
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
 	let unitName = this.getDesiredSpawnUnit(roomName);
+	let unitsDemanded = 0;
 	let units = {};
-	units.worker = creepManager.countRoomUnits(roomName, "worker");
-	units.hauler = creepManager.countRoomUnits(roomName, "hauler");
+	units.worker = creepManager.countRoomMotivationUnits(roomName, this.name, "worker");
+	units.hauler = creepManager.countRoomMotivationUnits(roomName, this.name, "hauler");
+	let roomUnits = {};
+	roomUnits.worker = creepManager.countRoomUnits(roomName, "worker");
+	roomUnits.hauler = creepManager.countRoomUnits(roomName, "hauler");
 
-	//
-
-	if (memory.active)
+	if (memory.active && room.memory.demands[unitName] > roomUnits[unitName])
 	{
-	    if (units[unitName] < lib.nullProtect(demands.units[unitName], 0))
-	        result = true;
+		unitsDemanded = lib.nullProtect(demands.units[unitName], 0);
+		if (units[unitName] < unitsDemanded)
+		{
+			result = true;
+		}
 	}
 
-    // enforce max spawns
-	if (units.worker < config.minWorkers)
-		result = false;
-	if (unitName === "worker" && units.worker >= config.maxWorkers[room.getControllerLevel()])
-		result = false;
-	else if (unitName === "hauler" && units.hauler >= config.maxHaulers)
-		result = false;
+	lib.log(`Room: ${roomLink(roomName)} ${this.name}.getDesireSpawn: active: ${memory.active} Result: ${result} unit: ${unitName} A/D: ${units[unitName]}/${unitsDemanded} R/D: ${roomUnits[unitName]}/${room.memory.demands[unitName]}`, debug);
 
 	return result;
 };

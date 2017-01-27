@@ -55,24 +55,21 @@ MotivationHarvestSource.prototype.getDesireSpawn = function (roomName, demands)
 	let unitName = this.getDesiredSpawnUnit(roomName);
 	let numHarvesters = 0;
 	let demandedHarvesters = lib.nullProtect(demands.units[unitName], 0);
-	let numWorkers = creepManager.countRoomUnits(roomName, "worker");
-	let critWorkers = config.critWorkers;
 
-	// if we not in one of my owned rooms then we don't need to respect the crit workers limitation
+	// if we not in one of my owned rooms then check for assigned to the room so we don't double spawn
 	if (lib.isNull(room) || !room.getIsMine())
 	{
 		numHarvesters = creepManager.countRoomUnits(roomName, unitName);
-		critWorkers = 0;
 	} else {
 	    numHarvesters = creepManager.countRoomMotivationUnits(roomName, "motivationHarvestSource",unitName);
 	}
 
-	if (roomMemory.energyPickupMode < C.ROOM_ENERGYPICKUPMODE_PRECONTAINER || numHarvesters >= demandedHarvesters || numWorkers < critWorkers)
+	if (roomMemory.energyPickupMode < C.ROOM_ENERGYPICKUPMODE_PRECONTAINER || numHarvesters >= demandedHarvesters)
 	{
 		result = false;
 	}
 
-	lib.log(`Room: ${roomName} Desire Spawn: ${result} Unit: ${unitName} #Pickup: ${roomMemory.energyPickupMode} Demanded Harvesters: ${demandedHarvesters}/${numHarvesters} Workers: ${numWorkers}/${critWorkers}`, debug);
+	lib.log(`Room: ${roomName} Desire Spawn: ${result} Unit: ${unitName} #Pickup: ${roomMemory.energyPickupMode} Demanded Harvesters: ${demandedHarvesters}/${numHarvesters}`, debug);
 
 	return result;
 };

@@ -64,7 +64,7 @@ Spawn.prototype.generateName = function (name)
  */
 Spawn.prototype.spawnUnit = function (unitName, forceRsl = 0)
 {
-	let debug = false;
+	let debug = true;
 	let spawnEnergy = this.room.getSpawnEnergy();
 	let energyBudget = 0;
 	let numWorkers = creepManager.countRoomUnits(this.room.name, "worker");
@@ -96,7 +96,7 @@ Spawn.prototype.spawnUnit = function (unitName, forceRsl = 0)
  */
 Spawn.prototype.spawnUnitByEnergy = function (unitName, energyBudget, forceRsl = 0)
 {
-	let debug = false;
+	let debug = true;
 	let parts = [];
 	let name;
 	let result;

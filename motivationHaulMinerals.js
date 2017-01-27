@@ -45,23 +45,27 @@ MotivationHaulMinerals.prototype.getDesiredSpawnUnit = function (roomName)
 
 MotivationHaulMinerals.prototype.getDesireSpawn = function (roomName, demands)
 {
-	let result = true;
+	let debug = true;
+	let result = false;
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	let numHaulers = creepManager.countRoomUnits(roomName, "hauler");
+	let unitName = this.getDesiredSpawnUnit(roomName);
+	let unitsDemanded = 0;
+	let units = {};
+	units.hauler = creepManager.countRoomMotivationUnits(roomName, this.name, "hauler");
+	let roomUnits = {};
+	roomUnits.hauler = creepManager.countRoomUnits(roomName, "hauler");
 
-	if (memory.active)
+	if (memory.active && room.memory.demands[unitName] > roomUnits[unitName])
 	{
-		if ((!lib.isNull(demands.units["hauler"]) && demands.units["hauler"] <= numHaulers))
+		unitsDemanded = lib.nullProtect(demands.units[unitName], 0);
+		if (units[unitName] < unitsDemanded)
 		{
-			result = false;
+			result = true;
 		}
-	} else {
-		result = false;
 	}
 
-	if (numHaulers >= config.maxHaulers)
-		result = false;
+	lib.log(`Room: ${roomLink(roomName)} ${this.name}.getDesireSpawn: active: ${memory.active} Result: ${result} unit: ${unitName} A/D: ${units[unitName]}/${unitsDemanded} R/D: ${roomUnits[unitName]}/${room.memory.demands[unitName]}`, debug);
 
 	return result;
 };

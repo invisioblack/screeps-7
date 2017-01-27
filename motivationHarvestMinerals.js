@@ -56,24 +56,21 @@ MotivationHarvestMinerals.prototype.getDesireSpawn = function (roomName, demands
 	let numHarvesters = 0;
 	let numContainers = lib.nullProtect(roomMemory.cache.structures[STRUCTURE_CONTAINER], []).length;
 	let demandedHarvesters = lib.nullProtect(demands.units[unitName], 0);
-	let numWorkers = creepManager.countRoomUnits(roomName, "worker");
-	let critWorkers = config.critWorkers;
 
-    // if we not in one of my owned rooms then we don't need to respect the crit workers limitation
+	// if we not in one of my owned rooms then check for assigned to the room so we don't double spawn
 	if (lib.isNull(room) || !room.getIsMine())
 	{
 	    numHarvesters = creepManager.countRoomUnits(roomName, unitName);
-		critWorkers = 0;
 	} else {
 	    numHarvesters = creepManager.countRoomMotivationUnits(roomName, "motivationHarvestSource", unitName);
 	}
 	    
-	if (numContainers === 0 || numHarvesters >= demandedHarvesters || numWorkers < critWorkers)
+	if (numContainers === 0 || numHarvesters >= demandedHarvesters)
 	{
 		result = false;
 	}
 
-	lib.log(`Room: ${roomName} Desire Spawn: ${result} Unit: ${unitName} #PickUp: ${roomMemory.energyPickupMode} Demanded Harvesters: ${demandedHarvesters}/${numHarvesters} Workers: ${numWorkers}/${critWorkers}`, debug);
+	lib.log(`Room: ${roomName} Desire Spawn: ${result} Unit: ${unitName} #PickUp: ${roomMemory.energyPickupMode} Demanded Harvesters: ${demandedHarvesters}/${numHarvesters}`, debug);
 
 	return result;
 };

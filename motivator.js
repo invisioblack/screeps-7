@@ -17,6 +17,7 @@ module.exports =
 				room.init();
 				room.initMemCache();
 				room.updateEnergyPickupMode();
+				room.updateUnitDemands();
 
 				// update defenses -----------------------------------------------------------------------------------------
 				room.updateThreat();
@@ -26,14 +27,40 @@ module.exports =
 					room.memory.motivations = {};
 				}
 
+				// only in my rooms
+				if (room.getIsMine()) {
+					motivationSupplySpawn.init(room.name);
+					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_1;
+				} else if (motivationSupplySpawn.isInit(room.name)) {
+					motivationSupplySpawn.deInit(room.name);
+				}
+
 				// init each motivation for this room
 				motivationManualTactical.init(room.name);
 				room.memory.motivations[motivationManualTactical.name].priority = C.PRIORITY_1;
 
+				motivationGarrison.init(room.name);
+				room.memory.motivations[motivationGarrison.name].priority = C.PRIORITY_2;
+
+				// only in my rooms
+				if (room.getIsMine()) {
+					motivationSupplyController.init(room.name);
+					let roomController = room.controller;
+					let ticksToDowngrade;
+					if (!lib.isNull(roomController))
+						ticksToDowngrade = roomController.ticksToDowngrade;
+					else
+						ticksToDowngrade = 0;
+
+					room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_2;
+				} else if (motivationSupplyController.isInit(room.name)) {
+					motivationSupplyController.deInit(room.name);
+				}
+
 				// should only be init in my room, or a ldh target
 				if (room.getIsMine() || roomManager.getIsLongDistanceHarvestTarget(room.name)) {
 					motivationHarvestSource.init(room.name);
-					room.memory.motivations[motivationHarvestSource.name].priority = C.PRIORITY_1;
+					room.memory.motivations[motivationHarvestSource.name].priority = C.PRIORITY_3;
 				} else if (motivationHarvestSource.isInit(room.name)) {
 					motivationHarvestSource.deInit(room.name);
 				}
@@ -41,7 +68,7 @@ module.exports =
 				// should only be init in my room, or a ldh target
 				if (room.getIsMine() || roomManager.getIsLongDistanceHarvestTarget(room.name)) {
 					motivationHaulToStorage.init(room.name);
-					room.memory.motivations[motivationHaulToStorage.name].priority = C.PRIORITY_2;
+					room.memory.motivations[motivationHaulToStorage.name].priority = C.PRIORITY_3;
 				} else if (motivationHaulToStorage.isInit(room.name)) {
 					motivationHaulToStorage.deInit(room.name);
 				}
@@ -58,9 +85,6 @@ module.exports =
 				motivationClaimRoom.init(room.name);
 				room.memory.motivations[motivationClaimRoom.name].priority = C.PRIORITY_4;
 
-				motivationGarrison.init(room.name);
-				room.memory.motivations[motivationGarrison.name].priority = C.PRIORITY_2;
-
 				// should only be init in my room
 				if (room.getIsMine()) {
 					motivationLongDistanceHarvest.init(room.name);
@@ -69,39 +93,12 @@ module.exports =
 					motivationLongDistanceHarvest.deInit(room.name);
 				}
 
-
-				// only in my rooms
-				if (room.getIsMine()) {
-					motivationSupplySpawn.init(room.name);
-					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_1;
-				} else if (motivationSupplySpawn.isInit(room.name)) {
-					motivationSupplySpawn.deInit(room.name);
-				}
-
 				// should only be init in my room, or a ldh target
 				if (room.getIsMine() || roomManager.getIsLongDistanceHarvestTarget(room.name)) {
 					motivationMaintainInfrastructure.init(room.name);
 					room.memory.motivations[motivationMaintainInfrastructure.name].priority = C.PRIORITY_5;
 				} else if (motivationMaintainInfrastructure.isInit(room.name)) {
 					motivationMaintainInfrastructure.deInit(room.name);
-				}
-
-				// only in my rooms
-				if (room.getIsMine()) {
-					motivationSupplyController.init(room.name);
-					let roomController = room.controller;
-					let ticksToDowngrade;
-					if (!lib.isNull(roomController))
-						ticksToDowngrade = roomController.ticksToDowngrade;
-					else
-						ticksToDowngrade = 0;
-
-					if (ticksToDowngrade > config.claimTicks)
-						room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_7;
-					else
-						room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_2;
-				} else if (motivationSupplyController.isInit(room.name)) {
-					motivationSupplyController.deInit(room.name);
 				}
 
 				// only in my room with extractor
@@ -180,28 +177,6 @@ module.exports =
 				this.motivateRound2(sortedMotivations, room);
 				cpuManager.timerStop("motivate.r2", config.cpuMotivateDebug);
 
-/*
-				// TODO: this needs to be implemented differently, this is just a hack
-				// send off helpers for long distance harvest rooms
-				this.sendWorkersToLDHRooms(roomName);
-
-
-				// second and 3rd round motivation processing ----------------------------------------------------------
-				// unit allocation and need processing
-				countActiveMotivations = this.countActiveMotivations(roomName);
-				lib.log("--: Active Motivations: " + countActiveMotivations, debug);
-
-				// process round 2 and 3 for each unit type ------------------------------------------------------------
-				cpuManager.timerStart(`\t\tMotivate R2&R3`, "motivate.r2");
-				this.motivateRound2n3(roomName, sortedMotivations, demands, resources);
-				cpuManager.timerStop("motivate.r2", config.cpuMotivateDebug);
-
-
-				// motivation round 4 ----------------------------------------------------------------------------------
-				cpuManager.timerStart(`\t\tManage Needs`, "motivate.r4");
-				this.motivateRound4(sortedMotivations, room);
-				cpuManager.timerStop("motivate.r4", config.cpuMotivateDebug);
-*/
 				cpuManager.timerStop("motivate.room", config.cpuRoomDebug, 8, 10);
 			}
 
@@ -271,64 +246,103 @@ module.exports =
 			});
 		},
 
+		// TODO: need to bail out of loop not at max tries, but when we reach demand,
+		//      then, have a catch all motivation specified for each unit type, then force
+		//      assign the unit to that motivation
+		//      eliminate 999 unit demands, adjust demands to be more realistic
+		//      hopefully demands will allow us to stop capping spawning
 		motivateRound2: function (sortedMotivations, room) {
-			let debug = true;
+			let debug = false;
 			let roomName = room.name;
 			let unAssignedCreeps = creepManager.getRoomUnassignedCreeps(roomName);
 			_.forEach(unAssignedCreeps, (creep) => {
 				lib.log(`${roomLink(roomName)}: ${creep.name}`, debug);
 
-				let maxCreeps = 1, maxTrys = 5;
+				let maxCreeps = 1, maxTrys = 10;
 				let success = false;
-				while (maxCreeps <= maxTrys && !success)
-				{
-					success = this.findCreepJob(roomName, sortedMotivations, creep, maxCreeps);
-					maxCreeps++;
-				}
-
+				this.findCreepJob(roomName, sortedMotivations, creep, maxCreeps);
 			});
 		},
 
-		findCreepJob: function (roomName, sortedMotivations, creep, maxCreeps)
+		findCreepJob: function (roomName, sortedMotivations, creep)
 		{
 			let debug = true;
 			let assigned = false;
-			_.forEach(sortedMotivations, (motivationMemory) =>
+			let isDemand = true;
+			let tryCount = 1;
+			while (isDemand && !assigned)
 			{
-				if (!assigned && motivationMemory.active)
+				// reset this value, it needs to be set true in the loop to proceed to the next loop
+				isDemand = false;
+				// loop over motivations to look for an open spot
+				_.forEach(sortedMotivations , (motivationMemory) =>
 				{
-					let motivation = global[motivationMemory.name];
-					if (_.some(motivation.getAssignableUnitNames() , (unit) =>
-						{
-							return creep.memory.unit === unit
-						}))
+					if (!assigned && motivationMemory.active && _.some(global[motivationMemory.name].getAssignableUnitNames(), (unitName) => { return unitName === creep.memory.unit; }));
 					{
 						let motiveUnits = creepManager.countRoomMotivationUnits(roomName , motivationMemory.name , creep.memory.unit);
 						let demandedUnits = lib.nullProtect(motivationMemory.demands.units[creep.memory.unit] , 0);
-						if (motiveUnits < maxCreeps && motiveUnits < demandedUnits)
+						if (!assigned && motiveUnits < tryCount && motiveUnits < demandedUnits)
 						{
-							console.log("Fine me a need!");
 							// read up needs sorted by priority
 							let needs = _.sortByOrder(motivationMemory.needs , ['priority'] , ['desc']);
 							_.forEach(needs , (need) =>
 							{
 								if (!assigned)
 								{
-									let needUnits = creepManager.countRoomMotivationNeedUnits(roomName , motivationMemory.name, need.name , creep.memory.unit);
+									let needUnits = creepManager.countRoomMotivationNeedUnits(roomName , motivationMemory.name , need.name , creep.memory.unit);
 									let demandedNeedUnits = lib.nullProtect(need.demands[creep.memory.unit] , 0);
-									if (needUnits < maxCreeps && needUnits < demandedNeedUnits)
+									if (needUnits < tryCount && needUnits < demandedNeedUnits)
 									{
-										console.log("Assign ME!");
-										creep.assignMotive(roomName, motivationMemory.name , need.name);
+										creep.assignMotive(roomName , motivationMemory.name , need.name);
 										assigned = true;
 									}
 								}
 							});
 						}
-						lib.log(`\t${creep.name} : ${motivationMemory.name} max: ${maxCreeps} assigned/demanded: ${motiveUnits}/${demandedUnits}` , debug);
+
+						// if there is still demand mark it so
+						motiveUnits = creepManager.countRoomMotivationUnits(roomName , motivationMemory.name , creep.memory.unit);
+						demandedUnits = lib.nullProtect(motivationMemory.demands.units[creep.memory.unit] , 0);
+						if (motiveUnits < demandedUnits)
+						{
+							isDemand = true;
+						}
+
+						lib.log(`\t${creep.name} : ${motivationMemory.name} max: ${tryCount} assigned/demanded: ${motiveUnits}/${demandedUnits}` , debug);
 					}
+				});
+				lib.log(`Assigned: ${assigned} isDemand: ${isDemand}`, debug);
+				tryCount++;
+			}
+
+			// no assignment found try to force assign
+			if (!assigned)
+			{
+				lib.log(`\t${creep.name} Room: ${roomLink(creep.room.name)}: No assignment found, trying force assign!` , debug);
+				switch (creep.memory.unit)
+				{
+					case "hauler":
+						if (creep.room.getIsMine())
+						{
+							creep.assignMotive(roomName , "motivationSupplySpawn" , "supplyExtenders." + creep.room.name);
+							assigned = true;
+						}
+						break;
+					case "worker":
+						if (creep.room.getIsMine())
+						{
+							creep.assignMotive(roomName , "motivationSupplyController" , "supplyController." + creep.room.name);
+							assigned = true;
+						}
+						break;
 				}
-			});
+			}
+
+			if (!assigned)
+			{
+				lib.log(`\t${creep.name} Room: ${roomLink(creep.room.name)}: No assignment found!` , debug);
+				creep.say("No JOB!");
+			}
 
 			// return true if the creep was assigned
 			return assigned;
