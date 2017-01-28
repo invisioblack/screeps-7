@@ -98,16 +98,20 @@ MotivationHarvestMinerals.prototype.updateActive = function (roomName)
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
 	let numContainers = roomManager.getStructureIdType(roomName , STRUCTURE_CONTAINER).length;
-	let numExtractors = roomManager.getStructureIdType(roomName , STRUCTURE_EXTRACTOR).length;
+	let extractor = roomManager.getStructuresType(roomName , STRUCTURE_EXTRACTOR)[0];
+	let mineral = Game.getObjectById(room.memory.mineraId);
 	let numSources = room.memory.cache.sources.length;
 
-	if (numContainers > numSources && numExtractors > 0)
+
+	if (numContainers > numSources && !lib.isNull(mineral) && mineral.amount > 0)
 	{
 		memory.active = true;
 	}
 	else
 	{
 		memory.active = false;
+		memory.demands.spawn = false;
+		memory.spawnAllocated = false;
 	}
 };
 
@@ -151,6 +155,7 @@ MotivationHarvestMinerals.prototype.updateNeeds = function (roomName)
 			let container = s.pos.findInRange(containers , 1)[0];
 			let mineral = s.pos.findInRange(FIND_MINERALS , 1)[0];
 			room.memory.mineralContainerId = container.id;
+			room.memory.mineralId = mineral.id;
 			memory.needs[needName] = {};
 			need = memory.needs[needName];
 			need.name = needName;

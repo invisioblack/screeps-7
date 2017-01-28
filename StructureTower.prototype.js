@@ -58,13 +58,15 @@ StructureTower.prototype.autoRepair = function ()
 
 	//console.log(JSON.stringify(damagedBuildings));
 
-	if (!lib.isNull(damagedBuildings[0]) && this.energy > (this.energyCapacity * config.towerPowerFactor))
+	if (1 === 2 && !lib.isNull(damagedBuildings[0]) && this.energy > (this.energyCapacity * config.towerPowerFactor))
 	{
-		this.repair(damagedBuildings[0]);
+		let target = _.max(damagedBuildings , (c) => c.hitsMax - c.hits);
+		this.repair(target);
 		return true;
 	}
 	else
 	{
+
 
 		// walls and ramparts
 		structures = roomManager.getStructuresType(this.room.name, STRUCTURE_ALL_WALL);
@@ -76,9 +78,13 @@ StructureTower.prototype.autoRepair = function ()
 		//console.log(JSON.stringify((wallHP * config.towerRepairFactor)));
 		//console.log(JSON.stringify(damagedBuildings));
 
-		if (!lib.isNull(damagedBuildings[0]) && this.energy > (this.energyCapacity * config.towerPowerFactor))
+		let target = _.min(damagedBuildings , (c) => c.hits);
+
+		//console.log(target);
+
+		if (!lib.isNull(target) && this.energy > (this.energyCapacity * config.towerPowerFactor))
 		{
-			this.repair(damagedBuildings[0]);
+			this.repair(target);
 			return true;
 		}
 		else

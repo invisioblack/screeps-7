@@ -50,7 +50,7 @@ JobRepair.prototype.work = function (creep)
 		repairSites = _.filter(structuresWall , (s) => s.hits < (wallHP * config.repairFactor));
 	}
 
-	target = _.min(repairSites , (c) => c.progressTotal - c.progress);
+	target = _.min(repairSites , (c) => c.hitsMax - c.hits);
 
 	creep.sing("Fixing stuff!");
 

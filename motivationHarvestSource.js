@@ -97,6 +97,8 @@ MotivationHarvestSource.prototype.updateActive = function (roomName)
 		memory.active = true;
 	} else {
 		memory.active = false;
+		memory.demands.spawn = false;
+		memory.spawnAllocated = false;
 	}
 };
 

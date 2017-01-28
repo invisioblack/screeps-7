@@ -52,7 +52,7 @@ MotivationMaintainInfrastructure.prototype.getDesireSpawn = function (roomName, 
 	let memory = room.memory.motivations[this.name];
 	let numWorkers = creepManager.countHomeRoomUnits(roomName, "worker");
 
-	if (!memory.active || lib.isNull(demands.units["worker"]) || demands.units["worker"] <= numWorkers)
+	if (!memory.active || lib.isNull(demands.units["worker"]) || demands.units["worker"] <= numWorkers || numWorkers >= config.unit.max.worker)
 	{
 		result = false;
 	}

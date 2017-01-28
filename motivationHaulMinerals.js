@@ -57,7 +57,7 @@ MotivationHaulMinerals.prototype.getDesireSpawn = function (roomName , demands)
 	let roomUnits = {};
 	roomUnits.hauler = creepManager.countRoomUnits(roomName , "hauler");
 
-	if (memory.active && room.memory.demands[unitName] > roomUnits[unitName] && room.memory.mode === C.ROOM_MODE_NORMAL)
+	if (memory.active && roomUnits.hauler < config.unit.max.hauler && room.memory.mode === C.ROOM_MODE_NORMAL)
 	{
 		unitsDemanded = lib.nullProtect(demands.units[unitName] , 0);
 		if (units[unitName] < unitsDemanded)
@@ -101,6 +101,8 @@ MotivationHaulMinerals.prototype.updateActive = function (roomName)
 	else
 	{
 		memory.active = false;
+		memory.demands.spawn = false;
+		memory.spawnAllocated = false;
 	}
 };
 

@@ -169,17 +169,7 @@ Room.prototype.updateStructureCache = function (forceRefresh = false)
 			{
 				return o.id
 			});
-		structures[STRUCTURE_ALL_WALL] = _.map(
-			room.find(FIND_STRUCTURES , {
-				filter: (s) =>
-				{
-					return s.structureType === STRUCTURE_WALL
-						|| s.structureType === STRUCTURE_RAMPART
-				}
-			}) , (o) =>
-			{
-				return o.id
-			});
+		structures[STRUCTURE_ALL_WALL] = _.map(room.find(FIND_STRUCTURES , {filter: (s) => s.structureType === STRUCTURE_WALL || s.structureType === STRUCTURE_RAMPART}) , (o) =>	o.id);
 	}
 };
 
@@ -424,7 +414,7 @@ Room.prototype.updateUnitDemands = function ()
 	// add in demands
 	_.forEach(this.memory.motivations , (motivation , motivationName) =>
 	{
-		if (!lib.isNull(motivation.demands))
+		if (!lib.isNull(motivation.demands) && motivation.active)
 		{
 			_.forEach(motivation.demands.units , (demand , unitName) =>
 			{

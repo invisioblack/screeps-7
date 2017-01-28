@@ -158,6 +158,8 @@ MotivationClaimRoom.prototype.updateActive = function (roomName)
 	{
 		// if the room does not have a controller, inactive
 		memory.active = false;
+		memory.demands.spawn = false;
+		memory.spawnAllocated = false;
 	}
 	else if (room.controller.my)
 	{
@@ -169,6 +171,8 @@ MotivationClaimRoom.prototype.updateActive = function (roomName)
 		else
 		{
 			memory.active = false;
+			memory.demands.spawn = false;
+			memory.spawnAllocated = false;
 		}
 	}
 	else // not my room
@@ -181,6 +185,8 @@ MotivationClaimRoom.prototype.updateActive = function (roomName)
 		else
 		{
 			memory.active = false;
+			memory.demands.spawn = false;
+			memory.spawnAllocated = false;
 		}
 	}
 };

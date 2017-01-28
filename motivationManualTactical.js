@@ -103,6 +103,8 @@ MotivationManualTactical.prototype.updateActive = function (roomName)
 	else
 	{
 		memory.active = false;
+		memory.demands.spawn = false;
+		memory.spawnAllocated = false;
 	}
 };
 

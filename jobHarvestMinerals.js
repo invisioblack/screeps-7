@@ -59,7 +59,7 @@ JobHarvestMinerals.prototype.work = function (creep)
 		//console.log(result);
 		if (result === ERR_NOT_ENOUGH_ENERGY)
 		{
-			creep.say("Extractor Empty!");
+			creep.sing("Extractor Empty!");
 		}
 	}
 	else

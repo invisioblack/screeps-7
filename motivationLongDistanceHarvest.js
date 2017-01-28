@@ -89,11 +89,17 @@ MotivationLongDistanceHarvest.prototype.updateActive = function (roomName)
 		if (room.memory.mode >= C.ROOM_MODE_NORMAL)
 			memory.active = true;
 		else
+		{
 			memory.active = false;
+			memory.demands.spawn = false;
+			memory.spawnAllocated = false;
+		}
 	}
 	else
 	{
 		memory.active = false;
+		memory.demands.spawn = false;
+		memory.spawnAllocated = false;
 	}
 };
 

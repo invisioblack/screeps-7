@@ -5,6 +5,10 @@ module.exports =
 			"min": {
 				"worker": 3 ,
 				"hauler": 2
+			},
+			"max": {
+				"worker": 4 ,
+				"hauler": 4
 			}
 		} ,
 		"critWorkers": 2 ,
@@ -19,13 +23,13 @@ module.exports =
 		'towerPowerFactor': 0.8 ,
 		'towerRepairFactor': 1 ,
 		"cpuDebug": true ,
-		"cpuDetailDebug": false ,
-		"cpuInitDebug": false ,
-		"cpuLoopDebug": false ,
-		"cpuRoomDebug": false ,
-		"cpuMotivateDebug": false ,
-		"cpuNeedsDebug": false ,
-		"cpuNeedsUpdateDebug": false ,
+		"cpuDetailDebug": true ,
+		"cpuInitDebug": true ,
+		"cpuLoopDebug": true ,
+		"cpuRoomDebug": true ,
+		"cpuMotivateDebug": true ,
+		"cpuNeedsDebug": true ,
+		"cpuNeedsUpdateDebug": true ,
 		"cpuNeedsUnitDebug": false ,
 		"cpuHistorySize": 1000 ,
 		"cpuThresholdThird": 1000 ,

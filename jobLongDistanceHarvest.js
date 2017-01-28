@@ -29,8 +29,6 @@ JobLongDistanceHarvest.prototype.constructor = JobLongDistanceHarvest;
 JobLongDistanceHarvest.prototype.work = function (creep)
 {
 	let need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
-	let target = Game.getObjectById(need.targetId);
-	let carry = _.sum(creep.carry);
 	let homeRoom = Game.rooms[creep.memory.homeRoom];
 	let assigned = false;
 
@@ -74,14 +72,11 @@ JobLongDistanceHarvest.prototype.work = function (creep)
 					let numWorkers = creepManager.countRoomUnits(rN , "worker");
 					let workerDemand = roomMemory.demands["worker"];
 
-					console.log(`creep: ${creep.name} room: ${rN} num workers: ${numWorkers}/${workerDemand}`);
+					//console.log(`creep: ${creep.name} room: ${rN} num workers: ${numWorkers}/${workerDemand}`);
 					if (numWorkers < workerDemand)
 					{
 						creep.deassignMotive(rN);
 						assigned = true;
-						console.log("Assign");
-					} else {
-						console.log("No assign");
 					}
 				}
 			}

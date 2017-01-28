@@ -51,7 +51,7 @@ MotivationSupplyController.prototype.getDesireSpawn = function (roomName , deman
 	let memory = room.memory.motivations[this.name];
 	let numWorkers = creepManager.countRoomMotivationUnits(roomName , this.name , "worker");
 
-	if (!memory.active || lib.isNull(demands.units["worker"]) || demands.units["worker"] <= numWorkers)
+	if (!memory.active || lib.isNull(demands.units["worker"]) || demands.units["worker"] <= numWorkers || numWorkers >= config.unit.max.worker)
 	{
 		result = false;
 	}
@@ -81,6 +81,8 @@ MotivationSupplyController.prototype.updateActive = function (roomName)
 	else
 	{
 		memory.active = false;
+		memory.demands.spawn = false;
+		memory.spawnAllocated = false;
 	}
 };
 
