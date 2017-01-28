@@ -14,11 +14,22 @@ Room.prototype.init = function ()
 	let reservation = {};
 	reservation.time = Game.time;
 
+	this.initMemCache();
+	this.updateEnergyPickupMode();
+	this.updateUnitDemands();
+
+	// update defenses -----------------------------------------------------------------------------------------
+	this.updateThreat();
+
+	this.updateMode();
+
+	// init ldh targets mem
 	if(lib.isNull(this.memory.longDistanceHarvestTargets))
 	{
 		this.memory.longDistanceHarvestTargets = [];
 	}
 
+	// update ldh reservations
 	if (!lib.isNull(this.controller) && !lib.isNull(this.controller.reservation)) {
 		if (this.controller.reservation.username === C.ME)
 		{
@@ -268,9 +279,7 @@ Room.prototype.updateEnergyPickupMode = function ()
 		}
 
 		let numHarvesters = creepManager.countRoomUnits(roomName, "harvester");
-			//_.has(global, "cache.rooms." + roomName + ".units.harvester") ? global.cache.rooms[roomName].units["harvester"].length : 0;
 		let numHaulers = creepManager.countRoomUnits(roomName, "hauler");
-			//_.has(global, "cache.rooms." + roomName + ".units.hauler") ? global.cache.rooms[roomName].units["hauler"].length : 0;
 
 		/** precontainer, or container setup mode, is when we have containers, but they are not properly manned, check
 		 * for energy in containers in this mode, but don't rely on it
@@ -287,7 +296,7 @@ Room.prototype.updateEnergyPickupMode = function ()
 			result = C.ROOM_ENERGYPICKUPMODE_CONTAINER;
 		}
 
-		if (numStorage > 0 && this.getIsMine())
+		if (numStorage > 0 && this.getIsMine() && numHaulers > 0)
 		{
 			result = C.ROOM_ENERGYPICKUPMODE_STORAGE;
 		}
@@ -302,6 +311,53 @@ Room.prototype.updateEnergyPickupMode = function ()
 	return result;
 };
 
+Room.prototype.updateMode = function ()
+{
+	let relation = this.getRelation();
+	let result = C.ROOM_MODE_NEUTRAL;
+	// my rooms
+	if (this.getIsMine())
+	{
+		let numWorkers = creepManager.countRoomUnits(this.name, "worker");
+		let numHauler = creepManager.countRoomUnits(this.name, "hauler");
+
+		if (this.memory.threat.level >= C.THREAT_NPC)
+		{
+			result = C.ROOM_MODE_SIEGE;
+		} else if (numWorkers < config.unit.min.worker)
+		{
+			result = C.ROOM_MODE_WORKER_PANIC;
+		}
+		else
+			result = C.ROOM_MODE_NORMAL;
+	}
+	// my harvest rooms
+	else if (roomManager.getIsLongDistanceHarvestTarget(this.name))
+	{
+		if (this.memory.threat.level >= C.THREAT_NPC)
+		{
+			result = C.ROOM_MODE_REMOTE_HARVEST_SIEGE;
+		} else
+			result = C.ROOM_MODE_REMOTE_HARVEST;
+	}
+	// my ally rooms
+	else if (relation > C.RELATION_NEUTRAL)
+	{
+		result = C.ROOM_MODE_ALLY;
+	}
+	// enemy room
+	else if (relation === C.RELATION_HOSTILE)
+	{
+		result = C.ROOM_MODE_ENEMY;
+	}
+	// neutral room
+	else {
+		result = C.ROOM_MODE_NEUTRAL;
+	}
+
+	this.memory.mode = result;
+};
+
 Room.prototype.updateUnitDemands = function ()
 {
 	// init memory
@@ -313,10 +369,13 @@ Room.prototype.updateUnitDemands = function ()
 	// add in demands
 	_.forEach(this.memory.motivations, (motivation, motivationName) =>
 	{
-		_.forEach(motivation.demands.units, (demand, unitName) =>
+		if (!lib.isNull(motivation.demands))
 		{
-			this.memory.demands[unitName] += demand;
-		});
+			_.forEach(motivation.demands.units , (demand , unitName) =>
+			{
+				this.memory.demands[unitName] += demand;
+			});
+		}
 	});
 
 };
@@ -379,8 +438,11 @@ Room.prototype.getExtenderEnergy = function ()
 	let extenders = this.find(FIND_MY_STRUCTURES , {filter: {structureType: STRUCTURE_EXTENSION}});
 	extenders.forEach(function (ex)
 	{
-		result.energy += ex.energy;
-		result.energyCapacity += ex.energyCapacity;
+		if (ex.isActive())
+		{
+			result.energy += ex.energy;
+			result.energyCapacity += ex.energyCapacity;
+		}
 	} , this);
 
 	return result;
@@ -392,10 +454,7 @@ Room.prototype.getContainerEnergy = function ()
 	result.energy = 0;
 	result.energyCapacity = 0;
 
-	let containerIds = this.memory.cache.structures[STRUCTURE_CONTAINER];
-	let containers = _.map(containerIds, (id) => {
-		return Game.getObjectById(id);
-	});
+	let containers = roomManager.getStructuresType(this.name, STRUCTURE_CONTAINER);
 	containers.forEach(function (ex)
 	{
 		result.energy += ex.store[RESOURCE_ENERGY];
@@ -452,6 +511,22 @@ Room.prototype.getIsMine = function ()
 	}
 	return result;
 };
+
+Room.prototype.getRelation = function ()
+{
+	let result = false;
+
+	if (!lib.isNull(this.controller))
+	{
+		let owner = this.controller.owner;
+		let ownerRelation = diplomacyManager.status(owner);
+		result = ownerRelation;
+	} else
+		result = C.RELATION_NEUTRAL;
+
+	return result;
+};
+
 
 /***********************************************************************************************************************
  * Creep finding functions
@@ -616,7 +691,7 @@ Room.prototype.updateThreat = function ()
 	if (lib.isNull(threatCounts[C.RELATION_HOSTILE]))
 		threatCounts[C.RELATION_HOSTILE] = 0;
 
-	lib.log(`ThreatCounts: ${JSON.stringify(threatCounts)}`, debug);
+	lib.log(`Room: ${roomLink(this.name)} ThreatCounts: ${JSON.stringify(threatCounts)}`, debug);
 	lib.log("ALERT: " + (timeSinceSeen < config.alertTime), debug);
 
 	// based on threats, update our status

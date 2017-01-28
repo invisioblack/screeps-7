@@ -265,11 +265,10 @@ module.exports = function()
 	Job.prototype.findEnergyStorage = function (creep)
 	{
 		// look for energy in storages
-		let storageId = creep.room.memory.cache.structures[STRUCTURE_STORAGE][0];
-		let storage = Game.getObjectById(storageId);
+		let storage = roomManager.getStructuresType(creep.room.name, STRUCTURE_STORAGE)[0];
 		if (!lib.isNull(storage) && storage.store[RESOURCE_ENERGY] > 0)
 		{
-			creep.memory.sourceId = storageId;
+			creep.memory.sourceId = storage.id;
 			creep.memory.sourceType = this.JOB_SOURCETYPE_CONTAINER;
 		}
 	};
@@ -287,8 +286,7 @@ module.exports = function()
 
 	Job.prototype.findEnergyContainer = function (creep)
 	{
-		let containerIds = creep.room.memory.cache.structures[STRUCTURE_CONTAINER];
-		let containers = _.map(containerIds, function (c) { return Game.getObjectById(c)});
+		let containers = roomManager.getStructuresType(creep.room.name, STRUCTURE_CONTAINER);
 		let container = _.max(containers, function (o) { return o.store[RESOURCE_ENERGY]});
 
 		//console.log(`room: ${creep.room.name} creep: ${creep.name} container: ${JSON.stringify(container)}/${container}`);

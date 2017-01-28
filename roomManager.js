@@ -149,7 +149,7 @@ module.exports =
 			_.forEach(roomCreeps, (c, k) => {
 				if (c.memory.motive.motivation !== "")
 				{
-					console.log(`c: ${c.name} r: ${c.memory.motive.room} m: ${c.memory.motive.motivation}`);
+					//console.log(`c: ${c.name} r: ${c.memory.motive.room} m: ${c.memory.motive.motivation}`);
 
 					roomMemory.cache.unitMotive[c.memory.motive.motivation].units[c.memory.unit]++;
 					if (lib.isNull(roomMemory.cache.unitMotive[c.memory.motive.motivation].needs[c.memory.motive.need]))
@@ -166,11 +166,6 @@ module.exports =
 			lib.log(`updateUnitMotiveCache(${roomName}): ${JSON.stringify(roomMemory.cache.unitMotive)}`, debug);
 		},
 
-		getStructureIds: function (roomName, structureType) {
-			let result = _.has(Memory, "rooms[" + roomName + "].cache.structures[" + structureType + "]") ? Memory.rooms[roomName].cache.structures[structureType] : [];
-			return result;
-		},
-
 		getIsLongDistanceHarvestTarget: function (roomName) {
 			return lib.nullProtect(Memory.rooms[roomName].longDistanceHarvestParents, []).length > 0;
 		},
@@ -181,6 +176,19 @@ module.exports =
 			if (!lib.isNull(room))
 				result = room.getIsMine();
 			return result;
+		},
+
+		getStructureIdType: function (roomName, structureType)
+		{
+			let result = _.has(Memory, "rooms[" + roomName + "].cache.structures[" + structureType + "]") ? Memory.rooms[roomName].cache.structures[structureType] : [];
+			return result;
+		},
+
+		getStructuresType: function (roomName, structureType)
+		{
+			let ids = this.getStructureIdType(roomName, structureType);
+			let sites = _( ids ).map( id => Game.getObjectById( id ) ).filter().value();
+			return sites;
 		}
 
 	};

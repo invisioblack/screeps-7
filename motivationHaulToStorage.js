@@ -48,7 +48,7 @@ MotivationHaulToStorage.prototype.getDesireSpawn = function (roomName, demands)
 	if (roomManager.getIsLongDistanceHarvestTarget(roomName))
 		return false;
 
-	let debug = true;
+	let debug = false;
 	let result = false;
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
@@ -61,7 +61,7 @@ MotivationHaulToStorage.prototype.getDesireSpawn = function (roomName, demands)
 	roomUnits.worker = creepManager.countRoomUnits(roomName, "worker");
 	roomUnits.hauler = creepManager.countRoomUnits(roomName, "hauler");
 
-	if (memory.active && room.memory.demands[unitName] > roomUnits[unitName])
+	if (memory.active && room.memory.demands[unitName] > roomUnits[unitName] && room.memory.mode === C.ROOM_MODE_NORMAL)
 	{
 		unitsDemanded = lib.nullProtect(demands.units[unitName], 0);
 	    if (units[unitName] < unitsDemanded)
@@ -147,7 +147,7 @@ MotivationHaulToStorage.prototype.updateNeeds = function (roomName)
 		_.forEach(room.memory.longDistanceHarvestTargets, (rN) => {
 			let ldhNeed;
 			needName = "ldhaulstorage." + rN;
-			let numContainers = roomManager.getStructureIds(rN, STRUCTURE_CONTAINER).length;
+			let numContainers = roomManager.getStructureIdType(rN, STRUCTURE_CONTAINER).length;
 
 			if (numContainers > 0) {
 				if (lib.isNull(memory.needs[needName]))
@@ -193,7 +193,7 @@ MotivationHaulToStorage.prototype.updateNeeds = function (roomName)
 	{
 		let needName = "ldpickup." + room.name;
 		let need;
-		let containerIds = roomManager.getStructureIds(roomName, STRUCTURE_CONTAINER);
+		let containerIds = roomManager.getStructureIdType(roomName, STRUCTURE_CONTAINER);
 
 		// create new need if one doesn't exist
 		if (lib.isNull(memory.needs[needName]) && containerIds.length) {

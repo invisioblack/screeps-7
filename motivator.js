@@ -15,110 +15,114 @@ module.exports =
 			// init motivations in each room we control
 			_.forEach(Game.rooms, (room, roomName) => {
 				room.init();
-				room.initMemCache();
-				room.updateEnergyPickupMode();
-				room.updateUnitDemands();
-
-				// update defenses -----------------------------------------------------------------------------------------
-				room.updateThreat();
 
 				// init motivations in memory
 				if (lib.isNull(room.memory.motivations)) {
 					room.memory.motivations = {};
 				}
 
-				// only in my rooms
-				if (room.getIsMine()) {
-					motivationSupplySpawn.init(room.name);
-					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_1;
-				} else if (motivationSupplySpawn.isInit(room.name)) {
-					motivationSupplySpawn.deInit(room.name);
-				}
+				/*******************************************************************************************************
+				 * CORE
+				 */
 
-				// init each motivation for this room
-				motivationManualTactical.init(room.name);
-				room.memory.motivations[motivationManualTactical.name].priority = C.PRIORITY_1;
-
-				motivationGarrison.init(room.name);
-				room.memory.motivations[motivationGarrison.name].priority = C.PRIORITY_2;
-
-				// only in my rooms
-				if (room.getIsMine()) {
-					motivationSupplyController.init(room.name);
-					let roomController = room.controller;
-					let ticksToDowngrade;
-					if (!lib.isNull(roomController))
-						ticksToDowngrade = roomController.ticksToDowngrade;
-					else
-						ticksToDowngrade = 0;
-
-					room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_2;
-				} else if (motivationSupplyController.isInit(room.name)) {
-					motivationSupplyController.deInit(room.name);
-				}
-
-				// should only be init in my room, or a ldh target
+				// harvestSource ---------------------------------------------------------------------------------------
 				if (room.getIsMine() || roomManager.getIsLongDistanceHarvestTarget(room.name)) {
 					motivationHarvestSource.init(room.name);
-					room.memory.motivations[motivationHarvestSource.name].priority = C.PRIORITY_3;
+					room.memory.motivations[motivationHarvestSource.name].priority = C.PRIORITY_1;
 				} else if (motivationHarvestSource.isInit(room.name)) {
 					motivationHarvestSource.deInit(room.name);
 				}
 
-				// should only be init in my room, or a ldh target
+				// haulToStorage ---------------------------------------------------------------------------------------
 				if (room.getIsMine() || roomManager.getIsLongDistanceHarvestTarget(room.name)) {
 					motivationHaulToStorage.init(room.name);
-					room.memory.motivations[motivationHaulToStorage.name].priority = C.PRIORITY_3;
+					room.memory.motivations[motivationHaulToStorage.name].priority = C.PRIORITY_2;
 				} else if (motivationHaulToStorage.isInit(room.name)) {
 					motivationHaulToStorage.deInit(room.name);
 				}
 
-				// only active in my rooms with towers
-				if (room.getIsMine() && room.memory.cache.structures[STRUCTURE_TOWER].length > 0) {
-					motivationSupplyTower.init(room.name);
-					room.memory.motivations[motivationSupplyTower.name].priority = C.PRIORITY_4;
-				} else if (motivationSupplyTower.isInit(room.name)) {
-					motivationSupplyTower.deInit(room.name);
+				// supplySpawn -----------------------------------------------------------------------------------------
+				if (room.getIsMine()) {
+					motivationSupplySpawn.init(room.name);
+					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
+				} else if (motivationSupplySpawn.isInit(room.name)) {
+					motivationSupplySpawn.deInit(room.name);
 				}
 
-				// TODO: this one should only be active in rooms with a claim
-				motivationClaimRoom.init(room.name);
-				room.memory.motivations[motivationClaimRoom.name].priority = C.PRIORITY_4;
 
-				// should only be init in my room
+				// supplyController ------------------------------------------------------------------------------------
 				if (room.getIsMine()) {
+					motivationSupplyController.init(room.name);
+					room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_4;
+				} else if (motivationSupplyController.isInit(room.name)) {
+					motivationSupplyController.deInit(room.name);
+				}
+
+				// longDistanceHarvest ---------------------------------------------------------------------------------
+				if (room.getIsMine() && room.memory.mode === C.ROOM_MODE_NORMAL) {
 					motivationLongDistanceHarvest.init(room.name);
-					room.memory.motivations[motivationLongDistanceHarvest.name].priority = C.PRIORITY_3;
+					room.memory.motivations[motivationLongDistanceHarvest.name].priority = C.PRIORITY_5;
 				} else if (motivationLongDistanceHarvest.isInit(room.name)) {
 					motivationLongDistanceHarvest.deInit(room.name);
 				}
 
-				// should only be init in my room, or a ldh target
+				// claimRoom -------------------------------------------------------------------------------------------
+				let isClaimed = _.some(Memory.claims, (c) => c.room === room.name);
+				if ((room.getIsMine() && room.memory.mode === C.ROOM_MODE_NORMAL) || isClaimed) {
+					motivationClaimRoom.init(room.name);
+					room.memory.motivations[motivationClaimRoom.name].priority = C.PRIORITY_6;
+				} else if (motivationClaimRoom.isInit(room.name)) {
+					motivationClaimRoom.deInit(room.name);
+				}
+
+				// maintainInfrastructure ------------------------------------------------------------------------------
 				if (room.getIsMine() || roomManager.getIsLongDistanceHarvestTarget(room.name)) {
 					motivationMaintainInfrastructure.init(room.name);
-					room.memory.motivations[motivationMaintainInfrastructure.name].priority = C.PRIORITY_5;
+					room.memory.motivations[motivationMaintainInfrastructure.name].priority = C.PRIORITY_7;
 				} else if (motivationMaintainInfrastructure.isInit(room.name)) {
 					motivationMaintainInfrastructure.deInit(room.name);
 				}
 
-				// only in my room with extractor
+				// harvestMinerals -------------------------------------------------------------------------------------
 				if (room.getIsMine() && room.memory.cache.structures[STRUCTURE_EXTRACTOR].length > 0) {
 					let mineralContainer = Game.getObjectById(room.memory.mineralContainerId);
 					let containerTotal = 0;
 
 					motivationHarvestMinerals.init(room.name);
 					motivationHaulMinerals.init(room.name);
-					room.memory.motivations[motivationHarvestMinerals.name].priority = C.PRIORITY_6;
-					room.memory.motivations[motivationHaulMinerals.name].priority = C.PRIORITY_6;
+					room.memory.motivations[motivationHarvestMinerals.name].priority = C.PRIORITY_8;
+					room.memory.motivations[motivationHaulMinerals.name].priority = C.PRIORITY_9;
+
 
 					if (!lib.isNull(mineralContainer)) {
 						containerTotal = _.sum(mineralContainer.store);
 					}
 					if (containerTotal > 1000)
 						room.memory.motivations[motivationHaulMinerals.name].priority = C.PRIORITY_1;
+
 				} else if (motivationHarvestMinerals.isInit(room.name)) {
 					motivationHarvestMinerals.deInit(room.name);
 					motivationHaulMinerals.deInit(room.name);
+				}
+
+				/*******************************************************************************************************
+				 * COMBAT
+				 */
+
+				// manualTactical --------------------------------------------------------------------------------------
+				motivationManualTactical.init(room.name);
+				room.memory.motivations[motivationManualTactical.name].priority = C.PRIORITY_1;
+
+				// garrison --------------------------------------------------------------------------------------------
+				motivationGarrison.init(room.name);
+				room.memory.motivations[motivationGarrison.name].priority = C.PRIORITY_2;
+
+				// supplyTower -----------------------------------------------------------------------------------------
+				if (room.getIsMine() && room.memory.cache.structures[STRUCTURE_TOWER].length > 0) {
+					motivationSupplyTower.init(room.name);
+					room.memory.motivations[motivationSupplyTower.name].priority = C.PRIORITY_7;
+				} else if (motivationSupplyTower.isInit(room.name)) {
+					motivationSupplyTower.deInit(room.name);
 				}
 			});
 
@@ -266,7 +270,7 @@ module.exports =
 
 		findCreepJob: function (roomName, sortedMotivations, creep)
 		{
-			let debug = true;
+			let debug = false;
 			let assigned = false;
 			let isDemand = true;
 			let tryCount = 1;
@@ -280,6 +284,8 @@ module.exports =
 					if (!assigned && motivationMemory.active && _.some(global[motivationMemory.name].getAssignableUnitNames(), (unitName) => { return unitName === creep.memory.unit; }));
 					{
 						let motiveUnits = creepManager.countRoomMotivationUnits(roomName , motivationMemory.name , creep.memory.unit);
+						if (lib.isNull(motivationMemory.demands))
+							console.log(motivationMemory.name);
 						let demandedUnits = lib.nullProtect(motivationMemory.demands.units[creep.memory.unit] , 0);
 						if (!assigned && motiveUnits < tryCount && motiveUnits < demandedUnits)
 						{

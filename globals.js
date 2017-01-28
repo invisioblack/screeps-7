@@ -112,3 +112,21 @@ global.STRUCTURE_ALL_WALL       = "allWall";
 global.STRUCTURES = [STRUCTURE_SPAWN, STRUCTURE_EXTENSION, STRUCTURE_ROAD, STRUCTURE_WALL, STRUCTURE_RAMPART, STRUCTURE_KEEPER_LAIR, STRUCTURE_PORTAL,
 	STRUCTURE_CONTROLLER, STRUCTURE_LINK, STRUCTURE_STORAGE, STRUCTURE_TOWER, STRUCTURE_OBSERVER, STRUCTURE_POWER_BANK, STRUCTURE_POWER_SPAWN, STRUCTURE_EXTRACTOR,
 	STRUCTURE_LAB, STRUCTURE_TERMINAL, STRUCTURE_CONTAINER, STRUCTURE_NUKER];
+
+// lodash add _.count : by Vaejor -----
+_.mixin(
+	{
+		'count': ( collection, predicate=_.identity, value=undefined ) => {
+			if ( _.isString( predicate ) ) {
+				if ( value !== undefined ) {
+					predicate = _.matchesProperty( predicate, value );
+				} else {
+					predicate = _.property( predicate );
+				}
+			} else if ( _.isObject( predicate ) && !_.isFunction( predicate ) ) {
+				predicate = _.matches( predicate );
+			}
+			return _.sum( collection, ( v, k ) => predicate( v, k ) ? 1 : 0 );
+		}
+	}
+);

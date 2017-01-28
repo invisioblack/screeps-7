@@ -408,8 +408,8 @@ global.mList = function (roomName)
 	sortedMotivations = _.sortByOrder(Memory.rooms[roomName].motivations , ['priority'] , ['desc']);
 
 	output += `\n-- Motivations for ${roomName}`;
-	_.forEach(Memory.rooms[roomName].motivations, function (motivation) {
-		output += `\n${motivation.name}\n\tactive: ${motivation.active}\tdemand spawn:${motivation.demands.spawn}\tspawn allocated: ${motivation.spawnAllocated}`;
+	_.forEach(sortedMotivations, function (motivation) {
+		output += `\n${motivation.name}\n\tactive: ${motivation.active}\tdemand spawn:${motivation.demands.spawn}\tspawn allocated: ${motivation.spawnAllocated}\t unit: ${global[motivation.name].getDesiredSpawnUnit(roomName)}`;
 	});
 
 	return output;

@@ -27,23 +27,11 @@ NeedSupplyExtenders.prototype.constructor = NeedSupplyExtenders;
 
 NeedSupplyExtenders.prototype.getUnitDemands = function(roomName, memory, motivationName)
 {
-	memory.demands = {};
-	let room = Game.rooms[roomName];
-	let energy, energyCapacity, neededEnergy;
-	let worker = lib.nullProtect(creepManager.getRoomUnits(roomName, "worker")[0], {});
-	let workerCapacity = lib.nullProtect(worker.carryCapacity, 300);
-	let extenderEnergy = room.getExtenderEnergy();
-	let hauler = lib.nullProtect(creepManager.getRoomUnits(roomName, "hauler")[0], {});
-	let haulerCapacity = lib.nullProtect(hauler.carryCapacity, 1000);
 	let numHaulers = creepManager.countRoomUnits(roomName, "hauler");
+	memory.demands = {};
 
-	energy = extenderEnergy.energy;
-	energyCapacity = extenderEnergy.energyCapacity;
-	neededEnergy = energyCapacity - energy;
-
-	memory.demands["worker"] = lib.clamp(Math.ceil(neededEnergy / workerCapacity), 0, 3);
-	memory.demands["hauler"] = lib.clamp(Math.ceil(neededEnergy / haulerCapacity), 0 , 3);
-
+	memory.demands["worker"] = 2;
+	memory.demands["hauler"] = 1;
 
 	if (numHaulers > 1)
 	{

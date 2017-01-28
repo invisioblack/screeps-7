@@ -12,7 +12,7 @@ let Motivation = require("Motivation.prototype")();
 //-------------------------------------------------------------------------
 // Declarations
 //-------------------------------------------------------------------------
-let REPAIR_FACTOR = 0.8;
+
 //-------------------------------------------------------------------------
 // constructor
 //-------------------------------------------------------------------------
@@ -81,213 +81,81 @@ MotivationMaintainInfrastructure.prototype.updateActive = function (roomName)
 
 MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 {
-    /** TODO: This needs to be completely revamped, it is way too cpu heavy.
-     *      Only create one need each for repair, and one for construction
-     *      Then have units determine repair/build site when looking for it
-     *      rather than rebuilding these lists constantly.
-    */
 	let debug = false;
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
+	let structuresNoWall;
+	let numRepairSites;
+	let needName;
+	let structuresWall;
+	let wallHP;
+	let numConstructionSites;
+
 	// insure memory is initialized for needs
 	if (lib.isNull(memory.needs))
 	{
 		memory.needs = {};
 	}
 
-	// Handle Build Needs -------------------------------------------------------------------------------------
-	// look up sources and find out how many needs we should have for each one
-	let constructionSites = room.find(FIND_CONSTRUCTION_SITES);
-	constructionSites.forEach(function (cs) {
-		if (!lib.isNull(cs))
-		{
-			let needName = "build." + cs.id;
+	// create repair need
+	structuresNoWall = roomManager.getStructuresType(roomName , STRUCTURE_ALL_NOWALL);
+	numRepairSites = _.filter(structuresNoWall , (s) =>
+	{
+		return s.hits < (s.hitsMax * config.repairFactor);
+	}).length;
+	needName = "repairNoWall." + roomName;
 
-			//console.log('Site: ' + cs.id);
-
-			// create new need if one doesn't exist
-			if (lib.isNull(memory.needs[needName]))
-			{
-				memory.needs[needName] = {};
-				memory.needs[needName].type = "needBuild";
-				memory.needs[needName].name = needName;
-				memory.needs[needName].targetId = cs.id;
-				memory.needs[needName].priority = C.PRIORITY_5;
-			}
-		}
-	}, this);
-
-	// Handle Repair Needs -------------------------------------------------------------------------------------
-	// look up sources and find out how many needs we should have for each one
-	let sitesRaw = _.map(room.memory.cache.structures[STRUCTURE_ALL_NOWALL], (id) => { return Game.getObjectById(id); });
-	let sites = _.filter(sitesRaw, (o) => { return !lib.isNull(o)});
-
-	let repairSites = _.filter(sites, (s) => { return s.hits < (s.hitsMax * REPAIR_FACTOR); });
-	lib.log(`Room: ${roomName} ${sites}`, debug);
-	repairSites.forEach(function (rs) {
-		let needName = "repair." + rs.id;
-
+	if (numRepairSites > 0)
+	{
 		// create new need if one doesn't exist
 		if (lib.isNull(memory.needs[needName]))
 		{
 			memory.needs[needName] = {};
 			memory.needs[needName].type = "needRepair";
 			memory.needs[needName].name = needName;
-			memory.needs[needName].targetId = rs.id;
 			memory.needs[needName].priority = C.PRIORITY_1;
 		}
-	}, this);
+	} else {
+		delete memory.needs[needName];
+	}
 
-	// Handle WALLRepair Needs -------------------------------------------------------------------------------------
-	// look up sources and find out how many needs we should have for each one
-	let wallHP = config.wallHP[lib.isNull(room.controller) ? 0 : room.controller.level];
-	let wallSites = _.map(room.memory.cache.structures[STRUCTURE_ALL_WALL], (id) => { return Game.getObjectById(id); });
-	let wallRepairSites = room.find(wallSites, {
-		filter: function (s) {
-			return s.hits < wallHP;
-		}
-	});
-	wallRepairSites.forEach(function (rs) {
-		let needName;
-		if (rs.structureType === STRUCTURE_WALL)
-			needName = "repairWall." + rs.id;
-		else if (rs.structureType === STRUCTURE_RAMPART)
-			needName = "repairRampart." + rs.id;
+	// create wall repair need
+	structuresWall = roomManager.getStructuresType(roomName , STRUCTURE_ALL_WALL);
 
-		//console.log('Source: ' + s.id + ' Available Working Spots: ' + availableHarvesters + "/" + maxHarvesters);
-		//console.log(rs.id + " HP/Threshold: " + rs.hits + "/" + (wallHP * REPAIR_FACTOR));
+	wallHP = config.wallHP[lib.isNull(room.controller) ? 0 : room.controller.level];
+	numRepairSites = _.filter(structuresWall, (s) => { return s.hits < (wallHP * config.repairFactor); }).length;
+	needName = "repairWall." + roomName;
+
+	if (numRepairSites > 0)
+	{
 		// create new need if one doesn't exist
-		if (lib.isNull(memory.needs[needName]) && rs.hits < (wallHP * REPAIR_FACTOR))
+		if (lib.isNull(memory.needs[needName]))
 		{
 			memory.needs[needName] = {};
 			memory.needs[needName].type = "needRepair";
 			memory.needs[needName].name = needName;
-			memory.needs[needName].targetId = rs.id;
-			memory.needs[needName].priority = C.PRIORITY_1;
+			memory.needs[needName].priority = C.PRIORITY_2;
 		}
-	}, this);
+	} else {
+		delete memory.needs[needName];
+	}
 
-	_.forEach(memory.needs, function (need, needName)
+	// create build need
+	numConstructionSites = room.find(FIND_CONSTRUCTION_SITES).length;
+	needName = "build." + roomName;
+
+	if (numConstructionSites > 0)
 	{
-		//console.log("Need: " + needName);
-
+		// create new need if one doesn't exist
 		if (lib.isNull(memory.needs[needName]))
 		{
-			lib.log("-------------- CULLING NULL maintain infrastructure need -------------", debug);
-			delete memory.needs[needName];
+			memory.needs[needName] = {};
+			memory.needs[needName].type = "needBuild";
+			memory.needs[needName].name = needName;
+			memory.needs[needName].priority = C.PRIORITY_3;
 		}
-		else
-		{
-			//console.log("Need.type: " + memory.needs[needName].type);
-			if (lib.isNull(memory.needs[needName].type))
-			{
-				lib.log("-------------- CULLING untyped maintain infrastructure need -------------", debug);
-				delete memory.needs[needName];
-
-			} else if (memory.needs[needName].type === "needBuild") {
-				// cull build needs
-				if (lib.isNull(memory.needs[needName].targetId))
-				{
-					lib.log("-------------- CULLING INCOMPLETE CONSTRUCTION SITE -------------", debug);
-					delete memory.needs[needName];
-				}
-				else
-				{
-					let siteId = memory.needs[needName].targetId;
-					let result = _.filter(constructionSites , {"id": siteId});
-
-					// if there are no sites, then cull it
-					if (result.length === 0)
-					{
-						lib.log("-------------- CULLING CONSTRUCTION SITE -------------", debug);
-						delete memory.needs[needName];
-					}
-				}
-
-			} else if (memory.needs[needName].type === "needRepair") {
-				// cull repair needs
-				if (lib.isNull(memory.needs[needName].targetId))
-				{
-					lib.log("-------------- CULLING INCOMPLETE REPAIR SITE -------------", debug);
-					delete memory.needs[needName];
-				}
-				else
-				{
-
-					let siteId = memory.needs[needName].targetId;
-					let result = _.filter(repairSites , {"id": siteId});
-					let resultWall = _.filter(wallRepairSites , {"id": siteId});
-
-					// if there are no sites, then cull it
-					if (result.length === 0 && resultWall.length === 0)
-					{
-						lib.log("-------------- CULLING REPAIR SITE: " + siteId, debug);
-						delete memory.needs[needName];
-					}
-				}
-			}
-		}
-	});
-
-	// prioritize needs
-	for (let needName in memory.needs)
-	{
-		let need = memory.needs[needName];
-		let site = Game.getObjectById(need.targetId);
-
-		switch (site.structureType)
-		{
-			case STRUCTURE_SPAWN:
-				need.priority = C.PRIORITY_1;
-				break;
-			case STRUCTURE_TOWER:
-				need.priority = C.PRIORITY_2;
-				break;
-			case STRUCTURE_EXTENSION:
-				need.priority = C.PRIORITY_3;
-				break;
-			case STRUCTURE_CONTAINER:
-				need.priority = C.PRIORITY_4;
-				break;
-			default:
-				need.priority = C.PRIORITY_5;
-				break;
-		}
-
-		if (need.type === "needRepair")
-		{
-			let percent;
-			let max = site.hitsMax;
-
-			if (site.structureType === STRUCTURE_WALL || site.structureType === STRUCTURE_RAMPART)
-				max =  config.wallHP[room.controller.level];
-			percent = (site.hits / max) * 10000 / 100;
-			//console.log(needName + " PERCENT: " + percent);
-			if (percent < 5)
-			{
-				need.priority = C.PRIORITY_3;
-			}
-			else if (percent < 15)
-			{
-				need.priority = C.PRIORITY_4;
-			}
-			else if (percent < 25)
-			{
-				need.priority = C.PRIORITY_5;
-			}
-			else if (percent < 50)
-			{
-				need.priority = C.PRIORITY_6;
-			}
-			else if (percent < 75)
-			{
-				need.priority = C.PRIORITY_7;
-			}
-			else
-			{
-				need.priority = C.PRIORITY_8;
-			}
-		}
+	} else {
+		delete memory.needs[needName];
 	}
 };
 

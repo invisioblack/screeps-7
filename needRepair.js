@@ -25,17 +25,38 @@ let NeedRepair = function ()
 NeedRepair.prototype = Object.create(Need.prototype);
 NeedRepair.prototype.constructor = NeedRepair;
 
-NeedRepair.prototype.getUnitDemands = function(roomName, memory, motivationName)
+NeedRepair.prototype.getUnitDemands = function (roomName , memory , motivationName)
 {
+	let room = Game.rooms[roomName];
+	let needName = memory.name;
+	let wallHP = config.wallHP[lib.isNull(room.controller) ? 0 : room.controller.level];
+	let repairSites = [];
+	let numRepairSites = 0;
+
+	if (needName === "repairNoWall." + roomName)
+	{
+		let structuresNoWall = roomManager.getStructuresType(roomName , STRUCTURE_ALL_NOWALL);
+		repairSites = _.filter(structuresNoWall , (s) => s.hits < (s.hitsMax * config.repairFactor));
+	}
+	else if (needName === "repairWall." + roomName)
+	{
+		let structuresWall = roomManager.getStructuresType(roomName , STRUCTURE_ALL_WALL);
+		repairSites = _.filter(structuresWall , (s) => s.hits < (wallHP * config.repairFactor));
+	}
+	numRepairSites = repairSites.length;
+
 	memory.demands = {};
-	let target = Game.getObjectById(memory.targetId);
-	if (!lib.isNull(target))
-		memory.demands["worker"] = Math.ceil((target.hitsMax - target.hits)/1000);
+
+	if (numRepairSites > 0)
+	{
+		memory.demands["worker"] = 1;
+	}
 	else
+	{
 		memory.demands["worker"] = 0;
-	//console.log(memory.targetId);
+	}
+
 	return memory.demands;
 };
-
 
 module.exports = new NeedRepair();

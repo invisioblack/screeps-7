@@ -9,6 +9,8 @@ module.exports = {
 	},
 
 	status: function(name) {
+		if (name === C.ME)
+			return C.RELATION_ME;
 		if(!Memory.players || !Memory.players[name])
 			return C.RELATION_HOSTILE;
 		return Memory.players[name];

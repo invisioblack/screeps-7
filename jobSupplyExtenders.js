@@ -68,7 +68,7 @@ JobSupplyExtenders.prototype.work = function (creep)
 				creep.deassignMotive();
 			} else {
 				this.resetSource(creep);
-				let extensions = _.map(creep.room.memory.cache.structures[STRUCTURE_EXTENSION], (o) => { return Game.getObjectById(o)});
+				let extensions = roomManager.getStructuresType(creep.room.name, STRUCTURE_EXTENSION);
 				let target = creep.pos.findClosestByRange(extensions, {
 					ignoreCreeps: true,
 					filter: function (e)

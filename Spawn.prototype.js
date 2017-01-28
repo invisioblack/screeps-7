@@ -64,7 +64,7 @@ Spawn.prototype.generateName = function (name)
  */
 Spawn.prototype.spawnUnit = function (unitName, forceRsl = 0)
 {
-	let debug = true;
+	let debug = false;
 	let spawnEnergy = this.room.getSpawnEnergy();
 	let energyBudget = 0;
 	let numWorkers = creepManager.countRoomUnits(this.room.name, "worker");
@@ -78,7 +78,7 @@ Spawn.prototype.spawnUnit = function (unitName, forceRsl = 0)
 	}
 
 	// panic worker override
-	if (numWorkers < config.critWorkers && unitName === "worker")
+	if (this.room.memory.mode === C.ROOM_MODE_WORKER_PANIC && unitName === "worker")
 	{
 		energyBudget = spawnEnergy.energy;
 	} else {
@@ -96,7 +96,7 @@ Spawn.prototype.spawnUnit = function (unitName, forceRsl = 0)
  */
 Spawn.prototype.spawnUnitByEnergy = function (unitName, energyBudget, forceRsl = 0)
 {
-	let debug = true;
+	let debug = false;
 	let parts = [];
 	let name;
 	let result;

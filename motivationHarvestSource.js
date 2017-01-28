@@ -56,6 +56,9 @@ MotivationHarvestSource.prototype.getDesireSpawn = function (roomName, demands)
 	let numHarvesters = 0;
 	let demandedHarvesters = lib.nullProtect(demands.units[unitName], 0);
 
+	if (roomMemory.mode !== C.ROOM_MODE_NORMAL)
+		return false;
+
 	// if we not in one of my owned rooms then check for assigned to the room so we don't double spawn
 	if (lib.isNull(room) || !room.getIsMine())
 	{
@@ -128,7 +131,7 @@ MotivationHarvestSource.prototype.updateNeeds = function (roomName)
 		// create new need if one doesn't exist
 		if (lib.isNull(memory.needs[needName]))
 		{
-			let containers = _.map(room.memory.cache.structures[STRUCTURE_CONTAINER], (id) => { return Game.getObjectById(id); });
+			let containers = roomManager.getStructuresType(roomName, STRUCTURE_CONTAINER);
 			let container = s.pos.findInRange(containers, 1)[0];
 			memory.needs[needName] = {};
 			need = memory.needs[needName];

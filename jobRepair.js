@@ -33,8 +33,24 @@ JobRepair.prototype.constructor = JobRepair;
 JobRepair.prototype.work = function (creep)
 {
 	let need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
-	let target = Game.getObjectById(need.targetId);
+	let needName = need.name;
+	let repairSites = [];
+	let roomName = creep.room.name;
 	let carry = _.sum(creep.carry);
+	let target;
+
+	if (needName === "repairNoWall." + roomName)
+	{
+		let structuresNoWall = roomManager.getStructuresType(roomName , STRUCTURE_ALL_NOWALL);
+		repairSites = _.filter(structuresNoWall , (s) => s.hits < (s.hitsMax * config.repairFactor));
+	}
+	else if (needName === "repairWall." + roomName)
+	{
+		let structuresWall = roomManager.getStructuresType(roomName , STRUCTURE_ALL_WALL);
+		repairSites = _.filter(structuresWall , (s) => s.hits < (wallHP * config.repairFactor));
+	}
+
+	target = _.min(repairSites, (c) => c.progressTotal - c.progress);
 
 	creep.sing("Fixing stuff!");
 

@@ -42,7 +42,7 @@ MotivationSupplySpawn.prototype.getDemands = function (roomName)
 
 MotivationSupplySpawn.prototype.getDesireSpawn = function (roomName, demands)
 {
-	let debug = true;
+	let debug = false;
 	let result = false;
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
@@ -73,7 +73,7 @@ MotivationSupplySpawn.prototype.getDesiredSpawnUnit = function (roomName)
 {
 	let energyPickupMode = lib.nullProtect(Memory.rooms[roomName].energyPickupMode, C.ROOM_ENERGYPICKUPMODE_NOENERGY, C.ROOM_ENERGYPICKUPMODE_NOENERGY);
 
-	if (energyPickupMode < C.ROOM_ENERGYPICKUPMODE_CONTAINER)
+	if (energyPickupMode < C.ROOM_ENERGYPICKUPMODE_CONTAINER || Memory.rooms[roomName].mode === C.ROOM_MODE_WORKER_PANIC)
 		return "worker";
 	else
 		return "hauler";

@@ -30,8 +30,8 @@ JobBuild.prototype.constructor = JobBuild;
 //-------------------------------------------------------------------------
 JobBuild.prototype.work = function (creep)
 {
-	let need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
-	let target = Game.getObjectById(need.targetId);
+	let constructionSites = creep.room.find(FIND_CONSTRUCTION_SITES);
+	let target = _.min(constructionSites, (c) => c.progressTotal - c.progress);
 	let carry = _.sum(creep.carry);
 
 	creep.sing("Building things!");

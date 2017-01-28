@@ -37,6 +37,7 @@ module.exports = function ()
 			room.memory.motivations[this.name].spawnAllocated = false;
 			room.memory.motivations[this.name].needs = {};
 			room.memory.motivations[this.name].active = false;
+			room.memory.motivations[this.name].demands = this.getDemands(room.name);
 
 			// set init true
 			Game.rooms[roomName].memory.motivations[this.name].init = true;
