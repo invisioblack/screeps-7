@@ -36,7 +36,7 @@
 // Modules
 //----------------------------------------------------------------------------------------------------------------------
 const profiler = require('screeps-profiler');
-profiler.enable();
+//profiler.enable();
 // game prototypes
 require('Creep.prototype');
 require('Source.prototype');

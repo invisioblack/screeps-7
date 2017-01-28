@@ -58,7 +58,7 @@ StructureTower.prototype.autoRepair = function ()
 
 	//console.log(JSON.stringify(damagedBuildings));
 
-	if (1 === 2 && !lib.isNull(damagedBuildings[0]) && this.energy > (this.energyCapacity * config.towerPowerFactor))
+	if (!lib.isNull(damagedBuildings[0]) && this.energy > (this.energyCapacity * config.towerPowerFactor))
 	{
 		let target = _.max(damagedBuildings , (c) => c.hitsMax - c.hits);
 		this.repair(target);

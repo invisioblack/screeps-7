@@ -63,7 +63,9 @@ MotivationSupplyTower.prototype.getDesireSpawn = function (roomName , demands)
 		for (let unitName in units)
 		{
 			let numUnits = creepManager.countRoomUnits(roomName , unitName);
-			if (!lib.isNull(demands.units[unitName]) || demands.units[unitName] <= numUnits || numUnits >= config.unit.max[unitName])
+			let roomUnits = creepManager.countHomeRoomUnits(roomName, unitName);
+
+			if (!lib.isNull(demands.units[unitName]) || demands.units[unitName] <= numUnits || roomUnits >= config.unit.max[unitName])
 			{
 				result = false;
 			}

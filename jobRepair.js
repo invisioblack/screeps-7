@@ -38,6 +38,7 @@ JobRepair.prototype.work = function (creep)
 	let roomName = creep.room.name;
 	let carry = _.sum(creep.carry);
 	let target;
+	let wallHP = config.wallHP[lib.isNull(creep.room.controller) ? 0 : creep.room.controller.level];
 
 	if (needName === "repairNoWall." + roomName)
 	{

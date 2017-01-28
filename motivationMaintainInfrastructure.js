@@ -81,7 +81,7 @@ MotivationMaintainInfrastructure.prototype.updateActive = function (roomName)
 
 MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 {
-	let debug = false;
+	let debug = true;
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
 	let structuresNoWall;

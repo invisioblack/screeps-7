@@ -45,13 +45,15 @@ NeedRepair.prototype.getUnitDemands = function (roomName , memory , motivationNa
 	}
 	numRepairSites = repairSites.length;
 
+	//console.log(`room: ${roomName} n: ${needName} s: ${numRepairSites}`);
+
 	memory.demands = {};
 
-	if (numRepairSites.length > 5)
+	if (numRepairSites > 5)
 	{
 		memory.demands["worker"] = 2;
 	}
-	else if (numRepairSites.length > 0)
+	else if (numRepairSites > 0)
 	{
 		memory.demands["worker"] = 1;
 	}

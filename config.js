@@ -3,7 +3,7 @@ module.exports =
 	{
 		"unit": {
 			"min": {
-				"worker": 3 ,
+				"worker": 2 ,
 				"hauler": 2
 			},
 			"max": {

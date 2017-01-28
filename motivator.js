@@ -182,6 +182,7 @@ module.exports =
 			let cpuUsed = 0;
 
 			// motivate in each room we control ----------------------------------------------------------------------------
+			cpuManager.timerStart(`\tRoom Total` , "motivate.roomTotal");
 			for (let roomName in Game.rooms)
 			{
 				cpuManager.timerStart(`\tRoom: ${roomLink(roomName)}` , "motivate.room");
@@ -217,11 +218,12 @@ module.exports =
 
 				cpuManager.timerStop("motivate.room" , config.cpuRoomDebug , 8 , 10);
 			}
+			cpuManager.timerStop("motivate.roomTotal" , config.cpuRoomDebug , 10 , 20);
 
 			// fulfill needs ---------------------------------------------------------------------------------------
 			cpuManager.timerStart("\tFulfill Needs" , "motivate.fulfillNeeds");
 			needManager.fulfillNeeds();
-			cpuManager.timerStop("motivate.fulfillNeeds" , config.cpuNeedsDebug , 5 , 10);
+			cpuManager.timerStop("motivate.fulfillNeeds" , config.cpuNeedsDebug , 10 , 15);
 
 			cpuManager.timerStop("motivate" , config.cpuMotivateDebug , 25 , 40);
 		} ,
@@ -368,14 +370,14 @@ module.exports =
 					case "hauler":
 						if (roomManager.getIsMine(creep.memory.motive.room))
 						{
-							creep.assignMotive(roomName , "motivationSupplySpawn" , "supplyExtenders." + creep.room.name);
+							creep.assignMotive(creep.memory.motive.room , "motivationSupplySpawn" , "supplyExtenders." + creep.memory.motive.room);
 							assigned = true;
 						}
 						break;
 					case "worker":
 						if (roomManager.getIsMine(creep.memory.motive.room))
 						{
-							creep.assignMotive(roomName , "motivationSupplyController" , "supplyController." + creep.room.name);
+							creep.assignMotive(creep.memory.motive.room , "motivationSupplyController" , "supplyController." + creep.memory.motive.room);
 							assigned = true;
 						}
 						break;

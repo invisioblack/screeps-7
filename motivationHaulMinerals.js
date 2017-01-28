@@ -46,7 +46,7 @@ MotivationHaulMinerals.prototype.getDesiredSpawnUnit = function (roomName)
 
 MotivationHaulMinerals.prototype.getDesireSpawn = function (roomName , demands)
 {
-	let debug = true;
+	let debug = false;
 	let result = false;
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
@@ -55,7 +55,7 @@ MotivationHaulMinerals.prototype.getDesireSpawn = function (roomName , demands)
 	let units = {};
 	units.hauler = creepManager.countRoomMotivationUnits(roomName , this.name , "hauler");
 	let roomUnits = {};
-	roomUnits.hauler = creepManager.countRoomUnits(roomName , "hauler");
+	roomUnits.hauler = creepManager.countHomeRoomUnits(roomName , "hauler");
 
 	if (memory.active && roomUnits.hauler < config.unit.max.hauler && room.memory.mode === C.ROOM_MODE_NORMAL)
 	{
