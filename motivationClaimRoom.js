@@ -31,13 +31,14 @@ MotivationClaimRoom.prototype.constructor = MotivationClaimRoom;
 //-------------------------------------------------------------------------
 // implementation
 //-------------------------------------------------------------------------
-MotivationClaimRoom.prototype.getDemands = function (roomName) {
+MotivationClaimRoom.prototype.getDemands = function (roomName)
+{
 	let debug = false;
 	let result = {};
 	let unitName = this.getDesiredSpawnUnit(roomName);
 	result.units = this.getUnitDemands(roomName);
-	result.spawn = this.getDesireSpawn(roomName, result);
-	lib.log(`  Claim Room Demands ${roomName} : ${unitName} : ${result.units[unitName]} Spawn: ${result.spawn}`, debug);
+	result.spawn = this.getDesireSpawn(roomName , result);
+	lib.log(`  Claim Room Demands ${roomName} : ${unitName} : ${result.units[unitName]} Spawn: ${result.spawn}` , debug);
 	Memory.rooms[roomName].motivations[this.name].demands = result;
 	return result;
 };
@@ -52,16 +53,17 @@ MotivationClaimRoom.prototype.getAssignableUnitNames = function ()
 	return ["claimer"];
 };
 
-MotivationClaimRoom.prototype.getDesireSpawn = function (roomName, demands)
+MotivationClaimRoom.prototype.getDesireSpawn = function (roomName , demands)
 {
 	let debug = false;
 	let result = false;
 	let room = Game.rooms[roomName];
-	let numWorkers = creepManager.countHomeRoomUnits(roomName, "worker");
-	let numClaimers = creepManager.countHomeRoomUnits(roomName, "claimer");
+	let numWorkers = creepManager.countHomeRoomUnits(roomName , "worker");
+	let numClaimers = creepManager.countHomeRoomUnits(roomName , "claimer");
 
 	// filter this to only claims spawning in specified room
-	let spawnClaims = _.filter(Memory.claims, function (c){
+	let spawnClaims = _.filter(Memory.claims , function (c)
+	{
 		return c.spawnRoom === roomName;
 	});
 
@@ -72,55 +74,61 @@ MotivationClaimRoom.prototype.getDesireSpawn = function (roomName, demands)
 
 	if (_.size(spawnClaims) === 0)
 	{
-		lib.log(">&>&>&>&>&>&> FAIL: Not my room", debug);
+		lib.log(">&>&>&>&>&>&> FAIL: Not my room" , debug);
 		return false;
 	}
 
 	if (_.size(spawnClaims) === 0)
 	{
-		lib.log(">&>&>&>&>&>&> FAIL: No claims", debug);
+		lib.log(">&>&>&>&>&>&> FAIL: No claims" , debug);
 		return false;
 	}
 
 	if (numClaimers >= _.size(spawnClaims))
 	{
-		lib.log(">&>&>&>&>&>&> FAIL: Too many claimers", debug);
+		lib.log(">&>&>&>&>&>&> FAIL: Too many claimers" , debug);
 		return false;
 	}
 
 	// if this room is specified as spawn for another room, and the demanded units don't exist, true
 
-	_.forEach(spawnClaims, function (c) {
+	_.forEach(spawnClaims , function (c)
+	{
 		if (lib.isNull(Memory.rooms[c.room]))
 		{
 			Memory.rooms[c.room] = {};
 		}
 		//console.log(c.room + ": " + _.has(global, "cache.rooms." + c.room + ".units.claimer"));
-		let numClaimers = creepManager.countRoomUnits(c.room, "claimer");
+		let numClaimers = creepManager.countRoomUnits(c.room , "claimer");
 		let claimRoom = Game.rooms[c.room];
 		let reservation;
 
 		if (!lib.isNull(claimRoom) && !lib.isNull(claimRoom.controller) && !lib.isNull(claimRoom.controller.reservation))
 		{
 			reservation = claimRoom.controller.reservation.ticksToEnd;
-		} else if (!lib.isNull(Memory.rooms[c.room].reservation))
+		}
+		else if (!lib.isNull(Memory.rooms[c.room].reservation))
 		{
 			let timeDiff = Game.time - Memory.rooms[c.room].reservation.time;
-			reservation = lib.nullProtect(Memory.rooms[c.room].reservation.reservation, 0) - timeDiff;
+			reservation = lib.nullProtect(Memory.rooms[c.room].reservation.reservation , 0) - timeDiff;
 			//console.log(timeDiff);
-		} else
+		}
+		else
+		{
 			reservation = 0;
-
-		// don't request a spawn if somebody is already there, or we're not worried about degrade
-		if (!numClaimers && reservation < config.claimTicks) {
-			result = true;
-			lib.log(">&>&>&>&>&>&> SUCCESS", debug);
 		}
 
-		lib.log("Room: " + c.room + " COUNT: " + numClaimers + " TICKS: " + reservation, debug);
+		// don't request a spawn if somebody is already there, or we're not worried about degrade
+		if (!numClaimers && reservation < config.claimTicks)
+		{
+			result = true;
+			lib.log(">&>&>&>&>&>&> SUCCESS" , debug);
+		}
+
+		lib.log("Room: " + c.room + " COUNT: " + numClaimers + " TICKS: " + reservation , debug);
 	});
 
-	lib.log("Spawn claimer " + result, debug);
+	lib.log("Spawn claimer " + result , debug);
 	return result;
 };
 
@@ -136,10 +144,12 @@ MotivationClaimRoom.prototype.updateActive = function (roomName)
 	let memory = room.memory.motivations[this.name];
 	// TODO: THIS ISN'T RIGHT
 	// filter this to only claims spawning in specified room
-	let countSpawnClaims = _.size(Memory.claims, function (c){
+	let countSpawnClaims = _.size(Memory.claims , function (c)
+	{
 		return c.spawnRoom === roomName;
 	});
-	let countClaims = _.size(Memory.claims, function (c){
+	let countClaims = _.size(Memory.claims , function (c)
+	{
 		return c.room === roomName;
 	});
 
@@ -153,17 +163,25 @@ MotivationClaimRoom.prototype.updateActive = function (roomName)
 	{
 		// be active if we are specified as a spawning room
 		if (countSpawnClaims)
+		{
 			memory.active = true;
+		}
 		else
+		{
 			memory.active = false;
+		}
 	}
 	else // not my room
 	{
 		// be active if we are specified as a claim room
 		if (countClaims)
+		{
 			memory.active = true;
+		}
 		else
+		{
 			memory.active = false;
+		}
 	}
 };
 

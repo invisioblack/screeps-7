@@ -50,7 +50,7 @@ JobRepair.prototype.work = function (creep)
 		repairSites = _.filter(structuresWall , (s) => s.hits < (wallHP * config.repairFactor));
 	}
 
-	target = _.min(repairSites, (c) => c.progressTotal - c.progress);
+	target = _.min(repairSites , (c) => c.progressTotal - c.progress);
 
 	creep.sing("Fixing stuff!");
 
@@ -82,17 +82,21 @@ JobRepair.prototype.work = function (creep)
 			{
 				creep.memory.job.mode = this.JOB_MODE_GETENERGY;
 				creep.deassignMotive();
-			} else {
+			}
+			else
+			{
 
 				let result = creep.repair(target);
 				//console.log("return: " + target);
 				//console.log("creep: " + creep.name);
 				if (result === ERR_NOT_IN_RANGE)
 				{
-					let moveResult = creep.moveTo(target, {"maxRooms": 1});
+					let moveResult = creep.moveTo(target , {"maxRooms": 1});
 					//if (moveResult < 0 && moveResult != ERR_TIRED)
 					//	console.log(creep.name + " Can't move while repairing: " + moveResult);
-				} else if (result === ERR_FULL) {
+				}
+				else if (result === ERR_FULL)
+				{
 					//console.log("---- RESET");
 					creep.deassignMotive();
 				}

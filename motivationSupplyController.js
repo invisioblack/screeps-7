@@ -27,13 +27,14 @@ MotivationSupplyController.prototype.constructor = MotivationSupplyController;
 //-------------------------------------------------------------------------
 // implementation
 //-------------------------------------------------------------------------
-MotivationSupplyController.prototype.getDemands = function (roomName) {
+MotivationSupplyController.prototype.getDemands = function (roomName)
+{
 	let debug = false;
 	let result = {};
 	let unitName = this.getDesiredSpawnUnit(roomName);
 	result.units = this.getUnitDemands(roomName);
-	result.spawn = this.getDesireSpawn(roomName, result);
-	lib.log('  Supply Controller Demands: e: ' + result.energy + " " + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn, debug);
+	result.spawn = this.getDesireSpawn(roomName , result);
+	lib.log('  Supply Controller Demands: e: ' + result.energy + " " + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn , debug);
 	Memory.rooms[roomName].motivations[this.name].demands = result;
 	return result;
 };
@@ -43,12 +44,12 @@ MotivationSupplyController.prototype.getDesiredSpawnUnit = function (roomName)
 	return "worker";
 };
 
-MotivationSupplyController.prototype.getDesireSpawn = function (roomName, demands)
+MotivationSupplyController.prototype.getDesireSpawn = function (roomName , demands)
 {
 	let result = true;
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	let numWorkers = creepManager.countRoomMotivationUnits(roomName, this.name, "worker");
+	let numWorkers = creepManager.countRoomMotivationUnits(roomName , this.name , "worker");
 
 	if (!memory.active || lib.isNull(demands.units["worker"]) || demands.units["worker"] <= numWorkers)
 	{
@@ -76,7 +77,9 @@ MotivationSupplyController.prototype.updateActive = function (roomName)
 	if (room.getIsMine())
 	{
 		memory.active = true;
-	} else {
+	}
+	else
+	{
 		memory.active = false;
 	}
 };

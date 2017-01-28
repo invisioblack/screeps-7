@@ -32,7 +32,6 @@ JobLongDistanceHarvest.prototype.work = function (creep)
 	let target = Game.getObjectById(need.targetId);
 	let carry = _.sum(creep.carry);
 	let homeRoom = Game.rooms[creep.memory.homeRoom];
-	let unitName = "ldharvester";
 	let assigned = false;
 
 	//avoid hostiles
@@ -41,26 +40,53 @@ JobLongDistanceHarvest.prototype.work = function (creep)
 		return;
 	}
 
-	_.forEach(homeRoom.memory.longDistanceHarvestTargets, (rN) => {
-		if (!lib.isNull(Memory.rooms[rN]) && !lib.isNull(Memory.rooms[rN].motivations) && !lib.isNull(Memory.rooms[rN].motivations["motivationHarvestSource"])) {
-			if (Memory.rooms[rN].motivations["motivationHarvestSource"].active) {
-				if (!assigned) {
+	_.forEach(homeRoom.memory.longDistanceHarvestTargets , (rN) =>
+	{
+		if (creep.memory.unit === "ldharvester" && !lib.isNull(Memory.rooms[rN]) && !lib.isNull(Memory.rooms[rN].motivations) && !lib.isNull(Memory.rooms[rN].motivations["motivationHarvestSource"]))
+		{
+			if (Memory.rooms[rN].motivations["motivationHarvestSource"].active)
+			{
+				if (Memory.rooms[rN].motivations["motivationHarvestSource"].active)
+				{
+					if (!assigned)
+					{
+						let roomMemory = Memory.rooms[rN];
+						let numSources = roomMemory.cache.sources.length;
+						let numHarvesters = creepManager.countRoomUnits(rN , "ldharvester");
 
+						if (numSources > numHarvesters)
+						{
+							creep.deassignMotive(rN);
+							assigned = true;
+						}
+					}
+				}
+			}
+		}
+		else if (creep.memory.unit === "worker" && !lib.isNull(Memory.rooms[rN]) && !lib.isNull(Memory.rooms[rN].motivations) && !lib.isNull(Memory.rooms[rN].motivations["motivationMaintainInfrastructure"]))
+		{
+			if (Memory.rooms[rN].motivations["motivationMaintainInfrastructure"].active)
+			{
+
+				if (!assigned)
+				{
 					let roomMemory = Memory.rooms[rN];
-					let numSources = roomMemory.cache.sources.length;
-					let numHarvesters = creepManager.countRoomUnits(rN, unitName);
-					//_.has(global, "cache.rooms." + rN + ".units." + unitName) ? global.cache.rooms[rN].units[unitName].length : 0;
+					let numWorkers = creepManager.countRoomUnits(rN , "worker");
+					let workerDemand = roomMemory.demands["worker"];
 
-					//console.log(`${numSources} ${numHarvesters}`);
-					if (numSources > numHarvesters) {
+					console.log(`creep: ${creep.name} room: ${rN} num workers: ${numWorkers}/${workerDemand}`);
+					if (numWorkers < workerDemand)
+					{
 						creep.deassignMotive(rN);
 						assigned = true;
+						console.log("Assign");
+					} else {
+						console.log("No assign");
 					}
 				}
 			}
 		}
 	});
-
 };
 
 //-------------------------------------------------------------------------

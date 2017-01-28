@@ -30,8 +30,8 @@ JobHarvestSource.prototype.work = function (creep)
 {
 	let need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
 	let target = Game.getObjectById(need.targetId);
-	let containers = roomManager.getStructuresType(creep.room.name, STRUCTURE_CONTAINER);
-	let container = target.pos.findInRange(containers, 1)[0];
+	let containers = roomManager.getStructuresType(creep.room.name , STRUCTURE_CONTAINER);
+	let container = target.pos.findInRange(containers , 1)[0];
 
 	//avoid hostiles
 	if (creep.avoidHostile(creep))
@@ -49,14 +49,16 @@ JobHarvestSource.prototype.work = function (creep)
 	creep.memory.sourceId = target.id;
 	creep.memory.sourceType = this.JOB_SOURCETYPE_SOURCE;
 
-
 	let moveResult = creep.moveTo(container , {"maxRooms": 1});
 	let link = Game.getObjectById(need.linkId);
 	if (lib.isNull(creep.room.memory.sourceLinks))
+	{
 		creep.room.memory.sourceLinks = {};
+	}
 	if (!lib.isNull(link))
+	{
 		creep.room.memory.sourceLinks[need.targetId] = link.id;
-
+	}
 
 	if (creep.carryCapacity > 0 && creep.carrying() >= 10 && container.hits < container.hitsMax)
 	{
@@ -65,7 +67,7 @@ JobHarvestSource.prototype.work = function (creep)
 
 	if (creep.carryCapacity > 0 && creep.carrying() >= 38 && !lib.isNull(link) && link.energy < link.energyCapacity)
 	{
-		let tResult = creep.transfer(link, RESOURCE_ENERGY);
+		let tResult = creep.transfer(link , RESOURCE_ENERGY);
 	}
 	else if (_.sum(container.store) < container.storeCapacity || (creep.carrying() < (creep.carryCapacity - 12)))
 	{
@@ -80,7 +82,9 @@ JobHarvestSource.prototype.work = function (creep)
 	{
 		creep.say("Full!");
 		if (creep.pos.getRangeTo(container) != 0)
+		{
 			creep.moveTo(container , {"maxRooms": 1});
+		}
 	}
 };
 

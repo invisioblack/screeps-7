@@ -21,7 +21,7 @@ let NeedHaulMinerals = function ()
 NeedHaulMinerals.prototype = Object.create(Need.prototype);
 NeedHaulMinerals.prototype.constructor = NeedHaulMinerals;
 
-NeedHaulMinerals.prototype.getUnitDemands = function(roomName, memory, motivationName)
+NeedHaulMinerals.prototype.getUnitDemands = function (roomName , memory , motivationName)
 {
 	memory.demands = {};
 	memory.demands["hauler"] = 1;
@@ -34,6 +34,5 @@ NeedHaulMinerals.prototype.getUnitDemands = function(roomName, memory, motivatio
 
 	return memory.demands;
 };
-
 
 module.exports = new NeedHaulMinerals();

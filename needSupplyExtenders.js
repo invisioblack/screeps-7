@@ -25,9 +25,9 @@ let NeedSupplyExtenders = function ()
 NeedSupplyExtenders.prototype = Object.create(Need.prototype);
 NeedSupplyExtenders.prototype.constructor = NeedSupplyExtenders;
 
-NeedSupplyExtenders.prototype.getUnitDemands = function(roomName, memory, motivationName)
+NeedSupplyExtenders.prototype.getUnitDemands = function (roomName , memory , motivationName)
 {
-	let numHaulers = creepManager.countRoomUnits(roomName, "hauler");
+	let numHaulers = creepManager.countRoomUnits(roomName , "hauler");
 	memory.demands = {};
 
 	memory.demands["worker"] = 2;
@@ -40,6 +40,5 @@ NeedSupplyExtenders.prototype.getUnitDemands = function(roomName, memory, motiva
 
 	return memory.demands;
 };
-
 
 module.exports = new NeedSupplyExtenders();

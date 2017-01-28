@@ -34,13 +34,13 @@ MotivationSupplySpawn.prototype.getDemands = function (roomName)
 	let result = {};
 	let unitName = this.getDesiredSpawnUnit(roomName);
 	result.units = this.getUnitDemands(roomName);
-	result.spawn = this.getDesireSpawn(roomName, result);
-	lib.log('  Supply Spawn Demands: e: ' + result.energy + ' ' + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn, debug);
+	result.spawn = this.getDesireSpawn(roomName , result);
+	lib.log('  Supply Spawn Demands: e: ' + result.energy + ' ' + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn , debug);
 	Memory.rooms[roomName].motivations[this.name].demands = result;
 	return result;
 };
 
-MotivationSupplySpawn.prototype.getDesireSpawn = function (roomName, demands)
+MotivationSupplySpawn.prototype.getDesireSpawn = function (roomName , demands)
 {
 	let debug = false;
 	let result = false;
@@ -49,39 +49,43 @@ MotivationSupplySpawn.prototype.getDesireSpawn = function (roomName, demands)
 	let unitName = this.getDesiredSpawnUnit(roomName);
 	let unitsDemanded = 0;
 	let units = {};
-	units.worker = creepManager.countRoomMotivationUnits(roomName, this.name, "worker");
-	units.hauler = creepManager.countRoomMotivationUnits(roomName, this.name, "hauler");
+	units.worker = creepManager.countRoomMotivationUnits(roomName , this.name , "worker");
+	units.hauler = creepManager.countRoomMotivationUnits(roomName , this.name , "hauler");
 	let roomUnits = {};
-	roomUnits.worker = creepManager.countRoomUnits(roomName, "worker");
-	roomUnits.hauler = creepManager.countRoomUnits(roomName, "hauler");
+	roomUnits.worker = creepManager.countRoomUnits(roomName , "worker");
+	roomUnits.hauler = creepManager.countRoomUnits(roomName , "hauler");
 
 	if (memory.active && room.memory.demands[unitName] > roomUnits[unitName])
 	{
-		unitsDemanded = lib.nullProtect(demands.units[unitName], 0);
+		unitsDemanded = lib.nullProtect(demands.units[unitName] , 0);
 		if (units[unitName] < unitsDemanded)
 		{
 			result = true;
 		}
 	}
 
-	lib.log(`Room: ${roomLink(roomName)} ${this.name}.getDesireSpawn: active: ${memory.active} Result: ${result} unit: ${unitName} A/D: ${units[unitName]}/${unitsDemanded} R/D: ${roomUnits[unitName]}/${room.memory.demands[unitName]}`, debug);
+	lib.log(`Room: ${roomLink(roomName)} ${this.name}.getDesireSpawn: active: ${memory.active} Result: ${result} unit: ${unitName} A/D: ${units[unitName]}/${unitsDemanded} R/D: ${roomUnits[unitName]}/${room.memory.demands[unitName]}` , debug);
 
 	return result;
 };
 
 MotivationSupplySpawn.prototype.getDesiredSpawnUnit = function (roomName)
 {
-	let energyPickupMode = lib.nullProtect(Memory.rooms[roomName].energyPickupMode, C.ROOM_ENERGYPICKUPMODE_NOENERGY, C.ROOM_ENERGYPICKUPMODE_NOENERGY);
+	let energyPickupMode = lib.nullProtect(Memory.rooms[roomName].energyPickupMode , C.ROOM_ENERGYPICKUPMODE_NOENERGY , C.ROOM_ENERGYPICKUPMODE_NOENERGY);
 
 	if (energyPickupMode < C.ROOM_ENERGYPICKUPMODE_CONTAINER || Memory.rooms[roomName].mode === C.ROOM_MODE_WORKER_PANIC)
+	{
 		return "worker";
+	}
 	else
+	{
 		return "hauler";
+	}
 };
 
 MotivationSupplySpawn.prototype.getAssignableUnitNames = function ()
 {
-	return ["worker", "hauler"];
+	return ["worker" , "hauler"];
 };
 
 /**
@@ -97,7 +101,9 @@ MotivationSupplySpawn.prototype.updateActive = function (roomName)
 	if (room.getIsMine())
 	{
 		memory.active = true;
-	} else {
+	}
+	else
+	{
 		memory.active = false;
 	}
 };
@@ -106,7 +112,7 @@ MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
 {
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	let sortedNeedsByDistance, x;
+	let sortedNeedsByDistance , x;
 
 	// insure memory is initialized for needs
 	if (lib.isNull(memory.needs))
@@ -138,7 +144,9 @@ MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
 					need.targetId = spawn.id;
 					need.priority = C.PRIORITY_2;
 				}
-			} else { // cull need if we don't need energy
+			}
+			else
+			{ // cull need if we don't need energy
 				delete memory.needs[needName];
 			}
 		}
@@ -161,7 +169,9 @@ MotivationSupplySpawn.prototype.updateNeeds = function (roomName)
 			need.name = needName;
 			need.priority = C.PRIORITY_1;
 		}
-	} else { // cull need if we don't need energy
+	}
+	else
+	{ // cull need if we don't need energy
 		delete memory.needs[needName];
 	}
 };

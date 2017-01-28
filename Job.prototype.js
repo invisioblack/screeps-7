@@ -1,10 +1,12 @@
 //-------------------------------------------------------------------------
 // prototype.job
 //-------------------------------------------------------------------------
-module.exports = function()
+module.exports = function ()
 {
 	"use strict";
-	let Job = function () {};
+	let Job = function ()
+	{
+	};
 
 	Job.prototype.JOB_MODE_GETENERGY = 0;
 	Job.prototype.JOB_MODE_WORK = 1;
@@ -19,9 +21,8 @@ module.exports = function()
 	{
 		//console.log(`${creep.name} M: ${creep.memory.motive.motivation} N: ${creep.memory.motive.need}`);
 		// declarations
-		let carry, source, room;
-		let numHaulers = creepManager.countHomeRoomUnits(creep.room.name, "hauler");
-			//_.has(global, "cache.homeRooms." + creep.room.name + ".units.hauler") ? global.cache.homeRooms[creep.room.name].units["hauler"].length : 0;
+		let carry , source , room;
+		let numHaulers = creepManager.countHomeRoomUnits(creep.room.name , "hauler");
 
 		// confirm that creep can attempt this job
 		if (creep.carryCapacity === 0)
@@ -36,7 +37,6 @@ module.exports = function()
 		// get information
 		carry = _.sum(creep.carry);
 		room = creep.room;
-
 
 		// if I am full, then reset into work mode ---------------------------------------------------------------------
 		if (carry === creep.carryCapacity)
@@ -68,12 +68,13 @@ module.exports = function()
 		/**
 		 * handle finding energy on the ground
 		 * if we are only harvest mode, anyone will get energy off the ground, otherwise just haulers will
- 		 */
+		 */
 
 		if (creep.memory.sourceId === "" && (room.memory.energyPickupMode <= C.ROOM_ENERGYPICKUPMODE_CONTAINER || numHaulers === 0))
 		{
 			this.findEnergyPickup(creep);
-		} else if (creep.memory.sourceId === "" && creep.memory.unit === "hauler")
+		}
+		else if (creep.memory.sourceId === "" && creep.memory.unit === "hauler")
 		{
 			this.findEnergyPickup(creep);
 		}
@@ -117,15 +118,17 @@ module.exports = function()
 		// harvest my own energy
 		if (creep.memory.sourceId === "" && creep.getHasPart(WORK) && room.memory.energyPickupMode <= C.ROOM_ENERGYPICKUPMODE_PRECONTAINER)
 		{
-			let source = creep.pos.findClosestByPath(FIND_SOURCES,
+			let source = creep.pos.findClosestByPath(FIND_SOURCES ,
 				{
-					maxRooms: 1,
-					ignoreCreeps: true,
+					maxRooms: 1 ,
+					ignoreCreeps: true ,
 					filter: function (s)
 					{
 						let max = 1;
 						if (creep.memory.unit != "harvester")
+						{
 							max = s.getMaxHarvesters();
+						}
 						let on = creepManager.countCreepsOnSource(s.id);
 						return max > on && s.energy > 0;
 					}
@@ -143,18 +146,14 @@ module.exports = function()
 		if (creep.memory.sourceId === "") // I'm screwed, I cannot get energy
 		{
 			creep.sing("No Energy!");
-			if (creep.room.name != creep.memory.homeRoom)
-			{
-				creep.deassignMotive(creep.memory.homeRoom);
-				this.resetSource(creep);
-			}
-
 			if (carry > 0)
 			{
 				creep.memory.job.mode = this.JOB_MODE_WORK;
 				this.resetSource(creep);
 			}
-		} else { // move to and pick up the goods
+		}
+		else
+		{ // move to and pick up the goods
 			creep.sing("Getting energy!");
 			let result;
 			switch (creep.memory.sourceType)
@@ -164,17 +163,17 @@ module.exports = function()
 					result = creep.pickup(drop);
 					if (result === ERR_NOT_IN_RANGE)
 					{
-						let moveResult = creep.moveTo(drop, {"maxRooms": 1});
+						let moveResult = creep.moveTo(drop , {"maxRooms": 1});
 						//if (moveResult < 0 && moveResult != ERR_TIRED)
 						//	console.log(creep.name + " Can't move while getting from container: " + moveResult);
 					}
 					break;
 				case this.JOB_SOURCETYPE_CONTAINER:
 					let container = Game.getObjectById(creep.memory.sourceId);
-					result = creep.withdraw(container, RESOURCE_ENERGY);
+					result = creep.withdraw(container , RESOURCE_ENERGY);
 					if (result === ERR_NOT_IN_RANGE)
 					{
-						let moveResult = creep.moveTo(container, {"maxRooms": 1});
+						let moveResult = creep.moveTo(container , {"maxRooms": 1});
 						//if (moveResult < 0 && moveResult != ERR_TIRED)
 						//	console.log(creep.name + " Can't move while getting from container: " + moveResult);
 					}
@@ -197,17 +196,17 @@ module.exports = function()
 					}
 					if (result === ERR_NOT_IN_RANGE)
 					{
-						let moveResult = creep.moveTo(source, {"maxRooms": 1});
+						let moveResult = creep.moveTo(source , {"maxRooms": 1});
 						//if (moveResult < 0 && moveResult != ERR_TIRED)
 						//	console.log(creep.name + " Can't move while harvesting: " + moveResult);
 					}
 					break;
 				case this.JOB_SOURCETYPE_LINK:
 					let link = Game.getObjectById(creep.memory.sourceId);
-					result = creep.withdraw(link, RESOURCE_ENERGY);
+					result = creep.withdraw(link , RESOURCE_ENERGY);
 					if (result === ERR_NOT_IN_RANGE)
 					{
-						let moveResult = creep.moveTo(link, {"maxRooms": 1});
+						let moveResult = creep.moveTo(link , {"maxRooms": 1});
 						//if (moveResult < 0 && moveResult != ERR_TIRED)
 						//	console.log(creep.name + " Can't move while getting from container: " + moveResult);
 					}
@@ -232,7 +231,9 @@ module.exports = function()
 			if (!lib.isNull(creep.memory.sourceId))
 			{
 				if (creep.memory.sourceId === sourceId)
+				{
 					result++;
+				}
 			}
 		}
 
@@ -250,22 +251,25 @@ module.exports = function()
 		// look for energy laying on the ground
 		let droppedEnergy = creep.room.memory.cache.dropped;
 
-		if (creep.room.memory.threat.level < C.THREAT_NPC) {
-			droppedEnergy.forEach(function (drop) {
+		if (creep.room.memory.threat.level < C.THREAT_NPC)
+		{
+			droppedEnergy.forEach(function (drop)
+			{
 				//console.log("dropID: " + drop);
-				if (creep.memory.sourceType != this.JOB_SOURCETYPE_DROP && creepManager.countCreepsOnSource(drop) === 0) {
+				if (creep.memory.sourceType != this.JOB_SOURCETYPE_DROP && creepManager.countCreepsOnSource(drop) === 0)
+				{
 					//console.log("I'll get it! dropID: " + drop.id);
 					creep.memory.sourceId = drop;
 					creep.memory.sourceType = this.JOB_SOURCETYPE_DROP;
 				}
-			}, this);
+			} , this);
 		}
 	};
 
 	Job.prototype.findEnergyStorage = function (creep)
 	{
 		// look for energy in storages
-		let storage = roomManager.getStructuresType(creep.room.name, STRUCTURE_STORAGE)[0];
+		let storage = roomManager.getStructuresType(creep.room.name , STRUCTURE_STORAGE)[0];
 		if (!lib.isNull(storage) && storage.store[RESOURCE_ENERGY] > 0)
 		{
 			creep.memory.sourceId = storage.id;
@@ -286,8 +290,11 @@ module.exports = function()
 
 	Job.prototype.findEnergyContainer = function (creep)
 	{
-		let containers = roomManager.getStructuresType(creep.room.name, STRUCTURE_CONTAINER);
-		let container = _.max(containers, function (o) { return o.store[RESOURCE_ENERGY]});
+		let containers = roomManager.getStructuresType(creep.room.name , STRUCTURE_CONTAINER);
+		let container = _.max(containers , function (o)
+		{
+			return o.store[RESOURCE_ENERGY]
+		});
 
 		//console.log(`room: ${creep.room.name} creep: ${creep.name} container: ${JSON.stringify(container)}/${container}`);
 
@@ -299,20 +306,24 @@ module.exports = function()
 		}
 	};
 
-
 	Job.prototype.findEnergySource = function (creep)
 	{
-		let sources = _.map(creep.room.cache.sources, function (s) { return Game.getObjectById(s); });
+		let sources = _.map(creep.room.cache.sources , function (s)
+		{
+			return Game.getObjectById(s);
+		});
 
-		let source = creep.pos.findClosestByPath(sources,
+		let source = creep.pos.findClosestByPath(sources ,
 			{
-				maxRooms: 1,
-				ignoreCreeps: true,
+				maxRooms: 1 ,
+				ignoreCreeps: true ,
 				filter: function (s)
 				{
 					let max = 1;
 					if (creep.memory.unit != "harvester")
+					{
 						max = s.getMaxHarvesters();
+					}
 					let on = creepManager.countCreepsOnSource(s.id);
 					return max > on && s.energy > 0;
 				}

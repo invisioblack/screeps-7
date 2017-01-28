@@ -3,24 +3,27 @@
 //-------------------------------------------------------------------------
 "use strict";
 
-Source.prototype.getPercentFull = function()
+Source.prototype.getPercentFull = function ()
 {
-    return (this.energy / this.energyCapacity) * 10000 / 100;
+	return (this.energy / this.energyCapacity) * 10000 / 100;
 };
 
 Source.prototype.getMaxHarvesters = function ()
 {
-    let result = 0;
-    let area = this.room.lookForAtArea(LOOK_TERRAIN, lib.clamp(this.pos.y - 1, 0, 49), lib.clamp(this.pos.x - 1, 0, 49), lib.clamp(this.pos.y + 1, 0, 49), lib.clamp(this.pos.x + 1, 0, 49), true);
+	let result = 0;
+	let area = this.room.lookForAtArea(LOOK_TERRAIN , lib.clamp(this.pos.y - 1 , 0 , 49) , lib.clamp(this.pos.x - 1 , 0 , 49) , lib.clamp(this.pos.y + 1 , 0 , 49) , lib.clamp(this.pos.x + 1 , 0 , 49) , true);
 
-    area.forEach(function(p) {
-		if ( !(p.x === this.pos.x && p.y === this.pos.y) && p.terrain != 'wall')
+	area.forEach(function (p)
+	{
+		if (!(p.x === this.pos.x && p.y === this.pos.y) && p.terrain != 'wall')
 		{
 			result++;
 		}
-    }, this);
+	} , this);
 
-    return result;
+	return result;
 };
 
-module.exports = function() {};
+module.exports = function ()
+{
+};

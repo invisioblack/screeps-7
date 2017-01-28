@@ -30,7 +30,7 @@ JobClaim.prototype.work = function (creep)
 {
 	let need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
 
-	creep.sing("This is mine!", true);
+	creep.sing("This is mine!" , true);
 
 	//avoid hostiles
 	if (creep.avoidHostile(creep))
@@ -43,26 +43,33 @@ JobClaim.prototype.work = function (creep)
 		if (creep.memory.motive.room === creep.room.name)
 		{
 			// filter this to only claims spawning in specified room
-			let spawnClaims = _.filter(Memory.claims, function (c){
+			let spawnClaims = _.filter(Memory.claims , function (c)
+			{
 				return c.spawnRoom === creep.memory.motive.room;
 			});
-			_.forEach(spawnClaims, function (c) {
-				if (creep.memory.motive.room === creep.room.name) {
-					let countUnits = creepManager.countRoomUnits(c.room, "claimer");
-						//_.has(global, "cache.rooms." + c.room + ".units.claimer") ? global.cache.rooms[c.room].units["claimer"].length : 0;
-					if (!countUnits) {
+			_.forEach(spawnClaims , function (c)
+			{
+				if (creep.memory.motive.room === creep.room.name)
+				{
+					let countUnits = creepManager.countRoomUnits(c.room , "claimer");
+					//_.has(global, "cache.rooms." + c.room + ".units.claimer") ? global.cache.rooms[c.room].units["claimer"].length : 0;
+					if (!countUnits)
+					{
 						let reservation = 0;
 						if (lib.isNull(Memory.rooms[c.room]))
 						{
 							Memory.rooms[c.room] = {};
 						}
-						if (!lib.isNull(Memory.rooms[c.room].reservation)) {
+						if (!lib.isNull(Memory.rooms[c.room].reservation))
+						{
 							let timeDiff = Game.time - Memory.rooms[c.room].reservation.time;
-							reservation = lib.nullProtect(Memory.rooms[c.room].reservation.reservation, 0) - timeDiff;
+							reservation = lib.nullProtect(Memory.rooms[c.room].reservation.reservation , 0) - timeDiff;
 						}
 
 						if (reservation < config.claimTicks)
+						{
 							creep.deassignMotive(c.room);
+						}
 					}
 				}
 			});
@@ -73,8 +80,11 @@ JobClaim.prototype.work = function (creep)
 				creep.say("NO CLAIM!");
 			}
 		}
-	} else {
-		let claim = _.find(Memory.claims, function (c) {
+	}
+	else
+	{
+		let claim = _.find(Memory.claims , function (c)
+		{
 			return c.room === creep.memory.motive.room;
 		});
 
@@ -83,23 +93,32 @@ JobClaim.prototype.work = function (creep)
 
 			if (claim.type === "claim")
 			{
-				if(creep.room.controller) {
-					if(creep.claimController(creep.room.controller) === ERR_NOT_IN_RANGE) {
+				if (creep.room.controller)
+				{
+					if (creep.claimController(creep.room.controller) === ERR_NOT_IN_RANGE)
+					{
 						creep.moveTo(creep.room.controller);
 					}
 				}
-			} else if (claim.type === "reserve")
+			}
+			else if (claim.type === "reserve")
 			{
-				if(creep.room.controller) {
-					if(creep.reserveController(creep.room.controller) === ERR_NOT_IN_RANGE) {
+				if (creep.room.controller)
+				{
+					if (creep.reserveController(creep.room.controller) === ERR_NOT_IN_RANGE)
+					{
 						creep.moveTo(creep.room.controller);
 					}
 				}
-			} else {
+			}
+			else
+			{
 				creep.say("No Type");
 			}
 
-		} else {
+		}
+		else
+		{
 			creep.say("Get Shwifty");
 		}
 	}

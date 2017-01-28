@@ -49,13 +49,13 @@ JobTransfer.prototype.work = function (creep)
 		creep.memory.job.mode = this.JOB_MODE_GETENERGY;
 	}
 
-	lib.log(creep.name + " job/mode: " + creep.memory.job.mode, debug);
+	lib.log(creep.name + " job/mode: " + creep.memory.job.mode , debug);
 
 	// manage job
 	switch (creep.memory.job.mode)
 	{
 		case this.JOB_MODE_GETENERGY:
-			lib.log(creep.name + " getting energy ", debug);
+			lib.log(creep.name + " getting energy " , debug);
 			this.getEnergy(creep);
 			break;
 		case this.JOB_MODE_WORK:
@@ -64,23 +64,28 @@ JobTransfer.prototype.work = function (creep)
 			{
 				creep.memory.job.mode = this.JOB_MODE_GETENERGY;
 				creep.deassignMotive();
-			} else {
+			}
+			else
+			{
 
 				//console.log("return: " + target);
 				this.resetSource(creep);
 				let result;
-				_.forEach(creep.carry, (v, k) => {
-					result = creep.transfer(target, k);
-					lib.log(creep.name + " transfer result: " + result, false);
+				_.forEach(creep.carry , (v , k) =>
+				{
+					result = creep.transfer(target , k);
+					lib.log(creep.name + " transfer result: " + result , false);
 				});
 				if (result === ERR_NOT_IN_RANGE)
 				{
 
-					let moveResult = creep.moveTo(target, {"maxRooms": 1});
+					let moveResult = creep.moveTo(target , {"maxRooms": 1});
 					//if (moveResult < 0 && moveResult != ERR_TIRED)
 					//	console.log(creep.name + " Can't move while transferring: " + moveResult);
-				} else if (result === ERR_FULL) {
-					lib.log("---- RESET", debug);
+				}
+				else if (result === ERR_FULL)
+				{
+					lib.log("---- RESET" , debug);
 					creep.deassignMotive();
 				}
 			}

@@ -1,14 +1,19 @@
 var _transferEnergy = StructureLink.prototype.transferEnergy;
-StructureLink.prototype.transferEnergy = function(target, amount) {
-	if( !target || !(target instanceof StructureLink) ) {
+StructureLink.prototype.transferEnergy = function (target , amount)
+{
+	if (!target || !(target instanceof StructureLink))
+	{
 		return ERR_INVALID_TARGET;
 	}
 
-	if( target && target.isReceiving )
+	if (target && target.isReceiving)
+	{
 		return ERR_BUSY;
+	}
 
 	var status;
-	switch( (status=_transferEnergy.apply(this, arguments)) ) {
+	switch ((status = _transferEnergy.apply(this , arguments)))
+	{
 		case OK:
 			target.isReceiving = true;
 			break;
@@ -16,4 +21,6 @@ StructureLink.prototype.transferEnergy = function(target, amount) {
 	return status;
 };
 
-module.exports = function() {};
+module.exports = function ()
+{
+};

@@ -52,15 +52,15 @@ JobLongDistancePickup.prototype.work = function (creep)
 			creep.memory.job.mode = this.JOB_MODE_GETENERGY;
 		}
 
-		lib.log(creep.name + " job/mode: " + creep.memory.job.mode, debug);
+		lib.log(creep.name + " job/mode: " + creep.memory.job.mode , debug);
 
 		// manage job
 		switch (creep.memory.job.mode)
 		{
 			case this.JOB_MODE_GETENERGY:
 
-				let container, result;
-				lib.log(creep.name + " getting energy ", debug);
+				let container , result;
+				lib.log(creep.name + " getting energy " , debug);
 				this.findEnergyContainer(creep);
 
 				// If I'm full or there is no energy head home
@@ -71,19 +71,24 @@ JobLongDistancePickup.prototype.work = function (creep)
 				}
 
 				container = Game.getObjectById(creep.memory.sourceId);
-				if (!lib.isNull(container)) {
-					result = creep.withdraw(container, RESOURCE_ENERGY);
-					if (result === ERR_NOT_IN_RANGE) {
-						let moveResult = creep.moveTo(container, {"maxRooms": 1});
+				if (!lib.isNull(container))
+				{
+					result = creep.withdraw(container , RESOURCE_ENERGY);
+					if (result === ERR_NOT_IN_RANGE)
+					{
+						let moveResult = creep.moveTo(container , {"maxRooms": 1});
 						//if (moveResult < 0 && moveResult != ERR_TIRED)
 						//	console.log(creep.name + " Can't move while getting from container: " + moveResult);
 					}
-					if (container.store[RESOURCE_ENERGY] < 20) {
+					if (container.store[RESOURCE_ENERGY] < 20)
+					{
 						creep.say("Empty!");
 						creep.memory.job.mode = this.JOB_MODE_WORK;
 						this.resetSource(creep);
 					}
-				} else {
+				}
+				else
+				{
 					this.resetSource(creep);
 				}
 				break;
@@ -98,7 +103,6 @@ JobLongDistancePickup.prototype.work = function (creep)
 		let target = need.targetRoom;
 		let carry = creep.carry[RESOURCE_ENERGY];
 
-
 		// set up mode memory
 		if (lib.isNull(creep.memory.job))
 		{
@@ -109,29 +113,32 @@ JobLongDistancePickup.prototype.work = function (creep)
 			creep.memory.job.mode = this.JOB_MODE_GETENERGY;
 		}
 
-		lib.log(creep.name + " job/mode: " + creep.memory.job.mode, debug);
+		lib.log(creep.name + " job/mode: " + creep.memory.job.mode , debug);
 
-		if (carry === 0) {
-			let numHaulers = creepManager.countRoomUnits(target, "hauler");
-			if (numHaulers < 2) {
+		if (carry === 0)
+		{
+			let numHaulers = creepManager.countRoomUnits(target , "hauler");
+			if (numHaulers < 2)
+			{
 				creep.deassignMotive(target);
 				creep.say("LDH!");
-			} else {
+			}
+			else
+			{
 				creep.say("NO JOB!");
 				creep.deassignMotive(creep.memory.homeRoom);
 			}
-		} else if (creep.room.name != creep.memory.homeRoom) {
+		}
+		else if (creep.room.name != creep.memory.homeRoom)
+		{
 			creep.deassignMotive(creep.memory.homeRoom);
-		} else {
+		}
+		else
+		{
 			// I'm home put the energy in storage
-			creep.assignMotive(creep.memory.homeRoom, "motivationHaulToStorage", "haulStorage." + creep.memory.homeRoom);
+			creep.assignMotive(creep.memory.homeRoom , "motivationHaulToStorage" , "haulStorage." + creep.memory.homeRoom);
 		}
 	}
-
-
-
-
-
 
 };
 

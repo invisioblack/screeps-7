@@ -21,16 +21,20 @@ let NeedHarvestMinerals = function ()
 NeedHarvestMinerals.prototype = Object.create(Need.prototype);
 NeedHarvestMinerals.prototype.constructor = NeedHarvestMinerals;
 
-NeedHarvestMinerals.prototype.getUnitDemands = function(roomName, memory, motivationName)
+NeedHarvestMinerals.prototype.getUnitDemands = function (roomName , memory , motivationName)
 {
 	let unitName = "";
 	let room = Game.rooms[roomName];
-	let ticksTillHarvesterDeath = this.getTicksTillHarvesterDeath(roomName, memory);
+	let ticksTillHarvesterDeath = this.getTicksTillHarvesterDeath(roomName , memory);
 
 	if (!lib.isNull(room) && room.getIsMine())
+	{
 		unitName = "harvester";
+	}
 	else
+	{
 		unitName = "ldharvester";
+	}
 	// ---------------------------------------------------
 	memory.demands = {};
 	memory.demands[unitName] = 1;
@@ -42,16 +46,20 @@ NeedHarvestMinerals.prototype.getUnitDemands = function(roomName, memory, motiva
 	return memory.demands;
 };
 
-NeedHarvestMinerals.prototype.getTicksTillHarvesterDeath = function (roomName, memory)
+NeedHarvestMinerals.prototype.getTicksTillHarvesterDeath = function (roomName , memory)
 {
 	let unitName = "";
 	let room = Game.rooms[roomName];
 	if (!lib.isNull(room) && room.getIsMine())
+	{
 		unitName = "harvester";
+	}
 	else
+	{
 		unitName = "ldharvester";
+	}
 
-	let harvester = creepManager.countRoomUnits(roomName, unitName);
+	let harvester = creepManager.countRoomUnits(roomName , unitName);
 	//_.has(global, "cache.rooms." + roomName + ".units." + unitName) ? _.find(global.cache.rooms[roomName].units[unitName], (o) => { return o.memory.motive.need === memory.name; }) : null;
 	if (lib.isNull(harvester))
 	{
@@ -62,6 +70,5 @@ NeedHarvestMinerals.prototype.getTicksTillHarvesterDeath = function (roomName, m
 		return harvester.ticksToLive;
 	}
 };
-
 
 module.exports = new NeedHarvestMinerals();

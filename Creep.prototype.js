@@ -13,14 +13,14 @@
 //-------------------------------------------------------------------------
 "use strict";
 
-Creep.prototype.moveToRange = function (target, range)
+Creep.prototype.moveToRange = function (target , range)
 {
-	if (target.pos.inRangeTo(this.pos, range - 1))
+	if (target.pos.inRangeTo(this.pos , range - 1))
 	{
-		this.moveTo(this.pos.x + this.pos.x - target.pos.x, creep.pos.y + creep.pos.y - target.pos.y);
+		this.moveTo(this.pos.x + this.pos.x - target.pos.x , creep.pos.y + creep.pos.y - target.pos.y);
 		return true;
 	}
-	else if (target.pos.inRangeTo(this.pos, range))
+	else if (target.pos.inRangeTo(this.pos , range))
 	{
 		return true;
 	}
@@ -37,7 +37,7 @@ Creep.prototype.avoidHostile = function (range)
 	{
 		range = 3;
 	}
-	let inRange = this.pos.findInRange(Game.HOSTILE_CREEPS, range);
+	let inRange = this.pos.findInRange(Game.HOSTILE_CREEPS , range);
 	if (inRange && inRange.length)
 	{
 		let target = this.pos.findNearest(Game.HOSTILE_CREEPS);
@@ -61,39 +61,39 @@ Creep.prototype.rendezvous = function (range)
 	//console.log(JSON.stringify(flags));
 	if (this.memory.rendezvous)
 	{
-		this.moveToRange(this.memory.rendezvous, range);
+		this.moveToRange(this.memory.rendezvous , range);
 	}
 	else
 	{
-		this.moveToRange(this.getSpawn(), range);
+		this.moveToRange(this.getSpawn() , range);
 	}
 };
 
-Creep.prototype.carrying = function()
+Creep.prototype.carrying = function ()
 {
-    let result = 0;
+	let result = 0;
 
-    if (this.carryCapacity > 0)
-    {
-        result = _.sum(this.carry);
-    }
+	if (this.carryCapacity > 0)
+	{
+		result = _.sum(this.carry);
+	}
 
-    return result;
+	return result;
 };
 
-Creep.prototype.percentFull = function()
+Creep.prototype.percentFull = function ()
 {
-    let percent = 0;
+	let percent = 0;
 
-    if (this.carryCapacity > 0)
-    {
-        percent = (this.carrying / this.carryCapacity) * 10000 / 100
-    }
+	if (this.carryCapacity > 0)
+	{
+		percent = (this.carrying / this.carryCapacity) * 10000 / 100
+	}
 
-    return percent;
+	return percent;
 };
 
-Creep.prototype.getSpawn = function()
+Creep.prototype.getSpawn = function ()
 {
 	let creepSpawn = Game.spawns[creep.memory.spawn];
 	return creepSpawn;
@@ -102,37 +102,46 @@ Creep.prototype.getSpawn = function()
 Creep.prototype.getHasPart = function (part)
 {
 	let result = false;
-	this.body.forEach(function (i) {
+	this.body.forEach(function (i)
+	{
 		if (i.type === part)
 		{
 			result = true;
 		}
-	}, this);
+	} , this);
 	return result;
 };
 
-Creep.prototype.initMotive = function()
+Creep.prototype.initMotive = function ()
 {
-	if (lib.isNull(this.memory.motive))
-	{
-		//cacheManager.dirtyMem("cacheFunction", cacheManager.genKey("creepManager.countRoomMotivationUnits", [this.memory.motive.room, this.memory.motive.motivation, this.memory.unit]));
-
-		this.memory.motive = {};
-		this.memory.motive.room = this.room.name;
-		this.memory.motive.motivation = "";
-		this.memory.motive.need = "";
-	}
+	this.memory.motive = {};
+	this.memory.motive.room = this.room.name;
+	this.memory.motive.motivation = "";
+	this.memory.motive.need = "";
 };
 
-Creep.prototype.assignMotive = function (roomName, motivationName, needName)
+Creep.prototype.assignMotive = function (roomName , motivationName , needName)
 {
+	if (this.room.name !== this.memory.motive.room)
+	{
+		console.log(`!!!!! Assign: ${this.name}: room: ${roomLink(this.room.name)} does not match motivation room: ${roomLink(this.memory.motive.room)} m: ${motivationName} n: ${needName}`);
+	}
+
+	if (this.room.name !== this.memory.homeRoom)
+	{
+		console.log(`----- Assign: ${this.name}: room: ${roomLink(this.room.name)} does not match home room: ${roomLink(this.memory.homeRoom)} m: ${motivationName} n: ${needName}`);
+	}
+
 	// if the creep is assigned, remove him from the cache
 	if (this.memory.motive.motivation !== "")
 	{
-		if (!lib.isNull(this.room.memory.cache.unitMotive[this.memory.motive.motivation])) {
+		if (!lib.isNull(this.room.memory.cache.unitMotive[this.memory.motive.motivation]))
+		{
 			this.room.memory.cache.unitMotive[this.memory.motive.motivation].units[this.memory.unit]--;
 			if (!lib.isNull(this.room.memory.cache.unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need]))
+			{
 				this.room.memory.cache.unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need].units[this.memory.unit]--;
+			}
 		}
 	}
 
@@ -146,7 +155,8 @@ Creep.prototype.assignMotive = function (roomName, motivationName, needName)
 	// add to the cache
 	if (this.memory.motive.motivation !== "")
 	{
-		if (lib.isNull(this.room.memory.cache.unitMotive[this.memory.motive.motivation])) {
+		if (lib.isNull(this.room.memory.cache.unitMotive[this.memory.motive.motivation]))
+		{
 			this.room.memory.cache.unitMotive[this.memory.motive.motivation] = {};
 			this.room.memory.cache.unitMotive[this.memory.motive.motivation].units = {};
 			this.room.memory.cache.unitMotive[this.memory.motive.motivation].needs = {};
@@ -154,7 +164,8 @@ Creep.prototype.assignMotive = function (roomName, motivationName, needName)
 		}
 		this.room.memory.cache.unitMotive[this.memory.motive.motivation].units[this.memory.unit]++;
 
-		if (lib.isNull(this.room.memory.cache.unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need])) {
+		if (lib.isNull(this.room.memory.cache.unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need]))
+		{
 			this.room.memory.cache.unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need] = {};
 			this.room.memory.cache.unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need].units = {};
 			this.room.memory.cache.unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need].units[this.memory.unit] = 0;
@@ -166,20 +177,34 @@ Creep.prototype.assignMotive = function (roomName, motivationName, needName)
 Creep.prototype.deassignMotive = function (roomName)
 {
 	let debug = false;
-	lib.log(`Creep: ${this.name} Room/target: ${roomLink(this.room.name)}/${roomName} Motive: ${this.memory.motive.motivation}/${this.memory.motive.need}`, debug);
+	lib.log(`Creep: ${this.name} Room/target: ${roomLink(this.room.name)}/${roomName} Motive: ${this.memory.motive.motivation}/${this.memory.motive.need}` , debug);
 	this.say("Done!");
+
+	if (this.room.name !== this.memory.motive.room)
+	{
+		console.log(`!!!!! Deassign: ${this.name}: room: ${roomLink(this.room.name)} does not match motivation room: ${roomLink(this.memory.motive.room)}`);
+	}
+
+	if (this.room.name !== this.memory.homeRoom)
+	{
+		console.log(`----- Deassign: ${this.name}: room: ${roomLink(this.room.name)} does not match home room: ${roomLink(this.memory.homeRoom)}`);
+	}
 
 	// if the creep is assigned, remove him from the cache
 	if (this.memory.motive.motivation !== "")
 	{
-		if (!lib.isNull(this.room.memory.cache.unitMotive[this.memory.motive.motivation])) {
+		if (!lib.isNull(this.room.memory.cache.unitMotive[this.memory.motive.motivation]))
+		{
 			this.room.memory.cache.unitMotive[this.memory.motive.motivation].units[this.memory.unit]--;
 			if (!lib.isNull(this.room.memory.cache.unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need]))
+			{
 				this.room.memory.cache.unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need].units[this.memory.unit]--;
+			}
 		}
 	}
 
-	if (!lib.isNull(roomName) && roomName != "") {
+	if (!lib.isNull(roomName) && roomName != "")
+	{
 		roomManager.updateUnitCache(this.memory.motive.room);
 		this.memory.motive.room = roomName;
 	}
@@ -201,10 +226,14 @@ Creep.prototype.assignToRoom = function (roomName)
  * Creep.prototype.sing(sentence, public)
  *   creep will sing a different part of sentence per tick
  */
-Creep.prototype.sing = function(sentence, pub){
-	if(pub === undefined)pub = false;
+Creep.prototype.sing = function (sentence , pub)
+{
+	if (pub === undefined)
+	{
+		pub = false;
+	}
 	let words = sentence.split(" ");
-	this.say(words[Game.time % words.length], pub);
+	this.say(words[Game.time % words.length] , pub);
 };
 
 Creep.prototype.resetSource = function ()
@@ -213,4 +242,6 @@ Creep.prototype.resetSource = function ()
 	this.memory.sourceType = 0;
 };
 
-module.exports = function() {};
+module.exports = function ()
+{
+};

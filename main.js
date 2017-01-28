@@ -36,7 +36,7 @@
 // Modules
 //----------------------------------------------------------------------------------------------------------------------
 const profiler = require('screeps-profiler');
-//profiler.enable();
+profiler.enable();
 // game prototypes
 require('Creep.prototype');
 require('Source.prototype');
@@ -54,11 +54,12 @@ require("shortcuts");
 global.cpuUsedLast = 0;
 cpuManager.log(">>>> Global Start <<<<");
 
-
 // main loop -----------------------------------------------------------------------------------------------------------
-module.exports.loop = function () {
-	profiler.wrap(function () {
-		cpuManager.timerStart("++++ Loop ++++", "loop");
+module.exports.loop = function ()
+{
+	profiler.wrap(function ()
+	{
+		cpuManager.timerStart("++++ Loop ++++" , "loop");
 		delete Memory.rooms[undefined]; // WTF WHY IS THIS HAPPENING!!!
 		//------------------------------------------------------------------------------------------------------------------
 		// Declarations
@@ -73,9 +74,10 @@ module.exports.loop = function () {
 		//------------------------------------------------------------------------------------------------------------------
 		// Do stuffs
 		//------------------------------------------------------------------------------------------------------------------
-		lib.log("<b>+++++++++++++++++++++++ new tick +++++++++++++++++++++++</b>", debug);
+		lib.log("<b>+++++++++++++++++++++++ new tick +++++++++++++++++++++++</b>" , debug);
 		cleanupMemory();
-		if (active) {
+		if (active)
+		{
 			cacheManager.init();
 			motivator.init();
 			motivator.motivate();
@@ -85,26 +87,28 @@ module.exports.loop = function () {
 		//------------------------------------------------------------------------------------------------------------------
 		// END
 		//------------------------------------------------------------------------------------------------------------------
-		lib.log("<b>+++++++++++++++++++++++ end tick +++++++++++++++++++++++</b>", debug);
+		lib.log("<b>+++++++++++++++++++++++ end tick +++++++++++++++++++++++</b>" , debug);
 
-		cpuManager.timerStop("loop", config.cpuLoopDebug, 30, 38);
+		cpuManager.timerStop("loop" , config.cpuLoopDebug , 30 , 38);
 		cpuManager.tickTrack();
 	});
 };
 
-function cleanupMemory() {
-	for (let i in Memory.creeps) {
-		if (!Game.creeps[i]) {
-			let mem = Memory.creeps[i];
-			if (!lib.isNull(mem)
-				&& !lib.isNull(mem.unit)
-				&& !lib.isNull(mem.motive)
-				&& !lib.isNull(mem.motive.room)
-				&& !lib.isNull(mem.motive.motivation))
-
-				delete Memory.creeps[i];
+function cleanupMemory ()
+{
+	let debug = false;
+	_.forEach(Memory.creeps, (m, c) =>
+	{
+		if (lib.isNull(Game.creeps[c]))
+		{
+			let mem = Memory.creeps[c];
+			if (!lib.isNull(mem))
+			{
+				lib.log(`Memory cleanup: ${c}`, debug);
+				delete Memory.creeps[c];
+			}
 		}
-	}
+	});
 };
 
 

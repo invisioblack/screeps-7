@@ -50,13 +50,13 @@ JobSupplyExtenders.prototype.work = function (creep)
 		creep.memory.job.mode = this.JOB_MODE_GETENERGY;
 	}
 
-	lib.log(creep.name + " job/mode: " + creep.memory.job.mode, debug);
+	lib.log(creep.name + " job/mode: " + creep.memory.job.mode , debug);
 
 	// manage job
 	switch (creep.memory.job.mode)
 	{
 		case this.JOB_MODE_GETENERGY:
-			lib.log(creep.name + " getting energy ", debug);
+			lib.log(creep.name + " getting energy " , debug);
 			this.getEnergy(creep);
 			break;
 		case this.JOB_MODE_WORK:
@@ -66,18 +66,20 @@ JobSupplyExtenders.prototype.work = function (creep)
 				// reset our need assignment when we run out of energy
 				creep.memory.job.mode = this.JOB_MODE_GETENERGY;
 				creep.deassignMotive();
-			} else {
+			}
+			else
+			{
 				this.resetSource(creep);
-				let extensions = roomManager.getStructuresType(creep.room.name, STRUCTURE_EXTENSION);
-				let target = creep.pos.findClosestByRange(extensions, {
-					ignoreCreeps: true,
+				let extensions = roomManager.getStructuresType(creep.room.name , STRUCTURE_EXTENSION);
+				let target = creep.pos.findClosestByRange(extensions , {
+					ignoreCreeps: true ,
 					filter: function (e)
 					{
 						return e.energy < e.energyCapacity;
 					}
 				});
 
-				lib.log(creep.name + " target: " + JSON.stringify(target), debug);
+				lib.log(creep.name + " target: " + JSON.stringify(target) , debug);
 
 				if (!lib.isNull(target))
 				{
@@ -92,7 +94,9 @@ JobSupplyExtenders.prototype.work = function (creep)
 						//	console.log(creep.name + " Can't move while transferring: " + moveResult);
 					}// else
 					//	creep.deassignMotive();
-				} else {
+				}
+				else
+				{
 					creep.deassignMotive();
 				}
 			}

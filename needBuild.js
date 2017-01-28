@@ -24,21 +24,25 @@ let NeedBuild = function ()
 NeedBuild.prototype = Object.create(Need.prototype);
 NeedBuild.prototype.constructor = NeedBuild;
 
-NeedBuild.prototype.getUnitDemands = function(roomName, memory, motivationName)
+NeedBuild.prototype.getUnitDemands = function (roomName , memory , motivationName)
 {
 	let constructionSites = Game.rooms[roomName].find(FIND_CONSTRUCTION_SITES);
 	memory.demands = {};
 
-	if (constructionSites.length > 0)
+	if (constructionSites.length > 5)
+	{
+		memory.demands["worker"] = 2;
+	}
+	else if (constructionSites.length > 0)
 	{
 		memory.demands["worker"] = 1;
-	} else
+	}
+	else
 	{
 		memory.demands["worker"] = 0;
 	}
 
 	return memory.demands;
 };
-
 
 module.exports = new NeedBuild();

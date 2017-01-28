@@ -25,7 +25,7 @@ let NeedManualTactical = function ()
 NeedManualTactical.prototype = Object.create(Need.prototype);
 NeedManualTactical.prototype.constructor = NeedManualTactical;
 
-NeedManualTactical.prototype.getUnitDemands = function(roomName, memory, motivationName)
+NeedManualTactical.prototype.getUnitDemands = function (roomName , memory , motivationName)
 {
 	memory.demands = {};
 	memory.demands["guard"] = 99;
@@ -33,6 +33,5 @@ NeedManualTactical.prototype.getUnitDemands = function(roomName, memory, motivat
 	memory.demands["heal"] = 99;
 	return memory.demands;
 };
-
 
 module.exports = new NeedManualTactical();

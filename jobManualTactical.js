@@ -25,34 +25,42 @@ JobManualTactical.prototype.constructor = JobManualTactical;
 //-------------------------------------------------------------------------
 JobManualTactical.prototype.work = function (creep)
 {
-	creep.sing("For the glory of the empire!", true);
+	creep.sing("For the glory of the empire!" , true);
 	if (Game.flags.heal && Game.flags.heal.room === creep.room && creep.hits < (creep.hitsMax * 0.8) || (!lib.isNull(creep.memory.healing) && creep.memory.healing))
 	{
 		creep.memory.healing = true;
 		let flag = Game.flags.heal;
-		let result = creep.moveTo(flag, { maxRooms: 1});
+		let result = creep.moveTo(flag , {maxRooms: 1});
 		if (result === ERR_NOT_IN_RANGE)
-			creep.rendezvous(flag, 2);
+		{
+			creep.rendezvous(flag , 2);
+		}
 		if (creep.hits === creep.hitsMax)
+		{
 			creep.memory.healing = false;
+		}
 	}
 	else if (Game.flags.move && Game.flags.move.room === creep.room)
 	{
 		let flag = Game.flags.move;
-		let result = creep.moveTo(flag, { maxRooms: 1});
+		let result = creep.moveTo(flag , {maxRooms: 1});
 		if (result === ERR_NOT_IN_RANGE)
-			creep.rendezvous(flag, 2);
+		{
+			creep.rendezvous(flag , 2);
+		}
 	}
 	else if (Game.flags.move1 && Game.flags.heal.move1 === creep.room)
 	{
 		let flag = Game.flags.move1;
-		let result = creep.moveTo(flag, { maxRooms: 1});
+		let result = creep.moveTo(flag , {maxRooms: 1});
 		if (result === ERR_NOT_IN_RANGE)
-			creep.rendezvous(flag, 2);
+		{
+			creep.rendezvous(flag , 2);
+		}
 	}
 	else if (Game.flags.creep && Game.flags.creep.room === creep.room)
 	{
-		let target = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS, { ignoreCreeps: true});
+		let target = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS , {ignoreCreeps: true});
 
 		if (target && diplomacyManager.status(target.owner.username) === C.RELATION_HOSTILE)
 		{
@@ -62,10 +70,17 @@ JobManualTactical.prototype.work = function (creep)
 	}
 	else if (Game.flags.wall && Game.flags.wall.room === creep.room)
 	{
-		let wall = Game.flags.wall.pos.findClosestByPath(FIND_STRUCTURES, { filter: function (s) { return s.structureType === STRUCTURE_WALL} });
+		let wall = Game.flags.wall.pos.findClosestByPath(FIND_STRUCTURES , {
+			filter: function (s)
+			{
+				return s.structureType === STRUCTURE_WALL
+			}
+		});
 		let result = creep.attack(wall);
 		if (result === ERR_NOT_IN_RANGE)
+		{
 			creep.moveTo(wall);
+		}
 	}
 	else if (Game.flags.spawn && Game.flags.spawn.room === creep.room)
 	{
@@ -75,17 +90,22 @@ JobManualTactical.prototype.work = function (creep)
 		{
 			let result = creep.attack(spawn);
 			if (result === ERR_NOT_IN_RANGE)
-				creep.moveTo(spawn, { maxRooms: 1});
+			{
+				creep.moveTo(spawn , {maxRooms: 1});
+			}
 		}
-		}
+	}
 
 	else if (Game.flags.structure && Game.flags.structure.room === creep.room)
 	{
 		let target = Game.flags.structure.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES);
-		if (target && diplomacyManager.status(target.owner.username) === C.RELATION_HOSTILE) {
+		if (target && diplomacyManager.status(target.owner.username) === C.RELATION_HOSTILE)
+		{
 			let result = creep.attack(target);
 			if (result === ERR_NOT_IN_RANGE)
-				creep.moveTo(target, {maxRooms: 1});
+			{
+				creep.moveTo(target , {maxRooms: 1});
+			}
 		}
 	}
 };

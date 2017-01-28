@@ -24,11 +24,10 @@ let NeedHaulToStorage = function ()
 NeedHaulToStorage.prototype = Object.create(Need.prototype);
 NeedHaulToStorage.prototype.constructor = NeedHaulToStorage;
 
-NeedHaulToStorage.prototype.getUnitDemands = function(roomName, memory, motivationName)
+NeedHaulToStorage.prototype.getUnitDemands = function (roomName , memory , motivationName)
 {
 	memory.demands = {};
-	this.getUnitHaulToStorageDemand(roomName, "hauler", memory.demands);
-
+	this.getUnitHaulToStorageDemand(roomName , "hauler" , memory.demands);
 
 	//console.log(JSON.stringify(memory));
 	//console.log("getUnitDemands: " + energy + "/" + energyCapacity + "/" + neededEnergy);
@@ -38,6 +37,5 @@ NeedHaulToStorage.prototype.getUnitDemands = function(roomName, memory, motivati
 
 	return memory.demands;
 };
-
 
 module.exports = new NeedHaulToStorage();

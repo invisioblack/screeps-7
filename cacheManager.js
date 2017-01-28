@@ -5,7 +5,8 @@
 "use strict";
 
 module.exports = {
-	init: function () {
+	init: function ()
+	{
 		// init global cache
 		if (lib.isNull(global.cache))
 		{

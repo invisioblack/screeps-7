@@ -24,29 +24,45 @@ let NeedLongDistanceHarvest = function ()
 NeedLongDistanceHarvest.prototype = Object.create(Need.prototype);
 NeedLongDistanceHarvest.prototype.constructor = NeedLongDistanceHarvest;
 
-NeedLongDistanceHarvest.prototype.getUnitDemands = function(roomName, needMemory, motivationName)
+NeedLongDistanceHarvest.prototype.getUnitDemands = function (roomName , needMemory , motivationName)
 {
 	// Validation
 	if (lib.isNull(needMemory))
+	{
 		return;
+	}
 	if (lib.isNull(Memory.rooms[needMemory.targetRoom]))
+	{
 		return;
+	}
 
 	// implementation
 	let targetRoomMemory = Memory.rooms[needMemory.targetRoom];
 	needMemory.demands = {};
 	needMemory.demands["ldharvester"] = 0;
 
-	if (!lib.isNull(targetRoomMemory) && !lib.isNull(targetRoomMemory.motivations) && !lib.isNull(targetRoomMemory.motivations["motivationHarvestSource"]) && !lib.isNull(targetRoomMemory.motivations["motivationHarvestSource"].demands)) {
-		//console.log();
-		needMemory.demands["ldharvester"] = lib.nullProtect(targetRoomMemory.motivations["motivationHarvestSource"].demands.units["ldharvester"], 0);
-	} else {
-	    needMemory.demands["ldharvester"] = 0;
+	if (!lib.isNull(targetRoomMemory) && !lib.isNull(targetRoomMemory.motivations) && !lib.isNull(targetRoomMemory.motivations["motivationHarvestSource"]) && !lib.isNull(targetRoomMemory.motivations["motivationHarvestSource"].demands))
+	{
+		needMemory.demands["ldharvester"] = lib.nullProtect(targetRoomMemory.motivations["motivationHarvestSource"].demands.units["ldharvester"] , 0);
+	}
+	else
+	{
+		needMemory.demands["ldharvester"] = 0;
+	}
+
+	if (!lib.isNull(targetRoomMemory) && !lib.isNull(targetRoomMemory.motivations) && !lib.isNull(targetRoomMemory.motivations["motivationMaintainInfrastructure"]) && !lib.isNull(targetRoomMemory.motivations["motivationHarvestSource"].demands))
+	{
+		let numWorkers = creepManager.countRoomUnits(needMemory.targetRoom , "worker");
+		needMemory.demands["worker"] = lib.nullProtect(targetRoomMemory.motivations["motivationMaintainInfrastructure"].demands.units["worker"] , 0);
+		needMemory.demands["worker"] -= numWorkers;
+	}
+	else
+	{
+		needMemory.demands["worker"] = 0;
 	}
 
 	//console.log(`${roomName} ${JSON.stringify(needMemory.demands)}`);
 	return needMemory.demands;
 };
-
 
 module.exports = new NeedLongDistanceHarvest();

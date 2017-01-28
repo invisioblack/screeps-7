@@ -24,19 +24,19 @@ let NeedGarrison = function ()
 NeedGarrison.prototype = Object.create(Need.prototype);
 NeedGarrison.prototype.constructor = NeedGarrison;
 
-NeedGarrison.prototype.getUnitDemands = function(roomName, memory, motivationName)
+NeedGarrison.prototype.getUnitDemands = function (roomName , memory , motivationName)
 {
 	let room = Game.rooms[roomName];
 	let unitCount = room.memory.threat.count;
-	
+
 	memory.demands = {};
 	memory.demands["guard"] = unitCount * 2;
 	memory.demands["rangedGuard"] = unitCount * 2;
 	memory.demands["heal"] = unitCount * 2;
-	
-	
-	_.forEach(room.memory.longDistanceHarvestTargets, (r) => {
-		let numGuards = creepManager.countRoomUnits(r, "guard");
+
+	_.forEach(room.memory.longDistanceHarvestTargets , (r) =>
+	{
+		let numGuards = creepManager.countRoomUnits(r , "guard");
 		let threatLevel = Memory.rooms[r].threat.level;
 
 		if (numGuards < 1 && threatLevel >= C.THREAT_NPC)
@@ -44,10 +44,8 @@ NeedGarrison.prototype.getUnitDemands = function(roomName, memory, motivationNam
 			memory.demands["guard"] = 1;
 		}
 	});
-	
-	
+
 	return memory.demands;
 };
-
 
 module.exports = new NeedGarrison();

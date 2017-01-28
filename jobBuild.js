@@ -31,7 +31,7 @@ JobBuild.prototype.constructor = JobBuild;
 JobBuild.prototype.work = function (creep)
 {
 	let constructionSites = creep.room.find(FIND_CONSTRUCTION_SITES);
-	let target = _.min(constructionSites, (c) => c.progressTotal - c.progress);
+	let target = _.min(constructionSites , (c) => c.progressTotal - c.progress);
 	let carry = _.sum(creep.carry);
 
 	creep.sing("Building things!");
@@ -64,16 +64,20 @@ JobBuild.prototype.work = function (creep)
 			{
 				creep.memory.job.mode = this.JOB_MODE_GETENERGY;
 				creep.deassignMotive();
-			} else {
+			}
+			else
+			{
 
 				let result = creep.build(target);
 				//console.log("build: " + target + " Result: " + result);
 				if (result === ERR_NOT_IN_RANGE)
 				{
-					let moveResult = creep.moveTo(target, {"maxRooms": 1});
+					let moveResult = creep.moveTo(target , {"maxRooms": 1});
 					//if (moveResult < 0 && moveResult != ERR_TIRED)
 					//	console.log(creep.name + " Can't move while building: " + moveResult);
-				} else if (result === ERR_FULL) {
+				}
+				else if (result === ERR_FULL)
+				{
 					//console.log("---- RESET");
 					creep.deassignMotive();
 				}

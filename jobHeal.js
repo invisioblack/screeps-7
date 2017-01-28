@@ -26,13 +26,14 @@ JobHeal.prototype.constructor = JobHeal;
 JobHeal.prototype.work = function (creep)
 {
 	//avoid hostiles
-	if (creep.avoidHostile(creep, 3))
+	if (creep.avoidHostile(creep , 3))
 	{
 		return;
 	}
 
 	//Find my creeps that are hurt. If they're hurt, heal them.
-	let healTarget = creep.pos.findClosestByPath(FIND_MY_CREEPS, { filter: function (t)
+	let healTarget = creep.pos.findClosestByPath(FIND_MY_CREEPS , {
+		filter: function (t)
 		{
 			return t != creep && t.hits < t.hitsMax
 		}
@@ -50,15 +51,15 @@ JobHeal.prototype.work = function (creep)
 		//if there are hostile targets stay near the action
 		if (targets.length)
 		{
-			let target = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS, { ignoreCreeps: true});
+			let target = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS , {ignoreCreeps: true});
 
 			if (target)
 			{
-				if (target.pos.inRangeTo(creep.pos, 2))
+				if (target.pos.inRangeTo(creep.pos , 2))
 				{
-					creep.moveTo(creep.pos.x + creep.pos.x - target.pos.x, creep.pos.y + creep.pos.y - target.pos.y);
+					creep.moveTo(creep.pos.x + creep.pos.x - target.pos.x , creep.pos.y + creep.pos.y - target.pos.y);
 				}
-				else if (target.pos.inRangeTo(creep.pos, 3))
+				else if (target.pos.inRangeTo(creep.pos , 3))
 				{
 					creep.rangedAttack(target);
 				}
@@ -72,9 +73,11 @@ JobHeal.prototype.work = function (creep)
 		else
 		{
 			let flag = Game.flags.heal;
-			let result = creep.moveTo(flag, { maxRooms: 1});
+			let result = creep.moveTo(flag , {maxRooms: 1});
 			if (result === ERR_NOT_IN_RANGE)
-				creep.rendezvous(flag, 2);
+			{
+				creep.rendezvous(flag , 2);
+			}
 		}
 	}
 };

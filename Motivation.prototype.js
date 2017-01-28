@@ -11,20 +11,28 @@
 
 module.exports = function ()
 {
-    let Motivation = function () {};
+	let Motivation = function ()
+	{
+	};
 
-    Motivation.prototype.name = "Motivation";
+	Motivation.prototype.name = "Motivation";
 
-    Motivation.prototype.init = function (roomName)
+	Motivation.prototype.init = function (roomName)
 	{
 		if (lib.isNull(Game.rooms[roomName]))
+		{
 			return;
+		}
 
 		if (lib.isNull(Game.rooms[roomName].memory.motivations))
+		{
 			Game.rooms[roomName].memory.motivations = {};
+		}
 
 		if (lib.isNull(Game.rooms[roomName].memory.motivations[this.name]))
+		{
 			Game.rooms[roomName].memory.motivations[this.name] = {};
+		}
 
 		// if init has not been completed, then init
 		if (!Game.rooms[roomName].memory.motivations[this.name].init)
@@ -48,8 +56,9 @@ module.exports = function ()
 	{
 		delete Game.rooms[roomName].memory.motivations[this.name];
 
-		let creeps = creepManager.getRoomMotivationCreeps(roomName, this.name);
-		_.forEach(creeps, (c) => {
+		let creeps = creepManager.getRoomMotivationCreeps(roomName , this.name);
+		_.forEach(creeps , (c) =>
+		{
 			c.deassignMotive();
 		});
 
@@ -66,17 +75,19 @@ module.exports = function ()
 		let result = {};
 		let roomMemory = Memory.rooms[roomName];
 
-		lib.log(roomName, debug);
-		_.forEach(roomMemory.motivations[this.name].needs, (need, needName) =>
+		lib.log(roomName , debug);
+		_.forEach(roomMemory.motivations[this.name].needs , (need , needName) =>
 		{
 			//console.log("!!!!!!!!!!!!---:" + need.type);
-			let demands = global[need.type].getUnitDemands(roomName, need, this.name);
+			let demands = global[need.type].getUnitDemands(roomName , need , this.name);
 
-			lib.log("----------- demands: " + JSON.stringify(demands), debug);
-			_.forEach(demands, (demand, unitName) =>
+			lib.log("----------- demands: " + JSON.stringify(demands) , debug);
+			_.forEach(demands , (demand , unitName) =>
 			{
 				if (lib.isNull(result[unitName]))
+				{
 					result[unitName] = 0;
+				}
 				result[unitName] += demand;
 			});
 		});

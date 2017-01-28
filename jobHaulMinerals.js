@@ -47,7 +47,7 @@ JobHaulMinerals.prototype.work = function (creep)
 		creep.memory.job.mode = this.JOB_MODE_GETENERGY;
 	}
 
-	lib.log(creep.name + " job/mode: " + creep.memory.job.mode, debug);
+	lib.log(creep.name + " job/mode: " + creep.memory.job.mode , debug);
 
 	if (lib.isNull(mineralContainer))
 	{
@@ -59,16 +59,17 @@ JobHaulMinerals.prototype.work = function (creep)
 	switch (creep.memory.job.mode)
 	{
 		case this.JOB_MODE_GETENERGY:
-			lib.log(creep.name + " getting minerals ", debug);
+			lib.log(creep.name + " getting minerals " , debug);
 			let result;
-			_.forEach(mineralContainer.store, (v, k) => {
-				result = creep.withdraw(mineralContainer, k);
-				lib.log(creep.name + " withdraw result: " + result, false);
+			_.forEach(mineralContainer.store , (v , k) =>
+			{
+				result = creep.withdraw(mineralContainer , k);
+				lib.log(creep.name + " withdraw result: " + result , false);
 			});
 
 			if (result === ERR_NOT_IN_RANGE)
 			{
-				let moveResult = creep.moveTo(mineralContainer, {"maxRooms": 1});
+				let moveResult = creep.moveTo(mineralContainer , {"maxRooms": 1});
 			}
 			if (carry === creep.carryCapacity || result == ERR_NOT_ENOUGH_ENERGY)
 			{
@@ -83,18 +84,23 @@ JobHaulMinerals.prototype.work = function (creep)
 			{
 				creep.memory.job.mode = this.JOB_MODE_GETENERGY;
 				creep.deassignMotive();
-			} else {
+			}
+			else
+			{
 				let result;
-				_.forEach(creep.carry, (v, k) => {
-					result = creep.transfer(target, k);
-					lib.log(creep.name + " transfer result: " + result, false);
+				_.forEach(creep.carry , (v , k) =>
+				{
+					result = creep.transfer(target , k);
+					lib.log(creep.name + " transfer result: " + result , false);
 				});
 
 				if (result === ERR_NOT_IN_RANGE)
 				{
-					let moveResult = creep.moveTo(target, {"maxRooms": 1});
-				} else if (result === ERR_FULL) {
-					lib.log("---- RESET", debug);
+					let moveResult = creep.moveTo(target , {"maxRooms": 1});
+				}
+				else if (result === ERR_FULL)
+				{
+					lib.log("---- RESET" , debug);
 					creep.deassignMotive();
 				}
 			}

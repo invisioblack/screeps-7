@@ -29,13 +29,13 @@ MotivationGarrison.prototype.getDemands = function (roomName)
 	let result = {};
 	let unitName = this.getDesiredSpawnUnit(roomName);
 	result.units = this.getUnitDemands(roomName);
-	result.spawn = this.getDesireSpawn(roomName, result);
-	lib.log('  Garrison Demands: e: ' + result.energy + ' ' + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn, debug);
+	result.spawn = this.getDesireSpawn(roomName , result);
+	lib.log('  Garrison Demands: e: ' + result.energy + ' ' + unitName + ': ' + result.units[unitName] + ' Spawn: ' + result.spawn , debug);
 	Memory.rooms[roomName].motivations[this.name].demands = result;
 	return result;
 };
 
-MotivationGarrison.prototype.getDesireSpawn = function (roomName, demands)
+MotivationGarrison.prototype.getDesireSpawn = function (roomName , demands)
 {
 	let result = false;
 	let room = Game.rooms[roomName];
@@ -46,8 +46,9 @@ MotivationGarrison.prototype.getDesireSpawn = function (roomName, demands)
 		result = true;
 	}
 
-	_.forEach(room.memory.longDistanceHarvestTargets, (r) => {
-		let numGuards = creepManager.countRoomUnits(r, "guard");
+	_.forEach(room.memory.longDistanceHarvestTargets , (r) =>
+	{
+		let numGuards = creepManager.countRoomUnits(r , "guard");
 		let threatLevel = Memory.rooms[r].threat.level;
 
 		if (numGuards < 1 && threatLevel >= C.THREAT_NPC)
@@ -67,16 +68,22 @@ MotivationGarrison.prototype.getDesiredSpawnUnit = function (roomName)
 	let numHeal = global.cache.rooms[roomName].units["heal"].length;
 
 	if (numRangedGuard < numGuard)
+	{
 		return "rangedGuard";
+	}
 	else if (numGuard <= numRangedGuard || numGuard <= numHeal)
+	{
 		return "guard";
+	}
 	else if (numHeal <= numRangedGuard)
+	{
 		return "rangedGuard";
+	}
 };
 
 MotivationGarrison.prototype.getAssignableUnitNames = function ()
 {
-	return ["guard", "rangedGuard", "healer"];
+	return ["guard" , "rangedGuard" , "healer"];
 };
 
 /**
@@ -99,7 +106,9 @@ MotivationGarrison.prototype.updateActive = function (roomName)
 	if (numCombatUnits > 0)
 	{
 		memory.active = true;
-	} else {
+	}
+	else
+	{
 		memory.active = false;
 	}
 };

@@ -26,7 +26,7 @@ global.ws = wallStatus;
  * @param creepName
  * @param roomName
  */
-global.cRoom = function(creepName, roomName)
+global.cRoom = function (creepName , roomName)
 {
 	Game.creeps[creepName].deassignMotive(roomName);
 	Game.creeps[creepName].memory.homeRoom = roomName;
@@ -37,15 +37,14 @@ global.cRoom = function(creepName, roomName)
  * @param creepName
  * @param roomName
  */
-global.cTRoom = function(creepName, roomName)
+global.cTRoom = function (creepName , roomName)
 {
 	Game.creeps[creepName].deassignMotive(roomName);
 };
 
-
-global.cAssign = function (creepName, roomName, motivationName, needName)
+global.cAssign = function (creepName , roomName , motivationName , needName)
 {
-	Game.creeps[creepName].assignMotive(roomName, motivationName, needName);
+	Game.creeps[creepName].assignMotive(roomName , motivationName , needName);
 };
 
 global.cList = function (roomName)
@@ -58,7 +57,8 @@ global.cList = function (roomName)
 	}
 
 	output += `\n-- Creeps for ${roomName}`;
-	_.forEach(Memory.rooms[roomName].resources.units, function (c, k) {
+	_.forEach(Memory.rooms[roomName].resources.units , function (c , k)
+	{
 		output += `\n${k}\n\ttotal: ${c.total}\tallocated: ${c.allocated}\tunallocated: ${c.unallocated}\tassigned: ${c.assigned}\tunassigned: ${c.unassigned}`;
 	});
 
@@ -66,17 +66,23 @@ global.cList = function (roomName)
 };
 
 // force spawn ---------------------------------------------------------------------------------------------------------
-global.fs = function (roomName, unit)
+global.fs = function (roomName , unit)
 {
 	if (lib.isNull(roomName) || lib.isNull(unit))
+	{
 		return "fs - forceSpawn arguments roomName, unit";
+	}
 	if (lib.isNull(Memory.rooms[roomName]))
+	{
 		return "Room " + roomName + " not found.";
+	}
 	if (!lib.isNull(unit))
 	{
 		Memory.rooms[roomName].forceSpawn = unit;
 		return "Force Spawn for " + roomLink(roomName) + " set to : " + unit;
-	} else {
+	}
+	else
+	{
 		return "Force Spawn for " + roomLink(roomName) + " is : " + Memory.rooms[roomName].forceSpawn;
 	}
 };
@@ -93,7 +99,7 @@ global.qList = function ()
 
 	// build output
 	outputString = "\n--- Current Claims ---\n";
-	_.forEach(claims, function (claim)
+	_.forEach(claims , function (claim)
 	{
 		let unclaimCommand = "qUnclaim('" + claim.room + "')";
 		let buttonUnclaim = makeButton(getId() , undefined , "Unclaim" , unclaimCommand);
@@ -104,7 +110,8 @@ global.qList = function ()
 		{
 			toggleCommand = "qClaim('" + claim.room + "','" + claim.spawnRoom + "','claim')";
 			buttonToggle = makeButton(getId() , undefined , "Claim" , toggleCommand);
-		} else if (claim.type === "claim")
+		}
+		else if (claim.type === "claim")
 		{
 			toggleCommand = "qClaim('" + claim.room + "','" + claim.spawnRoom + "','reserve')";
 			buttonToggle = makeButton(getId() , undefined , "Reserve" , toggleCommand);
@@ -124,23 +131,26 @@ global.qList = function ()
  * @param claimType
  * @returns {*}
  */
-global.qClaim = function (roomName, spawnRoom, claimType)
+global.qClaim = function (roomName , spawnRoom , claimType)
 {
 	let claims = Memory.claims;
-	let claim = _.find(claims, function (c)
+	let claim = _.find(claims , function (c)
 	{
 		return c.room === roomName;
 	});
 
 	if (lib.isNull(roomName) || lib.isNull(spawnRoom) || lib.isNull(claimType))
+	{
 		return "Missing argument(s). - roomName, spawnRoom, claimType";
-
+	}
 
 	if (lib.isNull(claim))
 	{
-		claims.push({ "room": roomName, "spawnRoom": spawnRoom, "type": claimType });
+		claims.push({"room": roomName , "spawnRoom": spawnRoom , "type": claimType});
 		return "New claim added.";
-	} else {
+	}
+	else
+	{
 		claim.spawnRoom = spawnRoom;
 		claim.type = claimType;
 		return "Claim updated."
@@ -154,7 +164,7 @@ global.qClaim = function (roomName, spawnRoom, claimType)
 global.qUnclaim = function (roomName)
 {
 	let claims = Memory.claims;
-	let claim = _.find(claims, function (c)
+	let claim = _.find(claims , function (c)
 	{
 		return c.room === roomName;
 	});
@@ -162,9 +172,11 @@ global.qUnclaim = function (roomName)
 	if (lib.isNull(claim))
 	{
 		return "Unable to find claim to remove.";
-	} else {
+	}
+	else
+	{
 		let index = claims.indexOf(claim);
-		claims.splice(index, 1);
+		claims.splice(index , 1);
 		return "Claim removed."
 	}
 };
@@ -173,18 +185,22 @@ global.qUnclaim = function (roomName)
 global.lList = function ()
 {
 	let outputString = "\n--- Current Long Distance Harvest Targets ---";
-	let button, buttonCommand, link;
+	let button , buttonCommand , link;
 
-	_.forEach(Memory.rooms, function (r, k) {
+	_.forEach(Memory.rooms , function (r , k)
+	{
 		if (lib.isNull(r.longDistanceHarvestTargets))
+		{
 			r.longDistanceHarvestTargets = [];
+		}
 		if (lib.isNull(r.longDistanceHarvestParents))
+		{
 			r.longDistanceHarvestParents = [];
-
+		}
 
 		link = roomLink(k);
 		outputString += `\nSource Room: ${link}`;
-		_.forEach(r.longDistanceHarvestTargets, function (target)
+		_.forEach(r.longDistanceHarvestTargets , function (target)
 		{
 			buttonCommand = "lRemove('" + k + "','" + target + "')";
 			link = roomLink(target);
@@ -192,28 +208,37 @@ global.lList = function ()
 			outputString += `\n\troom: ${link}\t ${button}\n`;
 		});
 		if (r.longDistanceHarvestTargets.length === 0)
+		{
 			outputString += `\n\tNo targets.`;
+		}
 	});
-
 
 	return outputString;
 };
 
-global.lAdd = function (sourceRoomName, targetRoomName)
+global.lAdd = function (sourceRoomName , targetRoomName)
 {
 	if (lib.isNull(sourceRoomName) || lib.isNull(targetRoomName))
+	{
 		return "Missing argument(s). - sourceRoomName, targetRoomName";
+	}
 	if (lib.isNull(Memory.rooms[sourceRoomName]))
+	{
 		return "Missing source room: " + sourceRoomName;
+	}
 
 	if (lib.isNull(Memory.rooms[targetRoomName].longDistanceHarvestTargets))
+	{
 		Memory.rooms[targetRoomName].longDistanceHarvestTargets = [];
+	}
 	if (lib.isNull(Memory.rooms[targetRoomName].longDistanceHarvestParents))
+	{
 		Memory.rooms[targetRoomName].longDistanceHarvestParents = [];
+	}
 
 	let targets = Memory.rooms[sourceRoomName].longDistanceHarvestTargets;
 	let parents = Memory.rooms[targetRoomName].longDistanceHarvestParents;
-	let target = _.find(targets, function (c)
+	let target = _.find(targets , function (c)
 	{
 		return c === targetRoomName;
 	});
@@ -223,27 +248,33 @@ global.lAdd = function (sourceRoomName, targetRoomName)
 		targets.push(targetRoomName);
 		parents.push(sourceRoomName);
 		return "New target added.";
-	} else {
+	}
+	else
+	{
 		return "Target exists."
 	}
 };
 
-global.lRemove = function (sourceRoomName, targetRoomName)
+global.lRemove = function (sourceRoomName , targetRoomName)
 {
 	let result = "";
 	if (lib.isNull(sourceRoomName) || lib.isNull(targetRoomName))
+	{
 		return "Missing argument(s). - sourceRoomName, targetRoomName";
+	}
 	if (lib.isNull(Memory.rooms[sourceRoomName]))
+	{
 		return "Missing source room: " + sourceRoomName;
+	}
 
 	let targets = Memory.rooms[sourceRoomName].longDistanceHarvestTargets;
 	let parents = Memory.rooms[targetRoomName].longDistanceHarvestParents;
-	let target = _.find(targets, function (c)
+	let target = _.find(targets , function (c)
 	{
 		return c === targetRoomName;
 	});
 
-	let parent = _.find(parents, function (c)
+	let parent = _.find(parents , function (c)
 	{
 		return c === sourceRoomName;
 	});
@@ -251,18 +282,22 @@ global.lRemove = function (sourceRoomName, targetRoomName)
 	if (lib.isNull(target))
 	{
 		result = "Unable to find target to remove.";
-	} else {
+	}
+	else
+	{
 		let index = targets.indexOf(target);
-		targets.splice(index, 1);
+		targets.splice(index , 1);
 		result = "Target removed."
 	}
 
 	if (lib.isNull(parent))
 	{
 		return "Unable to find parent to remove.";
-	} else {
+	}
+	else
+	{
 		let index = parents.indexOf(parent);
-		parents.splice(index, 1);
+		parents.splice(index , 1);
 		result = "Parent removed."
 	}
 
@@ -277,7 +312,7 @@ global.mtList = function ()
 
 	// build output
 	outputString = "\n--- Manual Tactical Mode ---\n";
-	_.forEach(rooms, function (roomMemory, roomName)
+	_.forEach(rooms , function (roomMemory , roomName)
 	{
 		if (!lib.isNull(roomMemory.motivations))
 		{
@@ -304,7 +339,7 @@ global.mtList = function ()
 	console.log(outputString);
 };
 
-global.mt = function (roomName, state)
+global.mt = function (roomName , state)
 {
 	let roomMemory = Memory.rooms[roomName];
 	// toggle
@@ -327,9 +362,13 @@ global.mt = function (roomName, state)
 	}
 
 	if (state)
+	{
 		return roomName + " set active.";
+	}
 	else
+	{
 		return roomName + " set inactive.";
+	}
 };
 
 // room manager --------------------------------------------------------------------------------------------------------
@@ -345,7 +384,7 @@ global.rmList = function ()
 	outputString += `\tRoom\tVisible\tMine\tManTac\n`;
 
 	// loop over rooms
-	_.forEach(rooms, function (roomMemory, roomName)
+	_.forEach(rooms , function (roomMemory , roomName)
 	{
 		if (!lib.isNull(roomMemory) && roomName != undefined)
 		{
@@ -408,37 +447,41 @@ global.mList = function (roomName)
 	sortedMotivations = _.sortByOrder(Memory.rooms[roomName].motivations , ['priority'] , ['desc']);
 
 	output += `\n-- Motivations for ${roomName}`;
-	_.forEach(sortedMotivations, function (motivation) {
+	_.forEach(sortedMotivations , function (motivation)
+	{
 		output += `\n${motivation.name}\n\tactive: ${motivation.active}\tdemand spawn:${motivation.demands.spawn}\tspawn allocated: ${motivation.spawnAllocated}\t unit: ${global[motivation.name].getDesiredSpawnUnit(roomName)}`;
 	});
 
 	return output;
 };
 
-
 /*
-* All of the code below here was provided by guys on the screeps slack.
-* If you haven't checked that out, do so now, it is awesome.
-* Huge props to all the guys for sharing this!
+ * All of the code below here was provided by guys on the screeps slack.
+ * If you haven't checked that out, do so now, it is awesome.
+ * Huge props to all the guys for sharing this!
  */
 // ---------------------------------------------------------------------------------------------------------------------
 // credit due for next line to warinternal
-global.ex = (x) => JSON.stringify(x, null, 2);
+global.ex = (x) => JSON.stringify(x , null , 2);
 
 // game object shortcuts -----------------------------------------------------------------------------------------------
 global.g = {
-	c: global.gc = Game.creeps,
-	f: global.gf = Game.flags,
-	s: global.gs = Game.spawns,
-	r: global.gr = Game.rooms,
-	m: global.gm = Game.market,
+	c: global.gc = Game.creeps ,
+	f: global.gf = Game.flags ,
+	s: global.gs = Game.spawns ,
+	r: global.gr = Game.rooms ,
+	m: global.gm = Game.market ,
 };
 
 global.goid = Game.getObjectById;
 
-global.r = function r(rName){ return gr[rName];};
+global.r = function r (rName)
+{
+	return gr[rName];
+};
 
-global.total = function(){
+global.total = function ()
+{
 	return Object.keys(Game.creeps).length;
 };
 
@@ -458,8 +501,10 @@ global.total = function(){
 
 // to be used after you respawn into a new location
 //   but before you spawn your first creep...
-global.respawn = function(){
-	for(let f in Game.flags){
+global.respawn = function ()
+{
+	for (let f in Game.flags)
+	{
 		Game.flags[f].remove();
 	}
 	Memory = {};

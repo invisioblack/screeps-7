@@ -47,7 +47,11 @@ NeedRepair.prototype.getUnitDemands = function (roomName , memory , motivationNa
 
 	memory.demands = {};
 
-	if (numRepairSites > 0)
+	if (numRepairSites.length > 5)
+	{
+		memory.demands["worker"] = 2;
+	}
+	else if (numRepairSites.length > 0)
 	{
 		memory.demands["worker"] = 1;
 	}
