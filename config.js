@@ -18,7 +18,7 @@ module.exports =
 		'repairFactor': 0.8 ,
 		'towerPowerFactor': 0.8 ,
 		'towerRepairFactor': 1 ,
-		"cpuDebug": false ,
+		"cpuDebug": true ,
 		"cpuDetailDebug": false ,
 		"cpuInitDebug": false ,
 		"cpuLoopDebug": false ,

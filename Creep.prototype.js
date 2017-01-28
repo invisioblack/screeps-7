@@ -122,16 +122,6 @@ Creep.prototype.initMotive = function ()
 
 Creep.prototype.assignMotive = function (roomName , motivationName , needName)
 {
-	if (this.room.name !== this.memory.motive.room)
-	{
-		console.log(`!!!!! Assign: ${this.name}: room: ${roomLink(this.room.name)} does not match motivation room: ${roomLink(this.memory.motive.room)} m: ${motivationName} n: ${needName}`);
-	}
-
-	if (this.room.name !== this.memory.homeRoom)
-	{
-		console.log(`----- Assign: ${this.name}: room: ${roomLink(this.room.name)} does not match home room: ${roomLink(this.memory.homeRoom)} m: ${motivationName} n: ${needName}`);
-	}
-
 	// if the creep is assigned, remove him from the cache
 	if (this.memory.motive.motivation !== "")
 	{
@@ -179,16 +169,6 @@ Creep.prototype.deassignMotive = function (roomName)
 	let debug = false;
 	lib.log(`Creep: ${this.name} Room/target: ${roomLink(this.room.name)}/${roomName} Motive: ${this.memory.motive.motivation}/${this.memory.motive.need}` , debug);
 	this.say("Done!");
-
-	if (this.room.name !== this.memory.motive.room)
-	{
-		console.log(`!!!!! Deassign: ${this.name}: room: ${roomLink(this.room.name)} does not match motivation room: ${roomLink(this.memory.motive.room)}`);
-	}
-
-	if (this.room.name !== this.memory.homeRoom)
-	{
-		console.log(`----- Deassign: ${this.name}: room: ${roomLink(this.room.name)} does not match home room: ${roomLink(this.memory.homeRoom)}`);
-	}
 
 	// if the creep is assigned, remove him from the cache
 	if (this.memory.motive.motivation !== "")

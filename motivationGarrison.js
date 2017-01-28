@@ -96,21 +96,8 @@ MotivationGarrison.prototype.updateActive = function (roomName)
 {
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	let numGuard = global.cache.rooms[roomName].units["guard"].length;
-	let numRangedGuard = global.cache.rooms[roomName].units["rangedGuard"].length;
-	let numHeal = global.cache.rooms[roomName].units["heal"].length;
-	let numCombatUnits = numGuard + numHeal + numRangedGuard;
 
-	//console.log(`Room: ${roomName} ${numCombatUnits}`);
-
-	if (numCombatUnits > 0)
-	{
-		memory.active = true;
-	}
-	else
-	{
-		memory.active = false;
-	}
+	memory.active = true;
 };
 
 MotivationGarrison.prototype.updateNeeds = function (roomName)

@@ -60,7 +60,7 @@ MotivationLongDistanceHarvest.prototype.getDesireSpawn = function (roomName , de
 			}
 			if (!lib.isNull(roomMemory))
 			{
-				lib.log(`Room: ${roomName} Target: ${rN} Result: ${result} ${JSON.stringify(roomMemory.motivations["motivationHarvestSource"].demands)}` , debug);
+				lib.log(`Room: ${roomLink(roomName)} Target: ${roomLink(rN)} Result: ${result} ${JSON.stringify(roomMemory.motivations["motivationHarvestSource"].demands)}` , debug);
 			}
 		}
 	});
@@ -86,7 +86,10 @@ MotivationLongDistanceHarvest.prototype.updateActive = function (roomName)
 
 	if (room.getIsMine() && room.memory.longDistanceHarvestTargets.length > 0)
 	{
-		memory.active = true;
+		if (room.memory.mode >= C.ROOM_MODE_NORMAL)
+			memory.active = true;
+		else
+			memory.active = false;
 	}
 	else
 	{

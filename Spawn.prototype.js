@@ -117,7 +117,7 @@ Spawn.prototype.spawnUnitByEnergy = function (unitName , energyBudget , forceRsl
 	_.forEach(this.rsl , (en) =>
 	{
 		//console.log("en: " + en + " x: " + x);
-		if (energyBudget > en)
+		if (energyBudget >= en)
 		{
 			x++;
 		}

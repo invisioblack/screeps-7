@@ -366,14 +366,14 @@ module.exports =
 				switch (creep.memory.unit)
 				{
 					case "hauler":
-						if (creep.room.getIsMine())
+						if (roomManager.getIsMine(creep.memory.motive.room))
 						{
 							creep.assignMotive(roomName , "motivationSupplySpawn" , "supplyExtenders." + creep.room.name);
 							assigned = true;
 						}
 						break;
 					case "worker":
-						if (creep.room.getIsMine())
+						if (roomManager.getIsMine(creep.memory.motive.room))
 						{
 							creep.assignMotive(roomName , "motivationSupplyController" , "supplyController." + creep.room.name);
 							assigned = true;

@@ -29,7 +29,7 @@ MotivationHarvestSource.prototype.getDemands = function (roomName) {
 	let unitName = this.getDesiredSpawnUnit(roomName);
 	result.units = this.getUnitDemands(roomName);
 	result.spawn = this.getDesireSpawn(roomName, result);
-	lib.log("  Harvest Source Demands : " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn, debug);
+	lib.log("Room: " + roomName + "  Harvest Source Demands : " + unitName + ": " + result.units[unitName] + " Spawn: " + result.spawn, debug);
 	Memory.rooms[roomName].motivations[this.name].demands = result;
 	return result;
 };
@@ -56,8 +56,12 @@ MotivationHarvestSource.prototype.getDesireSpawn = function (roomName, demands)
 	let numHarvesters = 0;
 	let demandedHarvesters = lib.nullProtect(demands.units[unitName], 0);
 
-	if (roomMemory.mode !== C.ROOM_MODE_NORMAL)
+	lib.log(roomMemory.mode, debug);
+
+	if (roomMemory.mode !== C.ROOM_MODE_NORMAL && roomMemory.mode !== C.ROOM_MODE_REMOTE_HARVEST)
+	{
 		return false;
+	}
 
 	// if we not in one of my owned rooms then check for assigned to the room so we don't double spawn
 	if (lib.isNull(room) || !room.getIsMine())
@@ -72,7 +76,7 @@ MotivationHarvestSource.prototype.getDesireSpawn = function (roomName, demands)
 		result = false;
 	}
 
-	lib.log(`Room: ${roomName} Desire Spawn: ${result} Unit: ${unitName} #Pickup: ${roomMemory.energyPickupMode} Demanded Harvesters: ${demandedHarvesters}/${numHarvesters}`, debug);
+	lib.log(`Room: ${roomLink(roomName)} Desire Spawn: ${result} Unit: ${unitName} #Pickup: ${roomMemory.energyPickupMode} Demanded Harvesters: ${demandedHarvesters}/${numHarvesters}`, debug);
 
 	return result;
 };

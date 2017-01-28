@@ -179,7 +179,14 @@ module.exports =
 				if (c.memory.motive.motivation !== "")
 				{
 					//console.log(`c: ${c.name} r: ${c.memory.motive.room} m: ${c.memory.motive.motivation}`);
+					if (lib.isNull(roomMemory.cache.unitMotive[c.memory.motive.motivation]))
+					{
+						roomMemory.cache.unitMotive[c.memory.motive.motivation] = {};
+						roomMemory.cache.unitMotive[c.memory.motive.motivation].units = {};
+						roomMemory.cache.unitMotive[c.memory.motive.motivation].units[c.memory.unit] = 0;
+						roomMemory.cache.unitMotive[c.memory.motive.motivation].needs = {};
 
+					}
 					roomMemory.cache.unitMotive[c.memory.motive.motivation].units[c.memory.unit]++;
 					if (lib.isNull(roomMemory.cache.unitMotive[c.memory.motive.motivation].needs[c.memory.motive.need]))
 					{
