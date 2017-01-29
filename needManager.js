@@ -23,6 +23,7 @@ module.exports =
 			{
 				// @type {Creep}
 				let creep = Game.creeps[creepName];
+
 				if (creep.memory.motive.room === creep.room.name && creep.memory.motive.motivation !== "" && creep.memory.motive.need !== "")
 				{
 					lib.log(`Creep executing need: ${creep.name}: room: ${creep.room.name} motive room:${creep.memory.motive.room} ${creep.memory.motive.motivation}: ${creep.memory.motive.need}`, debug);

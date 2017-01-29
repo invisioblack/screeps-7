@@ -14,6 +14,8 @@ global.l3 = "W14S77";
 global.l4 = "W13S78";
 global.l5 = "W12S79";
 global.rM = "W12S78";
+global.n = "W9S79";
+global.n1 = "W9S78";
 
 global.rl = roomLevels;
 global.ws = wallStatus;

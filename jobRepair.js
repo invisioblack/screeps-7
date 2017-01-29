@@ -40,18 +40,29 @@ JobRepair.prototype.work = function (creep)
 	let target;
 	let wallHP = config.wallHP[lib.isNull(creep.room.controller) ? 0 : creep.room.controller.level];
 
-	if (needName === "repairNoWall." + roomName)
+
+	if (!lib.isNull(creep.memory.repairTargetId) && creep.memory.repairTargetId !== "")
 	{
-		let structuresNoWall = roomManager.getStructuresType(roomName , STRUCTURE_ALL_NOWALL);
-		repairSites = _.filter(structuresNoWall , (s) => s.hits < (s.hitsMax * config.repairFactor));
-	}
-	else if (needName === "repairWall." + roomName)
-	{
-		let structuresWall = roomManager.getStructuresType(roomName , STRUCTURE_ALL_WALL);
-		repairSites = _.filter(structuresWall , (s) => s.hits < (wallHP * config.repairFactor));
+		target = Game.getObjectById(creep.memory.repairTargetId);
 	}
 
-	target = _.min(repairSites , (c) => c.hitsMax - c.hits);
+	if (lib.isNull(target))
+	{
+		if (needName === "repairNoWall." + roomName)
+		{
+			let structuresNoWall = roomManager.getStructuresType(roomName , STRUCTURE_ALL_NOWALL);
+			repairSites = _.filter(structuresNoWall , (s) => s.hits < (s.hitsMax * config.repairFactor));
+		}
+		else if (needName === "repairWall." + roomName)
+		{
+			let structuresWall = roomManager.getStructuresType(roomName , STRUCTURE_ALL_WALL);
+			repairSites = _.filter(structuresWall , (s) => s.hits < (wallHP * config.repairFactor));
+		}
+
+		target = _.min(repairSites , (c) => c.hits);
+		creep.memory.repairTargetId = target.id;
+		console.log(`c: ${creep.name} New Target: ${target}`);
+	}
 
 	creep.sing("Fixing stuff!");
 
@@ -100,10 +111,12 @@ JobRepair.prototype.work = function (creep)
 				{
 					//console.log("---- RESET");
 					creep.deassignMotive();
+					creep.memory.repairTargetId = "";
 				}
 				if (target.hits === target.hitsMax)
 				{
 					creep.deassignMotive();
+					creep.memory.repairTargetId = "";
 				}
 			}
 			break;
