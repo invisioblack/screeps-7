@@ -291,7 +291,7 @@ module.exports =
 					{
 						_.forEach(Game.spawns , (spawn , spawnName) =>
 						{
-							if (spawn.room.name === roomName)
+							if (spawn.room.name === roomName && !spawn.spawning)
 							{
 								let unitName = global[motivationMemory.name].getDesiredSpawnUnit(roomName);
 								spawn.spawnUnit(unitName);

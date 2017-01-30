@@ -66,7 +66,7 @@ Creep.prototype.getOffEdge = function ()
 	if (this.memory.motive.room === this.room.name)
 	{
 		let moveResult = -1;
-		if (( this.pos.x <= 1 ) || ( this.pos.x >= 48 ) || ( this.pos.y <= 1 ) || ( this.pos.y >= 48 ))
+		if (( this.pos.x < 1 ) || ( this.pos.x > 48 ) || ( this.pos.y < 1 ) || ( this.pos.y > 48 ))
 		{
 			let dirs = [];
 			if (this.pos.x <= 1)
