@@ -155,6 +155,25 @@ module.exports =
 				{
 					motivationSupplyTower.deInit(room.name);
 				}
+
+				// scout -----------------------------------------------------------------------------------------------
+				if (lib.isNull(Memory.scoutTargets))
+					Memory.scoutTargets = [];
+
+				if (roomManager.getIsMine(roomName) && _.some(Memory.scoutTargets , {sourceRoom: roomName}))
+				{
+					motivationScout.init(room.name);
+					room.memory.motivations[motivationScout.name].priority = C.PRIORITY_6;
+				}
+				else if (_.some( Memory.scoutTargets, { targetRoom: roomName } ))
+				{
+					motivationScout.init(room.name);
+					room.memory.motivations[motivationScout.name].priority = C.PRIORITY_1;
+				}
+				else if (motivationScout.isInit(room.name))
+				{
+					motivationScout.deInit(room.name);
+				}
 			});
 
 			/***************************************************************************************************************
@@ -306,13 +325,15 @@ module.exports =
 			let assigned = false;
 			let isDemand = true;
 			let tryCount = 1;
+			let maxxed = false;
+			let maxTrys = 20;
 
 			if (roomName !== creep.memory.motive.room)
 			{
 				console.lob(`!!!!!> Trying to find a creep job in wrong room: ${creep.name} assign room: ${roomName} motive room: ${creep.motive.room} creep room: ${creep.room.name}`);
 			}
 
-			while (isDemand && !assigned)
+			while (isDemand && !assigned && maxxed === false)
 			{
 				// reset this value, it needs to be set true in the loop to proceed to the next loop
 				isDemand = false;
@@ -322,10 +343,6 @@ module.exports =
 					if (!assigned && motivationMemory.active && _.some(global[motivationMemory.name].getAssignableUnitNames() , (unitName) => unitName === creep.memory.unit))
 					{
 						let motiveUnits = creepManager.countRoomMotivationUnits(roomName , motivationMemory.name , creep.memory.unit);
-						if (lib.isNull(motivationMemory.demands))
-						{
-							console.log(motivationMemory.name);
-						}
 						let demandedUnits = lib.nullProtect(motivationMemory.demands.units[creep.memory.unit] , 0);
 						if (!assigned && motiveUnits < tryCount && motiveUnits < demandedUnits)
 						{
@@ -359,6 +376,11 @@ module.exports =
 				});
 				lib.log(`Assigned: ${assigned} isDemand: ${isDemand}` , debug);
 				tryCount++;
+				if (tryCount > maxTrys)
+				{
+					console.log("WHOA! trycount: " + tryCount);
+					maxxed = true;
+				}
 			}
 
 			// no assignment found try to force assign

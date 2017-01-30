@@ -72,12 +72,12 @@ MotivationHarvestMinerals.prototype.getDesireSpawn = function (roomName , demand
 		numHarvesters = creepManager.countRoomMotivationUnits(roomName , "motivationHarvestSource" , unitName);
 	}
 
-	if (numContainers === 0 || numHarvesters >= demandedHarvesters && room.memory.mode !== C.ROOM_MODE_NORMAL)
+	if (numContainers === 0 || numHarvesters >= demandedHarvesters || room.memory.mode !== C.ROOM_MODE_NORMAL)
 	{
 		result = false;
 	}
 
-	lib.log(`Room: ${roomName} Desire Spawn: ${result} Unit: ${unitName} #PickUp: ${roomMemory.energyPickupMode} Demanded Harvesters: ${demandedHarvesters}/${numHarvesters}` , debug);
+	lib.log(`MotivationHarvestMinerals Room: ${roomName} Desire Spawn: ${result} Unit: ${unitName} #PickUp: ${roomMemory.energyPickupMode} Demanded Harvesters: ${demandedHarvesters}/${numHarvesters}` , debug);
 
 	return result;
 };
@@ -98,12 +98,20 @@ MotivationHarvestMinerals.prototype.updateActive = function (roomName)
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
 	let numContainers = roomManager.getStructureIdType(roomName , STRUCTURE_CONTAINER).length;
-	let extractor = roomManager.getStructuresType(roomName , STRUCTURE_EXTRACTOR)[0];
-	let mineral = Game.getObjectById(room.memory.mineraId);
 	let numSources = room.memory.cache.sources.length;
+	let mineral;
+	if (lib.isNull(room.memory.mineralId))
+	{
+		mineral = Game.getObjectById(room.memory.mineralId);
+	}
 
+	if (lib.isNull(mineral))
+	{
+		mineral = room.find(FIND_MINERALS , 1)[0];
+		room.memory.mineralId = mineral.id;
+	}
 
-	if (numContainers > numSources && !lib.isNull(mineral) && mineral.amount > 0)
+	if (numContainers > numSources && !lib.isNull(mineral) && mineral.mineralAmount > 0)
 	{
 		memory.active = true;
 	}
@@ -153,9 +161,7 @@ MotivationHarvestMinerals.prototype.updateNeeds = function (roomName)
 				return Game.getObjectById(o);
 			});
 			let container = s.pos.findInRange(containers , 1)[0];
-			let mineral = s.pos.findInRange(FIND_MINERALS , 1)[0];
 			room.memory.mineralContainerId = container.id;
-			room.memory.mineralId = mineral.id;
 			memory.needs[needName] = {};
 			need = memory.needs[needName];
 			need.name = needName;
@@ -170,7 +176,6 @@ MotivationHarvestMinerals.prototype.updateNeeds = function (roomName)
 				need.containerId = "";
 			}
 			need.priority = C.PRIORITY_1;
-
 		}
 
 		// cull need if the container is gone
@@ -179,6 +184,7 @@ MotivationHarvestMinerals.prototype.updateNeeds = function (roomName)
 		{
 			delete memory.needs[needName];
 		}
+
 	} , this);
 };
 

@@ -184,6 +184,7 @@ Spawn.prototype.spawnUnitByEnergy = function (unitName , energyBudget , forceRsl
 			let creep = Game.creeps[name];
 			creep.memory.homeRoom = this.room.name;
 			creep.memory.spawn = this.name;
+			creep.memory.spawnTime = Game.time;
 			creep.initMotive();
 		}
 		else

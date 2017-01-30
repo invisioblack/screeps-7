@@ -68,7 +68,7 @@ MotivationHarvestSource.prototype.getDesireSpawn = function (roomName, demands)
 	{
 		numHarvesters = creepManager.countRoomUnits(roomName, unitName);
 	} else {
-	    numHarvesters = creepManager.countRoomMotivationUnits(roomName, "motivationHarvestSource",unitName);
+	    numHarvesters = creepManager.countRoomMotivationUnits(roomName, "motivationHarvestSource", unitName);
 	}
 
 	if (roomMemory.energyPickupMode < C.ROOM_ENERGYPICKUPMODE_PRECONTAINER || numHarvesters >= demandedHarvesters)
@@ -151,7 +151,6 @@ MotivationHarvestSource.prototype.updateNeeds = function (roomName)
 				need.containerId = "";
 			}
 			need.priority = C.PRIORITY_1;
-
 		} else {
 			need = memory.needs[needName];
 		}

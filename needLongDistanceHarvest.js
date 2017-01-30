@@ -61,7 +61,6 @@ NeedLongDistanceHarvest.prototype.getUnitDemands = function (roomName , needMemo
 		needMemory.demands["worker"] = 0;
 	}
 
-	//console.log(`${roomName} ${JSON.stringify(needMemory.demands)}`);
 	return needMemory.demands;
 };
 

@@ -82,7 +82,7 @@ module.exports = function ()
 		/**
 		 * handle finding energy in link
 		 */
-		if (room.memory.energyPickupMode >= C.ROOM_ENERGYPICKUPMODE_STORAGE && creep.memory.sourceId === "")
+		if (room.memory.energyPickupMode >= C.ROOM_ENERGYPICKUPMODE_PRECONTAINER && creep.memory.sourceId === "")
 		{
 			this.findEnergyLink(creep);
 		}
@@ -90,7 +90,7 @@ module.exports = function ()
 		/**
 		 * handle finding energy in storage
 		 */
-		if (room.memory.energyPickupMode >= C.ROOM_ENERGYPICKUPMODE_STORAGE && creep.memory.sourceId === "" && creep.memory.motive.motivation != "motivationHaulToStorage")
+		if (room.memory.energyPickupMode >= C.ROOM_ENERGYPICKUPMODE_PRECONTAINER && creep.memory.sourceId === "" && creep.memory.motive.motivation != "motivationHaulToStorage")
 		{
 			this.findEnergyStorage(creep);
 		}
@@ -279,7 +279,7 @@ module.exports = function ()
 
 	Job.prototype.findEnergyLink = function (creep)
 	{
-		let linkId = creep.room.memory.storageLinkId;
+		let linkId = lib.nullProtect(creep.room.memory.storageLinkId, "");
 		let link = Game.getObjectById(linkId);
 		if (!lib.isNull(link) && link.energy > 0)
 		{

@@ -29,12 +29,6 @@ NeedHaulToStorage.prototype.getUnitDemands = function (roomName , memory , motiv
 	memory.demands = {};
 	this.getUnitHaulToStorageDemand(roomName , "hauler" , memory.demands);
 
-	//console.log(JSON.stringify(memory));
-	//console.log("getUnitDemands: " + energy + "/" + energyCapacity + "/" + neededEnergy);
-	//console.log("   workers: carry: " + workerCapacity + " demanded workers: " + result["worker"]);
-
-	//console.log(`NeedTransferEnergy.prototype.getUnitDemands: ${motivationName}\t${JSON.stringify(result)}`);
-
 	return memory.demands;
 };
 

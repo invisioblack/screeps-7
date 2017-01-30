@@ -49,8 +49,6 @@ NeedTransferEnergy.prototype.getUnitDemands = function (roomName , memory , moti
 		}
 	}
 
-	//console.log(`NeedTransferEnergy.prototype.getUnitDemands: ${motivationName}\t${JSON.stringify(result)}`);
-
 	return memory.demands;
 };
 

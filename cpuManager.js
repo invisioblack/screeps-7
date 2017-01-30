@@ -14,7 +14,7 @@ module.exports =
 		tickTrack: function ()
 		{
 			let result = {};
-			let tenTick , hunTick , thouTick;
+			let tenTick , hunTick , thouTick, bucketChange;
 
 			this.initMem();
 			// insure memory structure exist
@@ -57,7 +57,9 @@ module.exports =
 
 			}
 
-			lib.log(`Tick: ${result.tick}\tAve 10/100/All: ${tenTick}/${hunTick}/${thouTick}\tUsed CPU: ${_.round(result.used , 1)}\t<progress value="${result.used}" max="${result.limit}"></progress>\tC/R: ${_.round(result.used/_.size(Game.creeps),1)}/${_.round(result.used/_.size(Game.rooms),1)}\tBucket: ${_.round(result.bucketChange , 1)}/${result.bucket}` , config.cpuDebug);
+
+			bucketChange = _.round(result.bucketChange , 1);
+			lib.log(`Tick: ${result.tick}\tAve 10/100/All: ${tenTick}/${hunTick}/${thouTick}\tUsed CPU: ${_.round(result.used , 1)}\t<progress value="${result.used}" max="${result.limit}"></progress>\tC/R: ${_.round(result.used/_.size(Game.creeps),1)}/${_.round(result.used/_.size(Game.rooms),1)}\tBucket: ${bucketChange > 0 ? result.bucket + "(+" + bucketChange + ")" : result.bucket + "(" + bucketChange + ")"}` , config.cpuDebug);
 
 		} ,
 

@@ -26,12 +26,6 @@ NeedHaulMinerals.prototype.getUnitDemands = function (roomName , memory , motiva
 	memory.demands = {};
 	memory.demands["hauler"] = 1;
 
-	//console.log(JSON.stringify(memory));
-	//console.log("getUnitDemands: " + energy + "/" + energyCapacity + "/" + neededEnergy);
-	//console.log("   workers: carry: " + workerCapacity + " demanded workers: " + result["worker"]);
-
-	//console.log(`NeedTransferEnergy.prototype.getUnitDemands: ${motivationName}\t${JSON.stringify(result)}`);
-
 	return memory.demands;
 };
 

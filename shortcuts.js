@@ -14,8 +14,6 @@ global.l3 = "W14S77";
 global.l4 = "W13S78";
 global.l5 = "W12S79";
 global.rM = "W12S78";
-global.n = "W9S79";
-global.n1 = "W9S78";
 
 global.rl = roomLevels;
 global.ws = wallStatus;
@@ -204,7 +202,7 @@ global.llist = function ()
 		outputString += `\nSource Room: ${link}`;
 		_.forEach(r.longDistanceHarvestTargets , function (target)
 		{
-			buttonCommand = "lremove('" + k + "','" + target + "')";
+			buttonCommand = "lremove('" + target + "','" + k + "')";
 			link = roomLink(target);
 			button = makeButton(getId() , undefined , "Stop Harvesting" , buttonCommand);
 			outputString += `\n\troom: ${link}\t ${button}\n`;
@@ -218,11 +216,11 @@ global.llist = function ()
 	return outputString;
 };
 
-global.ladd = function (sourceRoomName , targetRoomName)
+global.ladd = function (targetRoomName, sourceRoomName)
 {
 	if (lib.isNull(sourceRoomName) || lib.isNull(targetRoomName))
 	{
-		return "Missing argument(s). - sourceRoomName, targetRoomName";
+		return "Missing argument(s). - targetRoomName, sourceRoomName";
 	}
 	if (lib.isNull(Memory.rooms[sourceRoomName]))
 	{
@@ -257,12 +255,12 @@ global.ladd = function (sourceRoomName , targetRoomName)
 	}
 };
 
-global.lremove = function (sourceRoomName , targetRoomName)
+global.lremove = function (targetRoomName, sourceRoomName)
 {
 	let result = "";
 	if (lib.isNull(sourceRoomName) || lib.isNull(targetRoomName))
 	{
-		return "Missing argument(s). - sourceRoomName, targetRoomName";
+		return "Missing argument(s). - targetRoomName, sourceRoomName";
 	}
 	if (lib.isNull(Memory.rooms[sourceRoomName]))
 	{
@@ -301,6 +299,100 @@ global.lremove = function (sourceRoomName , targetRoomName)
 		let index = parents.indexOf(parent);
 		parents.splice(index , 1);
 		result = "Parent removed."
+	}
+
+	return result;
+};
+
+// scout ---------------------------------------------------------------------------------------------------------------
+global.slist = function ()
+{
+	let outputString = "\n--- Current Scout Targets ---";
+	let button , buttonCommand;
+
+	_.forEach(Memory.scoutTargets , function (scoutTarget)
+	{
+		outputString += `\nTarget Room: ${roomLink(scoutTarget.targetRoom)}`;
+		outputString += `\tSource Room: ${roomLink(scoutTarget.sourceRoom)}`;
+		outputString += `\tInterval: ${scoutTarget.scoutInterval}`;
+		outputString += `\tLast Seen: ${Game.time - scoutTarget.lastSeen}`;
+
+		buttonCommand = "sremove('" + scoutTarget.targetRoom + "','" + scoutTarget.sourceRoom + "')";
+		button = makeButton(getId() , undefined , "Stop Scouting" , buttonCommand);
+		outputString += `\t${button}`;
+	});
+	if (_.size(Memory.scoutTargets) < 1)
+	{
+		outputString += `\n\tNo scout targets.`;
+	}
+
+	return outputString;
+};
+
+global.sadd = function (targetRoomName, sourceRoomName, scoutInterval = 0)
+{
+	// validate input
+	if (lib.isNull(targetRoomName) || lib.isNull(sourceRoomName))
+	{
+		return "Missing argument(s). - targetRoomName, sourceRoomName, scoutInterval = 0";
+	}
+	if (lib.isNull(Memory.rooms[sourceRoomName]))
+	{
+		return "Missing source room: " + sourceRoomName;
+	}
+
+	// declarations
+	let scoutTarget = _.find(Memory.scoutTargets , {targetRoom: targetRoomName, sourceRoom: sourceRoomName});
+
+	if (lib.isNull(Memory.rooms[targetRoomName]))
+	{
+		Memory.rooms[targetRoomName] = {};
+		Memory.rooms[targetRoomName].cache = {};
+		console.log(`Creating memory for ${targetRoomName}`);
+	}
+
+	// implementation
+	if (lib.isNull(scoutTarget))
+	{
+		scoutTarget = {};
+		scoutTarget.targetRoom = targetRoomName;
+		scoutTarget.sourceRoom = sourceRoomName;
+		scoutTarget.scoutInterval = scoutInterval;
+		scoutTarget.lastSeen = 0;
+		Memory.scoutTargets.push(scoutTarget);
+		return "New target added.";
+	}
+	else
+	{
+		return "Target exists."
+	}
+
+
+};
+
+global.sremove = function (targetRoomName, sourceRoomName)
+{
+	let result = "";
+	if (lib.isNull(sourceRoomName) || lib.isNull(targetRoomName))
+	{
+		return "Missing argument(s). - targetRoomName, sourceRoomName";
+	}
+	if (lib.isNull(Memory.rooms[sourceRoomName]))
+	{
+		return "Missing source room: " + sourceRoomName;
+	}
+
+	let scoutTarget = _.find(Memory.scoutTargets , {targetRoom: targetRoomName, sourceRoom: sourceRoomName});
+
+	if (lib.isNull(scoutTarget))
+	{
+		result = "Unable to find target to remove.";
+	}
+	else
+	{
+		let index = Memory.scoutTargets.indexOf(scoutTarget);
+		Memory.scoutTargets.splice(index , 1);
+		result = "Target removed."
 	}
 
 	return result;

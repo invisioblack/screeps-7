@@ -1,5 +1,4 @@
 /**
- * TODO: create scouts
  * TODO: implement ROOM_MODE_SETTLE
  * TODO: implement motivationAid
  * TODO: implement auto siege

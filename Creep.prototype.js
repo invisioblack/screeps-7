@@ -56,18 +56,41 @@ Creep.prototype.moveAwayFromTarget = function (target)
 	this.move((avoid + 4) % 8);
 };
 
-Creep.prototype.rendezvous = function (range)
+Creep.prototype.rendezvous = function (target, range)
 {
-	//console.log(JSON.stringify(flags));
-	if (this.memory.rendezvous)
+	this.moveToRange(target, range);
+};
+
+Creep.prototype.getOffEdge = function ()
+{
+	if (this.memory.motive.room === this.room.name)
 	{
-		this.moveToRange(this.memory.rendezvous , range);
-	}
-	else
-	{
-		this.moveToRange(this.getSpawn() , range);
+		let moveResult = -1;
+		if (( this.pos.x <= 1 ) || ( this.pos.x >= 48 ) || ( this.pos.y <= 1 ) || ( this.pos.y >= 48 ))
+		{
+			let dirs = [];
+			if (this.pos.x <= 1)
+			{
+				dirs = [2 , 3 , 4 , 2 , 3 , 4 , 2 , 3 , 4 , 2 , 3 , 4 , 2 , 3 , 4 , 1 , 5 ,];
+			}
+			else if (this.pos.x >= 48)
+			{
+				dirs = [6 , 7 , 8 , 6 , 7 , 8 , 6 , 7 , 8 , 6 , 7 , 8 , 6 , 7 , 8 , 5 , 1 ,];
+			}
+			else if (this.pos.y <= 1)
+			{
+				dirs = [4 , 5 , 6 , 4 , 5 , 6 , 4 , 5 , 6 , 4 , 5 , 6 , 4 , 5 , 6 , 3 , 7 ,];
+			}
+			else if (this.pos.y >= 48)
+			{
+				dirs = [8 , 1 , 2 , 8 , 1 , 2 , 8 , 1 , 2 , 8 , 1 , 2 , 8 , 1 , 2 , 7 , 3 ,];
+			}
+			moveResult = this.move(_.sample(dirs));
+			this.say("Move!");
+		}
 	}
 };
+
 
 Creep.prototype.carrying = function ()
 {

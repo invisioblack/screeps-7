@@ -41,6 +41,7 @@ NeedHarvestMinerals.prototype.getUnitDemands = function (roomName , memory , mot
 
 	if (ticksTillHarvesterDeath != 0 && ticksTillHarvesterDeath < config.harvesterPrespawnTicks)
 	{
+
 		memory.demands[unitName] = 2;
 	}
 	return memory.demands;

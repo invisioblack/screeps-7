@@ -293,6 +293,7 @@ module.exports =
 				"unit": "harvester"
 			}
 		} ,
+
 		"ldharvester": {
 			"mode": 2 ,
 			"parts": [
@@ -526,6 +527,7 @@ module.exports =
 				"unit": "hauler"
 			}
 		} ,
+
 		"claimer": {
 			"mode": 3 ,
 			"parts": [
@@ -603,6 +605,7 @@ module.exports =
 				"unit": "claimer"
 			}
 		} ,
+
 		"guard": {
 			"mode": 3 ,
 			"parts": [
@@ -826,6 +829,7 @@ module.exports =
 				"unit": "guard"
 			}
 		} ,
+
 		"rangedGuard": {
 			"mode": 1 ,
 			"parts": [
@@ -849,6 +853,7 @@ module.exports =
 				"unit": "rangedGuard"
 			}
 		} ,
+
 		"heal": {
 			"mode": 1 ,
 			"parts": [
@@ -872,6 +877,7 @@ module.exports =
 				"unit": "heal"
 			}
 		},
+
 		"scout": {
 			"mode": 2 ,
 			"parts": [ MOVE ] ,

@@ -47,29 +47,29 @@ JobClaim.prototype.work = function (creep)
 			{
 				return c.spawnRoom === creep.memory.motive.room;
 			});
+
+			let assigned = false;
 			_.forEach(spawnClaims , function (c)
 			{
-				if (creep.memory.motive.room === creep.room.name)
+				let countUnits = creepManager.countRoomUnits(c.room , "claimer");
+				//_.has(global, "cache.rooms." + c.room + ".units.claimer") ? global.cache.rooms[c.room].units["claimer"].length : 0;
+				if (!countUnits && !assigned)
 				{
-					let countUnits = creepManager.countRoomUnits(c.room , "claimer");
-					//_.has(global, "cache.rooms." + c.room + ".units.claimer") ? global.cache.rooms[c.room].units["claimer"].length : 0;
-					if (!countUnits)
+					let reservation = 0;
+					if (lib.isNull(Memory.rooms[c.room]))
 					{
-						let reservation = 0;
-						if (lib.isNull(Memory.rooms[c.room]))
-						{
-							Memory.rooms[c.room] = {};
-						}
-						if (!lib.isNull(Memory.rooms[c.room].reservation))
-						{
-							let timeDiff = Game.time - Memory.rooms[c.room].reservation.time;
-							reservation = lib.nullProtect(Memory.rooms[c.room].reservation.reservation , 0) - timeDiff;
-						}
+						Memory.rooms[c.room] = {};
+					}
+					if (!lib.isNull(Memory.rooms[c.room].reservation))
+					{
+						let timeDiff = Game.time - Memory.rooms[c.room].reservation.time;
+						reservation = lib.nullProtect(Memory.rooms[c.room].reservation.reservation , 0) - timeDiff;
+					}
 
-						if (reservation < config.claimTicks)
-						{
-							creep.deassignMotive(c.room);
-						}
+					if (reservation < config.claimTicks)
+					{
+						creep.deassignMotive(c.room);
+						assigned = true;
 					}
 				}
 			});
@@ -77,7 +77,7 @@ JobClaim.prototype.work = function (creep)
 			// yell if I'm still set to the room i own
 			if (creep.memory.motive.room === creep.room.name)
 			{
-				creep.say("NO CLAIM!");
+				creep.sing("NO CLAIM!");
 			}
 		}
 	}
@@ -113,13 +113,13 @@ JobClaim.prototype.work = function (creep)
 			}
 			else
 			{
-				creep.say("No Type");
+				creep.sing("No Type!");
 			}
 
 		}
 		else
 		{
-			creep.say("Get Shwifty");
+			creep.sing("Get Shwifty");
 		}
 	}
 };

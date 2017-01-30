@@ -58,7 +58,7 @@ module.exports =
 		countRoomMotivationUnits: function (roomName , motivationName , unitName)
 		{
 			// new cache
-			if (!lib.isNull(Memory.rooms[roomName].cache.unitMotive[motivationName]))
+			if (_.has(Memory, `rooms[${roomName}].cache.unitMotive[${motivationName}]`))
 				return Memory.rooms[roomName].cache.unitMotive[motivationName].units[unitName];
 			else return 0;
 		} ,

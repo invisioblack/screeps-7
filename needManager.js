@@ -23,6 +23,7 @@ module.exports =
 			{
 				// @type {Creep}
 				let creep = Game.creeps[creepName];
+
 				if (creep.memory.motive.room === creep.room.name && creep.memory.motive.motivation !== "" && creep.memory.motive.need !== "")
 				{
 					lib.log(`Creep executing need: ${creep.name}: room: ${creep.room.name} motive room:${creep.memory.motive.room} ${creep.memory.motive.motivation}: ${creep.memory.motive.need}`, debug);
@@ -117,6 +118,14 @@ module.exports =
 						lib.log("Creep: " + creep.name + " Working needLongDistancePickup" , debug);
 						jobLongDistancePickup.work(creep);
 					}
+					else if (need.type === "needScout")
+					{
+						lib.log("Creep: " + creep.name + " Working needScout" , debug);
+						jobScout.work(creep);
+					}
+
+					// creep edge protection
+					creep.getOffEdge();
 				}
 			}
 		}

@@ -26,7 +26,6 @@ NeedClaim.prototype.constructor = NeedClaim;
 
 NeedClaim.prototype.getUnitDemands = function (roomName , memory , motivationName)
 {
-	let debug = false;
 	let room = Game.rooms[roomName];
 	memory.demands = {};
 
@@ -43,7 +42,6 @@ NeedClaim.prototype.getUnitDemands = function (roomName , memory , motivationNam
 		memory.demands["claimer"] = spawnClaims.length;
 	}
 
-	lib.log(" Claim: " + JSON.stringify(memory.demands) , debug);
 	return memory.demands;
 };
 
