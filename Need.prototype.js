@@ -96,7 +96,7 @@ module.exports = function ()
 
 		preResult = containerEnergy / unitCapacity;
 
-		preResult = lib.clamp(Math.ceil(preResult), 0, 1);
+		preResult = lib.clamp(Math.floor(preResult), 0, 1);
 
 		//console.log(`Room: ${roomName} containerEnergy: ${containerEnergy} preResult: ${preResult}`);
 

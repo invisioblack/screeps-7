@@ -37,11 +37,6 @@ NeedLongDistancePickup.prototype.getUnitDemands = function (roomName , memory , 
 		this.getUnitHaulToStorageDemand(memory.targetRoom , "hauler" , memory.demands);
 	}
 
-	if (memory.demands["hauler"] > 1)
-	{
-		memory.demands["hauler"];
-	}
-
 	return memory.demands;
 };
 

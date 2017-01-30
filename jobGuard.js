@@ -26,7 +26,8 @@ JobGuard.prototype.constructor = JobGuard;
 //-------------------------------------------------------------------------
 JobGuard.prototype.work = function (creep)
 {
-	let target = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS, { ignoreCreeps: true});
+	let threats = _.map(creep.room.memory.threat.threats, t => Game.getObjectById(t.id));
+	let target = creep.pos.findClosestByPath(threats, { ignoreCreeps: true});
 	if (target && diplomacyManager.status(target.owner.username) === C.RELATION_HOSTILE)
 	{
 		creep.moveTo(target);

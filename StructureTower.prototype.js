@@ -11,11 +11,7 @@ StructureTower.prototype.autoAttack = function ()
 
 	if (Game.rooms[roomName].memory.threat.level >= C.THREAT_NPC)
 	{
-		targets = _.filter(Game.rooms[roomName].memory.threat.threats , (o) =>
-		{
-			return o.status === C.RELATION_HOSTILE;
-		});
-
+		targets = Game.rooms[roomName].memory.threat.threats;
 		if (targets.length > 0)
 		{
 			target = Game.getObjectById(targets[_.random(0 , targets.length - 1)].id);
@@ -31,10 +27,7 @@ StructureTower.prototype.autoAttack = function ()
 StructureTower.prototype.autoCreepHeal = function ()
 {
 	let roomName = this.room.name;
-	let woundedCreep = _.min(global.cache.rooms[roomName].creeps , (o) =>
-	{
-		return o.hitsMax - o.hits
-	});
+	let woundedCreep = _.min(global.cache.rooms[roomName].creeps , o => o.hitsMax - o.hits);
 	let wounds = woundedCreep.hitsMax - woundedCreep.hits;
 
 	//console.log(":::::::::::::::::::::" + JSON.stringify(woundedCreep));
@@ -51,10 +44,7 @@ StructureTower.prototype.autoRepair = function ()
 	let wallHP = config.wallHP[this.room.controller.level];
 	// non walls/ramparts
 	let structures = roomManager.getStructuresType(this.room.name, STRUCTURE_ALL_NOWALL);
-	let damagedBuildings = _.filter(structures , (object) =>
-	{
-		return (object.hits < (object.hitsMax * config.towerRepairFactor));
-	});
+	let damagedBuildings = _.filter(structures , object => object.hits < (object.hitsMax * config.towerRepairFactor));
 
 	//console.log(JSON.stringify(damagedBuildings));
 
@@ -66,19 +56,14 @@ StructureTower.prototype.autoRepair = function ()
 	}
 	else
 	{
-
-
 		// walls and ramparts
 		structures = roomManager.getStructuresType(this.room.name, STRUCTURE_ALL_WALL);
-		damagedBuildings = _.filter(structures , (object) =>
-		{
-			return (object.hits < (wallHP * config.towerRepairFactor));
-		});
+		damagedBuildings = _.filter(structures , object => object.hits < (wallHP * config.towerRepairFactor));
 
 		//console.log(JSON.stringify((wallHP * config.towerRepairFactor)));
 		//console.log(JSON.stringify(damagedBuildings));
 
-		let target = _.min(damagedBuildings , (c) => c.hits);
+		let target = _.min(damagedBuildings , 'hits');
 
 		//console.log(target);
 

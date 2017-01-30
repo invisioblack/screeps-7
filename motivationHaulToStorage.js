@@ -171,20 +171,20 @@ MotivationHaulToStorage.prototype.updateNeeds = function (roomName)
 				//console.log(`Room: ${v.targetRoom} energy: ${JSON.stringify(energy)}`);
 				if (energy.energy > 2000)
 				{
-					v.priority = need.priority = C.PRIORITY_1;
+					v.priority = C.PRIORITY_1;
 				} else if (energy.energy > 1700)
 				{
-					v.priority = need.priority = C.PRIORITY_2;
+					v.priority = C.PRIORITY_2;
 				} else if (energy.energy > 1500)
 				{
-					v.priority = need.priority = C.PRIORITY_3;
+					v.priority = C.PRIORITY_3;
 				} else if (energy.energy > 1000)
 				{
-					v.priority = need.priority = C.PRIORITY_4;
+					v.priority = C.PRIORITY_4;
 				}
 				else
 				{
-					v.priority = need.priority = C.PRIORITY_5;
+					delete memory.needs[k];
 				}
 			}
 			if (!_.some(room.memory.longDistanceHarvestTargets, (o) => { return v.targetRoom === o || v.type !== "needLongDistancePickup"; }))
