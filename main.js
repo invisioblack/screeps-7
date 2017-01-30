@@ -1,22 +1,13 @@
 /**
- * TODO: revamp haul to storage to make hauler smarter, don't use default energy finder
- *      split loads better
- *      manage links
- *      support picking up minerals
- *      support picking up energy from long range harvest rooms
- * TODO: set rooms as defended, and send creeps to kill enemies there
- *      tie this to garrison
- *      set garrison to allow to pull units from elsewhere
- *      create specific spawn profiles based on threat
- * TODO: should be able to set a motivation on a creep and have the need manager auto set a need on it
- *      this wil be used for things like periodically sending units places to do things
- * TODO: Implement labs and making boosts
- * TODO: improve creep design
- *      allow for specify max parts
- *      allow to specify max/for other parts
- *      utilize boosts
  * TODO: create scouts
+ * TODO: implement ROOM_MODE_SETTLE
+ * TODO: implement motivationAid
+ * TODO: implement auto siege
+ * TODO: implement siege defense
+ * TODO: Implement labs and making boosts
  * TODO: Implement market
+ * TODO: improve creep design
+ *      utilize boosts
  * TODO: create linked room manager for console
  *      creep details and manager
  *      storage details
@@ -27,15 +18,13 @@
  *      allow turing entire system on and off
  *      use this to pull and track historical data
  *      store data by tick, auto cull old data
- * TODO: implement standard validation on every function
- *      check to make sure every reference exists, and handle at the begenning
  */
 "use strict";
 
 //----------------------------------------------------------------------------------------------------------------------
 // Modules
 //----------------------------------------------------------------------------------------------------------------------
-const profiler = require('screeps-profiler');
+//const profiler = require('screeps-profiler');
 //profiler.enable();
 // game prototypes
 require('Creep.prototype');
@@ -57,8 +46,8 @@ cpuManager.log(">>>> Global Start <<<<");
 // main loop -----------------------------------------------------------------------------------------------------------
 module.exports.loop = function ()
 {
-	profiler.wrap(function ()
-	{
+	//profiler.wrap(function ()
+	//{
 		cpuManager.timerStart("++++ Loop ++++" , "loop");
 		delete Memory.rooms[undefined]; // WTF WHY IS THIS HAPPENING!!!
 		//------------------------------------------------------------------------------------------------------------------
@@ -91,7 +80,7 @@ module.exports.loop = function ()
 
 		cpuManager.timerStop("loop" , config.cpuLoopDebug , 30 , 38);
 		cpuManager.tickTrack();
-	});
+	//});
 };
 
 function cleanupMemory ()

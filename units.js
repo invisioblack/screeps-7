@@ -1,4 +1,10 @@
-// TODO: implement max property
+/**
+ * TODO: implement max property
+ * mode 1: spawn by ratios
+ * mode 2: direct parts spawn
+ * mode 3: spawn based on RSL
+  */
+
 "use strict";
 module.exports =
 	{
@@ -864,6 +870,13 @@ module.exports =
 			] ,
 			"memory": {
 				"unit": "heal"
+			}
+		},
+		"scout": {
+			"mode": 2 ,
+			"parts": [ MOVE ] ,
+			"memory": {
+				"unit": "scout"
 			}
 		}
 	};

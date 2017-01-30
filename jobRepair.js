@@ -46,7 +46,7 @@ JobRepair.prototype.work = function (creep)
 		target = Game.getObjectById(creep.memory.repairTargetId);
 	}
 
-	if (lib.isNull(target))
+	if (lib.isNull(target) || target.room.name !== creep.room.name)
 	{
 		if (needName === "repairNoWall." + roomName)
 		{
@@ -61,7 +61,7 @@ JobRepair.prototype.work = function (creep)
 
 		target = _.min(repairSites , (c) => c.hits);
 		creep.memory.repairTargetId = target.id;
-		console.log(`c: ${creep.name} New Target: ${target}`);
+		//console.log(`c: ${creep.name} New Target: ${target}`);
 	}
 
 	creep.sing("Fixing stuff!");

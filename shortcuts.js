@@ -28,7 +28,7 @@ global.ws = wallStatus;
  * @param creepName
  * @param roomName
  */
-global.cRoom = function (creepName , roomName)
+global.croom = function (creepName , roomName)
 {
 	Game.creeps[creepName].deassignMotive(roomName);
 	Game.creeps[creepName].memory.homeRoom = roomName;
@@ -39,17 +39,17 @@ global.cRoom = function (creepName , roomName)
  * @param creepName
  * @param roomName
  */
-global.cTRoom = function (creepName , roomName)
+global.ctroom = function (creepName , roomName)
 {
 	Game.creeps[creepName].deassignMotive(roomName);
 };
 
-global.cAssign = function (creepName , roomName , motivationName , needName)
+global.cassign = function (creepName , roomName , motivationName , needName)
 {
 	Game.creeps[creepName].assignMotive(roomName , motivationName , needName);
 };
 
-global.cList = function (roomName)
+global.clist = function (roomName)
 {
 	let output = "";
 
@@ -94,7 +94,7 @@ global.fs = function (roomName , unit)
 /**
  * list the current claims
  */
-global.qList = function ()
+global.qlist = function ()
 {
 	let claims = Memory.claims;
 	let outputString = "";
@@ -103,19 +103,19 @@ global.qList = function ()
 	outputString = "\n--- Current Claims ---\n";
 	_.forEach(claims , function (claim)
 	{
-		let unclaimCommand = "qUnclaim('" + claim.room + "')";
+		let unclaimCommand = "qunclaim('" + claim.room + "')";
 		let buttonUnclaim = makeButton(getId() , undefined , "Unclaim" , unclaimCommand);
 		let buttonToggle = "";
 		let toggleCommand = "";
 
 		if (claim.type === "reserve")
 		{
-			toggleCommand = "qClaim('" + claim.room + "','" + claim.spawnRoom + "','claim')";
+			toggleCommand = "qclaim('" + claim.room + "','" + claim.spawnRoom + "','claim')";
 			buttonToggle = makeButton(getId() , undefined , "Claim" , toggleCommand);
 		}
 		else if (claim.type === "claim")
 		{
-			toggleCommand = "qClaim('" + claim.room + "','" + claim.spawnRoom + "','reserve')";
+			toggleCommand = "qclaim('" + claim.room + "','" + claim.spawnRoom + "','reserve')";
 			buttonToggle = makeButton(getId() , undefined , "Reserve" , toggleCommand);
 		}
 
@@ -133,7 +133,7 @@ global.qList = function ()
  * @param claimType
  * @returns {*}
  */
-global.qClaim = function (roomName , spawnRoom , claimType)
+global.qclaim = function (roomName , spawnRoom , claimType)
 {
 	let claims = Memory.claims;
 	let claim = _.find(claims , function (c)
@@ -163,7 +163,7 @@ global.qClaim = function (roomName , spawnRoom , claimType)
  * remove a claim
  * @param roomName
  */
-global.qUnclaim = function (roomName)
+global.qunclaim = function (roomName)
 {
 	let claims = Memory.claims;
 	let claim = _.find(claims , function (c)
@@ -184,7 +184,7 @@ global.qUnclaim = function (roomName)
 };
 
 // long range harvest --------------------------------------------------------------------------------------------------
-global.lList = function ()
+global.llist = function ()
 {
 	let outputString = "\n--- Current Long Distance Harvest Targets ---";
 	let button , buttonCommand , link;
@@ -204,7 +204,7 @@ global.lList = function ()
 		outputString += `\nSource Room: ${link}`;
 		_.forEach(r.longDistanceHarvestTargets , function (target)
 		{
-			buttonCommand = "lRemove('" + k + "','" + target + "')";
+			buttonCommand = "lremove('" + k + "','" + target + "')";
 			link = roomLink(target);
 			button = makeButton(getId() , undefined , "Stop Harvesting" , buttonCommand);
 			outputString += `\n\troom: ${link}\t ${button}\n`;
@@ -218,7 +218,7 @@ global.lList = function ()
 	return outputString;
 };
 
-global.lAdd = function (sourceRoomName , targetRoomName)
+global.ladd = function (sourceRoomName , targetRoomName)
 {
 	if (lib.isNull(sourceRoomName) || lib.isNull(targetRoomName))
 	{
@@ -257,7 +257,7 @@ global.lAdd = function (sourceRoomName , targetRoomName)
 	}
 };
 
-global.lRemove = function (sourceRoomName , targetRoomName)
+global.lremove = function (sourceRoomName , targetRoomName)
 {
 	let result = "";
 	if (lib.isNull(sourceRoomName) || lib.isNull(targetRoomName))
@@ -307,74 +307,9 @@ global.lRemove = function (sourceRoomName , targetRoomName)
 };
 
 // manual tactical -----------------------------------------------------------------------------------------------------
-global.mtList = function ()
-{
-	let rooms = Memory.rooms;
-	let outputString = "";
-
-	// build output
-	outputString = "\n--- Manual Tactical Mode ---\n";
-	_.forEach(rooms , function (roomMemory , roomName)
-	{
-		if (!lib.isNull(roomMemory.motivations))
-		{
-			let state = roomMemory.motivations["motivationManualTactical"].active;
-			let buttonToggle = "";
-			let toggleCommand = "";
-
-			if (!state)
-			{
-				toggleCommand = "mt('" + roomName + "',true)";
-				buttonToggle = makeButton(getId() , undefined , "Enable" , toggleCommand);
-			}
-			else
-			{
-				toggleCommand = "mt('" + roomName + "',false)";
-				buttonToggle = makeButton(getId() , undefined , "Disable" , toggleCommand);
-			}
-
-			outputString += `\troom: ${roomLink(roomName)}\tenabled: ${state}\t${buttonToggle}\n`;
-		}
-	});
-
-	// output
-	console.log(outputString);
-};
-
-global.mt = function (roomName , state)
-{
-	let roomMemory = Memory.rooms[roomName];
-	// toggle
-	if (lib.isNull(state))
-	{
-		if (roomMemory.motivations["motivationManualTactical"].active === true)
-		{
-			roomMemory.motivations["motivationManualTactical"].active = false;
-			state = false;
-		}
-		else
-		{
-			roomMemory.motivations["motivationManualTactical"].active = true;
-			state = true;
-		}
-	}
-	else
-	{
-		roomMemory.motivations["motivationManualTactical"].active = state;
-	}
-
-	if (state)
-	{
-		return roomName + " set active.";
-	}
-	else
-	{
-		return roomName + " set inactive.";
-	}
-};
 
 // room manager --------------------------------------------------------------------------------------------------------
-global.rmList = function ()
+global.rmlist = function ()
 {
 	let rooms = Memory.rooms;
 	let outputString = "";
@@ -436,7 +371,7 @@ global.rmList = function ()
  * Motivation display/management
  */
 
-global.mList = function (roomName)
+global.mlist = function (roomName)
 {
 	let output = "";
 	let sortedMotivations = [];
