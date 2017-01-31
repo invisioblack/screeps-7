@@ -69,7 +69,7 @@ Spawn.prototype.generateName = function (name)
  */
 Spawn.prototype.spawnUnit = function (unitName , forceRsl = 0)
 {
-	let debug = true;
+	let debug = false;
 	let spawnEnergy = this.room.getSpawnEnergy();
 	let energyBudget = 0;
 	let forceSpawn = false;
@@ -102,7 +102,7 @@ Spawn.prototype.spawnUnit = function (unitName , forceRsl = 0)
  */
 Spawn.prototype.spawnUnitByEnergy = function (unitName , energyBudget , forceRsl = 0)
 {
-	let debug = true;
+	let debug = false;
 	let parts = [];
 	let name;
 	let result;
