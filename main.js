@@ -72,7 +72,7 @@ module.exports.loop = function ()
 		//------------------------------------------------------------------------------------------------------------------
 		// END
 		//------------------------------------------------------------------------------------------------------------------
-		cpuManager.timerStop("loop" , config.cpuLoopDebug , 30 , 38);
+		cpuManager.timerStop("loop" , config.cpuLoopDebug , 40 , 45);
 		cpuManager.tickTrack();
 	//});
 };
