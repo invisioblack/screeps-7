@@ -27,12 +27,19 @@
 //profiler.enable();
 // game prototypes
 require('Creep.prototype');
+//profiler.registerClass(Creep , 'Creep');
 require('Source.prototype');
+//profiler.registerClass(Source , 'Source');
 require('Room.prototype');
+//profiler.registerClass(Room , 'Room');
 require('RoomPosition.prototype');
+//profiler.registerClass(RoomPosition , 'RoomPosition');
 require('Spawn.prototype');
+//profiler.registerClass(Spawn , 'Spawn');
 require('StructureTower.prototype');
+//profiler.registerClass(StructureTower , 'StructureTower');
 require('StructureLink.prototype');
+//profiler.registerClass(StructureLink , 'StructureLink');
 
 require("globals");
 require("logging");

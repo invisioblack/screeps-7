@@ -287,12 +287,16 @@ module.exports =
 
 			_.forEach(sortedMotivations , (motivationMemory) =>
 			{
+				//cpuManager.timerStart(`\tMotivate r1 Motive: ${roomName} ${motivationMemory.name}` , `motivate.motivateRound1.${motivationMemory.name}`);
 				// is motivation active?
 				// decide which motivations should be active -------------------------------------------------------
 				global[motivationMemory.name].updateActive(roomName);
 
 				if (motivationMemory.active)
 				{
+					// update needs ------------------------------------------------------------------------------------
+					global[motivationMemory.name].updateNeeds(roomName);
+
 					// set up demands ----------------------------------------------------------------------------------
 					motivationMemory.demands = global[motivationMemory.name].getDemands(roomName);
 
@@ -307,12 +311,8 @@ module.exports =
 						motivationMemory.spawnAllocated = false;
 					}
 
-					// update needs ------------------------------------------------------------------------------------
-					global[motivationMemory.name].updateNeeds(roomName);
-
 					// spawn units if allocated spawn ------------------------------------------------------------------
 					// TODO: Spawning needs to be updated, this is terrible.
-					// this probably isn't handling multiple spawns well
 					if (motivationMemory.spawnAllocated && room.isMine)
 					{
 						let isSpawning = false;
@@ -331,6 +331,7 @@ module.exports =
 					// debug output
 					lib.log(`${roomLink(roomName)}: motivate.r1: ${motivationMemory.name}\tActive: ${motivationMemory.active}\tSpawn demand/allocated:  ${motivationMemory.demands.spawn}/${motivationMemory.spawnAllocated}` , debug);
 				}
+				//cpuManager.timerStop(`motivate.motivateRound1.${motivationMemory.name}` , true , 0.2 , 0.5);
 			});
 		} ,
 

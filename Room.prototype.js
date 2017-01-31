@@ -106,6 +106,7 @@ Room.prototype.initMemCache = function (forceRefresh = false)
 	}
 
 	this.updateStructureCache(forceRefresh);
+	this.updateConstructionCache(forceRefresh);
 	this.updateSourceCache(forceRefresh);
 	this.updateDroppedCache(forceRefresh);
 	this.updateFlagCache(forceRefresh);
@@ -142,34 +143,16 @@ Room.prototype.updateStructureCache = function (forceRefresh = false)
 			if (!lib.isNull(CONTROLLER_STRUCTURES[s]) && CONTROLLER_STRUCTURES[s][roomLevel] >= 0)
 			{
 				//console.log(`Checking ${s}...`);
-				let foundStructures = room.find(FIND_STRUCTURES , {
-					filter: function (st)
-					{
-						return st.structureType === s;
-					}
-				});
+				let foundStructures = room.find(FIND_STRUCTURES , { filter: st => st.structureType === s });
 				//console.log(`Found ${foundStructures}...`);
 
 				// map structure ids to the memory object
-				structures[s] = _.map(foundStructures , function (st)
-				{
-					return st.id;
-				});
+				structures[s] = _.map(foundStructures , 'id');
 			}
 		});
 
-		structures[STRUCTURE_ALL_NOWALL] = _.map(
-			room.find(FIND_STRUCTURES , {
-				filter: (s) =>
-				{
-					return s.structureType != STRUCTURE_WALL
-						&& s.structureType != STRUCTURE_RAMPART
-				}
-			}) , (o) =>
-			{
-				return o.id
-			});
-		structures[STRUCTURE_ALL_WALL] = _.map(room.find(FIND_STRUCTURES , {filter: (s) => s.structureType === STRUCTURE_WALL || s.structureType === STRUCTURE_RAMPART}) , (o) => o.id);
+		structures[STRUCTURE_ALL_NOWALL] = _.map(room.find(FIND_STRUCTURES , { filter: s => s.structureType != STRUCTURE_WALL && s.structureType != STRUCTURE_RAMPART }) , 'id');
+		structures[STRUCTURE_ALL_WALL] = _.map(room.find(FIND_STRUCTURES , {filter: (s) => s.structureType === STRUCTURE_WALL || s.structureType === STRUCTURE_RAMPART}) , 'id');
 	}
 };
 
@@ -193,10 +176,32 @@ Room.prototype.updateSourceCache = function (forceRefresh = false)
 		//console.log(`Found: ${foundSources}`);
 
 		// map structure ids to the memory object
-		this.memory.cache.sources = _.map(foundSources , function (s)
-		{
-			return s.id;
-		});
+		this.memory.cache.sources = _.map(foundSources , 'id');
+		//console.log(`Result ${this.memory.cache.sources}`);
+	}
+};
+
+Room.prototype.updateConstructionCache = function (forceRefresh = false)
+{
+	// insure the memory object exists
+	if (lib.isNull(this.memory.cache.construction))
+	{
+		this.memory.cache.construction = {};
+		forceRefresh = true;
+	}
+
+	if (Game.time % 5 === 0)
+	{
+		forceRefresh = true;
+	}
+
+	if (forceRefresh)
+	{
+		let foundConstruction = this.find(FIND_CONSTRUCTION_SITES);
+		//console.log(`Found: ${foundSources}`);
+
+		// map structure ids to the memory object
+		this.memory.cache.construction = _.map(foundConstruction , 'id');
 		//console.log(`Result ${this.memory.cache.sources}`);
 	}
 };
@@ -449,6 +454,8 @@ Room.prototype.motivateLinks = function ()
  * Resource related functions
  *
  */
+
+// TODO: these should be properties
 Room.prototype.getSpawnEnergy = function ()
 {
 	let result = {};
@@ -503,30 +510,6 @@ Room.prototype.getContainerEnergy = function ()
 	} , this);
 
 	return result;
-};
-
-Room.prototype.updateControllerStatus = function ()
-{
-	this.memory.controllerStatus = {};
-	// Enumerate over spawns
-	let controller = this.controller;
-
-	if (this.isMine)
-	{
-		this.memory.controllerStatus.progress = controller.progress;
-		this.memory.controllerStatus.progressTotal = controller.progressTotal;
-		this.memory.controllerStatus.ticksToDowngrade = controller.ticksToDowngrade;
-		this.memory.controllerStatus.level = controller.level;
-	}
-	else
-	{
-		this.memory.controllerStatus.progress = 0;
-		this.memory.controllerStatus.progressTotal = 0;
-		this.memory.controllerStatus.ticksToDowngrade = 0;
-		this.memory.controllerStatus.level = 0;
-	}
-
-	return this.memory.controllerStatus;
 };
 
 /***********************************************************************************************************************
@@ -982,6 +965,18 @@ Room.getStructureIdsType = function (roomName , structureType)
 Room.getStructuresType = function (roomName , structureType)
 {
 	let ids = this.getStructureIdsType(roomName , structureType);
+	let sites = _(ids).map(id => Game.getObjectById(id)).filter().value();
+	return sites;
+};
+
+Room.getConstructionIds = function (roomName)
+{
+	return _.has(Memory , "rooms[" + roomName + "].cache.construction") ? Memory.rooms[roomName].cache.construction : [];
+};
+
+Room.getConstruction = function (roomName)
+{
+	let ids = this.getConstructionIds(roomName);
 	let sites = _(ids).map(id => Game.getObjectById(id)).filter().value();
 	return sites;
 };

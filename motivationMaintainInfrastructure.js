@@ -141,7 +141,7 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 	}
 
 	// create build need
-	numConstructionSites = room.find(FIND_CONSTRUCTION_SITES).length;
+	numConstructionSites = Room.getConstructionIds(room.name).length;
 	needName = "build." + roomName;
 
 	if (numConstructionSites > 0)

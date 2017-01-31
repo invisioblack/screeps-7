@@ -26,14 +26,14 @@ NeedBuild.prototype.constructor = NeedBuild;
 
 NeedBuild.prototype.getUnitDemands = function (roomName , memory , motivationName)
 {
-	let constructionSites = Game.rooms[roomName].find(FIND_CONSTRUCTION_SITES);
+	let numSites = Room.getConstructionIds(roomName).length;
 	memory.demands = {};
 
-	if (constructionSites.length > 5)
+	if (numSites > 5)
 	{
 		memory.demands["worker"] = 2;
 	}
-	else if (constructionSites.length > 0)
+	else if (numSites > 0)
 	{
 		memory.demands["worker"] = 1;
 	}

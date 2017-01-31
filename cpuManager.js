@@ -121,7 +121,7 @@ module.exports =
 				color = C.COLOR_RED;
 			}
 
-			if (config.cpuDebug)
+			if (output)
 			{
 				lib.log(`${result.message}\tCPU Used Total: ${result.cpuStop.toFixed(1)}\tCPU Used Diff: <span style=color:${color}>${result.cpuDiff.toFixed(1)}</span>` , output);
 			}

@@ -30,7 +30,7 @@ JobBuild.prototype.constructor = JobBuild;
 //-------------------------------------------------------------------------
 JobBuild.prototype.work = function (creep)
 {
-	let constructionSites = creep.room.find(FIND_CONSTRUCTION_SITES);
+	let constructionSites = Room.getConstruction(creep.room.name);
 	let target = _.min(constructionSites , (c) => c.progressTotal - c.progress);
 	let carry = _.sum(creep.carry);
 
