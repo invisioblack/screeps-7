@@ -28,7 +28,7 @@ module.exports =
 			result.limit = Game.cpu.limit;
 			result.bucketChange = (result.used - result.limit) * -1;
 			result.bucket = Game.cpu.bucket;
-			result.panic = Memory.cpu.active;
+			result.panic = !Memory.cpu.active;
 
 			Memory.cpu.tickTrack.unshift(result);
 
@@ -40,10 +40,10 @@ module.exports =
 			if (config.cpuDebug)
 			{
 				let ticks = _.take(Memory.cpu.tickTrack , 10);
-				tenTick = (_.sum(ticks , t => t.cpuDiff) / 10).toFixed(1);
+				tenTick = (_.sum(ticks , t => t.used) / 10).toFixed(1);
 				ticks = _.take(Memory.cpu.tickTrack , 100);
-				hunTick = (_.sum(ticks , t => t.cpuDiff) / 100).toFixed(1);
-				thouTick = (_.sum(Memory.cpu.tickTrack , t => t.cpuDiff) / Memory.cpu.tickTrack.length).toFixed(1);
+				hunTick = (_.sum(ticks , t => t.used) / 100).toFixed(1);
+				thouTick = (_.sum(Memory.cpu.tickTrack , t => t.used) / Memory.cpu.tickTrack.length).toFixed(1);
 				bucketChange = result.bucketChange.toFixed(1);
 				lib.log(`Tick: ${result.tick}\tAve 10/100/1000: ${tenTick}/${hunTick}/${thouTick}\tUsed CPU: ${result.used.toFixed(1)}\t<progress value="${result.used}" max="${result.limit}"></progress>\tC/R: ${(result.used/_.size(Game.creeps)).toFixed(1)}/${(result.used/_.size(Game.rooms)).toFixed(1)}\tBucket: ${bucketChange > 0 ? result.bucket + "(+" + bucketChange + ")" : result.bucket + "(" + bucketChange + ")"}` , config.cpuDebug);
 			}
@@ -101,7 +101,6 @@ module.exports =
 			this.initMem();
 			let color = C.COLOR_GREEN;
 			let result = Memory.cpu.timer[key];
-			let tenTick , hunTick , thouTick;
 
 			if (lib.isNull(result))
 			{
