@@ -29,7 +29,7 @@ NeedClaim.prototype.getUnitDemands = function (roomName , memory , motivationNam
 	let room = Game.rooms[roomName];
 	memory.demands = {};
 
-	if (!room.getIsMine())
+	if (!room.isMine)
 	{
 		memory.demands["claimer"] = 1;
 	}

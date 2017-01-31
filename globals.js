@@ -67,8 +67,6 @@ global.motivationSupplySpawn = require('motivationSupplySpawn');
 //profiler.registerClass(motivationSupplySpawn , 'motivationSupplySpawn');
 global.motivationSupplyTower = require("motivationSupplyTower");
 //profiler.registerClass(motivationSupplyTower , 'motivationSupplyTower');
-global.needManager = require("needManager");
-//profiler.registerClass(needManager , 'needManager');
 global.needBuild = require("needBuild");
 //profiler.registerClass(needBuild , 'needBuild');
 global.needClaim = require("needClaim");

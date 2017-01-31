@@ -53,7 +53,7 @@ MotivationScout.prototype.getDesireSpawn = function (roomName , demands)
 	if (memory.active)
 	{
 		let scoutTargets;
-		if (room.getIsMine())
+		if (room.isMine)
 		{
 			scoutTargets = _.filter(Memory.scoutTargets , {sourceRoom: roomName});
 		}
@@ -110,7 +110,7 @@ MotivationScout.prototype.updateNeeds = function (roomName)
 	let memory = room.memory.motivations[this.name];
 	let scoutTargets;
 
-	if (room.getIsMine())
+	if (room.isMine)
 	{
 		scoutTargets = _.filter(Memory.scoutTargets , {sourceRoom: roomName});
 	}

@@ -38,7 +38,7 @@ MotivationHarvestSource.prototype.getDesiredSpawnUnit = function (roomName)
 {
 	let unitName = "";
 	let room = Game.rooms[roomName];
-	if (!lib.isNull(room) && room.getIsMine())
+	if (!lib.isNull(room) && room.isMine)
 		unitName = "harvester";
 	else
 		unitName = "ldharvester";
@@ -58,13 +58,13 @@ MotivationHarvestSource.prototype.getDesireSpawn = function (roomName, demands)
 
 	lib.log(roomMemory.mode, debug);
 
-	if (roomMemory.mode !== C.ROOM_MODE_NORMAL && roomMemory.mode !== C.ROOM_MODE_REMOTE_HARVEST)
+	if (roomMemory.mode < C.ROOM_MODE_NORMAL && roomMemory.mode !== C.ROOM_MODE_REMOTE_HARVEST)
 	{
 		return false;
 	}
 
 	// if we not in one of my owned rooms then check for assigned to the room so we don't double spawn
-	if (lib.isNull(room) || !room.getIsMine())
+	if (lib.isNull(room) || !room.isMine)
 	{
 		numHarvesters = Room.countUnits(roomName, unitName);
 	} else {
@@ -173,6 +173,11 @@ MotivationHarvestSource.prototype.updateNeeds = function (roomName)
 		}
 	}, this);
 };
+
+/***********************************************************************************************************************
+ ***********************************************************************************************************************
+ * properties
+ */
 
 //-------------------------------------------------------------------------
 // export

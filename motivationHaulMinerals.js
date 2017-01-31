@@ -94,7 +94,7 @@ MotivationHaulMinerals.prototype.updateActive = function (roomName)
 		containerTotal = _.sum(mineralContainer.store);
 	}
 
-	if ((room.getIsMine() && room.controller.level >= 4 && storageIds.length > 0) && !lib.isNull(mineralContainer) && containerTotal > 500)
+	if ((room.isMine && room.controller.level >= 4 && storageIds.length > 0) && !lib.isNull(mineralContainer) && containerTotal > 500)
 	{
 		memory.active = true;
 	}

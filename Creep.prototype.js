@@ -31,20 +31,21 @@ Creep.prototype.moveToRange = function (target , range)
 	}
 };
 
-Creep.prototype.avoidHostile = function (range)
+
+// TODO: work on this
+Creep.prototype.avoidHostile = function (range = 4)
 {
-	if (typeof(range) === 'undefined')
+	if (this.room.memory.threat.threats.length)
 	{
-		range = 3;
-	}
-	let inRange = this.pos.findInRange(Game.HOSTILE_CREEPS , range);
-	if (inRange && inRange.length)
-	{
-		let target = this.pos.findNearest(Game.HOSTILE_CREEPS);
-		if (target)
+		let inRange = this.pos.findInRange(this.room.memory.threat.threats , range);
+		if (inRange && inRange.length)
 		{
-			this.moveAwayFromTarget(target);
-			return true;
+			let target = this.pos.findNearest(Game.HOSTILE_CREEPS);
+			if (target)
+			{
+				this.moveAwayFromTarget(target);
+				return true;
+			}
 		}
 	}
 	return false;
@@ -63,63 +64,29 @@ Creep.prototype.rendezvous = function (target, range)
 
 Creep.prototype.getOffEdge = function ()
 {
-	if (this.memory.motive.room === this.room.name)
+	let moveResult = -1;
+	if (( this.pos.x < 1 ) || ( this.pos.x > 48 ) || ( this.pos.y < 1 ) || ( this.pos.y > 48 ))
 	{
-		let moveResult = -1;
-		if (( this.pos.x < 1 ) || ( this.pos.x > 48 ) || ( this.pos.y < 1 ) || ( this.pos.y > 48 ))
+		let dirs = [];
+		if (this.pos.x <= 1)
 		{
-			let dirs = [];
-			if (this.pos.x <= 1)
-			{
-				dirs = [2 , 3 , 4 , 2 , 3 , 4 , 2 , 3 , 4 , 2 , 3 , 4 , 2 , 3 , 4 , 1 , 5 ,];
-			}
-			else if (this.pos.x >= 48)
-			{
-				dirs = [6 , 7 , 8 , 6 , 7 , 8 , 6 , 7 , 8 , 6 , 7 , 8 , 6 , 7 , 8 , 5 , 1 ,];
-			}
-			else if (this.pos.y <= 1)
-			{
-				dirs = [4 , 5 , 6 , 4 , 5 , 6 , 4 , 5 , 6 , 4 , 5 , 6 , 4 , 5 , 6 , 3 , 7 ,];
-			}
-			else if (this.pos.y >= 48)
-			{
-				dirs = [8 , 1 , 2 , 8 , 1 , 2 , 8 , 1 , 2 , 8 , 1 , 2 , 8 , 1 , 2 , 7 , 3 ,];
-			}
-			moveResult = this.move(_.sample(dirs));
-			this.say("Move!");
+			dirs = [2 , 3 , 4 , 2 , 3 , 4 , 2 , 3 , 4 , 2 , 3 , 4 , 2 , 3 , 4 , 1 , 5 ,];
 		}
+		else if (this.pos.x >= 48)
+		{
+			dirs = [6 , 7 , 8 , 6 , 7 , 8 , 6 , 7 , 8 , 6 , 7 , 8 , 6 , 7 , 8 , 5 , 1 ,];
+		}
+		else if (this.pos.y <= 1)
+		{
+			dirs = [4 , 5 , 6 , 4 , 5 , 6 , 4 , 5 , 6 , 4 , 5 , 6 , 4 , 5 , 6 , 3 , 7 ,];
+		}
+		else if (this.pos.y >= 48)
+		{
+			dirs = [8 , 1 , 2 , 8 , 1 , 2 , 8 , 1 , 2 , 8 , 1 , 2 , 8 , 1 , 2 , 7 , 3 ,];
+		}
+		moveResult = this.move(_.sample(dirs));
+		this.say("Move!");
 	}
-};
-
-
-Creep.prototype.carrying = function ()
-{
-	let result = 0;
-
-	if (this.carryCapacity > 0)
-	{
-		result = _.sum(this.carry);
-	}
-
-	return result;
-};
-
-Creep.prototype.percentFull = function ()
-{
-	let percent = 0;
-
-	if (this.carryCapacity > 0)
-	{
-		percent = (this.carrying / this.carryCapacity) * 10000 / 100
-	}
-
-	return percent;
-};
-
-Creep.prototype.getSpawn = function ()
-{
-	let creepSpawn = Game.spawns[creep.memory.spawn];
-	return creepSpawn;
 };
 
 Creep.prototype.getHasPart = function (part)
@@ -244,6 +211,26 @@ Creep.prototype.resetSource = function ()
 	this.memory.sourceId = "";
 	this.memory.sourceType = 0;
 };
+
+
+/***********************************************************************************************************************
+ ***********************************************************************************************************************
+ * properties
+ */
+
+Object.defineProperty(Creep.prototype , "carrying" , {
+	get: function ()
+	{
+		let result = 0;
+
+		if (this.carryCapacity > 0)
+		{
+			result = _.sum(this.carry);
+		}
+
+		return result;
+	}
+});
 
 module.exports = function ()
 {

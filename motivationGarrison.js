@@ -39,9 +39,8 @@ MotivationGarrison.prototype.getDesireSpawn = function (roomName , demands)
 {
 	let result = false;
 	let room = Game.rooms[roomName];
-	let memory = room.memory.motivations[this.name];
 
-	if (room.memory.threat.level >= C.THREAT_PLAYER || (Room.getIsLongDistanceHarvestTarget(roomName) && room.memory.threat.level >= C.THREAT_NPC))
+	if (room.memory.threat.level >= C.THREAT_PLAYER || (room.isLongDistanceHarvestTarget && room.memory.threat.level >= C.THREAT_NPC))
 	{
 		result = true;
 	}

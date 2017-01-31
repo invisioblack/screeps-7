@@ -60,16 +60,16 @@ JobHarvestSource.prototype.work = function (creep)
 		creep.room.memory.sourceLinks[need.targetId] = link.id;
 	}
 
-	if (creep.carryCapacity > 0 && creep.carrying() >= 10 && container.hits < container.hitsMax)
+	if (creep.carryCapacity > 0 && creep.carrying >= 10 && container.hits < container.hitsMax)
 	{
 		creep.repair(container);
 	}
 
-	if (creep.carryCapacity > 0 && creep.carrying() >= 38 && !lib.isNull(link) && link.energy < link.energyCapacity)
+	if (creep.carryCapacity > 0 && creep.carrying >= 38 && !lib.isNull(link) && link.energy < link.energyCapacity)
 	{
 		let tResult = creep.transfer(link , RESOURCE_ENERGY);
 	}
-	else if (_.sum(container.store) < container.storeCapacity || (creep.carrying() < (creep.carryCapacity - 12)))
+	else if (_.sum(container.store) < container.storeCapacity || (creep.carrying < (creep.carryCapacity - 12)))
 	{
 
 		let result = creep.harvest(target);

@@ -48,7 +48,7 @@ Room.prototype.init = function ()
 
 	this.memory.reservation = reservation;
 
-	if (this.getIsMine() && !lib.isNull(this.memory.cache))
+	if (this.isMine && !lib.isNull(this.memory.cache))
 	{
 		let numExtensions = lib.nullProtect(this.memory.cache.structures[STRUCTURE_EXTENSION] , []).length;
 		if (numExtensions < 5)
@@ -169,7 +169,7 @@ Room.prototype.updateStructureCache = function (forceRefresh = false)
 			{
 				return o.id
 			});
-		structures[STRUCTURE_ALL_WALL] = _.map(room.find(FIND_STRUCTURES , {filter: (s) => s.structureType === STRUCTURE_WALL || s.structureType === STRUCTURE_RAMPART}) , (o) =>	o.id);
+		structures[STRUCTURE_ALL_WALL] = _.map(room.find(FIND_STRUCTURES , {filter: (s) => s.structureType === STRUCTURE_WALL || s.structureType === STRUCTURE_RAMPART}) , (o) => o.id);
 	}
 };
 
@@ -326,12 +326,12 @@ Room.prototype.updateEnergyPickupMode = function ()
 			result = C.ROOM_ENERGYPICKUPMODE_CONTAINER;
 		}
 
-		if (numStorage > 0 && this.getIsMine() && numHaulers > 0 && numHarvesters > 0)
+		if (numStorage > 0 && this.isMine && numHaulers > 0 && numHarvesters > 0)
 		{
 			result = C.ROOM_ENERGYPICKUPMODE_STORAGE;
 		}
 
-		if (numLink > 1 && numHaulers > 0 && numHarvesters > 0 && this.getIsMine())
+		if (numLink > 1 && numHaulers > 0 && numHarvesters > 0 && this.isMine)
 		{
 			result = C.ROOM_ENERGYPICKUPMODE_LINK;
 		}
@@ -346,7 +346,7 @@ Room.prototype.updateMode = function ()
 	let relation = this.getRelation();
 	let result = C.ROOM_MODE_NEUTRAL;
 	// my rooms
-	if (this.getIsMine())
+	if (this.isMine)
 	{
 		let numWorkers = Room.countUnits(this.name , "worker");
 
@@ -357,6 +357,10 @@ Room.prototype.updateMode = function ()
 		else if (numWorkers < config.unit.min.worker)
 		{
 			result = C.ROOM_MODE_WORKER_PANIC;
+		}
+		else if (this.memory.cache.structures[STRUCTURE_EXTENSION].length < 5)
+		{
+			result = C.ROOM_MODE_SETTLE;
 		}
 		else
 		{
@@ -419,7 +423,7 @@ Room.prototype.updateUnitDemands = function ()
 
 Room.prototype.motivateLinks = function ()
 {
-	if (this.getIsMine())
+	if (this.isMine)
 	{
 		// find all towers
 		let links = _.map(this.memory.cache.structures[STRUCTURE_LINK] , (o) =>
@@ -507,7 +511,7 @@ Room.prototype.updateControllerStatus = function ()
 	// Enumerate over spawns
 	let controller = this.controller;
 
-	if (this.getIsMine())
+	if (this.isMine)
 	{
 		this.memory.controllerStatus.progress = controller.progress;
 		this.memory.controllerStatus.progressTotal = controller.progressTotal;
@@ -593,7 +597,7 @@ Room.prototype.getMaxHarvesters = function ()
 Room.prototype.safeModeFailsafe = function ()
 {
 	let debug = false;
-	if (this.getIsMine())
+	if (this.isMine)
 	{
 		let controller = this.controller;
 		//safeMode	number	How many ticks of safe mode remaining, or undefined.
@@ -618,7 +622,7 @@ Room.prototype.safeModeFailsafe = function ()
 
 Room.prototype.motivateTowers = function ()
 {
-	if (this.getIsMine())
+	if (this.isMine)
 	{
 		// find all towers
 		let towers = _.map(this.memory.cache.structures[STRUCTURE_TOWER] , (o) =>
@@ -776,7 +780,7 @@ Room.prototype.getBreach = function ()
 	let spawn , spawnId;
 
 	// if not my room, always return false
-	if (!this.getIsMine())
+	if (!this.isMine)
 	{
 		return result;
 	}
@@ -819,6 +823,7 @@ Room.prototype.sing = function (sentence , public)
 };
 
 /***********************************************************************************************************************
+ ***********************************************************************************************************************
  * Static functions
  */
 
@@ -828,7 +833,7 @@ Room.getIsMine = function (roomName)
 	let room = Game.rooms[roomName];
 	if (!lib.isNull(room))
 	{
-		result = room.getIsMine();
+		result = room.isMine;
 	}
 	return result;
 };
@@ -836,8 +841,8 @@ Room.getIsMine = function (roomName)
 Room.updateRoomCache = function ()
 {
 	// build room assigned cache
-	global.cache.unitsByRoomMotive = _.groupBy(Game.creeps, 'memory.motive.room');
-	global.cache.unitsByHomeRoom = _.groupBy(Game.creeps, 'memory.homeRoom');
+	global.cache.unitsByRoomMotive = _.groupBy(Game.creeps , 'memory.motive.room');
+	global.cache.unitsByHomeRoom = _.groupBy(Game.creeps , 'memory.homeRoom');
 };
 
 Room.updateUnitCache = function (roomName)
@@ -969,15 +974,14 @@ Room.getIsLongDistanceHarvestTarget = function (roomName)
 	return lib.nullProtect(Memory.rooms[roomName].longDistanceHarvestParents , []).length > 0;
 };
 
-Room.getStructureIdType = function (roomName , structureType)
+Room.getStructureIdsType = function (roomName , structureType)
 {
-	let result = _.has(Memory , "rooms[" + roomName + "].cache.structures[" + structureType + "]") ? Memory.rooms[roomName].cache.structures[structureType] : [];
-	return result;
+	return _.has(Memory , "rooms[" + roomName + "].cache.structures[" + structureType + "]") ? Memory.rooms[roomName].cache.structures[structureType] : [];
 };
 
 Room.getStructuresType = function (roomName , structureType)
 {
-	let ids = this.getStructureIdType(roomName , structureType);
+	let ids = this.getStructureIdsType(roomName , structureType);
 	let sites = _(ids).map(id => Game.getObjectById(id)).filter().value();
 	return sites;
 };
@@ -1005,9 +1009,14 @@ Room.getRoomUnits = function (roomName , unitName)
 Room.countMotivationUnits = function (roomName , motivationName , unitName)
 {
 	// new cache
-	if (_.has(Memory, `rooms[${roomName}].cache.unitMotive[${motivationName}]`))
+	if (_.has(Memory , `rooms[${roomName}].cache.unitMotive[${motivationName}]`))
+	{
 		return Memory.rooms[roomName].cache.unitMotive[motivationName].units[unitName];
-	else return 0;
+	}
+	else
+	{
+		return 0;
+	}
 };
 
 Room.countHomeRoomUnits = function (roomName , unitName)
@@ -1040,7 +1049,30 @@ Room.countMotivationNeedUnits = function (roomName , motivationName , needName ,
 Room.getRoomUnassignedCreeps = function (roomName)
 {
 	return _.filter(global.cache.rooms[roomName].creeps , creep => creep.memory.motive.motivation === "");
-} ;
+};
+
+/***********************************************************************************************************************
+ ***********************************************************************************************************************
+ * properties
+ */
+Object.defineProperty(Room.prototype , "isMine" , {
+	get: function ()
+	{
+		let result = false;
+		if (!lib.isNull(this.controller) && this.controller.my && this.controller.level > 0)
+		{
+			result = true;
+		}
+		return result;
+	}
+});
+
+Object.defineProperty(Room.prototype , "isLongDistanceHarvestTarget" , {
+	get: function ()
+	{
+		return Room.getIsLongDistanceHarvestTarget(this.name);
+	}
+});
 
 module.exports = function ()
 {

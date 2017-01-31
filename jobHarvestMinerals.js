@@ -52,7 +52,7 @@ JobHarvestMinerals.prototype.work = function (creep)
 
 	let moveResult = creep.moveTo(container , {"maxRooms": 1});
 
-	if (_.sum(container.store) < container.storeCapacity || (creep.carrying() < (creep.carryCapacity - 12)))
+	if (_.sum(container.store) < container.storeCapacity || (creep.carrying < (creep.carryCapacity - 12)))
 	{
 
 		let result = creep.harvest(target);

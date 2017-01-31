@@ -35,14 +35,13 @@ module.exports = function ()
 		}
 
 		// get information
-		carry = _.sum(creep.carry);
 		room = creep.room;
 
 		// if I am full, then reset into work mode ---------------------------------------------------------------------
-		if (carry === creep.carryCapacity)
+		if (creep.carrying === creep.carryCapacity)
 		{
 			creep.say("Full!");
-			this.resetSource(creep);
+			creep.resetSource();
 			creep.memory.job.mode = this.JOB_MODE_WORK;
 			return;
 		}
@@ -52,7 +51,7 @@ module.exports = function ()
 		// init sourceId storage
 		if (lib.isNull(creep.memory.sourceId) || lib.isNull(creep.memory.sourceType))
 		{
-			this.resetSource(creep);
+			creep.resetSource();
 		}
 
 		// validate energy source
@@ -61,7 +60,7 @@ module.exports = function ()
 			source = Game.getObjectById(creep.memory.sourceId);
 			if (lib.isNull(source))
 			{
-				this.resetSource(creep);
+				creep.resetSource();
 			}
 		}
 
@@ -149,7 +148,7 @@ module.exports = function ()
 			if (carry > 0)
 			{
 				creep.memory.job.mode = this.JOB_MODE_WORK;
-				this.resetSource(creep);
+				creep.resetSource();
 			}
 		}
 		else
@@ -181,7 +180,7 @@ module.exports = function ()
 					{
 						creep.say("Empty!");
 						creep.memory.job.mode = this.JOB_MODE_WORK;
-						this.resetSource(creep);
+						creep.resetSource();
 					}
 					break;
 				case this.JOB_SOURCETYPE_SOURCE:
@@ -192,7 +191,7 @@ module.exports = function ()
 
 					if (result === ERR_NOT_ENOUGH_ENERGY)
 					{
-						this.resetSource(creep);
+						creep.resetSource();
 					}
 					if (result === ERR_NOT_IN_RANGE)
 					{
@@ -214,17 +213,11 @@ module.exports = function ()
 					{
 						creep.say("Empty!");
 						creep.memory.job.mode = this.JOB_MODE_WORK;
-						this.resetSource(creep);
+						creep.resetSource();
 					}
 					break;
 			}
 		}
-	};
-
-	Job.prototype.resetSource = function (creep)
-	{
-		creep.memory.sourceId = "";
-		creep.memory.sourceType = this.JOB_SOURCETYPE_NOTHING;
 	};
 
 	Job.prototype.findEnergyPickup = function (creep)
@@ -234,14 +227,16 @@ module.exports = function ()
 
 		if (creep.room.memory.threat.level < C.THREAT_NPC)
 		{
+			let found = false;
 			droppedEnergy.forEach(function (drop)
 			{
 				//console.log("dropID: " + drop);
-				if (creep.memory.sourceType != this.JOB_SOURCETYPE_DROP && Source.countCreepsOnSource(drop) === 0)
+				if (!found && creep.memory.sourceType != this.JOB_SOURCETYPE_DROP && Source.countCreepsOnSource(drop) === 0)
 				{
 					//console.log("I'll get it! dropID: " + drop.id);
 					creep.memory.sourceId = drop;
 					creep.memory.sourceType = this.JOB_SOURCETYPE_DROP;
+					found = true;
 				}
 			} , this);
 		}
@@ -272,10 +267,7 @@ module.exports = function ()
 	Job.prototype.findEnergyContainer = function (creep)
 	{
 		let containers = Room.getStructuresType(creep.room.name , STRUCTURE_CONTAINER);
-		let container = _.max(containers , function (o)
-		{
-			return o.store[RESOURCE_ENERGY]
-		});
+		let container = _.max(containers , `store[${RESOURCE_ENERGY}]`);
 
 		//console.log(`room: ${creep.room.name} creep: ${creep.name} container: ${JSON.stringify(container)}/${container}`);
 
@@ -284,36 +276,6 @@ module.exports = function ()
 		{
 			creep.memory.sourceId = container.id;
 			creep.memory.sourceType = this.JOB_SOURCETYPE_CONTAINER;
-		}
-	};
-
-	Job.prototype.findEnergySource = function (creep)
-	{
-		let sources = _.map(creep.room.cache.sources , function (s)
-		{
-			return Game.getObjectById(s);
-		});
-
-		let source = creep.pos.findClosestByPath(sources ,
-			{
-				maxRooms: 1 ,
-				ignoreCreeps: true ,
-				filter: function (s)
-				{
-					let max = 1;
-					if (creep.memory.unit != "harvester")
-					{
-						max = s.getMaxHarvesters();
-					}
-					let on = Source.countCreepsOnSource(s.id);
-					return max > on && s.energy > 0;
-				}
-			});
-
-		if (!lib.isNull(source))
-		{
-			creep.memory.sourceId = source.id;
-			creep.memory.sourceType = this.JOB_SOURCETYPE_SOURCE;
 		}
 	};
 

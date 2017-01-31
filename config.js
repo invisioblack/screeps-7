@@ -7,15 +7,10 @@ module.exports =
 				"hauler": 2
 			},
 			"max": {
-				"worker": 3 ,
+				"worker": 4 ,
 				"hauler": 4
 			}
 		} ,
-		"critWorkers": 2 ,
-		"minWorkers": 2 ,
-		"medWorkers": 3 ,
-		"maxWorkers": [1 , 8 , 7 , 6 , 6 , 5 , 4 , 3 , 2] ,
-		"maxHaulers": 4 ,
 		"alertTime": 200 ,
 		"wallHP": [0 , 5000 , 10000 , 10000 , 300000 , 500000 , 1000000 , 1500000 , 2000000] ,
 		"claimTicks": 1000 ,
@@ -28,6 +23,7 @@ module.exports =
 		"cpuLoopDebug": true ,
 		"cpuRoomDebug": true ,
 		"cpuMotivateDebug": true ,
+		"cpuMotivateInitDebug": true ,
 		"cpuNeedsDebug": true ,
 		"cpuNeedsUpdateDebug": true ,
 		"cpuNeedsUnitDebug": true ,

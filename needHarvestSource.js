@@ -30,7 +30,7 @@ NeedHarvestSource.prototype.getUnitDemands = function (roomName , memory , motiv
 	let room = Game.rooms[roomName];
 	let ticksTillHarvesterDeath = this.getTicksTillHarvesterDeath(roomName , memory);
 
-	if (!lib.isNull(room) && room.getIsMine())
+	if (!lib.isNull(room) && room.isMine)
 	{
 		unitName = "harvester";
 	}
@@ -53,7 +53,7 @@ NeedHarvestSource.prototype.getTicksTillHarvesterDeath = function (roomName , me
 {
 	let unitName = "";
 	let room = Game.rooms[roomName];
-	if (!lib.isNull(room) && room.getIsMine())
+	if (!lib.isNull(room) && room.isMine)
 	{
 		unitName = "harvester";
 	}

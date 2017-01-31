@@ -60,7 +60,7 @@ JobSupplyExtenders.prototype.work = function (creep)
 			this.getEnergy(creep);
 			break;
 		case this.JOB_MODE_WORK:
-			this.resetSource(creep);
+			creep.resetSource();
 			if (carry === 0)
 			{
 				// reset our need assignment when we run out of energy
@@ -69,7 +69,7 @@ JobSupplyExtenders.prototype.work = function (creep)
 			}
 			else
 			{
-				this.resetSource(creep);
+				creep.resetSource();
 				let extensions = Room.getStructuresType(creep.room.name , STRUCTURE_EXTENSION);
 				let target = creep.pos.findClosestByRange(extensions , {
 					ignoreCreeps: true ,

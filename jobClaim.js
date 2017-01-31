@@ -37,7 +37,7 @@ JobClaim.prototype.work = function (creep)
 	{
 		return;
 	}
-	if (creep.room.getIsMine())
+	if (creep.room.isMine)
 	{
 		// if we're in a room we own, then assign us to a room to take, if that doesn't work, complain
 		if (creep.memory.motive.room === creep.room.name)

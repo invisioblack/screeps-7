@@ -29,7 +29,7 @@ JobHaulMinerals.prototype.work = function (creep)
 	let need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
 	let target = Game.getObjectById(need.targetId); // this is the storage
 	let mineralContainer = Game.getObjectById(creep.room.memory.mineralContainerId);
-	let carry = creep.carrying();
+	let carry = creep.carrying;
 
 	//avoid hostiles
 	if (creep.avoidHostile(creep))

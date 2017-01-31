@@ -61,7 +61,7 @@ MotivationHaulToStorage.prototype.getDesireSpawn = function (roomName, demands)
 	roomUnits.worker = Room.countHomeRoomUnits(roomName, "worker");
 	roomUnits.hauler = Room.countHomeRoomUnits(roomName, "hauler");
 
-	if (memory.active && roomUnits[unitName] < config.unit.max[unitName] && room.memory.mode === C.ROOM_MODE_NORMAL)
+	if (memory.active && roomUnits[unitName] < config.unit.max[unitName] && room.memory.mode >= C.ROOM_MODE_NORMAL)
 	{
 		unitsDemanded = lib.nullProtect(demands.units[unitName], 0);
 	    if (units[unitName] < unitsDemanded)
@@ -92,7 +92,7 @@ MotivationHaulToStorage.prototype.updateActive = function (roomName)
 	let memory = room.memory.motivations[this.name];
 	let storageIds = lib.nullProtect(room.memory.cache.structures[STRUCTURE_STORAGE], []);
 
-	if ((room.getIsMine() && room.controller.level >= 4 && storageIds.length > 0) || Room.getIsLongDistanceHarvestTarget(roomName))
+	if ((room.isMine && room.controller.level >= 4 && storageIds.length > 0) || room.isLongDistanceHarvestTarget)
 	{
 		memory.active = true;
 	} else {
@@ -149,7 +149,7 @@ MotivationHaulToStorage.prototype.updateNeeds = function (roomName)
 		_.forEach(room.memory.longDistanceHarvestTargets, (rN) => {
 			let ldhNeed;
 			needName = "ldhaulstorage." + rN;
-			let numContainers = Room.getStructureIdType(rN, STRUCTURE_CONTAINER).length;
+			let numContainers = Room.getStructureIdsType(rN, STRUCTURE_CONTAINER).length;
 
 			if (numContainers > 0) {
 				if (lib.isNull(memory.needs[needName]))
@@ -191,11 +191,11 @@ MotivationHaulToStorage.prototype.updateNeeds = function (roomName)
 				delete memory.needs[k];
 		});
 	}
-	else if (Room.getIsLongDistanceHarvestTarget(roomName))
+	else if (room.isLongDistanceHarvestTarget)
 	{
 		let needName = "ldpickup." + room.name;
 		let need;
-		let containerIds = Room.getStructureIdType(roomName, STRUCTURE_CONTAINER);
+		let containerIds = Room.getStructureIdsType(roomName, STRUCTURE_CONTAINER);
 
 		// create new need if one doesn't exist
 		if (lib.isNull(memory.needs[needName]) && containerIds.length) {

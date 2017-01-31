@@ -84,7 +84,7 @@ MotivationSupplyTower.prototype.getDesiredSpawnUnit = function (roomName)
 	let energyPickupMode = lib.nullProtect(Memory.rooms[roomName].energyPickupMode , C.ROOM_ENERGYPICKUPMODE_NOENERGY);
 	let numWorkers = Room.countUnits(roomName , "worker");
 
-	if (energyPickupMode < C.ROOM_ENERGYPICKUPMODE_CONTAINER || numWorkers <= config.critWorkers)
+	if (energyPickupMode < C.ROOM_ENERGYPICKUPMODE_CONTAINER || numWorkers <= config.unit.min.worker)
 	{
 		return "worker";
 	}
@@ -109,7 +109,7 @@ MotivationSupplyTower.prototype.updateActive = function (roomName)
 {
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	if (room.getIsMine())
+	if (room.isMine)
 	{
 		memory.active = true;
 	}

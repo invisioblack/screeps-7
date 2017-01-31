@@ -38,9 +38,9 @@ JobLongDistancePickup.prototype.work = function (creep)
 	}
 
 	// if this is a ldh room
-	if (Room.getIsLongDistanceHarvestTarget(creep.room.name))
+	if (creep.room.isLongDistanceHarvestTarget)
 	{
-		let carry = creep.carrying();
+		let carry = creep.carrying;
 
 		// set up mode memory
 		if (lib.isNull(creep.memory.job))
@@ -84,16 +84,16 @@ JobLongDistancePickup.prototype.work = function (creep)
 					{
 						creep.say("Empty!");
 						creep.memory.job.mode = this.JOB_MODE_WORK;
-						this.resetSource(creep);
+						creep.resetSource();
 					}
 				}
 				else
 				{
-					this.resetSource(creep);
+					creep.resetSource();
 				}
 				break;
 			case this.JOB_MODE_WORK:
-				this.resetSource(creep);
+				creep.resetSource();
 				creep.deassignMotive(creep.memory.homeRoom);
 				creep.say("Home!");
 		}

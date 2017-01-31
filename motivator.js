@@ -18,7 +18,7 @@ module.exports =
 			{
 				cpuManager.timerStart(`\t  Room Init ${roomName}` , `motivate.r1.ri.${roomName}`);
 				room.init();
-				cpuManager.timerStop(`motivate.r1.ri.${roomName}` , true);
+				cpuManager.timerStop(`motivate.r1.ri.${roomName}` , config.cpuMotivateInitDebug);
 
 				// init motivations in memory
 				if (lib.isNull(room.memory.motivations))
@@ -33,7 +33,7 @@ module.exports =
 				cpuManager.timerStart(`\t  Motive Init ${roomName}` , `motivate.r1.mi.${roomName}`);
 
 				// harvestSource ---------------------------------------------------------------------------------------
-				if (room.getIsMine() || Room.getIsLongDistanceHarvestTarget(room.name))
+				if (room.isMine || room.isLongDistanceHarvestTarget)
 				{
 					motivationHarvestSource.init(room.name);
 					room.memory.motivations[motivationHarvestSource.name].priority = C.PRIORITY_1;
@@ -44,7 +44,7 @@ module.exports =
 				}
 
 				// haulToStorage ---------------------------------------------------------------------------------------
-				if (room.getIsMine() || Room.getIsLongDistanceHarvestTarget(room.name))
+				if (room.isMine || room.isLongDistanceHarvestTarget)
 				{
 					motivationHaulToStorage.init(room.name);
 					room.memory.motivations[motivationHaulToStorage.name].priority = C.PRIORITY_2;
@@ -55,7 +55,7 @@ module.exports =
 				}
 
 				// supplySpawn -----------------------------------------------------------------------------------------
-				if (room.getIsMine())
+				if (room.isMine)
 				{
 					motivationSupplySpawn.init(room.name);
 					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
@@ -66,10 +66,21 @@ module.exports =
 				}
 
 				// supplyController ------------------------------------------------------------------------------------
-				if (room.getIsMine())
+				if (room.isMine && room.memory.mode === C.ROOM_MODE_NORMAL || room.memory.mode === C.ROOM_MODE_WORKER_PANIC)
 				{
 					motivationSupplyController.init(room.name);
 					room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_4;
+				}
+				else if (room.isMine && room.memory.mode === C.ROOM_MODE_SETTLE)
+				{
+					if (room.controller.ticksToDowngrade < 1000)
+					{
+						motivationSupplyController.init(room.name);
+						room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_2;
+					} else if (motivationSupplyController.isInit(room.name))
+					{
+						motivationSupplyController.deInit(room.name);
+					}
 				}
 				else if (motivationSupplyController.isInit(room.name))
 				{
@@ -77,7 +88,7 @@ module.exports =
 				}
 
 				// longDistanceHarvest ---------------------------------------------------------------------------------
-				if (room.getIsMine() && room.memory.mode === C.ROOM_MODE_NORMAL)
+				if (room.isMine && room.memory.mode === C.ROOM_MODE_NORMAL)
 				{
 					motivationLongDistanceHarvest.init(room.name);
 					room.memory.motivations[motivationLongDistanceHarvest.name].priority = C.PRIORITY_5;
@@ -89,7 +100,7 @@ module.exports =
 
 				// claimRoom -------------------------------------------------------------------------------------------
 				let isClaimed = _.some(Memory.claims , (c) => c.room === room.name);
-				if ((room.getIsMine() && room.memory.mode === C.ROOM_MODE_NORMAL) || isClaimed)
+				if ((room.isMine && room.memory.mode === C.ROOM_MODE_NORMAL) || isClaimed)
 				{
 					motivationClaimRoom.init(room.name);
 					room.memory.motivations[motivationClaimRoom.name].priority = C.PRIORITY_6;
@@ -100,7 +111,7 @@ module.exports =
 				}
 
 				// maintainInfrastructure ------------------------------------------------------------------------------
-				if (room.getIsMine() || Room.getIsLongDistanceHarvestTarget(room.name))
+				if (room.isMine || room.isLongDistanceHarvestTarget)
 				{
 					motivationMaintainInfrastructure.init(room.name);
 					room.memory.motivations[motivationMaintainInfrastructure.name].priority = C.PRIORITY_7;
@@ -111,7 +122,7 @@ module.exports =
 				}
 
 				// harvestMinerals -------------------------------------------------------------------------------------
-				if (room.getIsMine() && room.memory.cache.structures[STRUCTURE_EXTRACTOR].length > 0)
+				if (room.isMine && room.memory.cache.structures[STRUCTURE_EXTRACTOR].length > 0)
 				{
 					let mineralContainer = Game.getObjectById(room.memory.mineralContainerId);
 					let containerTotal = 0;
@@ -178,7 +189,7 @@ module.exports =
 				{
 					motivationScout.deInit(room.name);
 				}
-				cpuManager.timerStop(`motivate.r1.mi.${roomName}` , true);
+				cpuManager.timerStop(`motivate.r1.mi.${roomName}` , config.cpuMotivateInitDebug);
 			});
 
 			/***************************************************************************************************************
@@ -194,7 +205,7 @@ module.exports =
 					Room.updateUnitMotiveCache(k);
 				}
 			});
-			cpuManager.timerStop(`motivate.r1.unloaded` , true);
+			cpuManager.timerStop(`motivate.r1.unloaded` , config.cpuMotivateInitDebug);
 			cpuManager.timerStop("motivate.init" , config.cpuInitDebug , 1 , 2);
 		} ,
 
@@ -220,7 +231,7 @@ module.exports =
 
 				// motivate defense towers -----------------------------------------------------------------------------
 				// TODO: Separate out healing from killing on the turrets
-				if (room.getIsMine())
+				if (room.isMine)
 				{
 					room.motivateTowers(roomName);
 					// safeMode failsafe
@@ -249,7 +260,7 @@ module.exports =
 
 			// fulfill needs ---------------------------------------------------------------------------------------
 			cpuManager.timerStart("\tFulfill Needs" , "motivate.fulfillNeeds");
-			needManager.fulfillNeeds();
+			this.fulfillNeeds();
 			cpuManager.timerStop("motivate.fulfillNeeds" , config.cpuNeedsDebug , 10 , 15);
 
 			cpuManager.timerStart("\tHandle Lost" , "handleLostCreeps");
@@ -299,7 +310,7 @@ module.exports =
 					// spawn units if allocated spawn ------------------------------------------------------------------
 					// TODO: Spawning needs to be updated, this is terrible.
 					// this probably isn't handling multiple spawns well
-					if (motivationMemory.spawnAllocated && room.getIsMine())
+					if (motivationMemory.spawnAllocated && room.isMine)
 					{
 						let isSpawning = false;
 						_.forEach(Game.spawns , (spawn , spawnName) =>
@@ -320,6 +331,11 @@ module.exports =
 			});
 		} ,
 
+		/**
+		 *
+		 * @param sortedMotivations
+		 * @param room
+		 */
 		motivateRound2: function (sortedMotivations , room)
 		{
 			let debug = false;
@@ -334,6 +350,13 @@ module.exports =
 			});
 		} ,
 
+		/**
+		 *
+		 * @param roomName
+		 * @param sortedMotivations
+		 * @param creep
+		 * @returns {boolean}
+		 */
 		findCreepJob: function (roomName , sortedMotivations , creep)
 		{
 			let debug = false;
@@ -412,10 +435,13 @@ module.exports =
 						}
 						break;
 					case "worker":
-						if (Room.getIsMine(creep.memory.motive.room))
+						if (Room.getIsMine(creep.memory.motive.room) && Memory.rooms[roomName].mode === C.ROOM_MODE_NORMAL)
 						{
 							creep.assignMotive(creep.memory.motive.room , "motivationSupplyController" , "supplyController." + creep.memory.motive.room);
 							assigned = true;
+						} else if (Room.getIsMine(creep.memory.motive.room) && Memory.rooms[roomName].mode === C.ROOM_MODE_SETTLE)
+						{
+							creep.assignMotive(creep.memory.motive.room , "motivationMaintainInfrastructure" , "build." + creep.memory.motive.room);
 						}
 						break;
 				}
@@ -433,6 +459,111 @@ module.exports =
 			return assigned;
 		},
 
+		/**
+		 *
+		 */
+		fulfillNeeds: function ()
+		{
+			let debug = false;
+			let creeps = _.filter(Game.creeps, creep => creep.memory.motive.room === creep.room.name && creep.memory.motive.motivation !== "" && creep.memory.motive.need !== "");
+			_.forEach(creeps , creep =>
+			{
+				lib.log(`Creep executing need: ${creep.name}: room: ${creep.room.name} motive room:${creep.memory.motive.room} ${creep.memory.motive.motivation}: ${creep.memory.motive.need}` , debug);
+
+				let need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
+
+				lib.log("Creep: " + creep.name + " m: " + creep.memory.motive.motivation + " n: " + creep.memory.motive.need , debug);
+
+				// deassign motive if we can't find the need
+				if (lib.isNull(need))
+				{
+					creep.deassignMotive();
+				}
+				else if (lib.isNull(need.type))
+				{
+					creep.deassignMotive();
+				}
+				else
+				{
+					switch (need.type)
+					{
+						case "needTransferEnergy":
+							lib.log("Creep: " + creep.name + " Working needTransferEnergy" , debug);
+							jobTransfer.work(creep);
+							break;
+						case "needBuild":
+							lib.log("Creep: " + creep.name + " Working needBuild" , debug);
+							jobBuild.work(creep);
+							break;
+						case "needRepair":
+							lib.log("Creep: " + creep.name + " Working needRepair" , debug);
+							jobRepair.work(creep);
+							break;
+						case "needHarvestSource":
+							lib.log("Creep: " + creep.name + " Working needHarvestSource" , debug);
+							jobHarvestSource.work(creep);
+							break;
+						case   "needHarvestMinerals":
+							lib.log("Creep: " + creep.name + " Working needHarvestMinerals" , debug);
+							jobHarvestMinerals.work(creep);
+							break;
+						case "needLongDistanceHarvest":
+							lib.log("Creep: " + creep.name + " Working needLongDistanceHarvest" , debug);
+							jobLongDistanceHarvest.work(creep);
+							break;
+						case "needGarrison":
+							lib.log("Creep: " + creep.name + " Working needGarrison" , debug);
+							switch (creep.memory.unit)
+							{
+								case "guard":
+									jobGuard.work(creep);
+									break;
+								case "rangedGuard":
+									jobRangedGuard.work(creep);
+									break;
+								case "heal":
+									jobHeal.work(creep);
+									break;
+							}
+							break;
+						case "needHaulMinerals":
+							lib.log("Creep: " + creep.name + " Working needHaulMinerals" , debug);
+							jobHaulMinerals.work(creep);
+							break;
+						case "needHaulToStorage":
+							lib.log("Creep: " + creep.name + " Working needHaulToStorage" , debug);
+							jobTransfer.work(creep);
+							break;
+						case "needClaim":
+							lib.log("Creep: " + creep.name + " Working needClaim" , debug);
+							jobClaim.work(creep);
+							break;
+						case "needManualTactical":
+							lib.log("Creep: " + creep.name + " Working needManualTactical" , debug);
+							jobManualTactical.work(creep);
+							break;
+						case "needSupplyExtenders":
+							lib.log("Creep: " + creep.name + " Working needSupplyExtenders" , debug);
+							jobSupplyExtenders.work(creep);
+							break;
+						case "needLongDistancePickup":
+							lib.log("Creep: " + creep.name + " Working needLongDistancePickup" , debug);
+							jobLongDistancePickup.work(creep);
+							break;
+						case "needScout":
+							lib.log("Creep: " + creep.name + " Working needScout" , debug);
+							jobScout.work(creep);
+							break;
+					}
+					// creep edge protection
+					creep.getOffEdge();
+				}
+			});
+		},
+
+		/**
+		 *
+		 */
 		handleLostCreeps: function ()
 		{
 			let debug = false;

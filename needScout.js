@@ -30,7 +30,7 @@ NeedScout.prototype.getUnitDemands = function (roomName , memory , motivationNam
 
 
 
-	if (!Room.getIsMine(roomName))
+	if (!Room.isMine(roomName))
 	{
 		memory.demands["scout"] = 1;
 	}
