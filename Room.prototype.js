@@ -833,10 +833,17 @@ Room.getIsMine = function (roomName)
 	return result;
 };
 
+Room.updateRoomCache = function ()
+{
+	// build room assigned cache
+	global.cache.unitsByRoomMotive = _.groupBy(Game.creeps, 'memory.motive.room');
+	global.cache.unitsByHomeRoom = _.groupBy(Game.creeps, 'memory.homeRoom');
+};
+
 Room.updateUnitCache = function (roomName)
 {
-	let roomCreeps = _.filter(Game.creeps , creep => creep.memory.motive.room === roomName);
-	let homeRoomCreeps = _.filter(Game.creeps , c => c.memory.homeRoom === roomName);
+	let roomCreeps = global.cache.unitsByRoomMotive[roomName];
+	let homeRoomCreeps = global.cache.unitsByHomeRoom[roomName];
 
 	// build room assigned cache
 	global.cache.rooms[roomName] = {};
@@ -927,7 +934,7 @@ Room.updateUnitMotiveCache = function (roomName)
 	});
 
 	// update creeps into cache
-	roomCreeps = _.filter(Game.creeps , creep => creep.memory.motive.room === roomName);
+	roomCreeps = global.cache.unitsByRoomMotive[roomName];
 
 	_.forEach(roomCreeps , (c , k) =>
 	{

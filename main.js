@@ -67,6 +67,7 @@ module.exports.loop = function ()
 		if (active)
 		{
 			cacheManager.init();
+			Room.updateRoomCache();
 			motivator.init();
 			motivator.motivate();
 		}
