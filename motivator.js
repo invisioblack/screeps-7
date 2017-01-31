@@ -12,13 +12,17 @@ module.exports =
 		// init, should be called before motivate
 		init: function ()
 		{
-			cpuManager.timerStart("motivate init" , "motivate.init");
+			cpuManager.timerStart("\tMotivate init" , "motivate.init");
+
+			// update the base room cache
+			Room.updateRoomCache();
+
 			// init motivations in each room we control
 			_.forEach(Game.rooms , (room , roomName) =>
 			{
 				cpuManager.timerStart(`\t  Room Init ${roomName}` , `motivate.r1.ri.${roomName}`);
 				room.init();
-				cpuManager.timerStop(`motivate.r1.ri.${roomName}` , config.cpuMotivateInitDebug);
+				cpuManager.timerStop(`motivate.r1.ri.${roomName}` , config.cpuInitDetailDebug);
 
 				// init motivations in memory
 				if (lib.isNull(room.memory.motivations))
@@ -189,7 +193,7 @@ module.exports =
 				{
 					motivationScout.deInit(room.name);
 				}
-				cpuManager.timerStop(`motivate.r1.mi.${roomName}` , config.cpuMotivateInitDebug);
+				cpuManager.timerStop(`motivate.r1.mi.${roomName}` , config.cpuInitDetailDebug);
 			});
 
 			/***************************************************************************************************************
@@ -205,8 +209,8 @@ module.exports =
 					Room.updateUnitMotiveCache(k);
 				}
 			});
-			cpuManager.timerStop(`motivate.r1.unloaded` , config.cpuMotivateInitDebug);
-			cpuManager.timerStop("motivate.init" , config.cpuInitDebug , 1 , 2);
+			cpuManager.timerStop(`motivate.r1.unloaded` , config.cpuInitDetailDebug);
+			cpuManager.timerStop("motivate.init" , config.cpuInitDebug , 7 , 10);
 		} ,
 
 		/*******************************************************************************************************************
@@ -221,21 +225,20 @@ module.exports =
 
 			// motivate in each room we control ----------------------------------------------------------------------------
 			cpuManager.timerStart(`\tRoom Total` , "motivate.roomTotal");
-			for (let roomName in Game.rooms)
+			_.forEach(Game.rooms, (room, roomName) =>
 			{
 				cpuManager.timerStart(`\tRoom: ${roomLink(roomName)}` , `motivate.room.${roomName}`);
 
 				// declarations ----------------------------------------------------------------------------------------
 				let sortedMotivations;
-				room = Game.rooms[roomName];
 
 				// motivate defense towers -----------------------------------------------------------------------------
 				// TODO: Separate out healing from killing on the turrets
 				if (room.isMine)
 				{
-					room.motivateTowers(roomName);
+					room.motivateTowers();
 					// safeMode failsafe
-					room.safeModeFailsafe(roomName);
+					room.safeModeFailsafe();
 				}
 
 				// links ---------------------------------------------------------------------------------------------------
@@ -248,15 +251,15 @@ module.exports =
 
 				cpuManager.timerStart(`\t  Motivate R1` , `motivate.r1.${roomName}`);
 				this.motivateRound1(sortedMotivations , room);
-				cpuManager.timerStop(`motivate.r1.${roomName}` , config.cpuMotivateDebug);
+				cpuManager.timerStop(`motivate.r1.${roomName}` , config.cpuMotivateDetailDebug);
 
 				cpuManager.timerStart(`\t  Motivate R2` , `motivate.r2.${roomName}`);
 				this.motivateRound2(sortedMotivations , room);
-				cpuManager.timerStop(`motivate.r2.${roomName}` , config.cpuMotivateDebug);
+				cpuManager.timerStop(`motivate.r2.${roomName}` , config.cpuMotivateDetailDebug);
 
-				cpuManager.timerStop(`motivate.room.${roomName}` , config.cpuRoomDebug , 8 , 10);
-			}
-			cpuManager.timerStop("motivate.roomTotal" , config.cpuRoomDebug , 10 , 20);
+				cpuManager.timerStop(`motivate.room.${roomName}` , config.cpuRoomDetailDebug , 8 , 10);
+			});
+			cpuManager.timerStop("motivate.roomTotal" , config.cpuRoomDebug , 10 , 15);
 
 			// fulfill needs ---------------------------------------------------------------------------------------
 			cpuManager.timerStart("\tFulfill Needs" , "motivate.fulfillNeeds");
@@ -265,9 +268,9 @@ module.exports =
 
 			cpuManager.timerStart("\tHandle Lost" , "handleLostCreeps");
 			this.handleLostCreeps();
-			cpuManager.timerStop("handleLostCreeps" , config.cpuHandleLostDebug , 2 , 4);
+			cpuManager.timerStop("handleLostCreeps" , config.cpuHandleLostDebug , 3 , 5);
 
-			cpuManager.timerStop("motivate" , config.cpuMotivateDebug , 25 , 40);
+			cpuManager.timerStop("motivate" , config.cpuMotivateDebug , 30 , 35);
 		} ,
 
 		/**

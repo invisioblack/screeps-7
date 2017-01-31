@@ -53,7 +53,6 @@ module.exports.loop = function ()
 		// Declarations
 		//------------------------------------------------------------------------------------------------------------------
 		let active = false;
-		let debug = false;
 		let cpuMode = cpuManager.getThrottleMode();
 
 		// cpu throttle
@@ -62,12 +61,10 @@ module.exports.loop = function ()
 		//------------------------------------------------------------------------------------------------------------------
 		// Do stuffs
 		//------------------------------------------------------------------------------------------------------------------
-		lib.log("<b>+++++++++++++++++++++++ new tick +++++++++++++++++++++++</b>" , debug);
 		cleanupMemory();
 		if (active)
 		{
 			cacheManager.init();
-			Room.updateRoomCache();
 			motivator.init();
 			motivator.motivate();
 		}
@@ -75,8 +72,6 @@ module.exports.loop = function ()
 		//------------------------------------------------------------------------------------------------------------------
 		// END
 		//------------------------------------------------------------------------------------------------------------------
-		lib.log("<b>+++++++++++++++++++++++ end tick +++++++++++++++++++++++</b>" , debug);
-
 		cpuManager.timerStop("loop" , config.cpuLoopDebug , 30 , 38);
 		cpuManager.tickTrack();
 	//});
