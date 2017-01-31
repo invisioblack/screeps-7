@@ -572,11 +572,12 @@ module.exports =
 		{
 			let debug = false;
 			let lostCreeps = _.filter(Game.creeps , creep => creep.room.name !== creep.memory.motive.room);
-			let moveResult;
+
+			console.log("Lost creeps: " + lostCreeps.length);
 			lostCreeps.forEach(function (creep)
 			{
 				let position = new RoomPosition(25, 25, creep.memory.motive.room);
-				moveResult = creep.moveTo(position);
+				let moveResult = creep.moveTo(position);
 
 				creep.say("Leave!");
 				lib.log(`LEAVE creep: ${creep.name} room: ${creep.room.name} dest: ${creep.memory.motive.room} move: ${moveResult}` , debug);
