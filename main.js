@@ -52,7 +52,7 @@ module.exports.loop = function ()
 		//------------------------------------------------------------------------------------------------------------------
 		// Declarations
 		//------------------------------------------------------------------------------------------------------------------
-		let active = true;
+		let active = false;
 		let debug = false;
 		let cpuMode = cpuManager.getThrottleMode();
 
@@ -70,7 +70,6 @@ module.exports.loop = function ()
 			motivator.init();
 			motivator.motivate();
 		}
-		creepManager.handleLostCreeps();
 
 		//------------------------------------------------------------------------------------------------------------------
 		// END

@@ -56,7 +56,7 @@ module.exports = function ()
 	{
 		delete Game.rooms[roomName].memory.motivations[this.name];
 
-		let creeps = creepManager.getRoomMotivationCreeps(roomName , this.name);
+		let creeps = Room.getRoomMotivationCreeps(roomName , this.name);
 		_.forEach(creeps , (c) =>
 		{
 			c.deassignMotive();

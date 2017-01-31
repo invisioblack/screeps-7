@@ -66,9 +66,9 @@ MotivationHarvestSource.prototype.getDesireSpawn = function (roomName, demands)
 	// if we not in one of my owned rooms then check for assigned to the room so we don't double spawn
 	if (lib.isNull(room) || !room.getIsMine())
 	{
-		numHarvesters = creepManager.countRoomUnits(roomName, unitName);
+		numHarvesters = Room.countUnits(roomName, unitName);
 	} else {
-	    numHarvesters = creepManager.countRoomMotivationUnits(roomName, "motivationHarvestSource", unitName);
+	    numHarvesters = Room.countMotivationUnits(roomName, "motivationHarvestSource", unitName);
 	}
 
 	if (roomMemory.energyPickupMode < C.ROOM_ENERGYPICKUPMODE_PRECONTAINER || numHarvesters >= demandedHarvesters)
@@ -137,7 +137,7 @@ MotivationHarvestSource.prototype.updateNeeds = function (roomName)
 		// create new need if one doesn't exist
 		if (lib.isNull(memory.needs[needName]))
 		{
-			let containers = roomManager.getStructuresType(roomName, STRUCTURE_CONTAINER);
+			let containers = Room.getStructuresType(roomName, STRUCTURE_CONTAINER);
 			let container = s.pos.findInRange(containers, 1)[0];
 			memory.needs[needName] = {};
 			need = memory.needs[needName];

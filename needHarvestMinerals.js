@@ -60,7 +60,7 @@ NeedHarvestMinerals.prototype.getTicksTillHarvesterDeath = function (roomName , 
 		unitName = "ldharvester";
 	}
 
-	let harvester = creepManager.countRoomUnits(roomName , unitName);
+	let harvester = Room.countUnits(roomName , unitName);
 	//_.has(global, "cache.rooms." + roomName + ".units." + unitName) ? _.find(global.cache.rooms[roomName].units[unitName], (o) => { return o.memory.motive.need === memory.name; }) : null;
 	if (lib.isNull(harvester))
 	{

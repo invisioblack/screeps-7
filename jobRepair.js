@@ -50,12 +50,12 @@ JobRepair.prototype.work = function (creep)
 	{
 		if (needName === "repairNoWall." + roomName)
 		{
-			let structuresNoWall = roomManager.getStructuresType(roomName , STRUCTURE_ALL_NOWALL);
+			let structuresNoWall = Room.getStructuresType(roomName , STRUCTURE_ALL_NOWALL);
 			repairSites = _.filter(structuresNoWall , (s) => s.hits < (s.hitsMax * config.repairFactor));
 		}
 		else if (needName === "repairWall." + roomName)
 		{
-			let structuresWall = roomManager.getStructuresType(roomName , STRUCTURE_ALL_WALL);
+			let structuresWall = Room.getStructuresType(roomName , STRUCTURE_ALL_WALL);
 			repairSites = _.filter(structuresWall , (s) => s.hits < (wallHP * config.repairFactor));
 		}
 

@@ -22,7 +22,7 @@ module.exports = function ()
 		//console.log(`${creep.name} M: ${creep.memory.motive.motivation} N: ${creep.memory.motive.need}`);
 		// declarations
 		let carry , source , room;
-		let numHaulers = creepManager.countHomeRoomUnits(creep.room.name , "hauler");
+		let numHaulers = Room.countHomeRoomUnits(creep.room.name , "hauler");
 
 		// confirm that creep can attempt this job
 		if (creep.carryCapacity === 0)
@@ -129,7 +129,7 @@ module.exports = function ()
 						{
 							max = s.getMaxHarvesters();
 						}
-						let on = creepManager.countCreepsOnSource(s.id);
+						let on = Source.countCreepsOnSource(s.id);
 						return max > on && s.energy > 0;
 					}
 				});
@@ -221,25 +221,6 @@ module.exports = function ()
 		}
 	};
 
-	Job.prototype.countCreepsOnSource = function (sourceId)
-	{
-		let result = 0;
-
-		for (let creepName in Game.creeps)
-		{
-			let creep = Game.creeps[creepName];
-			if (!lib.isNull(creep.memory.sourceId))
-			{
-				if (creep.memory.sourceId === sourceId)
-				{
-					result++;
-				}
-			}
-		}
-
-		return result;
-	};
-
 	Job.prototype.resetSource = function (creep)
 	{
 		creep.memory.sourceId = "";
@@ -256,7 +237,7 @@ module.exports = function ()
 			droppedEnergy.forEach(function (drop)
 			{
 				//console.log("dropID: " + drop);
-				if (creep.memory.sourceType != this.JOB_SOURCETYPE_DROP && creepManager.countCreepsOnSource(drop) === 0)
+				if (creep.memory.sourceType != this.JOB_SOURCETYPE_DROP && Source.countCreepsOnSource(drop) === 0)
 				{
 					//console.log("I'll get it! dropID: " + drop.id);
 					creep.memory.sourceId = drop;
@@ -269,7 +250,7 @@ module.exports = function ()
 	Job.prototype.findEnergyStorage = function (creep)
 	{
 		// look for energy in storages
-		let storage = roomManager.getStructuresType(creep.room.name , STRUCTURE_STORAGE)[0];
+		let storage = Room.getStructuresType(creep.room.name , STRUCTURE_STORAGE)[0];
 		if (!lib.isNull(storage) && storage.store[RESOURCE_ENERGY] > 0)
 		{
 			creep.memory.sourceId = storage.id;
@@ -290,7 +271,7 @@ module.exports = function ()
 
 	Job.prototype.findEnergyContainer = function (creep)
 	{
-		let containers = roomManager.getStructuresType(creep.room.name , STRUCTURE_CONTAINER);
+		let containers = Room.getStructuresType(creep.room.name , STRUCTURE_CONTAINER);
 		let container = _.max(containers , function (o)
 		{
 			return o.store[RESOURCE_ENERGY]
@@ -324,7 +305,7 @@ module.exports = function ()
 					{
 						max = s.getMaxHarvesters();
 					}
-					let on = creepManager.countCreepsOnSource(s.id);
+					let on = Source.countCreepsOnSource(s.id);
 					return max > on && s.energy > 0;
 				}
 			});

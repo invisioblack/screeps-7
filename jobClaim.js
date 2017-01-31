@@ -51,7 +51,7 @@ JobClaim.prototype.work = function (creep)
 			let assigned = false;
 			_.forEach(spawnClaims , function (c)
 			{
-				let countUnits = creepManager.countRoomUnits(c.room , "claimer");
+				let countUnits = Room.countUnits(c.room , "claimer");
 				//_.has(global, "cache.rooms." + c.room + ".units.claimer") ? global.cache.rooms[c.room].units["claimer"].length : 0;
 				if (!countUnits && !assigned)
 				{

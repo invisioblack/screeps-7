@@ -208,7 +208,7 @@ Creep.prototype.deassignMotive = function (roomName)
 
 	if (!lib.isNull(roomName) && roomName != "")
 	{
-		roomManager.updateUnitCache(this.memory.motive.room);
+		Room.updateUnitCache(this.memory.motive.room);
 		this.memory.motive.room = roomName;
 	}
 	this.memory.motive.motivation = "";

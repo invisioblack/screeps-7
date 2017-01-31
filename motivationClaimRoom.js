@@ -58,8 +58,8 @@ MotivationClaimRoom.prototype.getDesireSpawn = function (roomName , demands)
 	let debug = false;
 	let result = false;
 	let room = Game.rooms[roomName];
-	let numWorkers = creepManager.countHomeRoomUnits(roomName , "worker");
-	let numClaimers = creepManager.countHomeRoomUnits(roomName , "claimer");
+	let numWorkers = Room.countHomeRoomUnits(roomName , "worker");
+	let numClaimers = Room.countHomeRoomUnits(roomName , "claimer");
 
 	// filter this to only claims spawning in specified room
 	let spawnClaims = _.filter(Memory.claims , function (c)
@@ -99,7 +99,7 @@ MotivationClaimRoom.prototype.getDesireSpawn = function (roomName , demands)
 			Memory.rooms[c.room] = {};
 		}
 		//console.log(c.room + ": " + _.has(global, "cache.rooms." + c.room + ".units.claimer"));
-		let numClaimers = creepManager.countRoomUnits(c.room , "claimer");
+		let numClaimers = Room.countUnits(c.room , "claimer");
 		let claimRoom = Game.rooms[c.room];
 		let reservation;
 

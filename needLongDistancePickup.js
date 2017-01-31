@@ -28,7 +28,7 @@ NeedLongDistancePickup.prototype.getUnitDemands = function (roomName , memory , 
 {
 	memory.demands = {};
 
-	if (roomManager.getIsLongDistanceHarvestTarget(roomName))
+	if (Room.getIsLongDistanceHarvestTarget(roomName))
 	{
 		this.getUnitHaulToStorageDemand(roomName , "hauler" , memory.demands);
 	}

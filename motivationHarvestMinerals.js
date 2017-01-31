@@ -59,17 +59,17 @@ MotivationHarvestMinerals.prototype.getDesireSpawn = function (roomName , demand
 	let roomMemory = Memory.rooms[roomName];
 	let unitName = this.getDesiredSpawnUnit(roomName);
 	let numHarvesters = 0;
-	let numContainers = roomManager.getStructureIdType(roomName , STRUCTURE_CONTAINER).length;
+	let numContainers = Room.getStructureIdType(roomName , STRUCTURE_CONTAINER).length;
 	let demandedHarvesters = lib.nullProtect(demands.units[unitName] , 0);
 
 	// if we not in one of my owned rooms then check for assigned to the room so we don't double spawn
 	if (lib.isNull(room) || !room.getIsMine())
 	{
-		numHarvesters = creepManager.countRoomUnits(roomName , unitName);
+		numHarvesters = Room.countUnits(roomName , unitName);
 	}
 	else
 	{
-		numHarvesters = creepManager.countRoomMotivationUnits(roomName , "motivationHarvestSource" , unitName);
+		numHarvesters = Room.countMotivationUnits(roomName , "motivationHarvestSource" , unitName);
 	}
 
 	if (numContainers === 0 || numHarvesters >= demandedHarvesters || room.memory.mode !== C.ROOM_MODE_NORMAL)
@@ -97,7 +97,7 @@ MotivationHarvestMinerals.prototype.updateActive = function (roomName)
 {
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	let numContainers = roomManager.getStructureIdType(roomName , STRUCTURE_CONTAINER).length;
+	let numContainers = Room.getStructureIdType(roomName , STRUCTURE_CONTAINER).length;
 	let numSources = room.memory.cache.sources.length;
 	let mineral;
 	if (lib.isNull(room.memory.mineralId))

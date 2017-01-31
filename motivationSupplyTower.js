@@ -62,8 +62,8 @@ MotivationSupplyTower.prototype.getDesireSpawn = function (roomName , demands)
 	{
 		for (let unitName in units)
 		{
-			let numUnits = creepManager.countRoomUnits(roomName , unitName);
-			let roomUnits = creepManager.countHomeRoomUnits(roomName, unitName);
+			let numUnits = Room.countUnits(roomName , unitName);
+			let roomUnits = Room.countHomeRoomUnits(roomName, unitName);
 
 			if (!lib.isNull(demands.units[unitName]) || demands.units[unitName] <= numUnits || roomUnits >= config.unit.max[unitName])
 			{
@@ -82,7 +82,7 @@ MotivationSupplyTower.prototype.getDesireSpawn = function (roomName , demands)
 MotivationSupplyTower.prototype.getDesiredSpawnUnit = function (roomName)
 {
 	let energyPickupMode = lib.nullProtect(Memory.rooms[roomName].energyPickupMode , C.ROOM_ENERGYPICKUPMODE_NOENERGY);
-	let numWorkers = creepManager.countRoomUnits(roomName , "worker");
+	let numWorkers = Room.countUnits(roomName , "worker");
 
 	if (energyPickupMode < C.ROOM_ENERGYPICKUPMODE_CONTAINER || numWorkers <= config.critWorkers)
 	{

@@ -49,7 +49,7 @@ JobScout.prototype.work = function (creep)
 			{
 				if (!assigned)
 				{
-					let countUnits = creepManager.countRoomUnits(scoutTarget.targetRoom , "scout");
+					let countUnits = Room.countUnits(scoutTarget.targetRoom , "scout");
 
 					if (countUnits < 1 && (Game.time - scoutTarget.lastSeen) > (scoutTarget.scoutInterval + scoutTarget.travelTime))
 					{

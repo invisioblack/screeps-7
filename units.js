@@ -302,7 +302,6 @@ module.exports =
 				WORK ,
 				WORK ,
 				WORK ,
-				WORK ,
 				CARRY ,
 				MOVE ,
 				MOVE

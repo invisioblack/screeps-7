@@ -45,7 +45,7 @@ MotivationHaulToStorage.prototype.getDesiredSpawnUnit = function (roomName)
 
 MotivationHaulToStorage.prototype.getDesireSpawn = function (roomName, demands)
 {
-	if (roomManager.getIsLongDistanceHarvestTarget(roomName))
+	if (Room.getIsLongDistanceHarvestTarget(roomName))
 		return false;
 
 	let debug = false;
@@ -55,11 +55,11 @@ MotivationHaulToStorage.prototype.getDesireSpawn = function (roomName, demands)
 	let unitName = this.getDesiredSpawnUnit(roomName);
 	let unitsDemanded = 0;
 	let units = {};
-	units.worker = creepManager.countRoomMotivationUnits(roomName, this.name, "worker");
-	units.hauler = creepManager.countRoomMotivationUnits(roomName, this.name, "hauler");
+	units.worker = Room.countMotivationUnits(roomName, this.name, "worker");
+	units.hauler = Room.countMotivationUnits(roomName, this.name, "hauler");
 	let roomUnits = {};
-	roomUnits.worker = creepManager.countHomeRoomUnits(roomName, "worker");
-	roomUnits.hauler = creepManager.countHomeRoomUnits(roomName, "hauler");
+	roomUnits.worker = Room.countHomeRoomUnits(roomName, "worker");
+	roomUnits.hauler = Room.countHomeRoomUnits(roomName, "hauler");
 
 	if (memory.active && roomUnits[unitName] < config.unit.max[unitName] && room.memory.mode === C.ROOM_MODE_NORMAL)
 	{
@@ -92,7 +92,7 @@ MotivationHaulToStorage.prototype.updateActive = function (roomName)
 	let memory = room.memory.motivations[this.name];
 	let storageIds = lib.nullProtect(room.memory.cache.structures[STRUCTURE_STORAGE], []);
 
-	if ((room.getIsMine() && room.controller.level >= 4 && storageIds.length > 0) || roomManager.getIsLongDistanceHarvestTarget(roomName))
+	if ((room.getIsMine() && room.controller.level >= 4 && storageIds.length > 0) || Room.getIsLongDistanceHarvestTarget(roomName))
 	{
 		memory.active = true;
 	} else {
@@ -114,7 +114,7 @@ MotivationHaulToStorage.prototype.updateNeeds = function (roomName)
 	}
 
 
-	if (roomManager.getIsMine(roomName)) {
+	if (Room.getIsMine(roomName)) {
 
 		// pick up energy in room need -------------------------------------------------------------------------------------
 		let needName = "haulStorage." + room.name;
@@ -149,7 +149,7 @@ MotivationHaulToStorage.prototype.updateNeeds = function (roomName)
 		_.forEach(room.memory.longDistanceHarvestTargets, (rN) => {
 			let ldhNeed;
 			needName = "ldhaulstorage." + rN;
-			let numContainers = roomManager.getStructureIdType(rN, STRUCTURE_CONTAINER).length;
+			let numContainers = Room.getStructureIdType(rN, STRUCTURE_CONTAINER).length;
 
 			if (numContainers > 0) {
 				if (lib.isNull(memory.needs[needName]))
@@ -191,11 +191,11 @@ MotivationHaulToStorage.prototype.updateNeeds = function (roomName)
 				delete memory.needs[k];
 		});
 	}
-	else if (roomManager.getIsLongDistanceHarvestTarget(roomName))
+	else if (Room.getIsLongDistanceHarvestTarget(roomName))
 	{
 		let needName = "ldpickup." + room.name;
 		let need;
-		let containerIds = roomManager.getStructureIdType(roomName, STRUCTURE_CONTAINER);
+		let containerIds = Room.getStructureIdType(roomName, STRUCTURE_CONTAINER);
 
 		// create new need if one doesn't exist
 		if (lib.isNull(memory.needs[needName]) && containerIds.length) {

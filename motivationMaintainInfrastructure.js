@@ -50,7 +50,7 @@ MotivationMaintainInfrastructure.prototype.getDesireSpawn = function (roomName, 
 	let result = true;
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	let numWorkers = creepManager.countHomeRoomUnits(roomName, "worker");
+	let numWorkers = Room.countHomeRoomUnits(roomName, "worker");
 
 	if (!memory.active || lib.isNull(demands.units["worker"]) || demands.units["worker"] <= numWorkers || numWorkers >= config.unit.max.worker)
 	{
@@ -98,7 +98,7 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 	}
 
 	// create repair need
-	structuresNoWall = roomManager.getStructuresType(roomName , STRUCTURE_ALL_NOWALL);
+	structuresNoWall = Room.getStructuresType(roomName , STRUCTURE_ALL_NOWALL);
 	numRepairSites = _.filter(structuresNoWall , (s) =>
 	{
 		return s.hits < (s.hitsMax * config.repairFactor);
@@ -120,7 +120,7 @@ MotivationMaintainInfrastructure.prototype.updateNeeds = function (roomName)
 	}
 
 	// create wall repair need
-	structuresWall = roomManager.getStructuresType(roomName , STRUCTURE_ALL_WALL);
+	structuresWall = Room.getStructuresType(roomName , STRUCTURE_ALL_WALL);
 
 	wallHP = config.wallHP[lib.isNull(room.controller) ? 0 : room.controller.level];
 	numRepairSites = _.filter(structuresWall, (s) => { return s.hits < (wallHP * config.repairFactor); }).length;

@@ -50,7 +50,7 @@ JobLongDistanceHarvest.prototype.work = function (creep)
 					{
 						let roomMemory = Memory.rooms[rN];
 						let numSources = roomMemory.cache.sources.length;
-						let numHarvesters = creepManager.countRoomUnits(rN , "ldharvester");
+						let numHarvesters = Room.countUnits(rN , "ldharvester");
 
 						if (numSources > numHarvesters)
 						{
@@ -69,7 +69,7 @@ JobLongDistanceHarvest.prototype.work = function (creep)
 				if (!assigned)
 				{
 					let roomMemory = Memory.rooms[rN];
-					let numWorkers = creepManager.countRoomUnits(rN , "worker");
+					let numWorkers = Room.countUnits(rN , "worker");
 					let workerDemand = roomMemory.demands["worker"];
 
 					//console.log(`creep: ${creep.name} room: ${rN} num workers: ${numWorkers}/${workerDemand}`);

@@ -5,8 +5,6 @@ global.cacheManager = require("cacheManager");
 //profiler.registerClass(cacheManager , 'cacheManager');
 global.cpuManager = require("cpuManager");
 //profiler.registerClass(cpuManager , 'cpuManager');
-global.creepManager = require("creepManager");
-//profiler.registerClass(creepManager , 'creepManager');
 global.diplomacyManager = require("diplomacyManager");
 //profiler.registerClass(diplomacyManager , 'diplomacyManager');
 global.lib = require("lib");
@@ -99,8 +97,6 @@ global.needSupplyExtenders = require("needSupplyExtenders");
 //profiler.registerClass(needSupplyExtenders , 'needSupplyExtenders');
 global.needTransferEnergy = require("needTransferEnergy");
 //profiler.registerClass(needTransferEnergy , 'needTransferEnergy');
-global.roomManager = require("roomManager");
-//profiler.registerClass(roomManager , 'roomManager');
 
 // settings
 global.config = require("config");

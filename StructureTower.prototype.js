@@ -43,7 +43,7 @@ StructureTower.prototype.autoRepair = function ()
 {
 	let wallHP = config.wallHP[this.room.controller.level];
 	// non walls/ramparts
-	let structures = roomManager.getStructuresType(this.room.name, STRUCTURE_ALL_NOWALL);
+	let structures = Room.getStructuresType(this.room.name, STRUCTURE_ALL_NOWALL);
 	let damagedBuildings = _.filter(structures , object => object.hits < (object.hitsMax * config.towerRepairFactor));
 
 	//console.log(JSON.stringify(damagedBuildings));
@@ -57,7 +57,7 @@ StructureTower.prototype.autoRepair = function ()
 	else
 	{
 		// walls and ramparts
-		structures = roomManager.getStructuresType(this.room.name, STRUCTURE_ALL_WALL);
+		structures = Room.getStructuresType(this.room.name, STRUCTURE_ALL_WALL);
 		damagedBuildings = _.filter(structures , object => object.hits < (wallHP * config.towerRepairFactor));
 
 		//console.log(JSON.stringify((wallHP * config.towerRepairFactor)));

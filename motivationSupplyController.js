@@ -49,8 +49,8 @@ MotivationSupplyController.prototype.getDesireSpawn = function (roomName , deman
 	let result = true;
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
-	let numWorkers = creepManager.countRoomMotivationUnits(roomName , this.name , "worker");
-	let numRoomWorkers = creepManager.countHomeRoomUnits(roomName , this.name , "worker");
+	let numWorkers = Room.countMotivationUnits(roomName , this.name , "worker");
+	let numRoomWorkers = Room.countHomeRoomUnits(roomName , this.name , "worker");
 
 
 	if (!memory.active || lib.isNull(demands.units["worker"]) || demands.units["worker"] <= numWorkers || numRoomWorkers >= config.unit.max.worker)

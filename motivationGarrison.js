@@ -41,14 +41,14 @@ MotivationGarrison.prototype.getDesireSpawn = function (roomName , demands)
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
 
-	if (room.memory.threat.level >= C.THREAT_PLAYER || (roomManager.getIsLongDistanceHarvestTarget(roomName) && room.memory.threat.level >= C.THREAT_NPC))
+	if (room.memory.threat.level >= C.THREAT_PLAYER || (Room.getIsLongDistanceHarvestTarget(roomName) && room.memory.threat.level >= C.THREAT_NPC))
 	{
 		result = true;
 	}
 
 	_.forEach(room.memory.longDistanceHarvestTargets , (r) =>
 	{
-		let numGuards = creepManager.countRoomUnits(r , "guard");
+		let numGuards = Room.countUnits(r , "guard");
 		let threatLevel = Memory.rooms[r].threat.level;
 
 		if (numGuards < 1 && threatLevel >= C.THREAT_NPC)

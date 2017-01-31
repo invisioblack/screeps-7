@@ -52,7 +52,7 @@ NeedLongDistanceHarvest.prototype.getUnitDemands = function (roomName , needMemo
 
 	if (!lib.isNull(targetRoomMemory) && !lib.isNull(targetRoomMemory.motivations) && !lib.isNull(targetRoomMemory.motivations["motivationMaintainInfrastructure"]) && !lib.isNull(targetRoomMemory.motivations["motivationHarvestSource"].demands))
 	{
-		let numWorkers = creepManager.countRoomUnits(needMemory.targetRoom , "worker");
+		let numWorkers = Room.countUnits(needMemory.targetRoom , "worker");
 		needMemory.demands["worker"] = lib.clamp(lib.nullProtect(targetRoomMemory.motivations["motivationMaintainInfrastructure"].demands.units["worker"] , 0), 0, 1);
 		needMemory.demands["worker"] -= numWorkers;
 	}

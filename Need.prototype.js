@@ -38,7 +38,7 @@ module.exports = function ()
 	Need.prototype.getUnitSupplyDemand = function (roomName , target , unitName , result)
 	{
 		let energy , energyCapacity , neededEnergy;
-		let unit = lib.nullProtect(creepManager.getRoomUnits(roomName , unitName)[0] , {});
+		let unit = lib.nullProtect(Room.getRoomUnits(roomName , unitName)[0] , {});
 		let unitCapacity = lib.nullProtect(unit.carryCapacity , 50);
 
 		if (lib.isNull(target))
@@ -68,7 +68,7 @@ module.exports = function ()
 			return {};
 		}
 
-		let unit = lib.nullProtect(creepManager.getRoomUnits(roomName , unitName)[0] , {});
+		let unit = lib.nullProtect(Room.getRoomUnits(roomName , unitName)[0] , {});
 		let unitCapacity = lib.nullProtect(unit.carryCapacity , 500);
 		let containers = _.map(Memory.rooms[roomName].cache.structures[STRUCTURE_CONTAINER] , function (cid)
 		{

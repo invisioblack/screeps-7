@@ -30,7 +30,7 @@ JobHarvestSource.prototype.work = function (creep)
 {
 	let need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
 	let target = Game.getObjectById(need.targetId);
-	let containers = roomManager.getStructuresType(creep.room.name , STRUCTURE_CONTAINER);
+	let containers = Room.getStructuresType(creep.room.name , STRUCTURE_CONTAINER);
 	let container = target.pos.findInRange(containers , 1)[0];
 
 	//avoid hostiles

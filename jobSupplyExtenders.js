@@ -70,7 +70,7 @@ JobSupplyExtenders.prototype.work = function (creep)
 			else
 			{
 				this.resetSource(creep);
-				let extensions = roomManager.getStructuresType(creep.room.name , STRUCTURE_EXTENSION);
+				let extensions = Room.getStructuresType(creep.room.name , STRUCTURE_EXTENSION);
 				let target = creep.pos.findClosestByRange(extensions , {
 					ignoreCreeps: true ,
 					filter: function (e)

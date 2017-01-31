@@ -39,7 +39,7 @@ JobGuard.prototype.work = function (creep)
 		let assigned = false;
 		_.forEach(creep.room.memory.longDistanceHarvestTargets, (r) => {
 			if (!assigned) {
-				let numGuards = creepManager.countRoomUnits(r, "guard");
+				let numGuards = Room.countUnits(r, "guard");
 				let threatLevel = Memory.rooms[r].threat.level;
 
 				if (numGuards < 1 && threatLevel >= C.THREAT_NPC) {

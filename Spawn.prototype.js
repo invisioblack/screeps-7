@@ -72,7 +72,6 @@ Spawn.prototype.spawnUnit = function (unitName , forceRsl = 0)
 	let debug = false;
 	let spawnEnergy = this.room.getSpawnEnergy();
 	let energyBudget = 0;
-	let numWorkers = creepManager.countRoomUnits(this.room.name , "worker");
 	let forceSpawn = false;
 
 	// hijack if forceSpawn is enabled
@@ -186,12 +185,14 @@ Spawn.prototype.spawnUnitByEnergy = function (unitName , energyBudget , forceRsl
 			creep.memory.spawn = this.name;
 			creep.memory.spawnTime = Game.time;
 			creep.initMotive();
+			return true;
 		}
 		else
 		{
 			lib.log('Spawn Status -- Failed creating creep ' + name + ' : ' + name + " energyBudget: " + energyBudget + " result: " + result , debug);
 		}
 	}
+	return false;
 };
 
 Spawn.prototype.shuffle = function (body)

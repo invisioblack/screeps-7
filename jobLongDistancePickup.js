@@ -38,7 +38,7 @@ JobLongDistancePickup.prototype.work = function (creep)
 	}
 
 	// if this is a ldh room
-	if (roomManager.getIsLongDistanceHarvestTarget(creep.room.name))
+	if (Room.getIsLongDistanceHarvestTarget(creep.room.name))
 	{
 		let carry = creep.carrying();
 
@@ -117,7 +117,7 @@ JobLongDistancePickup.prototype.work = function (creep)
 
 		if (carry === 0)
 		{
-			let numHaulers = creepManager.countRoomUnits(target , "hauler");
+			let numHaulers = Room.countUnits(target , "hauler");
 			if (numHaulers < 1)
 			{
 				creep.deassignMotive(target);

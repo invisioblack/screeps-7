@@ -109,8 +109,8 @@ Room.prototype.initMemCache = function (forceRefresh = false)
 	this.updateSourceCache(forceRefresh);
 	this.updateDroppedCache(forceRefresh);
 	this.updateFlagCache(forceRefresh);
-	this.updateUnitCache();
-	roomManager.updateUnitMotiveCache(this.name);
+	Room.updateUnitCache(this.name);
+	Room.updateUnitMotiveCache(this.name);
 };
 
 /**
@@ -229,14 +229,6 @@ Room.prototype.updateDroppedCache = function (forceRefresh = false)
 	}
 };
 
-/**
- * This is a room based unit cache that lives for the duration of one tick in global
- */
-Room.prototype.updateUnitCache = function ()
-{
-	roomManager.updateUnitCache(this.name);
-};
-
 Room.prototype.updateFlagCache = function (forceRefresh = false)
 {
 	let roomName = this.name;
@@ -316,8 +308,8 @@ Room.prototype.updateEnergyPickupMode = function ()
 			});
 		}
 
-		let numHarvesters = creepManager.countRoomUnits(roomName , "harvester");
-		let numHaulers = creepManager.countRoomUnits(roomName , "hauler");
+		let numHarvesters = Room.countUnits(roomName , "harvester");
+		let numHaulers = Room.countUnits(roomName , "hauler");
 
 		/** precontainer, or container setup mode, is when we have containers, but they are not properly manned, check
 		 * for energy in containers in this mode, but don't rely on it
@@ -356,7 +348,7 @@ Room.prototype.updateMode = function ()
 	// my rooms
 	if (this.getIsMine())
 	{
-		let numWorkers = creepManager.countRoomUnits(this.name , "worker");
+		let numWorkers = Room.countUnits(this.name , "worker");
 
 		if (this.memory.threat.level >= C.THREAT_NPC)
 		{
@@ -372,7 +364,7 @@ Room.prototype.updateMode = function ()
 		}
 	}
 	// my harvest rooms
-	else if (roomManager.getIsLongDistanceHarvestTarget(this.name))
+	else if (Room.getIsLongDistanceHarvestTarget(this.name))
 	{
 		if (this.memory.threat.level >= C.THREAT_NPC)
 		{
@@ -499,7 +491,7 @@ Room.prototype.getContainerEnergy = function ()
 	result.energy = 0;
 	result.energyCapacity = 0;
 
-	let containers = roomManager.getStructuresType(this.name , STRUCTURE_CONTAINER);
+	let containers = Room.getStructuresType(this.name , STRUCTURE_CONTAINER);
 	containers.forEach(function (ex)
 	{
 		result.energy += ex.store[RESOURCE_ENERGY];
@@ -580,51 +572,6 @@ Room.prototype.getRelation = function ()
  * Creep finding functions
  *
  */
-
-Room.prototype.getLostCreeps = function ()
-{
-	let roomName = this.name;
-
-	let result = _.filter(Game.creeps , function (creep)
-	{
-		return creep.room.name === roomName
-			&& creep.memory.motive.room !== roomName;
-	});
-
-	return result;
-};
-
-Room.prototype.handleLostCreeps = function ()
-{
-	let debug = false;
-	let lostCreeps = this.getLostCreeps();
-	lostCreeps.forEach(function (creep)
-	{
-		let room = Game.rooms[creep.memory.motive.room];
-		let moveResult;
-		if (!lib.isNull(room) && !lib.isNull(room.controller))
-		{
-			moveResult = creep.moveTo(room.controller);
-			creep.say("Exit!");
-			lib.log(`EXIT creep: ${creep.name} room: ${creep.room.name} dest: ${creep.memory.motive.room} move: ${moveResult}` , debug);
-		}
-		else
-		{
-			let exit = creep.room.findExitTo(creep.memory.motive.room);
-			lib.log(JSON.stringify(exit) , debug);
-			// and move to exit
-			let door = creep.pos.findClosestByRange(exit , {maxRooms: 2});
-			//console.log(JSON.stringify(door));
-			moveResult = creep.moveTo(door);
-
-			creep.say("Leave!");
-			lib.log(`LEAVE creep: ${creep.name} room: ${creep.room.name} dest: ${creep.memory.motive.room} move: ${moveResult}` , debug);
-		}
-
-	} , this);
-
-};
-
 Room.prototype.getMaxHarvesters = function ()
 {
 	let sources = this.find(FIND_SOURCES);
@@ -870,6 +817,223 @@ Room.prototype.sing = function (sentence , public)
 		creeps[i].say(words[i % words.length] , public);
 	}
 };
+
+/***********************************************************************************************************************
+ * Static functions
+ */
+
+Room.getIsMine = function (roomName)
+{
+	let result = false;
+	let room = Game.rooms[roomName];
+	if (!lib.isNull(room))
+	{
+		result = room.getIsMine();
+	}
+	return result;
+};
+
+Room.updateUnitCache = function (roomName)
+{
+	let roomCreeps = _.filter(Game.creeps , creep => creep.memory.motive.room === roomName);
+	let homeRoomCreeps = _.filter(Game.creeps , c => c.memory.homeRoom === roomName);
+
+	// build room assigned cache
+	global.cache.rooms[roomName] = {};
+	global.cache.rooms[roomName].creeps = roomCreeps;
+	global.cache.rooms[roomName].units = _.groupBy(roomCreeps , 'memory.unit');
+
+	// make sure all unit types are filled
+	_.forEach(units , (v , k) =>
+	{
+		if (lib.isNull(global.cache.rooms[roomName].units[k]))
+		{
+			global.cache.rooms[roomName].units[k] = [];
+		}
+	});
+
+	// build home room cache
+	if (lib.isNull(global.cache.homeRooms))
+	{
+		global.cache.homeRooms = {};
+	}
+	global.cache.homeRooms[roomName] = {};
+	global.cache.homeRooms[roomName].creeps = homeRoomCreeps;
+	global.cache.homeRooms[roomName].units = _.groupBy(homeRoomCreeps , 'memory.unit');
+
+	// make sure cache is filled with empty unit records
+	_.forEach(units , (v , k) =>
+	{
+		if (lib.isNull(global.cache.homeRooms[roomName].units[k]))
+		{
+			global.cache.homeRooms[roomName].units[k] = [];
+		}
+	});
+};
+
+/**
+ * room.memory.cache.unitMotive
+ *  motivations
+ *      units - count
+ *      needs
+ *          units - count
+ * @param roomName
+ */
+Room.updateUnitMotiveCache = function (roomName)
+{
+	// declare
+	let debug = false;
+	let roomMemory;
+	let roomCreeps;
+
+	// validate room memory
+	roomMemory = Memory.rooms[roomName];
+	if (lib.isNull(roomMemory) || lib.isNull(roomMemory.motivations))
+	{
+		lib.log(`Error: updateUnitMotiveCache(${roomName}): room memory or motivation memory not found.` , debug);
+		return;
+	}
+
+	// validate cache
+	if (lib.isNull(roomMemory.cache))
+	{
+		roomMemory.cache = {};
+	}
+
+	// init unitMotive cache
+	roomMemory.cache.unitMotive = {};
+
+	// init each motive memory
+	_.forEach(roomMemory.motivations , (motivation , motivationName) =>
+	{
+		roomMemory.cache.unitMotive[motivationName] = {};
+		roomMemory.cache.unitMotive[motivationName].units = {};
+		_.forEach(units , (uv , uk) =>
+		{
+			roomMemory.cache.unitMotive[motivationName].units[uk] = 0;
+		});
+
+		// init needs
+		roomMemory.cache.unitMotive[motivationName].needs = {};
+		_.forEach(motivation.needs , (nv , nk) =>
+		{
+			roomMemory.cache.unitMotive[motivationName].needs[nk] = {};
+			roomMemory.cache.unitMotive[motivationName].needs[nk].units = {};
+			_.forEach(units , (uv , uk) =>
+			{
+				roomMemory.cache.unitMotive[motivationName].needs[nk].units[uk] = 0;
+			});
+		});
+	});
+
+	// update creeps into cache
+	roomCreeps = _.filter(Game.creeps , creep => creep.memory.motive.room === roomName);
+
+	_.forEach(roomCreeps , (c , k) =>
+	{
+		if (c.memory.motive.motivation !== "")
+		{
+			//console.log(`c: ${c.name} r: ${c.memory.motive.room} m: ${c.memory.motive.motivation}`);
+			if (lib.isNull(roomMemory.cache.unitMotive[c.memory.motive.motivation]))
+			{
+				roomMemory.cache.unitMotive[c.memory.motive.motivation] = {};
+				roomMemory.cache.unitMotive[c.memory.motive.motivation].units = {};
+				roomMemory.cache.unitMotive[c.memory.motive.motivation].units[c.memory.unit] = 0;
+				roomMemory.cache.unitMotive[c.memory.motive.motivation].needs = {};
+
+			}
+			roomMemory.cache.unitMotive[c.memory.motive.motivation].units[c.memory.unit]++;
+			if (lib.isNull(roomMemory.cache.unitMotive[c.memory.motive.motivation].needs[c.memory.motive.need]))
+			{
+				roomMemory.cache.unitMotive[c.memory.motive.motivation].needs[c.memory.motive.need] = {};
+				roomMemory.cache.unitMotive[c.memory.motive.motivation].needs[c.memory.motive.need].units = {};
+				roomMemory.cache.unitMotive[c.memory.motive.motivation].needs[c.memory.motive.need].units[c.memory.unit] = 0;
+
+			}
+			roomMemory.cache.unitMotive[c.memory.motive.motivation].needs[c.memory.motive.need].units[c.memory.unit]++;
+		}
+	});
+
+	lib.log(`updateUnitMotiveCache(${roomName}): ${JSON.stringify(roomMemory.cache.unitMotive)}` , debug);
+}
+
+Room.getIsLongDistanceHarvestTarget = function (roomName)
+{
+	return lib.nullProtect(Memory.rooms[roomName].longDistanceHarvestParents , []).length > 0;
+};
+
+Room.getStructureIdType = function (roomName , structureType)
+{
+	let result = _.has(Memory , "rooms[" + roomName + "].cache.structures[" + structureType + "]") ? Memory.rooms[roomName].cache.structures[structureType] : [];
+	return result;
+};
+
+Room.getStructuresType = function (roomName , structureType)
+{
+	let ids = this.getStructureIdType(roomName , structureType);
+	let sites = _(ids).map(id => Game.getObjectById(id)).filter().value();
+	return sites;
+};
+
+/***********************************************************************************************************************
+ * Creep finding functions
+ */
+
+Room.getCreeps = function (roomName)
+{
+	return _.has(global , "cache.rooms." + roomName + ".creeps") ? global.cache.rooms[roomName].creeps : [];
+};
+
+Room.countUnits = function (roomName , unitName)
+{
+	let units = _.has(global , "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName] : [];
+	return units.length;
+};
+
+Room.getRoomUnits = function (roomName , unitName)
+{
+	return _.has(global , "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName] : [];
+};
+
+Room.countMotivationUnits = function (roomName , motivationName , unitName)
+{
+	// new cache
+	if (_.has(Memory, `rooms[${roomName}].cache.unitMotive[${motivationName}]`))
+		return Memory.rooms[roomName].cache.unitMotive[motivationName].units[unitName];
+	else return 0;
+};
+
+Room.countHomeRoomUnits = function (roomName , unitName)
+{
+	let units = _.has(global , "cache.homeRooms." + roomName + ".units." + unitName) ? global.cache.homeRooms[roomName].units[unitName] : [];
+	return units.length;
+};
+
+Room.getRoomMotivationCreeps = function (roomName , motivationName)
+{
+	let result = _.filter(global.cache.rooms[roomName].creeps , function (creep)
+	{
+		return creep.memory.motive.motivation === motivationName;
+	});
+	return result;
+};
+
+Room.countMotivationNeedUnits = function (roomName , motivationName , needName , unitName)
+{
+	if (!lib.isNull(Memory.rooms[roomName].cache.unitMotive[motivationName].needs[needName]))
+	{
+		return Memory.rooms[roomName].cache.unitMotive[motivationName].needs[needName].units[unitName];
+	}
+	else
+	{
+		return 0;
+	}
+};
+
+Room.getRoomUnassignedCreeps = function (roomName)
+{
+	return _.filter(global.cache.rooms[roomName].creeps , creep => creep.memory.motive.motivation === "");
+} ;
 
 module.exports = function ()
 {

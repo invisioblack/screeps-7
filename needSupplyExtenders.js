@@ -27,7 +27,7 @@ NeedSupplyExtenders.prototype.constructor = NeedSupplyExtenders;
 
 NeedSupplyExtenders.prototype.getUnitDemands = function (roomName , memory , motivationName)
 {
-	let numHaulers = creepManager.countRoomUnits(roomName , "hauler");
+	let numHaulers = Room.countUnits(roomName , "hauler");
 	memory.demands = {};
 
 	memory.demands["worker"] = 2;

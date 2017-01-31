@@ -65,7 +65,7 @@ MotivationScout.prototype.getDesireSpawn = function (roomName , demands)
 		_.forEach(memory.needs , (need , needName) =>
 		{
 			let unitsDemanded = lib.nullProtect(need.demands["scout"] , 0);
-			let units = creepManager.countRoomUnits(need.targetRoom , "scout");
+			let units = Room.countUnits(need.targetRoom , "scout");
 			unitsDemandedTotal += unitsDemanded;
 			unitsTotal += units;
 			if (units < unitsDemanded)

@@ -62,7 +62,7 @@ NeedHarvestSource.prototype.getTicksTillHarvesterDeath = function (roomName , me
 		unitName = "ldharvester";
 	}
 
-	let harvester = creepManager.countRoomUnits(roomName , unitName);
+	let harvester = Room.countUnits(roomName , unitName);
 	if (lib.isNull(harvester))
 	{
 		return 0;
