@@ -578,7 +578,7 @@ module.exports =
 			{
 				let position = new RoomPosition(25, 25, creep.memory.motive.room);
 				cpuManager.timerStart("\tLost Move" , "handleLostCreeps.move");
-				let moveResult = creep.moveTo(position);
+				let moveResult = creep.moveTo(position, { reusePath: 10});
 				cpuManager.timerStop("handleLostCreeps.move" , config.cpuHandleLostDebug , 1 , 5);
 				creep.say("Leave!");
 				lib.log(`LEAVE creep: ${creep.name} room: ${creep.room.name} dest: ${creep.memory.motive.room} move: ${moveResult}` , debug);
