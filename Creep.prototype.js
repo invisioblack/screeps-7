@@ -40,6 +40,7 @@ Creep.prototype.travelTo = function (target , options)
 		options = _.assign({
 			ignoreCreeps: recalculatePath === false ,
 			reusePath: recalculatePath ? 0 : 1500 ,
+			maxRooms: 1
 		} , options);
 
 		moveResult = this.moveTo(target , options);
