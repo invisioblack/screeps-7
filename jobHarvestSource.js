@@ -49,7 +49,7 @@ JobHarvestSource.prototype.work = function (creep)
 	creep.memory.sourceId = target.id;
 	creep.memory.sourceType = this.JOB_SOURCETYPE_SOURCE;
 
-	let moveResult = creep.moveTo(container , {"maxRooms": 1});
+	let moveResult = creep.travelTo(container);
 	let link = Game.getObjectById(need.linkId);
 	if (lib.isNull(creep.room.memory.sourceLinks))
 	{
@@ -83,7 +83,7 @@ JobHarvestSource.prototype.work = function (creep)
 		creep.say("Full!");
 		if (creep.pos.getRangeTo(container) != 0)
 		{
-			creep.moveTo(container , {"maxRooms": 1});
+			creep.travelTo(container);
 		}
 	}
 };

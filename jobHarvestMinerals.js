@@ -50,7 +50,7 @@ JobHarvestMinerals.prototype.work = function (creep)
 	creep.memory.sourceType = this.JOB_SOURCETYPE_SOURCE;
 
 
-	let moveResult = creep.moveTo(container , {"maxRooms": 1});
+	let moveResult = creep.travelTo(container);
 
 	if (_.sum(container.store) < container.storeCapacity || (creep.carrying < (creep.carryCapacity - 12)))
 	{
@@ -66,7 +66,7 @@ JobHarvestMinerals.prototype.work = function (creep)
 	{
 		creep.say("Full!");
 		if (creep.pos.getRangeTo(container) != 0)
-			creep.moveTo(container , {"maxRooms": 1});
+			creep.travelTo(container);
 	}
 };
 

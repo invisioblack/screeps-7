@@ -42,7 +42,7 @@ JobHeal.prototype.work = function (creep)
 	//if healing target then go in for the heal
 	if (healTarget)
 	{
-		creep.moveTo(healTarget);
+		creep.travelTo(healTarget);
 		creep.heal(healTarget);
 	}
 	else
@@ -57,7 +57,7 @@ JobHeal.prototype.work = function (creep)
 			{
 				if (target.pos.inRangeTo(creep.pos , 2))
 				{
-					creep.moveTo(creep.pos.x + creep.pos.x - target.pos.x , creep.pos.y + creep.pos.y - target.pos.y);
+					creep.travelTo(creep.pos.x + creep.pos.x - target.pos.x , creep.pos.y + creep.pos.y - target.pos.y);
 				}
 				else if (target.pos.inRangeTo(creep.pos , 3))
 				{
@@ -65,7 +65,7 @@ JobHeal.prototype.work = function (creep)
 				}
 				else
 				{
-					creep.moveTo(target);
+					creep.travelTo(target);
 				}
 			}
 
@@ -73,7 +73,7 @@ JobHeal.prototype.work = function (creep)
 		else
 		{
 			let flag = Game.flags.heal;
-			let result = creep.moveTo(flag , {maxRooms: 1});
+			let result = creep.travelTo(flag);
 			if (result === ERR_NOT_IN_RANGE)
 			{
 				creep.rendezvous(flag , 2);

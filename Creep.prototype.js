@@ -13,6 +13,109 @@
 //-------------------------------------------------------------------------
 "use strict";
 
+/**
+ * Adapted from Vaejor's script, thanks!
+ * @param target
+ * @param options
+ * @returns {number}
+ */
+Creep.prototype.travelTo = function (target , options)
+{
+	let moveResult = ERR_TIRED;
+	if (this.fatigue === 0)
+	{
+		let movePerformed = (
+			( this.memory.movePosLast === undefined )
+			||
+			( this.pos.isEqualTo(RoomPosition.fromMemory(this.memory.movePosLast)) === false )
+		);
+		let recalculatePath = ( ( Game.time - ( this.memory.movePosLastTime || Game.time ) ) >= 3 );
+
+		if (movePerformed === true)
+		{
+			this.memory.movePosLast = this.pos.toMemory();
+			this.memory.movePosLastTime = Game.time;
+		}
+
+		options = _.assign({
+			ignoreCreeps: recalculatePath === false ,
+			reusePath: recalculatePath ? 0 : 1500 ,
+		} , options);
+
+		moveResult = this.moveTo(target , options);
+
+		let nextPos = this.getNextPathPosition();
+
+		/*
+		let nudgeResult = null;
+		if (( nextPos !== undefined ) && ( nextPos.isEqualTo(this.pos) === false ))
+		{
+			let blockingCreep = nextPos.creep;
+			if (blockingCreep !== undefined)
+			{
+				if (( blockingCreep.memory !== undefined ) && ( ( blockingCreep.memory.action === 'idle' ) || ( blockingCreep.memory.action === 'active' ) ))
+				{
+					nudgeResult = blockingCreep.doNudge(this);
+				}
+			}
+		}
+*/
+		if (moveResult === ERR_NO_PATH)
+		{
+			if (
+				( ( this.target instanceof RoomPosition ) && ( this.pos.roomName !== this.target.roomName ) )
+				||
+				( ( this.target instanceof RoomObject ) && ( this.pos.roomName !== this.target.pos.roomName ) )
+			)
+			{
+				if (( this.pos.x <= 1 ) || ( this.pos.x >= 48 ) || ( this.pos.y <= 1 ) || ( this.pos.y >= 48 ))
+				{
+					let dirs = [];
+					if (this.pos.x <= 1)
+					{
+						dirs = [2 , 3 , 4 , 2 , 3 , 4 , 2 , 3 , 4 , 2 , 3 , 4 , 2 , 3 , 4 , 1 , 5 ,];
+					}
+					else if (this.pos.x >= 48)
+					{
+						dirs = [6 , 7 , 8 , 6 , 7 , 8 , 6 , 7 , 8 , 6 , 7 , 8 , 6 , 7 , 8 , 5 , 1 ,];
+					}
+					else if (this.pos.y <= 1)
+					{
+						dirs = [4 , 5 , 6 , 4 , 5 , 6 , 4 , 5 , 6 , 4 , 5 , 6 , 4 , 5 , 6 , 3 , 7 ,];
+					}
+					else if (this.pos.y >= 48)
+					{
+						dirs = [8 , 1 , 2 , 8 , 1 , 2 , 8 , 1 , 2 , 8 , 1 , 2 , 8 , 1 , 2 , 7 , 3 ,];
+					}
+					moveResult = this.move(_.sample(dirs));
+				}
+			}
+			else
+			{
+				//utils.log( 'Creep.prototype.moveTo2(): ' + this + ': moveResult is ERR_NO_PATH (current role: ' + this.role + ', position: ' + this.pos + ', this.target: ' + this.target + '; this.target.pos: ' + this.target.pos + ')' );
+			}
+		}
+		else if (( moveResult !== OK ) && ( moveResult !== ERR_TIRED ))
+		{
+			//utils.log( 'Creep.prototype.moveTo2(): ' + this + ': moveResult is not OK: ' + moveResult + ' (current role: ' + this.role + ')' );
+		}
+		return moveResult;
+	}
+};
+
+Creep.prototype.getNextPathPosition = function() {
+	if ( this.memory._move !== undefined ) {
+		let path = this.memory._move.path;
+		if ( ( path !== undefined ) && ( path !== '' ) ) {
+			let xy = Number.parseInt( path.substring( 0, 4 ), 10 );
+			let x = Math.floor( xy / 100 );
+			let y = xy % 100;
+			return this.room.getPositionAt( x, y );
+		}
+	}
+	return undefined;
+};
+
 Creep.prototype.moveToRange = function (target , range)
 {
 	if (target.pos.inRangeTo(this.pos , range - 1))
@@ -26,11 +129,10 @@ Creep.prototype.moveToRange = function (target , range)
 	}
 	else
 	{
-		this.moveTo(target);
+		this.travelTo(target);
 		return true;
 	}
 };
-
 
 // TODO: work on this
 Creep.prototype.avoidHostile = function (range = 4)
@@ -57,9 +159,9 @@ Creep.prototype.moveAwayFromTarget = function (target)
 	this.move((avoid + 4) % 8);
 };
 
-Creep.prototype.rendezvous = function (target, range)
+Creep.prototype.rendezvous = function (target , range)
 {
-	this.moveToRange(target, range);
+	this.moveToRange(target , range);
 };
 
 Creep.prototype.getOffEdge = function ()
@@ -211,7 +313,6 @@ Creep.prototype.resetSource = function ()
 	this.memory.sourceId = "";
 	this.memory.sourceType = 0;
 };
-
 
 /***********************************************************************************************************************
  ***********************************************************************************************************************

@@ -69,7 +69,7 @@ JobHaulMinerals.prototype.work = function (creep)
 
 			if (result === ERR_NOT_IN_RANGE)
 			{
-				let moveResult = creep.moveTo(mineralContainer , {"maxRooms": 1});
+				let moveResult = creep.moveTo(mineralContainer);
 			}
 			if (carry === creep.carryCapacity || result == ERR_NOT_ENOUGH_ENERGY)
 			{
@@ -96,7 +96,7 @@ JobHaulMinerals.prototype.work = function (creep)
 
 				if (result === ERR_NOT_IN_RANGE)
 				{
-					let moveResult = creep.moveTo(target , {"maxRooms": 1});
+					let moveResult = creep.travelTo(target);
 				}
 				else if (result === ERR_FULL)
 				{

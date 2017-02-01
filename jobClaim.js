@@ -97,7 +97,7 @@ JobClaim.prototype.work = function (creep)
 				{
 					if (creep.claimController(creep.room.controller) === ERR_NOT_IN_RANGE)
 					{
-						creep.moveTo(creep.room.controller);
+						creep.travelTo(creep.room.controller);
 					}
 				}
 			}
@@ -107,7 +107,7 @@ JobClaim.prototype.work = function (creep)
 				{
 					if (creep.reserveController(creep.room.controller) === ERR_NOT_IN_RANGE)
 					{
-						creep.moveTo(creep.room.controller);
+						creep.travelTo(creep.room.controller);
 					}
 				}
 			}

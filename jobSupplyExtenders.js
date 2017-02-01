@@ -89,7 +89,7 @@ JobSupplyExtenders.prototype.work = function (creep)
 					if (result === ERR_NOT_IN_RANGE)
 					{
 
-						let moveResult = creep.moveTo(target , {"maxRooms": 1});
+						let moveResult = creep.travelTo(target);
 						//if (moveResult < 0 && moveResult != ERR_TIRED)
 						//	console.log(creep.name + " Can't move while transferring: " + moveResult);
 					}// else

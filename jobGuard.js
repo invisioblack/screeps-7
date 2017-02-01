@@ -30,7 +30,7 @@ JobGuard.prototype.work = function (creep)
 	let target = creep.pos.findClosestByPath(threats, { ignoreCreeps: true});
 	if (target && diplomacyManager.status(target.owner.username) === C.RELATION_HOSTILE)
 	{
-		creep.moveTo(target);
+		creep.travelTo(target);
 		creep.attack(target);
 	}
 
