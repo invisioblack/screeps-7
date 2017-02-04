@@ -5,7 +5,7 @@ module.exports =
 			"min": {
 				"worker": 2 ,
 				"hauler": 2
-			},
+			} ,
 			"max": {
 				"worker": 4 ,
 				"hauler": 4

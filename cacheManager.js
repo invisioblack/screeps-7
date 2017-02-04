@@ -1,10 +1,14 @@
-/***********************************************************************************************************************
+/**
  * Cache Manager
  *  Manages both global and memory caching
  */
 "use strict";
 
 module.exports = {
+
+	/**
+	 * init
+	 */
 	init: function ()
 	{
 		// init global cache

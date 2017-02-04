@@ -2,6 +2,9 @@
 
 module.exports =
 	{
+		/**
+		 * Initializes cpu memory.
+		 */
 		initMem: function ()
 		{
 			// insure memory structure exist
@@ -11,10 +14,13 @@ module.exports =
 			}
 		} ,
 
+		/**
+		 * Tick tracker should be called last in the loop.
+		 */
 		tickTrack: function ()
 		{
 			let result = {};
-			let tenTick , hunTick , thouTick, bucketChange;
+			let tenTick , hunTick , thouTick , bucketChange;
 
 			this.initMem();
 			// insure memory structure exist
@@ -40,40 +46,18 @@ module.exports =
 			if (config.cpuDebug)
 			{
 				let ticks = _.take(Memory.cpu.tickTrack , 10);
-				let panics = _.sum(Memory.cpu.tickTrack, 'panic');
+				let panics = _.sum(Memory.cpu.tickTrack , 'panic');
 				tenTick = (_.sum(ticks , t => t.used) / 10).toFixed(1);
 				ticks = _.take(Memory.cpu.tickTrack , 100);
 				hunTick = (_.sum(ticks , t => t.used) / 100).toFixed(1);
 				thouTick = (_.sum(Memory.cpu.tickTrack , t => t.used) / Memory.cpu.tickTrack.length).toFixed(1);
 				bucketChange = result.bucketChange.toFixed(1);
-				lib.log(`Tick: ${result.tick}\tAve 10/100/1000: ${tenTick}/${hunTick}/${thouTick}\tPanics: ${panics}\tUsed CPU: ${result.used.toFixed(1)}\t<progress value="${result.used}" max="${result.limit}"></progress>\tC/R: ${(result.used/_.size(Game.creeps)).toFixed(1)}/${(result.used/_.size(Game.rooms)).toFixed(1)}\tBucket: ${bucketChange > 0 ? result.bucket + "(+" + bucketChange + ")" : result.bucket + "(" + bucketChange + ")"}` , config.cpuDebug);
+				lib.log(`Tick: ${result.tick}\tAve 10/100/1000: ${tenTick}/${hunTick}/${thouTick}\tPanics: ${panics}\tUsed CPU: ${result.used.toFixed(1)}\t<progress value="${result.used}" max="${result.limit}"></progress>\tC/R: ${(result.used / _.size(Game.creeps)).toFixed(1)}/${(result.used / _.size(Game.rooms)).toFixed(1)}\tBucket: ${bucketChange > 0 ? result.bucket + "(+" + bucketChange + ")" : result.bucket + "(" + bucketChange + ")"}` , config.cpuDebug);
 			}
-		} ,
-
-		log: function (message)
-		{
-			global.cpuUsed = Game.cpu.getUsed();
-			let cpuDiff = cpuUsed - cpuUsedLast;
-			let green = "#00BB11";
-			let yellow = "#AAAA00";
-			let red = "#CC0011";
-			let color = "#00BB11";
-
-			if (cpuDiff > 1)
-			{
-				color = yellow;
-			}
-			if (cpuDiff >= 5)
-			{
-				color = red;
-			}
-
-			lib.log(`${message}\t CPU Used Total: ${_.round(cpuUsed , 1)}\tCPU Used Diff: <span style=color:${color}>${_.round(cpuDiff , 1)}</span>` , config.cpuDetailDebug);
-			global.cpuUsedLast = cpuUsed;
 		} ,
 
 		/**
-		 *
+		 * Starts a cpu timer.
 		 * @param message
 		 * @param key
 		 */
@@ -97,6 +81,13 @@ module.exports =
 
 		} ,
 
+		/**
+		 * Stops the cpu timer.
+		 * @param key
+		 * @param output
+		 * @param yellow
+		 * @param red
+		 */
 		timerStop: function (key , output = true , yellow = 1 , red = 5)
 		{
 			this.initMem();
@@ -127,6 +118,10 @@ module.exports =
 			}
 		} ,
 
+		/**
+		 * Returns the current throttle mode.
+		 * @returns {number}
+		 */
 		getThrottleMode: function ()
 		{
 			let bucket = Game.cpu.bucket;
@@ -148,6 +143,11 @@ module.exports =
 			}
 		} ,
 
+		/**
+		 * Returns true if the CPU should be active for the given mode.
+		 * @param mode
+		 * @returns {boolean}
+		 */
 		getCPUActive: function (mode)
 		{
 			let pingPong;

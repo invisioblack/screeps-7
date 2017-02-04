@@ -1,6 +1,12 @@
 "use strict";
 
 module.exports = {
+
+	/**
+	 * Set a relation to a player.
+	 * @param name
+	 * @param state
+	 */
 	set: function (name , state = C.RELATION_HOSTILE)
 	{
 		if (!Memory.players)
@@ -11,6 +17,11 @@ module.exports = {
 		Game.notify("Player " + name + " status set to " + state);
 	} ,
 
+	/**
+	 * Get relation for a player.
+	 * @param name
+	 * @returns {*}
+	 */
 	status: function (name)
 	{
 		if (name === C.ME)
@@ -24,6 +35,9 @@ module.exports = {
 		return Memory.players[name];
 	} ,
 
+	/**
+	 * Reset player relation. This deletes the memory key.
+	 */
 	reset: function ()
 	{
 		delete Memory.players;
