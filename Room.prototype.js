@@ -363,10 +363,6 @@ Room.prototype.updateMode = function ()
 		{
 			result = C.ROOM_MODE_WORKER_PANIC;
 		}
-		else if (this.memory.cache.structures[STRUCTURE_EXTENSION].length < 5)
-		{
-			result = C.ROOM_MODE_SETTLE;
-		}
 		else
 		{
 			result = C.ROOM_MODE_NORMAL;

@@ -8,6 +8,7 @@
 global.r1 = "W12S76";
 global.r2 = "W13S77";
 global.r3 = "W11S79";
+global.r4 = "W15S79";
 global.l1 = "W13S76";
 global.l2 = "W12S77";
 global.l3 = "W14S77";
