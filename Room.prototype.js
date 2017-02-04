@@ -416,11 +416,11 @@ Room.prototype.motivateTowers = function ()
  *     from top left to bottom right. the sentence will repeat
  *     if there are more creeps than parts in the sentence
  */
-Room.prototype.sing = function (sentence , public)
+Room.prototype.sing = function (sentence , isPublic)
 {
-	if (public === undefined)
+	if (isPublic === undefined)
 	{
-		public = true;
+		isPublic = true;
 	}
 	let words = sentence.split(" ");
 	let creeps = _.filter(Game.creeps , (c) => c.room.name === this.name);
@@ -431,7 +431,7 @@ Room.prototype.sing = function (sentence , public)
 
 	for (let i in creeps)
 	{
-		creeps[i].say(words[i % words.length] , public);
+		creeps[i].say(words[i % words.length] , isPublic);
 	}
 };
 
