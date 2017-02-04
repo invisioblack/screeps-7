@@ -1,29 +1,23 @@
-//----------------------------------------------------------------------------------------------------------------------
-// motivation
-//----------------------------------------------------------------------------------------------------------------------
-// memory --------------------------------------------------------------------------------------------------------------
-// room.memory.motivations[this.name].init                  boolean - true if this motivation is inited
-// room.memory.motivations[this.name].name
-// room.memory.motivations[this.name].allocatedUnits
-// room.memory.motivations[this.name].spawnAllocated
-// room.memory.motivations[this.name].needs
 "use strict";
 
 module.exports = function ()
 {
+	/**
+	 * Motivation base object
+	 * @constructor
+	 */
 	let Motivation = function ()
 	{
 	};
 
 	Motivation.prototype.name = "Motivation";
 
+	/**
+	 * initializes a motivation such that it can be processed by the room.
+	 * @param roomName
+	 */
 	Motivation.prototype.init = function (roomName)
 	{
-		if (lib.isNull(Game.rooms[roomName]))
-		{
-			return;
-		}
-
 		if (lib.isNull(Game.rooms[roomName].memory.motivations))
 		{
 			Game.rooms[roomName].memory.motivations = {};
@@ -45,13 +39,17 @@ module.exports = function ()
 			room.memory.motivations[this.name].spawnAllocated = false;
 			room.memory.motivations[this.name].needs = {};
 			room.memory.motivations[this.name].active = false;
-			room.memory.motivations[this.name].demands = this.getDemands(room.name);
+			room.memory.motivations[this.name].demands = this.getDemands(roomName);
 
 			// set init true
 			Game.rooms[roomName].memory.motivations[this.name].init = true;
 		}
 	};
 
+	/**
+	 * deInit
+	 * @param roomName
+	 */
 	Motivation.prototype.deInit = function (roomName)
 	{
 		delete Game.rooms[roomName].memory.motivations[this.name];
@@ -64,11 +62,21 @@ module.exports = function ()
 
 	};
 
+	/**
+	 * isInit
+	 * @param roomName
+	 * @returns {boolean|init|*|module.exports.init}
+	 */
 	Motivation.prototype.isInit = function (roomName)
 	{
 		return !lib.isNull(Game.rooms[roomName].memory.motivations[this.name]) && Game.rooms[roomName].memory.motivations[this.name].init;
 	};
 
+	/**
+	 *
+	 * @param roomName
+	 * @returns {{}}
+	 */
 	Motivation.prototype.getUnitDemands = function (roomName)
 	{
 		let debug = false;
@@ -78,7 +86,6 @@ module.exports = function ()
 		lib.log(roomName , debug);
 		_.forEach(roomMemory.motivations[this.name].needs , (need , needName) =>
 		{
-			//console.log("!!!!!!!!!!!!---:" + need.type);
 			let demands = global[need.type].getUnitDemands(roomName , need , this.name);
 
 			lib.log("----------- demands: " + JSON.stringify(demands) , debug);

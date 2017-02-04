@@ -11,6 +11,8 @@
  */
 Room.prototype.init = function ()
 {
+	cpuManager.timerStart(`\t  Room Init ${this.name}` , `motivate.r1.ri.${roomName}`);
+
 	let reservation = {};
 	reservation.time = Game.time;
 
@@ -20,7 +22,6 @@ Room.prototype.init = function ()
 
 	// update defenses -----------------------------------------------------------------------------------------
 	this.updateThreat();
-
 	this.updateMode();
 
 	// init ldh targets mem
@@ -48,6 +49,7 @@ Room.prototype.init = function ()
 
 	this.memory.reservation = reservation;
 
+	// init RSL
 	if (this.isMine && !lib.isNull(this.memory.cache))
 	{
 		let numExtensions = lib.nullProtect(this.memory.cache.structures[STRUCTURE_EXTENSION] , []).length;
@@ -94,8 +96,13 @@ Room.prototype.init = function ()
 
 		this.memory.lastSeen = Game.time;
 	}
+	cpuManager.timerStop(`motivate.r1.ri.${this.name}` , config.cpuInitDetailDebug);
 };
 
+/**
+ * Rebuild room cache.
+ * @param forceRefresh
+ */
 Room.prototype.initMemCache = function (forceRefresh = false)
 {
 	// insure the memory object exists
@@ -108,6 +115,7 @@ Room.prototype.initMemCache = function (forceRefresh = false)
 	this.updateStructureCache(forceRefresh);
 	this.updateConstructionCache(forceRefresh);
 	this.updateSourceCache(forceRefresh);
+	this.updateSpawnCache(forceRefresh);
 	this.updateDroppedCache(forceRefresh);
 	this.updateFlagCache(forceRefresh);
 	Room.updateUnitCache(this.name);
@@ -116,6 +124,7 @@ Room.prototype.initMemCache = function (forceRefresh = false)
 
 /**
  * Updates the memory structure cache to reduce the number of Room.find() calls for structures
+ * @param forceRefresh
  */
 Room.prototype.updateStructureCache = function (forceRefresh = false)
 {
@@ -143,7 +152,7 @@ Room.prototype.updateStructureCache = function (forceRefresh = false)
 			if (!lib.isNull(CONTROLLER_STRUCTURES[s]) && CONTROLLER_STRUCTURES[s][roomLevel] >= 0)
 			{
 				//console.log(`Checking ${s}...`);
-				let foundStructures = room.find(FIND_STRUCTURES , { filter: st => st.structureType === s });
+				let foundStructures = room.find(FIND_STRUCTURES , {filter: st => st.structureType === s});
 				//console.log(`Found ${foundStructures}...`);
 
 				// map structure ids to the memory object
@@ -151,11 +160,15 @@ Room.prototype.updateStructureCache = function (forceRefresh = false)
 			}
 		});
 
-		structures[STRUCTURE_ALL_NOWALL] = _.map(room.find(FIND_STRUCTURES , { filter: s => s.structureType != STRUCTURE_WALL && s.structureType != STRUCTURE_RAMPART }) , 'id');
+		structures[STRUCTURE_ALL_NOWALL] = _.map(room.find(FIND_STRUCTURES , {filter: s => s.structureType != STRUCTURE_WALL && s.structureType != STRUCTURE_RAMPART}) , 'id');
 		structures[STRUCTURE_ALL_WALL] = _.map(room.find(FIND_STRUCTURES , {filter: (s) => s.structureType === STRUCTURE_WALL || s.structureType === STRUCTURE_RAMPART}) , 'id');
 	}
 };
 
+/**
+ * updateSourceCache
+ * @param forceRefresh
+ */
 Room.prototype.updateSourceCache = function (forceRefresh = false)
 {
 	// insure the memory object exists
@@ -181,6 +194,41 @@ Room.prototype.updateSourceCache = function (forceRefresh = false)
 	}
 };
 
+/**
+ * updateSpawnCache
+ * @param forceRefresh
+ */
+Room.prototype.updateSpawnCache = function (forceRefresh = false)
+{
+	// insure the memory object exists
+	if (lib.isNull(this.memory.cache.sources))
+	{
+		this.memory.cache.spawns = {};
+		forceRefresh = true;
+	}
+
+	if (Game.time % 100 === 0)
+	{
+		forceRefresh = true;
+	}
+
+	if (forceRefresh)
+	{
+		let foundSpawns;
+		if (this.isMine)
+			foundSpawns = this.find(FIND_MY_SPAWNS);
+		else
+			foundSpawns = this.find(FIND_HOSTILE_SPAWNS);
+
+		// map structure ids to the memory object
+		this.memory.cache.spawns = _.map(foundSpawns , 'id');
+	}
+};
+
+/**
+ * updateConstructionCache
+ * @param forceRefresh
+ */
 Room.prototype.updateConstructionCache = function (forceRefresh = false)
 {
 	// insure the memory object exists
@@ -206,6 +254,10 @@ Room.prototype.updateConstructionCache = function (forceRefresh = false)
 	}
 };
 
+/**
+ * updateDroppedCache
+ * @param forceRefresh
+ */
 Room.prototype.updateDroppedCache = function (forceRefresh = false)
 {
 	// insure the memory object exists
@@ -226,14 +278,15 @@ Room.prototype.updateDroppedCache = function (forceRefresh = false)
 		//console.log(`Found: ${foundDropped}`);
 
 		// map structure ids to the memory object
-		this.memory.cache.dropped = _.map(foundDropped , function (s)
-		{
-			return s.id;
-		});
+		this.memory.cache.dropped = _.map(foundDropped , 'id');
 		//console.log(`Result ${this.memory.cache.sources}`);
 	}
 };
 
+/**
+ * updateFlagCache
+ * @param forceRefresh
+ */
 Room.prototype.updateFlagCache = function (forceRefresh = false)
 {
 	let roomName = this.name;
@@ -257,10 +310,7 @@ Room.prototype.updateFlagCache = function (forceRefresh = false)
 				return f.room.name === roomName;
 			}
 		});
-		let flagNames = _.map(foundFlags , (f) =>
-		{
-			return f.name
-		});
+		let flagNames = _.map(foundFlags , 'name');
 		//console.log(`Found: ${foundFlags}`);
 
 		// map structure ids to the memory object
@@ -280,7 +330,8 @@ Room.prototype.updateEnergyPickupMode = function ()
 		return;
 	}
 
-	result = C.ROOM_ENERGYPICKUPMODE_NOENERGY;
+	let result = C.ROOM_ENERGYPICKUPMODE_NOENERGY;
+
 	if (this.memory.cache.sources.length > 0)
 	{
 		result = C.ROOM_ENERGYPICKUPMODE_HARVEST;
@@ -346,6 +397,9 @@ Room.prototype.updateEnergyPickupMode = function ()
 	return result;
 };
 
+/**
+ *
+ */
 Room.prototype.updateMode = function ()
 {
 	let relation = this.getRelation();
@@ -403,6 +457,9 @@ Room.prototype.updateMode = function ()
 	this.memory.mode = result;
 };
 
+/**
+ *
+ */
 Room.prototype.updateUnitDemands = function ()
 {
 	// init memory
@@ -426,27 +483,23 @@ Room.prototype.updateUnitDemands = function ()
 
 };
 
+/**
+ * Motivates link in a room, should only be called on my rooms.
+ */
 Room.prototype.motivateLinks = function ()
 {
-	if (this.isMine)
+	// find all towers
+	let links = Room.getStructuresType(this.name , STRUCTURE_LINK);
+	let storageLink = Game.getObjectById(this.memory.storageLinkId);
+	if (!lib.isNull(storageLink))
 	{
-		// find all towers
-		let links = _.map(this.memory.cache.structures[STRUCTURE_LINK] , (o) =>
+		_.forEach(links , link =>
 		{
-			return Game.getObjectById(o)
-		});
-		let storageLinkId = this.memory.storageLinkId;
-		let storageLink = Game.getObjectById(storageLinkId);
-		if (!lib.isNull(storageLink))
-		{
-			links.forEach(function (link)
+			if (link.id != this.memory.storageLinkId && link.energy > 200 && storageLink.energy < (storageLink.energyCapacity - 50))
 			{
-				if (link.id != this.memory.storageLinkId && link.energy > 200 && storageLink.energy < (storageLink.energyCapacity - 50))
-				{
-					link.transferEnergy(storageLink);
-				}
-			} , this);
-		}
+				link.transferEnergy(storageLink);
+			}
+		});
 	}
 };
 
@@ -455,59 +508,65 @@ Room.prototype.motivateLinks = function ()
  *
  */
 
-// TODO: these should be properties
+/**
+ * getSpawnEnergy
+ * @returns {{}}
+ */
 Room.prototype.getSpawnEnergy = function ()
 {
 	let result = {};
+	let extenderEnergy = this.getExtenderEnergy();
+
 	result.energy = 0;
 	result.energyCapacity = 0;
 
 	// Enumerate over spawns
-	for (let spawnName in Game.spawns)
+	_.forEach(Room.getSpawns(this.name) , spawn =>
 	{
-		let spawn = Game.spawns[spawnName];
-		if (spawn.room.name === this.name)
-		{
-			result.energy += spawn.energy;
-			result.energyCapacity += spawn.energyCapacity;
-		}
-	}
+		result.energy += spawn.energy;
+		result.energyCapacity += spawn.energyCapacity;
+	});
 
-	let extenderEnergy = this.getExtenderEnergy();
 	result.energy += extenderEnergy.energy;
 	result.energyCapacity += extenderEnergy.energyCapacity;
 
 	return result;
 };
 
+/**
+ * getExtenderEnergy
+ * @returns {{}}
+ */
 Room.prototype.getExtenderEnergy = function ()
 {
 	let result = {};
 	result.energy = 0;
 	result.energyCapacity = 0;
 
-	let extenders = this.find(FIND_MY_STRUCTURES , {filter: {structureType: STRUCTURE_EXTENSION}});
-	extenders.forEach(function (ex)
+	_.forEach(Room.getStructuresType(this.name, STRUCTURE_EXTENSION), ex =>
 	{
 		result.energy += ex.energy;
 		result.energyCapacity += ex.energyCapacity;
-	} , this);
+	});
 
 	return result;
 };
 
+/**
+ * getContainerEnergy
+ * @returns {{}}
+ */
 Room.prototype.getContainerEnergy = function ()
 {
 	let result = {};
 	result.energy = 0;
 	result.energyCapacity = 0;
 
-	let containers = Room.getStructuresType(this.name , STRUCTURE_CONTAINER);
-	containers.forEach(function (ex)
+	_.forEach(Room.getStructuresType(this.name , STRUCTURE_CONTAINER), ex =>
 	{
 		result.energy += ex.store[RESOURCE_ENERGY];
 		result.energyCapacity += ex.storeCapacity;
-	} , this);
+	});
 
 	return result;
 };
@@ -517,22 +576,16 @@ Room.prototype.getContainerEnergy = function ()
  *
  */
 
+/**
+ * getControllerLevel
+ * @returns {number}
+ */
 Room.prototype.getControllerLevel = function ()
 {
 	let result = 0;
 	if (!lib.isNull(this.controller))
 	{
 		result = this.controller.level;
-	}
-	return result;
-};
-
-Room.prototype.getIsMine = function ()
-{
-	let result = false;
-	if (!lib.isNull(this.controller) && this.controller.my && this.controller.level > 0)
-	{
-		result = true;
 	}
 	return result;
 };
@@ -561,14 +614,12 @@ Room.prototype.getRelation = function ()
  */
 Room.prototype.getMaxHarvesters = function ()
 {
-	let sources = this.find(FIND_SOURCES);
 	let result = 0;
-	_.forEach(sources , function (s)
+	_.forEach(Room.getSources(this.name) , function (s)
 	{
 		result += s.getMaxHarvesters();
 	});
 
-	//console.log("MAX: " + result);
 	return result;
 };
 
@@ -577,66 +628,66 @@ Room.prototype.getMaxHarvesters = function ()
  *
  */
 
+/**
+ * Activates safe mode if it needs too, should only be called on my rooms.
+ */
 Room.prototype.safeModeFailsafe = function ()
 {
 	let debug = false;
-	if (this.isMine)
-	{
-		let controller = this.controller;
-		//safeMode	number	How many ticks of safe mode remaining, or undefined.
-		let safeMode = lib.nullProtect(controller.safeMode , 0);
-		//safeModeAvailable	number	Safe mode activations available to use.
-		let safeModeAvailable = lib.nullProtect(controller.safeModeAvailable , 0);
-		//safeModeCooldown	number	During this period in ticks new safe mode activations will be blocked, undefined if cooldown is inactive.
-		let safeModeCooldown = lib.nullProtect(controller.safeModeCooldown , 0);
-		let hostiles = lib.nullProtect(lib.nullProtect(this.threat , {}).threats , []).length;
+	let controller = this.controller;
+	//safeMode	number	How many ticks of safe mode remaining, or undefined.
+	let safeMode = lib.nullProtect(controller.safeMode , 0);
+	//safeModeAvailable	number	Safe mode activations available to use.
+	let safeModeAvailable = lib.nullProtect(controller.safeModeAvailable , 0);
+	//safeModeCooldown	number	During this period in ticks new safe mode activations will be blocked, undefined if cooldown is inactive.
+	let safeModeCooldown = lib.nullProtect(controller.safeModeCooldown , 0);
+	let hostiles = lib.nullProtect(lib.nullProtect(this.threat , {}).threats , []).length;
 
-		if (!safeMode && safeModeAvailable && !safeModeCooldown && (this.memory.threat.level === C.THREAT_PANIC))
-		{
-			lib.log("!!!!!!!!!!!!!!! ACTIVATING SAFE MODE !!!!!!!!!!!!!!!" , debug);
-			controller.activateSafeMode();
-		}
-		lib.log(">>>> Safe Mode Status: Hostiles: " + hostiles
-			+ " SafeMode: " + safeMode
-			+ " SafeModeAvailable: " + safeModeAvailable
-			+ " SafeModeCooldown: " + safeModeCooldown , debug);
+	if (!safeMode && safeModeAvailable && !safeModeCooldown && (this.memory.threat.level === C.THREAT_PANIC))
+	{
+		lib.log("!!!!!!!!!!!!!!! ACTIVATING SAFE MODE !!!!!!!!!!!!!!!" , debug);
+		controller.activateSafeMode();
 	}
+	lib.log(">>>> Safe Mode Status: Hostiles: " + hostiles
+		+ " SafeMode: " + safeMode
+		+ " SafeModeAvailable: " + safeModeAvailable
+		+ " SafeModeCooldown: " + safeModeCooldown , debug);
 };
 
+/**
+ * Motivates towers in a room. should only be called on one of my rooms.
+ */
 Room.prototype.motivateTowers = function ()
 {
-	if (this.isMine)
-	{
-		// find all towers
-		let towers = _.map(this.memory.cache.structures[STRUCTURE_TOWER] , (o) =>
-		{
-			return Game.getObjectById(o)
-		});
+	// find all towers
+	let towers = Room.getStructuresType(this.name , STRUCTURE_TOWER);
 
-		if (this.memory.threat.level >= C.THREAT_ALERT)
+	if (this.memory.threat.level >= C.THREAT_ALERT)
+	{
+		// for each tower
+		towers.forEach(function (tower)
 		{
-			// for each tower
-			towers.forEach(function (tower)
+			//tower.autoRepair();
+			tower.autoCreepHeal();
+			tower.autoAttack();
+		} , this);
+	}
+	else if (Game.time % 2 === 0)
+	{
+		// for each tower
+		towers.forEach(function (tower)
+		{
+			if (!tower.autoRepair())
 			{
-				//tower.autoRepair();
 				tower.autoCreepHeal();
-				tower.autoAttack();
-			} , this);
-		}
-		else if (Game.time % 2 === 0)
-		{
-			// for each tower
-			towers.forEach(function (tower)
-			{
-				if (!tower.autoRepair())
-				{
-					tower.autoCreepHeal();
-				}
-			} , this);
-		}
+			}
+		} , this);
 	}
 };
 
+/**
+ *
+ */
 Room.prototype.updateThreat = function ()
 {
 	let debug = false;
@@ -743,6 +794,10 @@ Room.prototype.updateThreat = function ()
 	}
 };
 
+/**
+ *
+ * @returns {TResult[]|boolean[]}
+ */
 Room.prototype.getThreats = function ()
 {
 	let hostiles = this.find(FIND_HOSTILE_CREEPS);
@@ -757,19 +812,16 @@ Room.prototype.getThreats = function ()
 	return result;
 };
 
+/**
+ *
+ * @returns {boolean}
+ */
 Room.prototype.getBreach = function ()
 {
 	let result = false;
-	let spawn , spawnId;
+	let spawn;
 
-	// if not my room, always return false
-	if (!this.isMine)
-	{
-		return result;
-	}
-
-	spawnId = this.memory.cache.structures[STRUCTURE_SPAWN][0];
-	spawn = Game.getObjectById(spawnId);
+	spawn = Room.getSpawns(this.name)[0];
 	if (!lib.isNull(spawn))
 	{
 		result = !spawn.pos.isEnclosed();
@@ -810,6 +862,11 @@ Room.prototype.sing = function (sentence , public)
  * Static functions
  */
 
+/**
+ *
+ * @param roomName
+ * @returns {boolean}
+ */
 Room.getIsMine = function (roomName)
 {
 	let result = false;
@@ -821,6 +878,9 @@ Room.getIsMine = function (roomName)
 	return result;
 };
 
+/**
+ *
+ */
 Room.updateRoomCache = function ()
 {
 	// build room assigned cache
@@ -828,6 +888,10 @@ Room.updateRoomCache = function ()
 	global.cache.unitsByHomeRoom = _.groupBy(Game.creeps , 'memory.homeRoom');
 };
 
+/**
+ *
+ * @param roomName
+ */
 Room.updateUnitCache = function (roomName)
 {
 	let roomCreeps = global.cache.unitsByRoomMotive[roomName];
@@ -950,57 +1014,196 @@ Room.updateUnitMotiveCache = function (roomName)
 	});
 
 	lib.log(`updateUnitMotiveCache(${roomName}): ${JSON.stringify(roomMemory.cache.unitMotive)}` , debug);
-}
+};
 
+/**
+ *
+ * @param roomName
+ * @returns {boolean}
+ */
 Room.getIsLongDistanceHarvestTarget = function (roomName)
 {
 	return lib.nullProtect(Memory.rooms[roomName].longDistanceHarvestParents , []).length > 0;
 };
 
+/**
+ *
+ * @param roomName
+ * @param structureType
+ * @returns {Array}
+ */
 Room.getStructureIdsType = function (roomName , structureType)
 {
 	return _.has(Memory , "rooms[" + roomName + "].cache.structures[" + structureType + "]") ? Memory.rooms[roomName].cache.structures[structureType] : [];
 };
 
+/**
+ *
+ * @param roomName
+ * @param structureType
+ * @returns {T[]}
+ */
 Room.getStructuresType = function (roomName , structureType)
 {
 	let ids = this.getStructureIdsType(roomName , structureType);
-	let sites = _(ids).map(id => Game.getObjectById(id)).filter().value();
-	return sites;
+	let af = id => Game.getObjectById( id );
+	return _( ids ).map( af ).filter().value();
 };
 
+/**
+ *
+ * @param roomName
+ * @returns {Array}
+ */
 Room.getConstructionIds = function (roomName)
 {
 	return _.has(Memory , "rooms[" + roomName + "].cache.construction") ? Memory.rooms[roomName].cache.construction : [];
 };
 
+/**
+ *
+ * @param roomName
+ * @returns {T[]}
+ */
 Room.getConstruction = function (roomName)
 {
 	let ids = this.getConstructionIds(roomName);
-	let sites = _(ids).map(id => Game.getObjectById(id)).filter().value();
-	return sites;
+	let af = id => Game.getObjectById( id );
+	return _( ids ).map( af ).filter().value();
+};
+
+/**
+ *
+ * @param roomName
+ * @returns {Array}
+ */
+Room.getSourceIds = function (roomName)
+{
+	return _.has(Memory , `rooms[${roomName}].cache.sources`) ? Memory.rooms[roomName].cache.sources : [];
+};
+
+/**
+ *
+ * @param roomName
+ * @returns {T[]}
+ */
+Room.getSources = function (roomName)
+{
+	let ids = this.getSourceIds(roomName);
+	let af = id => Game.getObjectById( id );
+	return _( ids ).map( af ).filter().value();
+};
+
+/**
+ *
+ * @param roomName
+ * @returns {Array}
+ */
+Room.getDroppedIds = function (roomName)
+{
+	return _.has(Memory , `rooms[${roomName}].cache.dropped`) ? Memory.rooms[roomName].cache.dropped : [];
+};
+
+/**
+ *
+ * @param roomName
+ * @returns {T[]}
+ */
+Room.getDropped = function (roomName)
+{
+	let ids = this.getDroppedIds(roomName);
+	let af = id => Game.getObjectById( id );
+	return _( ids ).map( af ).filter().value();
+};
+
+/**
+ *
+ * @param roomName
+ * @returns {Array}
+ */
+Room.getFlagNames = function (roomName)
+{
+	return _.has(Memory , `rooms[${roomName}].cache.flags`) ? Memory.rooms[roomName].cache.flags : [];
+};
+
+/**
+ *
+ * @param roomName
+ * @returns {T[]}
+ */
+Room.getFlags = function (roomName)
+{
+	let ids = this.getFlagNames(roomName);
+	let af = id => Game.getObjectById( id );
+	return _( ids ).map( af ).filter().value();
+};
+
+/**
+ *
+ * @param roomName
+ * @returns {Array}
+ */
+Room.getSpawnIds = function (roomName)
+{
+	return _.has(Memory , `rooms[${roomName}].cache.spawns`) ? Memory.rooms[roomName].cache.spawns : [];
+};
+
+/**
+ *
+ * @param roomName
+ * @returns {T[]}
+ */
+Room.getSpawns = function (roomName)
+{
+	let ids = this.getSpawnIds(roomName);
+	let af = id => Game.getObjectById( id );
+	return _( ids ).map( af ).filter().value();
 };
 
 /***********************************************************************************************************************
  * Creep finding functions
  */
 
+/**
+ *
+ * @param roomName
+ * @returns {*}
+ */
 Room.getCreeps = function (roomName)
 {
 	return _.has(global , "cache.rooms." + roomName + ".creeps") ? global.cache.rooms[roomName].creeps : [];
 };
 
+/**
+ *
+ * @param roomName
+ * @param unitName
+ * @returns {Number}
+ */
 Room.countUnits = function (roomName , unitName)
 {
 	let units = _.has(global , "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName] : [];
 	return units.length;
 };
 
+/**
+ *
+ * @param roomName
+ * @param unitName
+ * @returns {Array}
+ */
 Room.getRoomUnits = function (roomName , unitName)
 {
 	return _.has(global , "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName] : [];
 };
 
+/**
+ *
+ * @param roomName
+ * @param motivationName
+ * @param unitName
+ * @returns {number}
+ */
 Room.countMotivationUnits = function (roomName , motivationName , unitName)
 {
 	// new cache
@@ -1014,12 +1217,24 @@ Room.countMotivationUnits = function (roomName , motivationName , unitName)
 	}
 };
 
+/**
+ *
+ * @param roomName
+ * @param unitName
+ * @returns {Number}
+ */
 Room.countHomeRoomUnits = function (roomName , unitName)
 {
 	let units = _.has(global , "cache.homeRooms." + roomName + ".units." + unitName) ? global.cache.homeRooms[roomName].units[unitName] : [];
 	return units.length;
 };
 
+/**
+ *
+ * @param roomName
+ * @param motivationName
+ * @returns {string[]|T[]}
+ */
 Room.getRoomMotivationCreeps = function (roomName , motivationName)
 {
 	let result = _.filter(global.cache.rooms[roomName].creeps , function (creep)
@@ -1029,6 +1244,14 @@ Room.getRoomMotivationCreeps = function (roomName , motivationName)
 	return result;
 };
 
+/**
+ *
+ * @param roomName
+ * @param motivationName
+ * @param needName
+ * @param unitName
+ * @returns {number}
+ */
 Room.countMotivationNeedUnits = function (roomName , motivationName , needName , unitName)
 {
 	if (!lib.isNull(Memory.rooms[roomName].cache.unitMotive[motivationName].needs[needName]))
@@ -1041,6 +1264,11 @@ Room.countMotivationNeedUnits = function (roomName , motivationName , needName ,
 	}
 };
 
+/**
+ *
+ * @param roomName
+ * @returns {string[]|T[]}
+ */
 Room.getRoomUnassignedCreeps = function (roomName)
 {
 	return _.filter(global.cache.rooms[roomName].creeps , creep => creep.memory.motive.motivation === "");
@@ -1050,24 +1278,30 @@ Room.getRoomUnassignedCreeps = function (roomName)
  ***********************************************************************************************************************
  * properties
  */
-Object.defineProperty(Room.prototype , "isMine" , {
-	get: function ()
-	{
-		let result = false;
-		if (!lib.isNull(this.controller) && this.controller.my && this.controller.level > 0)
+if (Room.prototype.hasOwnProperty('isMine') === false)
+{
+	Object.defineProperty(Room.prototype , "isMine" , {
+		get: function ()
 		{
-			result = true;
+			let result = false;
+			if (!lib.isNull(this.controller) && this.controller.my && this.controller.level > 0)
+			{
+				result = true;
+			}
+			return result;
 		}
-		return result;
-	}
-});
+	});
+}
 
-Object.defineProperty(Room.prototype , "isLongDistanceHarvestTarget" , {
-	get: function ()
-	{
-		return Room.getIsLongDistanceHarvestTarget(this.name);
-	}
-});
+if (Room.prototype.hasOwnProperty('isMine') === false)
+{
+	Object.defineProperty(Room.prototype , "isLongDistanceHarvestTarget" , {
+		get: function ()
+		{
+			return Room.getIsLongDistanceHarvestTarget(this.name);
+		}
+	});
+}
 
 module.exports = function ()
 {

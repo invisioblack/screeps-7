@@ -27,31 +27,36 @@ RoomPosition.prototype.search = function (goals , opts)
 	return PathFinder.search(this , goals , opts);
 };
 
-RoomPosition.fromMemory = function( memoryData ) {
-	if ( ( memoryData === undefined ) || ( memoryData === null ) || ( typeof memoryData !== 'string' ) || ( memoryData.length < 3 ) ) {
+RoomPosition.fromMemory = function (memoryData)
+{
+	if (( memoryData === undefined ) || ( memoryData === null ) || ( typeof memoryData !== 'string' ) || ( memoryData.length < 3 ))
+	{
 		return undefined;
 	}
 	return new RoomPosition(
-		RoomPosition.letterToPos( memoryData.charCodeAt( 0 ) ),
-		RoomPosition.letterToPos( memoryData.charCodeAt( 1 ) ),
-		memoryData.substring( 2 )
+		RoomPosition.letterToPos(memoryData.charCodeAt(0)) ,
+		RoomPosition.letterToPos(memoryData.charCodeAt(1)) ,
+		memoryData.substring(2)
 	);
 };
 
-RoomPosition.letterToPos = function( charCode ) {
+RoomPosition.letterToPos = function (charCode)
+{
 	// 97 is 'a'
 	// 40 is 65('A') - 25(to reduce the second half to 0..24 range)
 	return ( charCode - ( ( charCode >= 97 ) ? 97 : 40 ) );
 };
 
-RoomPosition.posToLetter = function( pos ) {
+RoomPosition.posToLetter = function (pos)
+{
 	// 97 is 'a'
 	// 40 is 65('A') - 25(to reduce the second half to 0..24 range)
-	return String.fromCharCode( pos + ( ( pos < 25 ) ? 97 : 40 ) );
+	return String.fromCharCode(pos + ( ( pos < 25 ) ? 97 : 40 ));
 };
 
-RoomPosition.prototype.toMemory = function() {
-	return RoomPosition.posToLetter( this.x )
-		+ RoomPosition.posToLetter( this.y )
+RoomPosition.prototype.toMemory = function ()
+{
+	return RoomPosition.posToLetter(this.x)
+		+ RoomPosition.posToLetter(this.y)
 		+ this.roomName;
 };

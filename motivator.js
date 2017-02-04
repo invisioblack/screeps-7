@@ -1,15 +1,10 @@
-//----------------------------------------------------------------------------------------------------------------------
-// Motivator
-// The motivator is responsible for managing the highest level decision 
-// making. The motivator is the part in which the player interacts with.
-// It makes decisions on how resources many resources are allocated to 
-// each active motivation.
-//----------------------------------------------------------------------------------------------------------------------
 "use strict";
+
 module.exports =
 	{
-		//------------------------------------------------------------------------------------------------------------------
-		// init, should be called before motivate
+		/**
+		 * Initializes the motivator, this must be called before motivate().
+		 */
 		init: function ()
 		{
 			cpuManager.timerStart("\tMotivate init" , "motivate.init");
@@ -20,9 +15,8 @@ module.exports =
 			// init motivations in each room we control
 			_.forEach(Game.rooms , (room , roomName) =>
 			{
-				cpuManager.timerStart(`\t  Room Init ${roomName}` , `motivate.r1.ri.${roomName}`);
+				// ini the room
 				room.init();
-				cpuManager.timerStop(`motivate.r1.ri.${roomName}` , config.cpuInitDetailDebug);
 
 				// init motivations in memory
 				if (lib.isNull(room.memory.motivations))
@@ -33,166 +27,166 @@ module.exports =
 				/*******************************************************************************************************
 				 * CORE
 				 */
-
 				cpuManager.timerStart(`\t  Motive Init ${roomName}` , `motivate.r1.mi.${roomName}`);
+				/*
+				 // harvestSource ---------------------------------------------------------------------------------------
+				 if (room.isMine || room.isLongDistanceHarvestTarget)
+				 {
+				 motivationHarvestSource.init(room.name);
+				 room.memory.motivations[motivationHarvestSource.name].priority = C.PRIORITY_1;
+				 }
+				 else if (motivationHarvestSource.isInit(room.name))
+				 {
+				 motivationHarvestSource.deInit(room.name);
+				 }
 
-				// harvestSource ---------------------------------------------------------------------------------------
-				if (room.isMine || room.isLongDistanceHarvestTarget)
-				{
-					motivationHarvestSource.init(room.name);
-					room.memory.motivations[motivationHarvestSource.name].priority = C.PRIORITY_1;
-				}
-				else if (motivationHarvestSource.isInit(room.name))
-				{
-					motivationHarvestSource.deInit(room.name);
-				}
+				 // haulToStorage ---------------------------------------------------------------------------------------
+				 if (room.isMine || room.isLongDistanceHarvestTarget)
+				 {
+				 motivationHaulToStorage.init(room.name);
+				 room.memory.motivations[motivationHaulToStorage.name].priority = C.PRIORITY_2;
+				 }
+				 else if (motivationHaulToStorage.isInit(room.name))
+				 {
+				 motivationHaulToStorage.deInit(room.name);
+				 }
 
-				// haulToStorage ---------------------------------------------------------------------------------------
-				if (room.isMine || room.isLongDistanceHarvestTarget)
-				{
-					motivationHaulToStorage.init(room.name);
-					room.memory.motivations[motivationHaulToStorage.name].priority = C.PRIORITY_2;
-				}
-				else if (motivationHaulToStorage.isInit(room.name))
-				{
-					motivationHaulToStorage.deInit(room.name);
-				}
+				 // supplySpawn -----------------------------------------------------------------------------------------
+				 if (room.isMine)
+				 {
+				 motivationSupplySpawn.init(room.name);
+				 room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
+				 }
+				 else if (motivationSupplySpawn.isInit(room.name))
+				 {
+				 motivationSupplySpawn.deInit(room.name);
+				 }
 
-				// supplySpawn -----------------------------------------------------------------------------------------
-				if (room.isMine)
-				{
-					motivationSupplySpawn.init(room.name);
-					room.memory.motivations[motivationSupplySpawn.name].priority = C.PRIORITY_3;
-				}
-				else if (motivationSupplySpawn.isInit(room.name))
-				{
-					motivationSupplySpawn.deInit(room.name);
-				}
+				 // supplyController ------------------------------------------------------------------------------------
+				 if (room.isMine && room.memory.mode === C.ROOM_MODE_NORMAL || room.memory.mode === C.ROOM_MODE_WORKER_PANIC)
+				 {
+				 motivationSupplyController.init(room.name);
+				 room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_4;
+				 }
+				 else if (room.isMine && room.memory.mode === C.ROOM_MODE_SETTLE)
+				 {
+				 if (room.controller.ticksToDowngrade < 1000)
+				 {
+				 motivationSupplyController.init(room.name);
+				 room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_2;
+				 } else if (motivationSupplyController.isInit(room.name))
+				 {
+				 motivationSupplyController.deInit(room.name);
+				 }
+				 }
+				 else if (motivationSupplyController.isInit(room.name))
+				 {
+				 motivationSupplyController.deInit(room.name);
+				 }
 
-				// supplyController ------------------------------------------------------------------------------------
-				if (room.isMine && room.memory.mode === C.ROOM_MODE_NORMAL || room.memory.mode === C.ROOM_MODE_WORKER_PANIC)
-				{
-					motivationSupplyController.init(room.name);
-					room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_4;
-				}
-				else if (room.isMine && room.memory.mode === C.ROOM_MODE_SETTLE)
-				{
-					if (room.controller.ticksToDowngrade < 1000)
-					{
-						motivationSupplyController.init(room.name);
-						room.memory.motivations[motivationSupplyController.name].priority = C.PRIORITY_2;
-					} else if (motivationSupplyController.isInit(room.name))
-					{
-						motivationSupplyController.deInit(room.name);
-					}
-				}
-				else if (motivationSupplyController.isInit(room.name))
-				{
-					motivationSupplyController.deInit(room.name);
-				}
+				 // longDistanceHarvest ---------------------------------------------------------------------------------
+				 if (room.isMine && room.memory.mode === C.ROOM_MODE_NORMAL)
+				 {
+				 motivationLongDistanceHarvest.init(room.name);
+				 room.memory.motivations[motivationLongDistanceHarvest.name].priority = C.PRIORITY_5;
+				 }
+				 else if (motivationLongDistanceHarvest.isInit(room.name))
+				 {
+				 motivationLongDistanceHarvest.deInit(room.name);
+				 }
 
-				// longDistanceHarvest ---------------------------------------------------------------------------------
-				if (room.isMine && room.memory.mode === C.ROOM_MODE_NORMAL)
-				{
-					motivationLongDistanceHarvest.init(room.name);
-					room.memory.motivations[motivationLongDistanceHarvest.name].priority = C.PRIORITY_5;
-				}
-				else if (motivationLongDistanceHarvest.isInit(room.name))
-				{
-					motivationLongDistanceHarvest.deInit(room.name);
-				}
+				 // claimRoom -------------------------------------------------------------------------------------------
+				 let isClaimed = _.some(Memory.claims , (c) => c.room === room.name);
+				 if ((room.isMine && room.memory.mode === C.ROOM_MODE_NORMAL) || isClaimed)
+				 {
+				 motivationClaimRoom.init(room.name);
+				 room.memory.motivations[motivationClaimRoom.name].priority = C.PRIORITY_6;
+				 }
+				 else if (motivationClaimRoom.isInit(room.name))
+				 {
+				 motivationClaimRoom.deInit(room.name);
+				 }
 
-				// claimRoom -------------------------------------------------------------------------------------------
-				let isClaimed = _.some(Memory.claims , (c) => c.room === room.name);
-				if ((room.isMine && room.memory.mode === C.ROOM_MODE_NORMAL) || isClaimed)
-				{
-					motivationClaimRoom.init(room.name);
-					room.memory.motivations[motivationClaimRoom.name].priority = C.PRIORITY_6;
-				}
-				else if (motivationClaimRoom.isInit(room.name))
-				{
-					motivationClaimRoom.deInit(room.name);
-				}
+				 // maintainInfrastructure ------------------------------------------------------------------------------
+				 if (room.isMine || room.isLongDistanceHarvestTarget)
+				 {
+				 motivationMaintainInfrastructure.init(room.name);
+				 room.memory.motivations[motivationMaintainInfrastructure.name].priority = C.PRIORITY_7;
+				 }
+				 else if (motivationMaintainInfrastructure.isInit(room.name))
+				 {
+				 motivationMaintainInfrastructure.deInit(room.name);
+				 }
 
-				// maintainInfrastructure ------------------------------------------------------------------------------
-				if (room.isMine || room.isLongDistanceHarvestTarget)
-				{
-					motivationMaintainInfrastructure.init(room.name);
-					room.memory.motivations[motivationMaintainInfrastructure.name].priority = C.PRIORITY_7;
-				}
-				else if (motivationMaintainInfrastructure.isInit(room.name))
-				{
-					motivationMaintainInfrastructure.deInit(room.name);
-				}
+				 // harvestMinerals -------------------------------------------------------------------------------------
+				 if (room.isMine && room.memory.cache.structures[STRUCTURE_EXTRACTOR].length > 0)
+				 {
+				 let mineralContainer = Game.getObjectById(room.memory.mineralContainerId);
+				 let containerTotal = 0;
 
-				// harvestMinerals -------------------------------------------------------------------------------------
-				if (room.isMine && room.memory.cache.structures[STRUCTURE_EXTRACTOR].length > 0)
-				{
-					let mineralContainer = Game.getObjectById(room.memory.mineralContainerId);
-					let containerTotal = 0;
+				 motivationHarvestMinerals.init(room.name);
+				 motivationHaulMinerals.init(room.name);
+				 room.memory.motivations[motivationHarvestMinerals.name].priority = C.PRIORITY_8;
+				 room.memory.motivations[motivationHaulMinerals.name].priority = C.PRIORITY_9;
 
-					motivationHarvestMinerals.init(room.name);
-					motivationHaulMinerals.init(room.name);
-					room.memory.motivations[motivationHarvestMinerals.name].priority = C.PRIORITY_8;
-					room.memory.motivations[motivationHaulMinerals.name].priority = C.PRIORITY_9;
+				 if (!lib.isNull(mineralContainer))
+				 {
+				 containerTotal = _.sum(mineralContainer.store);
+				 }
+				 if (containerTotal > 1000)
+				 {
+				 room.memory.motivations[motivationHaulMinerals.name].priority = C.PRIORITY_1;
+				 }
 
-					if (!lib.isNull(mineralContainer))
-					{
-						containerTotal = _.sum(mineralContainer.store);
-					}
-					if (containerTotal > 1000)
-					{
-						room.memory.motivations[motivationHaulMinerals.name].priority = C.PRIORITY_1;
-					}
-
-				}
-				else if (motivationHarvestMinerals.isInit(room.name))
-				{
-					motivationHarvestMinerals.deInit(room.name);
-					motivationHaulMinerals.deInit(room.name);
-				}
-
+				 }
+				 else if (motivationHarvestMinerals.isInit(room.name))
+				 {
+				 motivationHarvestMinerals.deInit(room.name);
+				 motivationHaulMinerals.deInit(room.name);
+				 }
+				 */
 				/*******************************************************************************************************
 				 * COMBAT
 				 */
+				/*
+				 // manualTactical --------------------------------------------------------------------------------------
+				 motivationManualTactical.init(room.name);
+				 room.memory.motivations[motivationManualTactical.name].priority = C.PRIORITY_1;
 
-				// manualTactical --------------------------------------------------------------------------------------
-				motivationManualTactical.init(room.name);
-				room.memory.motivations[motivationManualTactical.name].priority = C.PRIORITY_1;
+				 // garrison --------------------------------------------------------------------------------------------
+				 motivationGarrison.init(room.name);
+				 room.memory.motivations[motivationGarrison.name].priority = C.PRIORITY_2;
 
-				// garrison --------------------------------------------------------------------------------------------
-				motivationGarrison.init(room.name);
-				room.memory.motivations[motivationGarrison.name].priority = C.PRIORITY_2;
+				 // supplyTower -----------------------------------------------------------------------------------------
+				 if (room.getIsMine() && room.memory.cache.structures[STRUCTURE_TOWER].length > 0)
+				 {
+				 motivationSupplyTower.init(room.name);
+				 room.memory.motivations[motivationSupplyTower.name].priority = C.PRIORITY_7;
+				 }
+				 else if (motivationSupplyTower.isInit(room.name))
+				 {
+				 motivationSupplyTower.deInit(room.name);
+				 }
 
-				// supplyTower -----------------------------------------------------------------------------------------
-				if (room.getIsMine() && room.memory.cache.structures[STRUCTURE_TOWER].length > 0)
-				{
-					motivationSupplyTower.init(room.name);
-					room.memory.motivations[motivationSupplyTower.name].priority = C.PRIORITY_7;
-				}
-				else if (motivationSupplyTower.isInit(room.name))
-				{
-					motivationSupplyTower.deInit(room.name);
-				}
+				 // scout -----------------------------------------------------------------------------------------------
+				 if (lib.isNull(Memory.scoutTargets))
+				 Memory.scoutTargets = [];
 
-				// scout -----------------------------------------------------------------------------------------------
-				if (lib.isNull(Memory.scoutTargets))
-					Memory.scoutTargets = [];
-
-				if (Room.getIsMine(roomName) && _.some(Memory.scoutTargets , {sourceRoom: roomName}))
-				{
-					motivationScout.init(room.name);
-					room.memory.motivations[motivationScout.name].priority = C.PRIORITY_6;
-				}
-				else if (_.some( Memory.scoutTargets, { targetRoom: roomName } ))
-				{
-					motivationScout.init(room.name);
-					room.memory.motivations[motivationScout.name].priority = C.PRIORITY_1;
-				}
-				else if (motivationScout.isInit(room.name))
-				{
-					motivationScout.deInit(room.name);
-				}
+				 if (Room.getIsMine(roomName) && _.some(Memory.scoutTargets , {sourceRoom: roomName}))
+				 {
+				 motivationScout.init(room.name);
+				 room.memory.motivations[motivationScout.name].priority = C.PRIORITY_6;
+				 }
+				 else if (_.some( Memory.scoutTargets, { targetRoom: roomName } ))
+				 {
+				 motivationScout.init(room.name);
+				 room.memory.motivations[motivationScout.name].priority = C.PRIORITY_1;
+				 }
+				 else if (motivationScout.isInit(room.name))
+				 {
+				 motivationScout.deInit(room.name);
+				 }
+				 */
 				cpuManager.timerStop(`motivate.r1.mi.${roomName}` , config.cpuInitDetailDebug);
 			});
 
@@ -219,56 +213,37 @@ module.exports =
 		motivate: function ()
 		{
 			cpuManager.timerStart("motivate" , "motivate");
-			let debug = false;
-			let room;
-			let cpuUsed = 0;
 
 			// motivate in each room we control ----------------------------------------------------------------------------
 			cpuManager.timerStart(`\tRoom Total` , "motivate.roomTotal");
-			_.forEach(Game.rooms, (room, roomName) =>
+			_.forEach(Game.rooms , (room , roomName) =>
 			{
 				cpuManager.timerStart(`\tRoom: ${roomLink(roomName)}` , `motivate.room.${roomName}`);
 
 				// declarations ----------------------------------------------------------------------------------------
-				let sortedMotivations;
+				let sortedMotivations = _.sortByOrder(room.memory.motivations , ['priority'] , ['desc']);
 
-				// motivate defense towers -----------------------------------------------------------------------------
-				// TODO: Separate out healing from killing on the turrets
 				if (room.isMine)
 				{
+					// motivate defense towers
 					room.motivateTowers();
 					// safeMode failsafe
 					room.safeModeFailsafe();
+					// links
+					room.motivateLinks();
 				}
 
-				// links ---------------------------------------------------------------------------------------------------
-				room.motivateLinks();
-
-				// -----------------------------------------------------------------------------------------------------
-				// process motivations in order of priority ------------------------------------------------------------
-				// get sorted motivations
-				sortedMotivations = _.sortByOrder(room.memory.motivations , ['priority'] , ['desc']);
-
-				cpuManager.timerStart(`\t  Motivate R1` , `motivate.r1.${roomName}`);
 				this.motivateRound1(sortedMotivations , room);
-				cpuManager.timerStop(`motivate.r1.${roomName}` , config.cpuMotivateDetailDebug);
-
-				cpuManager.timerStart(`\t  Motivate R2` , `motivate.r2.${roomName}`);
 				this.motivateRound2(sortedMotivations , room);
-				cpuManager.timerStop(`motivate.r2.${roomName}` , config.cpuMotivateDetailDebug);
 
 				cpuManager.timerStop(`motivate.room.${roomName}` , config.cpuRoomDetailDebug , 8 , 10);
 			});
 			cpuManager.timerStop("motivate.roomTotal" , config.cpuRoomDebug , 10 , 15);
 
-			// fulfill needs ---------------------------------------------------------------------------------------
-			cpuManager.timerStart("\tFulfill Needs" , "motivate.fulfillNeeds");
+			// fulfill needs -------------------------------------------------------------------------------------------
 			this.fulfillNeeds();
-			cpuManager.timerStop("motivate.fulfillNeeds" , config.cpuNeedsDebug , 10 , 15);
-
-			cpuManager.timerStart("\tHandle Lost" , "handleLostCreeps");
+			// lost creeps ---------------------------------------------------------------------------------------------
 			this.handleLostCreeps();
-			cpuManager.timerStop("handleLostCreeps" , config.cpuHandleLostDebug , 3 , 5);
 
 			cpuManager.timerStop("motivate" , config.cpuMotivateDebug , 30 , 35);
 		} ,
@@ -281,6 +256,7 @@ module.exports =
 		 */
 		motivateRound1: function (sortedMotivations , room)
 		{
+			cpuManager.timerStart(`\t  Motivate R1` , `motivate.r1.${room.name}`);
 			let debug = false;
 			let roomName = room.name;
 			let isSpawnAllocated = false;
@@ -312,18 +288,18 @@ module.exports =
 					}
 
 					// spawn units if allocated spawn ------------------------------------------------------------------
-					// TODO: Spawning needs to be updated, this is terrible.
 					if (motivationMemory.spawnAllocated && room.isMine)
 					{
 						let isSpawning = false;
-						_.forEach(Game.spawns , (spawn , spawnName) =>
+						_.forEach(Room.getSpawns(roomName) , spawn =>
 						{
-
-							if (spawn.room.name === roomName && !spawn.spawning && !isSpawning)
+							if (!spawn.spawning && !isSpawning)
 							{
 								let unitName = global[motivationMemory.name].getDesiredSpawnUnit(roomName);
 								if (spawn.spawnUnit(unitName))
+								{
 									isSpawning = true;
+								}
 							}
 						});
 					}
@@ -333,6 +309,7 @@ module.exports =
 				}
 				//cpuManager.timerStop(`motivate.motivateRound1.${motivationMemory.name}` , true , 0.2 , 0.5);
 			});
+			cpuManager.timerStop(`motivate.r1.${roomName}` , config.cpuMotivateDetailDebug);
 		} ,
 
 		/**
@@ -342,6 +319,7 @@ module.exports =
 		 */
 		motivateRound2: function (sortedMotivations , room)
 		{
+			cpuManager.timerStart(`\t  Motivate R2` , `motivate.r2.${roomName}`);
 			let debug = false;
 			let roomName = room.name;
 			let unAssignedCreeps = Room.getRoomUnassignedCreeps(roomName);
@@ -352,6 +330,7 @@ module.exports =
 				let maxCreeps = 1;
 				this.findCreepJob(roomName , sortedMotivations , creep , maxCreeps);
 			});
+			cpuManager.timerStop(`motivate.r2.${roomName}` , config.cpuMotivateDetailDebug);
 		} ,
 
 		/**
@@ -386,7 +365,7 @@ module.exports =
 					{
 						let motiveUnits = Room.countMotivationUnits(roomName , motivationMemory.name , creep.memory.unit);
 						let demandedUnits = lib.nullProtect(motivationMemory.demands.units[creep.memory.unit] , 0);
-						if (!assigned && motiveUnits < tryCount && motiveUnits < demandedUnits)
+						if (!assigned && motiveUnits < demandedUnits)
 						{
 							// read up needs sorted by priority
 							let needs = _.sortByOrder(motivationMemory.needs , ['priority'] , ['desc']);
@@ -443,7 +422,8 @@ module.exports =
 						{
 							creep.assignMotive(creep.memory.motive.room , "motivationSupplyController" , "supplyController." + creep.memory.motive.room);
 							assigned = true;
-						} else if (Room.getIsMine(creep.memory.motive.room) && Memory.rooms[roomName].mode === C.ROOM_MODE_SETTLE)
+						}
+						else if (Room.getIsMine(creep.memory.motive.room) && Memory.rooms[roomName].mode === C.ROOM_MODE_SETTLE)
 						{
 							creep.assignMotive(creep.memory.motive.room , "motivationMaintainInfrastructure" , "build." + creep.memory.motive.room);
 						}
@@ -456,20 +436,23 @@ module.exports =
 				lib.log(`\t${creep.name} Room: ${roomLink(creep.room.name)}: No assignment found!` , debug);
 				creep.say("No JOB!");
 				if (creep.room.name !== creep.memory.homeRoom)
+				{
 					creep.deassignMotive(creep.memory.homeRoom);
+				}
 			}
 
 			// return true if the creep was assigned
 			return assigned;
-		},
+		} ,
 
 		/**
 		 *
 		 */
 		fulfillNeeds: function ()
 		{
+			cpuManager.timerStart("\tFulfill Needs" , "motivate.fulfillNeeds");
 			let debug = false;
-			let creeps = _.filter(Game.creeps, creep => creep.memory.motive.room === creep.room.name && creep.memory.motive.motivation !== "" && creep.memory.motive.need !== "");
+			let creeps = _.filter(Game.creeps , creep => creep.memory.motive.room === creep.room.name && creep.memory.motive.motivation !== "" && creep.memory.motive.need !== "");
 			_.forEach(creeps , creep =>
 			{
 				lib.log(`Creep executing need: ${creep.name}: room: ${creep.room.name} motive room:${creep.memory.motive.room} ${creep.memory.motive.motivation}: ${creep.memory.motive.need}` , debug);
@@ -489,8 +472,10 @@ module.exports =
 				}
 				else
 				{
+					/*
 					switch (need.type)
 					{
+
 						case "needTransferEnergy":
 							lib.log("Creep: " + creep.name + " Working needTransferEnergy" , debug);
 							jobTransfer.work(creep);
@@ -559,29 +544,33 @@ module.exports =
 							jobScout.work(creep);
 							break;
 					}
+					*/
 					// creep edge protection
 					creep.getOffEdge();
 				}
 			});
-		},
+			cpuManager.timerStop("motivate.fulfillNeeds" , config.cpuNeedsDebug , 10 , 15);
+		} ,
 
 		/**
 		 *
 		 */
 		handleLostCreeps: function ()
 		{
+			cpuManager.timerStart("\tHandle Lost" , "handleLostCreeps");
 			let debug = false;
 			let lostCreeps = _.filter(Game.creeps , creep => creep.room.name !== creep.memory.motive.room);
 
 			console.log("Lost creeps: " + lostCreeps.length);
 			lostCreeps.forEach(function (creep)
 			{
-				let position = new RoomPosition(25, 25, creep.memory.motive.room);
+				let position = new RoomPosition(25 , 25 , creep.memory.motive.room);
 				cpuManager.timerStart("\tLost Move" , "handleLostCreeps.move");
 				let moveResult = creep.travelTo(position);
 				cpuManager.timerStop("handleLostCreeps.move" , config.cpuHandleLostDebug , 1 , 5);
 				creep.say("Leave!");
 				lib.log(`LEAVE creep: ${creep.name} room: ${creep.room.name} dest: ${creep.memory.motive.room} move: ${moveResult}` , debug);
 			} , this);
+			cpuManager.timerStop("handleLostCreeps" , config.cpuHandleLostDebug , 3 , 5);
 		}
 	};

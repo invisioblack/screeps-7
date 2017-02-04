@@ -1,4 +1,5 @@
 "use strict";
+
 /**
  * returns string for a link that can be clicked from the console
  * to change which room you are viewing. Useful for other logging functions

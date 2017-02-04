@@ -1,4 +1,4 @@
-/**
+/***********************************************************************************************************************
  * TODO: implement ROOM_MODE_SETTLE
  * TODO: implement motivationAid
  * TODO: implement auto siege
@@ -20,54 +20,53 @@
  */
 "use strict";
 
-//----------------------------------------------------------------------------------------------------------------------
-// Modules
-//----------------------------------------------------------------------------------------------------------------------
-//const profiler = require('screeps-profiler');
-//profiler.enable();
-// game prototypes
+/***********************************************************************************************************************
+ * profiler
+ */
+const profiler = require('screeps-profiler');
+profiler.enable();
+
+/***********************************************************************************************************************
+ * game prototypes
+ */
 require('Creep.prototype');
-//profiler.registerClass(Creep , 'Creep');
+profiler.registerClass(Creep , 'Creep');
 require('Source.prototype');
-//profiler.registerClass(Source , 'Source');
+profiler.registerClass(Source , 'Source');
 require('Room.prototype');
-//profiler.registerClass(Room , 'Room');
+profiler.registerClass(Room , 'Room');
 require('RoomPosition.prototype');
-//profiler.registerClass(RoomPosition , 'RoomPosition');
+profiler.registerClass(RoomPosition , 'RoomPosition');
 require('Spawn.prototype');
-//profiler.registerClass(Spawn , 'Spawn');
+profiler.registerClass(Spawn , 'Spawn');
 require('StructureTower.prototype');
-//profiler.registerClass(StructureTower , 'StructureTower');
+profiler.registerClass(StructureTower , 'StructureTower');
 require('StructureLink.prototype');
-//profiler.registerClass(StructureLink , 'StructureLink');
+profiler.registerClass(StructureLink , 'StructureLink');
 
 require("globals");
 require("logging");
 require("shortcuts");
 
-// global --------------------------------------------------------------------------------------------------------------
-global.cpuUsedLast = 0;
-cpuManager.log(">>>> Global Start <<<<");
+// global start --------------------------------------------------------------------------------------------------------
+cpuManager.log(`>>>> Global Start : ${Game.time} <<<<`);
 
 // main loop -----------------------------------------------------------------------------------------------------------
 module.exports.loop = function ()
 {
-	//profiler.wrap(function ()
-	//{
+	profiler.wrap(function ()
+	{
 		cpuManager.timerStart("++++ Loop ++++" , "loop");
 		delete Memory.rooms[undefined]; // WTF WHY IS THIS HAPPENING!!!
-		//------------------------------------------------------------------------------------------------------------------
-		// Declarations
-		//------------------------------------------------------------------------------------------------------------------
+
 		let active = false;
 		let cpuMode = cpuManager.getThrottleMode();
 
 		// cpu throttle
 		active = cpuManager.getCPUActive(cpuMode);
 
-		//------------------------------------------------------------------------------------------------------------------
+		//--------------------------------------------------------------------------------------------------------------
 		// Do stuffs
-		//------------------------------------------------------------------------------------------------------------------
 		cleanupMemory();
 		if (active)
 		{
@@ -76,14 +75,16 @@ module.exports.loop = function ()
 			motivator.motivate();
 		}
 
-		//------------------------------------------------------------------------------------------------------------------
+		//--------------------------------------------------------------------------------------------------------------
 		// END
-		//------------------------------------------------------------------------------------------------------------------
 		cpuManager.timerStop("loop" , config.cpuLoopDebug , 40 , 45);
 		cpuManager.tickTrack();
-	//});
+	});
 };
 
+/**
+ * Deletes memory for creeps that do not exist.
+ */
 function cleanupMemory ()
 {
 	let debug = false;
