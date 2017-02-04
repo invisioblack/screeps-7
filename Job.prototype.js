@@ -8,15 +8,6 @@ module.exports = function ()
 	{
 	};
 
-	Job.prototype.JOB_MODE_GETENERGY = 0;
-	Job.prototype.JOB_MODE_WORK = 1;
-
-	Job.prototype.JOB_SOURCETYPE_NOTHING = 0;
-	Job.prototype.JOB_SOURCETYPE_DROP = 1;
-	Job.prototype.JOB_SOURCETYPE_CONTAINER = 2;
-	Job.prototype.JOB_SOURCETYPE_SOURCE = 3;
-	Job.prototype.JOB_SOURCETYPE_LINK = 4;
-
 	Job.prototype.getEnergy = function (creep)
 	{
 		//console.log(`${creep.name} M: ${creep.memory.motive.motivation} N: ${creep.memory.motive.need}`);

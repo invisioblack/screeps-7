@@ -37,20 +37,12 @@ Creep.prototype.travelTo = function (target , options)
 			this.memory.movePosLastTime = Game.time;
 		}
 
-		if (target.room === creep.room)
-		{
+
 			options = _.assign({
 				ignoreCreeps: recalculatePath === false ,
-				reusePath: recalculatePath ? 0 : 1500 ,
-				maxRooms: 1
+				reusePath: recalculatePath ? 0 : 1500
 			} , options);
-		} else {
-			options = _.assign({
-				ignoreCreeps: recalculatePath === false ,
-				reusePath: recalculatePath ? 0 : 1500 ,
-				maxRooms: 2
-			} , options);
-		}
+
 
 		moveResult = this.moveTo(target , options);
 
