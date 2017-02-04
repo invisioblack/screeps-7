@@ -1,6 +1,4 @@
-//-------------------------------------------------------------------------
-// Room.prototype
-//-------------------------------------------------------------------------
+"use strict";
 
 /***********************************************************************************************************************
  * management functions
@@ -319,169 +317,10 @@ Room.prototype.updateFlagCache = function (forceRefresh = false)
 	}
 };
 
-/**
- * This function updates the state of the energy pickup mode for this room. This is how creeps who need energy will go
- * about acquiring it.
+/***********************************************************************************************************************
+ * Motivate functions
  */
-Room.prototype.updateEnergyPickupMode = function ()
-{
-	if (Game.time % 10 !== 0)
-	{
-		return;
-	}
 
-	let result = C.ROOM_ENERGYPICKUPMODE_NOENERGY;
-
-	if (this.memory.cache.sources.length > 0)
-	{
-		result = C.ROOM_ENERGYPICKUPMODE_HARVEST;
-
-		let roomName = this.name;
-		let numContainers = lib.nullProtect(this.memory.cache.structures[STRUCTURE_CONTAINER] , []).length;
-		let numStorage = lib.nullProtect(this.memory.cache.structures[STRUCTURE_STORAGE] , []).length;
-		let numLink = lib.nullProtect(this.memory.cache.structures[STRUCTURE_LINK] , []).length;
-		let containers = _.map(this.memory.cache.structures[STRUCTURE_CONTAINER] , function (cid)
-		{
-			return Game.getObjectById(cid);
-		});
-		let containerEnergy;
-		if (lib.isNull(containers) || containers.length === 0)
-		{
-			containerEnergy = 0;
-		}
-		else
-		{
-			containerEnergy = _.sum(containers , function (c)
-			{
-				if (lib.isNull(c))
-				{
-					return 0;
-				}
-				else
-				{
-					return c.store[RESOURCE_ENERGY];
-				}
-			});
-		}
-
-		let numHarvesters = Room.countUnits(roomName , "harvester");
-		let numHaulers = Room.countUnits(roomName , "hauler");
-
-		/** precontainer, or container setup mode, is when we have containers, but they are not properly manned, check
-		 * for energy in containers in this mode, but don't rely on it
-		 */
-
-		if (numContainers > 0)
-		{
-			result = C.ROOM_ENERGYPICKUPMODE_PRECONTAINER;
-		}
-
-		if (numContainers >= this.memory.cache.sources.length && (containerEnergy > 0 || numHarvesters > 0))
-		//if (numContainers > 0)
-		{
-			result = C.ROOM_ENERGYPICKUPMODE_CONTAINER;
-		}
-
-		if (numStorage > 0 && this.isMine && numHaulers > 0 && numHarvesters > 0)
-		{
-			result = C.ROOM_ENERGYPICKUPMODE_STORAGE;
-		}
-
-		if (numLink > 1 && numHaulers > 0 && numHarvesters > 0 && this.isMine)
-		{
-			result = C.ROOM_ENERGYPICKUPMODE_LINK;
-		}
-	}
-
-	this.memory.energyPickupMode = result;
-	return result;
-};
-
-/**
- *
- */
-Room.prototype.updateMode = function ()
-{
-	let relation = this.getRelation();
-	let result = C.ROOM_MODE_NEUTRAL;
-	// my rooms
-	if (this.isMine)
-	{
-		let numWorkers = Room.countUnits(this.name , "worker");
-
-		if (this.memory.threat.level >= C.THREAT_NPC)
-		{
-			result = C.ROOM_MODE_SIEGE;
-		}
-		else if (numWorkers < config.unit.min.worker)
-		{
-			result = C.ROOM_MODE_WORKER_PANIC;
-		}
-		else if (this.memory.cache.structures[STRUCTURE_EXTENSION].length < 5)
-		{
-			result = C.ROOM_MODE_SETTLE;
-		}
-		else
-		{
-			result = C.ROOM_MODE_NORMAL;
-		}
-	}
-	// my harvest rooms
-	else if (Room.getIsLongDistanceHarvestTarget(this.name))
-	{
-		if (this.memory.threat.level >= C.THREAT_NPC)
-		{
-			result = C.ROOM_MODE_REMOTE_HARVEST_SIEGE;
-		}
-		else
-		{
-			result = C.ROOM_MODE_REMOTE_HARVEST;
-		}
-	}
-	// my ally rooms
-	else if (relation > C.RELATION_NEUTRAL)
-	{
-		result = C.ROOM_MODE_ALLY;
-	}
-	// enemy room
-	else if (relation === C.RELATION_HOSTILE)
-	{
-		result = C.ROOM_MODE_ENEMY;
-	}
-	// neutral room
-	else
-	{
-		result = C.ROOM_MODE_NEUTRAL;
-	}
-
-	this.memory.mode = result;
-};
-
-/**
- *
- */
-Room.prototype.updateUnitDemands = function ()
-{
-	// init memory
-	this.memory.demands = {};
-	_.forEach(units , (unit , unitName) =>
-	{
-		this.memory.demands[unitName] = 0;
-	});
-
-	// add in demands
-	_.forEach(this.memory.motivations , (motivation , motivationName) =>
-	{
-		if (!lib.isNull(motivation.demands) && motivation.active)
-		{
-			_.forEach(motivation.demands.units , (demand , unitName) =>
-			{
-				this.memory.demands[unitName] += demand;
-			});
-		}
-	});
-
-};
 
 /**
  * Motivates link in a room, should only be called on my rooms.
@@ -501,126 +340,6 @@ Room.prototype.motivateLinks = function ()
 			}
 		});
 	}
-};
-
-/***********************************************************************************************************************
- * Resource related functions
- *
- */
-
-/**
- * getSpawnEnergy
- * @returns {{}}
- */
-Room.prototype.getSpawnEnergy = function ()
-{
-	let result = {};
-	let extenderEnergy = this.getExtenderEnergy();
-
-	result.energy = 0;
-	result.energyCapacity = 0;
-
-	// Enumerate over spawns
-	_.forEach(Room.getSpawns(this.name) , spawn =>
-	{
-		result.energy += spawn.energy;
-		result.energyCapacity += spawn.energyCapacity;
-	});
-
-	result.energy += extenderEnergy.energy;
-	result.energyCapacity += extenderEnergy.energyCapacity;
-
-	return result;
-};
-
-/**
- * getExtenderEnergy
- * @returns {{}}
- */
-Room.prototype.getExtenderEnergy = function ()
-{
-	let result = {};
-	result.energy = 0;
-	result.energyCapacity = 0;
-
-	_.forEach(Room.getStructuresType(this.name, STRUCTURE_EXTENSION), ex =>
-	{
-		result.energy += ex.energy;
-		result.energyCapacity += ex.energyCapacity;
-	});
-
-	return result;
-};
-
-/**
- * getContainerEnergy
- * @returns {{}}
- */
-Room.prototype.getContainerEnergy = function ()
-{
-	let result = {};
-	result.energy = 0;
-	result.energyCapacity = 0;
-
-	_.forEach(Room.getStructuresType(this.name , STRUCTURE_CONTAINER), ex =>
-	{
-		result.energy += ex.store[RESOURCE_ENERGY];
-		result.energyCapacity += ex.storeCapacity;
-	});
-
-	return result;
-};
-
-/***********************************************************************************************************************
- * General info functions
- *
- */
-
-/**
- * getControllerLevel
- * @returns {number}
- */
-Room.prototype.getControllerLevel = function ()
-{
-	let result = 0;
-	if (!lib.isNull(this.controller))
-	{
-		result = this.controller.level;
-	}
-	return result;
-};
-
-Room.prototype.getRelation = function ()
-{
-	let result = false;
-
-	if (!lib.isNull(this.controller))
-	{
-		let owner = this.controller.owner;
-		let ownerRelation = diplomacyManager.status(owner);
-		result = ownerRelation;
-	}
-	else
-	{
-		result = C.RELATION_NEUTRAL;
-	}
-
-	return result;
-};
-
-/***********************************************************************************************************************
- * Creep finding functions
- *
- */
-Room.prototype.getMaxHarvesters = function ()
-{
-	let result = 0;
-	_.forEach(Room.getSources(this.name) , function (s)
-	{
-		result += s.getMaxHarvesters();
-	});
-
-	return result;
 };
 
 /***********************************************************************************************************************
@@ -685,150 +404,9 @@ Room.prototype.motivateTowers = function ()
 	}
 };
 
-/**
- *
+/***********************************************************************************************************************
+ * Misc
  */
-Room.prototype.updateThreat = function ()
-{
-	let debug = false;
-	let timeSinceSeen;
-	let threatCounts;
-	let filteredThreats;
-	let threatsRaw;
-	let threats;
-
-	// init memory if need be
-	if (lib.isNull(this.memory.threat))
-	{
-		this.memory.threat = {};
-		this.memory.threat.lastSeen = 0;
-		this.memory.threat.count = 0;
-		this.memory.threat.threats = [];
-		this.memory.threat.level = C.THREAT_STANDBY;
-		this.memory.threat.breach = false;
-	}
-
-	timeSinceSeen = Game.time - this.memory.threat.lastSeen;
-
-	// update aggressives based on our current status
-	if (this.memory.threat.level >= C.THREAT_ALERT)
-	{
-		this.memory.threat.threats = this.getThreats();
-		if (Game.time % 5 === 0)
-		{
-			this.memory.threat.breach = this.getBreach();
-		}
-	}
-	else if (this.memory.threat.level >= C.THREAT_PLAYER)
-	{
-		this.memory.threat.threats = this.getThreats();
-		this.memory.threat.breach = this.getBreach();
-	}
-	else if (Game.time % 5 === 0)
-	{
-		this.memory.threat.threats = this.getThreats();
-		this.memory.threat.breach = this.getBreach();
-	}
-
-	threatCounts = _.countBy(this.memory.threat.threats , (o) =>
-	{
-		return o.status
-	});
-
-	if (lib.isNull(threatCounts[C.RELATION_HOSTILE]))
-	{
-		threatCounts[C.RELATION_HOSTILE] = 0;
-	}
-
-	lib.log(`Room: ${roomLink(this.name)} ThreatCounts: ${JSON.stringify(threatCounts)}` , debug);
-	lib.log("ALERT: " + (timeSinceSeen < config.alertTime) , debug);
-
-	// based on threats, update our status
-	if (timeSinceSeen > config.alertTime && threatCounts[C.RELATION_HOSTILE] === 0)
-	{
-		//console.log("Standby");
-		this.memory.threat.level = C.THREAT_STANDBY;
-		this.memory.threat.count = lib.nullProtect(this.memory.threat.threats , []).length;
-	}
-	else if (timeSinceSeen < config.alertTime && threatCounts[C.RELATION_HOSTILE] === 0)
-	{
-		//console.log("Alert");
-		this.memory.threat.level = C.THREAT_ALERT;
-		this.memory.threat.count = threatCounts[C.RELATION_HOSTILE].length;
-	}
-	else if (threatCounts[C.RELATION_HOSTILE] > 0)
-	{
-		//console.log("Some threat!");
-		filteredThreats = _.filter(this.memory.threat.threats , (o) =>
-		{
-			return o.status === C.RELATION_HOSTILE
-		});
-		threatsRaw = _.map(filteredThreats , (o) =>
-		{
-			return Game.getObjectById(o.id)
-		});
-
-		//console.log(JSON.stringify(threatsRaw));
-		let isPlayer = _.some(threatsRaw , (o) => o.owner.username !== "Invader" && o.owner.username !== "Source Keeper");
-		let link = roomLink(this.name);
-
-		if (isPlayer)
-		{
-			this.memory.threat.level = C.THREAT_PLAYER;
-			console.log("!!!> PLAYER THREAT: " + link);
-		}
-		else
-		{
-			this.memory.threat.level = C.THREAT_NPC;
-			console.log("!!!> NPC THREAT! " + link);
-		}
-
-		if (this.memory.threat.level >= C.THREAT_NPC && this.memory.threat.breach)
-		{
-			this.memory.threat.level = C.THREAT_PANIC;
-			console.log("!!!> WALL BREACH! " + link);
-		}
-
-		this.memory.threat.lastSeen = Game.time;
-		this.memory.threat.count = threatCounts[C.RELATION_HOSTILE];
-	}
-};
-
-/**
- *
- * @returns {TResult[]|boolean[]}
- */
-Room.prototype.getThreats = function ()
-{
-	let hostiles = this.find(FIND_HOSTILE_CREEPS);
-	let result = _.map(hostiles , (c) =>
-	{
-		let r = {};
-		r.id = c.id;
-		r.status = diplomacyManager.status(c.owner.username);
-		//console.log("getThreats: " + c.owner.username);
-		return r;
-	});
-	return result;
-};
-
-/**
- *
- * @returns {boolean}
- */
-Room.prototype.getBreach = function ()
-{
-	let result = false;
-	let spawn;
-
-	spawn = Room.getSpawns(this.name)[0];
-	if (!lib.isNull(spawn))
-	{
-		result = !spawn.pos.isEnclosed();
-	}
-
-	return result;
-};
 
 /*
  * NOTES: sentences are broken down using | to separate pieces
@@ -1046,8 +624,7 @@ Room.getStructureIdsType = function (roomName , structureType)
 Room.getStructuresType = function (roomName , structureType)
 {
 	let ids = this.getStructureIdsType(roomName , structureType);
-	let af = id => Game.getObjectById( id );
-	return _( ids ).map( af ).filter().value();
+	return _( ids ).map( af.goid ).filter().value();
 };
 
 /**
@@ -1068,8 +645,7 @@ Room.getConstructionIds = function (roomName)
 Room.getConstruction = function (roomName)
 {
 	let ids = this.getConstructionIds(roomName);
-	let af = id => Game.getObjectById( id );
-	return _( ids ).map( af ).filter().value();
+	return _( ids ).map( af.goid ).filter().value();
 };
 
 /**
@@ -1090,8 +666,7 @@ Room.getSourceIds = function (roomName)
 Room.getSources = function (roomName)
 {
 	let ids = this.getSourceIds(roomName);
-	let af = id => Game.getObjectById( id );
-	return _( ids ).map( af ).filter().value();
+	return _( ids ).map( af.goid ).filter().value();
 };
 
 /**
@@ -1112,8 +687,7 @@ Room.getDroppedIds = function (roomName)
 Room.getDropped = function (roomName)
 {
 	let ids = this.getDroppedIds(roomName);
-	let af = id => Game.getObjectById( id );
-	return _( ids ).map( af ).filter().value();
+	return _( ids ).map( af.goid ).filter().value();
 };
 
 /**
@@ -1134,8 +708,7 @@ Room.getFlagNames = function (roomName)
 Room.getFlags = function (roomName)
 {
 	let ids = this.getFlagNames(roomName);
-	let af = id => Game.getObjectById( id );
-	return _( ids ).map( af ).filter().value();
+	return _( ids ).map( af.goid ).filter().value();
 };
 
 /**
@@ -1156,8 +729,7 @@ Room.getSpawnIds = function (roomName)
 Room.getSpawns = function (roomName)
 {
 	let ids = this.getSpawnIds(roomName);
-	let af = id => Game.getObjectById( id );
-	return _( ids ).map( af ).filter().value();
+	return _( ids ).map( af.goid ).filter().value();
 };
 
 /***********************************************************************************************************************
@@ -1293,7 +865,7 @@ if (Room.prototype.hasOwnProperty('isMine') === false)
 	});
 }
 
-if (Room.prototype.hasOwnProperty('isMine') === false)
+if (Room.prototype.hasOwnProperty('isLongDistanceHarvestTarget') === false)
 {
 	Object.defineProperty(Room.prototype , "isLongDistanceHarvestTarget" , {
 		get: function ()
@@ -1303,6 +875,515 @@ if (Room.prototype.hasOwnProperty('isMine') === false)
 	});
 }
 
+if (Room.prototype.hasOwnProperty('threats') === false)
+{
+	Object.defineProperty(Room.prototype , "threats" , {
+		get: function ()
+		{
+			let hostiles = this.find(FIND_HOSTILE_CREEPS);
+			let result = _.map(hostiles , (c) =>
+			{
+				let r = {};
+				r.id = c.id;
+				r.status = diplomacyManager.status(c.owner.username);
+				//console.log("getThreats: " + c.owner.username);
+				return r;
+			});
+			return result;
+		}
+	});
+}
+
+if (Room.prototype.hasOwnProperty('breach') === false)
+{
+	Object.defineProperty(Room.prototype , "breach" , {
+		get: function ()
+		{
+			let result = false;
+			let spawn;
+
+			spawn = Room.getSpawns(this.name)[0];
+			if (!lib.isNull(spawn))
+			{
+				result = !spawn.pos.isEnclosed();
+			}
+
+			return result;
+		}
+	});
+}
+
+/***********************************************************************************************************************
+ * Lazy loading properties
+ */
+
+if (Room.prototype.hasOwnProperty('threat') === false)
+{
+	Object.defineProperty(Room.prototype , "threat" , {
+		get: function ()
+		{
+			let debug = false;
+
+			if (lib.isNull(this.memory.threat) || Game.time != this.memory.threat.lastUpdated)
+			{
+				let timeSinceSeen;
+				let threatCounts;
+				let filteredThreats;
+				let threatsRaw;
+
+				// init memory if need be
+				this.memory.threat = {
+					lastSeen: 0 ,
+					count: 0 ,
+					threats: [] ,
+					level: C.THREAT_STANDBY ,
+					breach: false ,
+					lastUpdated: Game.time
+				};
+
+				timeSinceSeen = Game.time - this.memory.threat.lastSeen;
+
+				// update aggressives based on our current status
+				if (this.memory.threat.level >= C.THREAT_ALERT)
+				{
+					this.memory.threat.threats = this.threats;
+					if (Game.time % 5 === 0)
+					{
+						this.memory.threat.breach = this.breach;
+					}
+				}
+				else if (this.memory.threat.level >= C.THREAT_PLAYER)
+				{
+					this.memory.threat.threats = this.threats;
+					this.memory.threat.breach = this.breach;
+				}
+				else if (Game.time % 5 === 0)
+				{
+					this.memory.threat.threats = this.threats;
+					this.memory.threat.breach = this.breach;
+				}
+
+				threatCounts = _.countBy(this.memory.threat.threats , 'status');
+
+				if (lib.isNull(threatCounts[C.RELATION_HOSTILE]))
+				{
+					threatCounts[C.RELATION_HOSTILE] = 0;
+				}
+
+				//lib.log(`Room: ${roomLink(this.name)} ThreatCounts: ${JSON.stringify(threatCounts)}` , debug);
+				lib.log("ALERT: " + (timeSinceSeen < config.alertTime) , debug);
+
+				// based on threats, update our status
+				if (timeSinceSeen > config.alertTime && threatCounts[C.RELATION_HOSTILE] === 0)
+				{
+					//console.log("Standby");
+					this.memory.threat.level = C.THREAT_STANDBY;
+					this.memory.threat.count = lib.nullProtect(this.memory.threat.threats , []).length;
+				}
+				else if (timeSinceSeen < config.alertTime && threatCounts[C.RELATION_HOSTILE] === 0)
+				{
+					//console.log("Alert");
+					this.memory.threat.level = C.THREAT_ALERT;
+					this.memory.threat.count = threatCounts[C.RELATION_HOSTILE].length;
+				}
+				else if (threatCounts[C.RELATION_HOSTILE] > 0)
+				{
+					//console.log("Some threat!");
+					filteredThreats = _.filter(this.memory.threat.threats , o => o.status === C.RELATION_HOSTILE);
+					threatsRaw = _(filteredThreats).map(af.goid);
+
+					//console.log(JSON.stringify(threatsRaw));
+					let isPlayer = _.some(threatsRaw , (o) => o.owner.username !== "Invader" && o.owner.username !== "Source Keeper");
+					let link = roomLink(this.name);
+
+					if (isPlayer)
+					{
+						this.memory.threat.level = C.THREAT_PLAYER;
+						console.log("!!!> PLAYER THREAT: " + link);
+					}
+					else
+					{
+						this.memory.threat.level = C.THREAT_NPC;
+						console.log("!!!> NPC THREAT! " + link);
+					}
+
+					if (this.memory.threat.level >= C.THREAT_NPC && this.memory.threat.breach)
+					{
+						this.memory.threat.level = C.THREAT_PANIC;
+						console.log("!!!> WALL BREACH! " + link);
+					}
+
+					this.memory.threat.lastSeen = Game.time;
+					this.memory.threat.count = threatCounts[C.RELATION_HOSTILE];
+				}
+			}
+
+			return this.memory.threat;
+		}
+	});
+}
+
+if (Room.prototype.hasOwnProperty('energyPickupMode') === false)
+{
+	Object.defineProperty(Room.prototype , "energyPickupMode" , {
+		get: function ()
+		{
+			if (lib.isNull(this.memory.energyPickupMode) || Game.time > this.memory.energyPickupMode.lastUpdated + 10)
+			{
+				this.memory.energyPickupMode = {
+					mode: C.ROOM_ENERGYPICKUPMODE_NOENERGY ,
+					lastUpdated: Game.time
+				};
+
+				if (Room.getSourceIds(this.name).length > 0)
+				{
+					this.memory.energyPickupMode.mode = C.ROOM_ENERGYPICKUPMODE_HARVEST;
+
+					let roomName = this.name;
+					let containers = Room.getStructuresType(roomName , STRUCTURE_CONTAINER);
+					let numStorage = Room.getStructureIdsType(roomName , STRUCTURE_STORAGE).length;
+					let numLink = Room.getStructureIdsType(roomName , STRUCTURE_LINK).length;
+					let numHarvesters = Room.countUnits(roomName , "harvester");
+					let numHaulers = Room.countUnits(roomName , "hauler");
+					let numSources = Room.getSourceIds(this.name).length;
+
+					let containerEnergy;
+					if (containers.length === 0)
+					{
+						containerEnergy = 0;
+					}
+					else
+					{
+						containerEnergy = _.sum(containers , `store[${RESOURCE_ENERGY}]`);
+					}
+
+					/** precontainer, or container setup mode, is when we have containers, but they are not properly manned, check
+					 * for energy in containers in this mode, but don't rely on it
+					 */
+
+					if (containers.length > 0)
+					{
+						this.memory.energyPickupMode.mode = C.ROOM_ENERGYPICKUPMODE_PRECONTAINER;
+					}
+
+					if (containers.length >= numSources && (containerEnergy > 0 || numHarvesters > 0))
+					{
+						this.memory.energyPickupMode.mode = C.ROOM_ENERGYPICKUPMODE_CONTAINER;
+					}
+
+					if (numStorage > 0 && this.isMine && numHaulers > 0 && numHarvesters > 0)
+					{
+						this.memory.energyPickupMode.mode = C.ROOM_ENERGYPICKUPMODE_STORAGE;
+					}
+
+					if (numLink > 1 && numHaulers > 0 && numHarvesters > 0 && this.isMine)
+					{
+						this.memory.energyPickupMode.mode = C.ROOM_ENERGYPICKUPMODE_LINK;
+					}
+				}
+			}
+
+			return this.memory.energyPickupMode.mode;
+		}
+	});
+}
+
+if (Room.prototype.hasOwnProperty('mode') === false)
+{
+	Object.defineProperty(Room.prototype , "mode" , {
+		get: function ()
+		{
+			if (lib.isNull(this.memory.mode) || Game.time !== this.memory.mode.lastUpdated)
+			{
+				let relation = this.getRelation();
+				let result = C.ROOM_MODE_NEUTRAL;
+
+				this.memory.mode = {
+					mode: result,
+					lastUpdated: Game.time
+				};
+
+				// my rooms
+				if (this.isMine)
+				{
+					let numWorkers = Room.countUnits(this.name , "worker");
+
+					if (this.threat.level >= C.THREAT_NPC)
+					{
+						result = C.ROOM_MODE_SIEGE;
+					}
+					else if (numWorkers < config.unit.min.worker)
+					{
+						result = C.ROOM_MODE_WORKER_PANIC;
+					}
+					else
+					{
+						result = C.ROOM_MODE_NORMAL;
+					}
+				}
+				// my harvest rooms
+				else if (this.isLongDistanceHarvestTarget)
+				{
+					if (this.threat.level >= C.THREAT_NPC)
+					{
+						result = C.ROOM_MODE_REMOTE_HARVEST_SIEGE;
+					}
+					else
+					{
+						result = C.ROOM_MODE_REMOTE_HARVEST;
+					}
+				}
+				// my ally rooms
+				else if (relation > C.RELATION_NEUTRAL)
+				{
+					result = C.ROOM_MODE_ALLY;
+				}
+				// enemy room
+				else if (relation === C.RELATION_HOSTILE)
+				{
+					result = C.ROOM_MODE_ENEMY;
+				}
+				// neutral room
+				else
+				{
+					result = C.ROOM_MODE_NEUTRAL;
+				}
+
+				this.memory.mode.mode = result;
+			}
+
+			return this.memory.mode.mode;
+		}
+	});
+}
+
+if (Room.prototype.hasOwnProperty('demands') === false)
+{
+	Object.defineProperty(Room.prototype , "demands" , {
+		get: function ()
+		{
+			if (lib.isNull(this.memory.demands) || Game.time !== this.memory.demands.lastUpdated)
+			{
+				// init memory
+				this.memory.demands = { lastUpdated: Game.time };
+				_.forEach(units , (unit , unitName) =>
+				{
+					this.memory.demands[unitName] = 0;
+				});
+
+				// add in demands
+				_.forEach(this.memory.motivations , (motivation , motivationName) =>
+				{
+					if (!lib.isNull(motivation.demands) && motivation.active)
+					{
+						_.forEach(motivation.demands.units , (demand , unitName) =>
+						{
+							this.memory.demands[unitName] += demand;
+						});
+					}
+				});
+			}
+
+			return this.memory.demands;
+		}
+	});
+}
+
+if (Room.prototype.hasOwnProperty('spawnEnergy') === false)
+{
+	Object.defineProperty(Room.prototype , "spawnEnergy" , {
+		get: function ()
+		{
+			if (lib.isNull(this.memory.spawnEnergy) || Game.time !== this.memory.spawnEnergy.lastUpdated)
+			{
+				this.memory.spawnEnergy = {
+					energy: 0,
+					energyCapacity: 0,
+					lastUpdated: Game.time
+				};
+
+				// Enumerate over spawns
+				_.forEach(Room.getSpawns(this.name) , spawn =>
+				{
+					this.memory.spawnEnergy.energy += spawn.energy;
+					this.memory.spawnEnergy.energyCapacity += spawn.energyCapacity;
+				});
+
+				this.memory.spawnEnergy.energy += this.extenderEnergy.energy;
+				this.memory.spawnEnergy.energyCapacity += this.extenderEnergy.energyCapacity;
+			}
+
+			return this.memory.spawnEnergy;
+		}
+	});
+}
+
+if (Room.prototype.hasOwnProperty('extenderEnergy') === false)
+{
+	Object.defineProperty(Room.prototype , "extenderEnergy" , {
+		get: function ()
+		{
+			if (lib.isNull(this.memory.extenderEnergy) || Game.time !== this.memory.extenderEnergy.lastUpdated)
+			{
+				this.memory.extenderEnergy = {
+					energy: 0 ,
+					energyCapacity: 0 ,
+					lastUpdated: Game.time
+				};
+
+				_.forEach(Room.getStructuresType(this.name , STRUCTURE_EXTENSION) , ex =>
+				{
+					this.memory.extenderEnergy.energy += ex.energy;
+					this.memory.extenderEnergy.energyCapacity += ex.energyCapacity;
+				});
+			}
+
+			return this.memory.extenderEnergy;
+		}
+	});
+}
+
+if (Room.prototype.hasOwnProperty('containerEnergy') === false)
+{
+	Object.defineProperty(Room.prototype , "containerEnergy" , {
+		get: function ()
+		{
+			if (lib.isNull(this.memory.containerEnergy) || Game.time !== this.memory.containerEnergy.lastUpdated)
+			{
+				this.memory.containerEnergy = {
+					energy: 0 ,
+					energyCapacity: 0 ,
+					lastUpdated: Game.time
+				};
+
+				_.forEach(Room.getStructuresType(this.name , STRUCTURE_CONTAINER) , ex =>
+				{
+					result.energy += ex.store[RESOURCE_ENERGY];
+					result.energyCapacity += ex.storeCapacity;
+				});
+			}
+		}
+	});
+}
+
+if (Room.prototype.hasOwnProperty('storageEnergy') === false)
+{
+	Object.defineProperty(Room.prototype , "storageEnergy" , {
+		get: function ()
+		{
+			if (lib.isNull(this.memory.storageEnergy) || Game.time !== this.memory.storageEnergy.lastUpdated)
+			{
+				this.memory.storageEnergy = {
+					energy: 0 ,
+					energyCapacity: 0 ,
+					lastUpdated: Game.time
+				};
+
+				_.forEach(Room.getStructuresType(this.name , STRUCTURE_STORAGE) , ex =>
+				{
+					result.energy += ex.store[RESOURCE_ENERGY];
+					result.energyCapacity += ex.storeCapacity;
+				});
+			}
+		}
+	});
+}
+
+if (Room.prototype.hasOwnProperty('energy') === false)
+{
+	Object.defineProperty(Room.prototype , "energy" , {
+		get: function ()
+		{
+			if (lib.isNull(this.memory.energy) || Game.time !== this.memory.energy.lastUpdated)
+			{
+				this.memory.storageEnergy = {
+					energy: 0 ,
+					energyCapacity: 0 ,
+					lastUpdated: Game.time
+				};
+
+				result.energy += this.containerEnergy.energy;
+				result.energyCapacity += this.containerEnergy.energyCapacity;
+
+				result.energy += this.storageEnergy.energy;
+				result.energyCapacity += this.storageEnergy.energyCapacity;
+			}
+		}
+	});
+}
+
+if (Room.prototype.hasOwnProperty('controllerLevel') === false)
+{
+	Object.defineProperty(Room.prototype , "controllerLevel" , {
+		get: function ()
+		{
+			if (lib.isNull(this.memory.controllerLevel) || Game.time !== this.memory.controllerLevel.lastUpdated)
+			{
+				this.memory.controllerLevel = {
+					level: 0 ,
+					lastUpdated: Game.time
+				};
+
+				if (!lib.isNull(this.controller))
+				{
+					this.memory.controllerLevel.level = this.controller.level;
+				}
+			}
+		}
+	});
+}
+
+if (Room.prototype.hasOwnProperty('relation') === false)
+{
+	Object.defineProperty(Room.prototype , "relation" , {
+		get: function ()
+		{
+			if (lib.isNull(this.memory.relation) || Game.time !== this.memory.relation.lastUpdated)
+			{
+				this.memory.relation = {
+					relation: C.RELATION_NEUTRAL ,
+					lastUpdated: Game.time
+				};
+				if (!lib.isNull(this.controller))
+				{
+					this.memory.relation.relation = diplomacyManager.status(this.controller.owner);
+				}
+				else
+				{
+					this.memory.relation.relation = C.RELATION_NEUTRAL;
+				}
+			}
+
+			return this.memory.relation.relation;
+		}
+	});
+}
+
+if (Room.prototype.hasOwnProperty('maxHarvesters') === false)
+{
+	Object.defineProperty(Room.prototype , "maxHarvesters" , {
+		get: function ()
+		{
+			if (lib.isNull(this.memory.maxHarvesters) || Game.time !== this.memory.maxHarvesters.lastUpdated)
+			{
+				this.memory.maxHarvesters = {
+					max: 0 ,
+					lastUpdated: Game.time
+				};
+
+				_.forEach(Room.getSources(this.name) , s =>
+				{
+					this.memory.maxHarvesters.max += s.getMaxHarvesters();
+				});
+			}
+		}
+	});
+}
+
+
+/***********************************************************************************************************************
+ * Export
+ */
 module.exports = function ()
 {
 };
