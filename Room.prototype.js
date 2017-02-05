@@ -9,19 +9,13 @@
  */
 Room.prototype.init = function ()
 {
-	cpuManager.timerStart(`\t  Room Init ${this.name}` , `motivate.r1.ri.${roomName}`);
+	cpuManager.timerStart(`\t  Room Init ${this.name}` , `motivate.r1.ri.${this.name}`);
 
 	let reservation = {};
 	reservation.time = Game.time;
 	this.memory.lastSeen = Game.time;
 
 	this.initMemCache();
-	this.updateEnergyPickupMode();
-	this.updateUnitDemands();
-
-	// update defenses -----------------------------------------------------------------------------------------
-	this.updateThreat();
-	this.updateMode();
 
 	// init ldh targets mem
 	if (lib.isNull(this.memory.longDistanceHarvestTargets))
@@ -95,7 +89,7 @@ Room.prototype.updateStructureCache = function (forceRefresh = false)
 	if (forceRefresh)
 	{
 		let structures = this.memory.cache.structures;
-		let roomLevel = this.getControllerLevel();
+		let roomLevel = this.controllerLevel;
 		let room = this;
 
 		_.forEach(STRUCTURES , function (s)
@@ -335,7 +329,7 @@ Room.prototype.motivateTowers = function ()
 	// find all towers
 	let towers = Room.getStructuresType(this.name , STRUCTURE_TOWER);
 
-	if (this.memory.threat.level >= C.THREAT_ALERT)
+	if (this.threat.level >= C.THREAT_ALERT)
 	{
 		// for each tower
 		towers.forEach(function (tower)
@@ -1032,6 +1026,7 @@ if (Room.prototype.hasOwnProperty('energyPickupMode') === false)
 	});
 }
 
+/*
 if (Room.prototype.hasOwnProperty('mode') === false)
 {
 	Object.defineProperty(Room.prototype , "mode" , {
@@ -1100,6 +1095,7 @@ if (Room.prototype.hasOwnProperty('mode') === false)
 		}
 	});
 }
+*/
 
 if (Room.prototype.hasOwnProperty('demands') === false)
 {

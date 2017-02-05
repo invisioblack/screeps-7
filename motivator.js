@@ -319,10 +319,10 @@ module.exports =
 		 */
 		motivateRound2: function (sortedMotivations , room)
 		{
-			cpuManager.timerStart(`\t  Motivate R2` , `motivate.r2.${roomName}`);
+			cpuManager.timerStart(`\t  Motivate R2` , `motivate.r2.${room.name}`);
 			let debug = false;
 			let roomName = room.name;
-			let unAssignedCreeps = Room.getRoomUnassignedCreeps(roomName);
+			let unAssignedCreeps = Room.getUnassignedCreeps(roomName);
 			_.forEach(unAssignedCreeps , (creep) =>
 			{
 				lib.log(`${roomLink(roomName)}: ${creep.name}` , debug);

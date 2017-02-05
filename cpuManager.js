@@ -14,6 +14,11 @@ module.exports =
 			}
 		} ,
 
+		log: function (message)
+		{
+			lib.log(`${message}\t CPU Used Total: ${Game.cpu.getUsed().toFixed(1)}`, config.cpuDetailDebug);
+		} ,
+
 		/**
 		 * Tick tracker should be called last in the loop.
 		 */
