@@ -13,10 +13,16 @@ global.motivator = require("motivator");
 profiler.registerClass(motivator , 'motivator');
 
 // motivations
+global.motivationMaintain = require("motivationMaintain");
+profiler.registerClass(motivationMaintain , 'motivationMaintain');
 global.motivationSupply = require("motivationSupply");
 profiler.registerClass(motivationSupply , 'motivationSupply');
 
 // Needs
+global.needBuild = require("needBuild");
+profiler.registerClass(needBuild , 'needBuild');
+global.needRepair = require("needRepair");
+profiler.registerClass(needRepair , 'needRepair');
 global.needSupplyController = require("needSupplyController");
 profiler.registerClass(needSupplyController , 'needSupplyController');
 global.needSupplyExtenders = require("needSupplyExtenders");
@@ -27,6 +33,10 @@ global.needSupplyTowers = require("needSupplyTowers");
 profiler.registerClass(needSupplySpawn , 'needSupplyTowers');
 
 // Jobs
+global.jobBuild = require("jobBuild");
+profiler.registerClass(jobBuild , 'jobBuild');
+global.jobRepair = require("jobRepair");
+profiler.registerClass(jobRepair , 'jobRepair');
 global.jobSupplyExtenders = require("jobSupplyExtenders");
 profiler.registerClass(jobSupplyExtenders , 'jobSupplyExtenders');
 global.jobTransferEnergy = require("jobTransferEnergy");

@@ -40,6 +40,17 @@ module.exports =
 					motivationSupply.deInit(room.name);
 				}
 
+				// maintainInfrastructure ------------------------------------------------------------------------------
+				if (room.isMine || room.isLongDistanceHarvestTarget)
+				{
+					motivationMaintain.init(room.name);
+					room.memory.motivations[motivationMaintain.name].priority = C.PRIORITY_7;
+				}
+				else if (motivationMaintain.isInit(room.name))
+				{
+					motivationMaintain.deInit(room.name);
+				}
+
 				/*
 				 // harvestSource ---------------------------------------------------------------------------------------
 				 if (room.isMine || room.isLongDistanceHarvestTarget)
@@ -332,7 +343,7 @@ module.exports =
 		motivateRound2: function (sortedMotivations , room)
 		{
 			cpuManager.timerStart(`\t  Motivate R2` , `motivate.r2.${room.name}`);
-			let debug = true;
+			let debug = false;
 			let roomName = room.name;
 			let unAssignedCreeps = Room.getUnassignedCreeps(roomName);
 
@@ -501,6 +512,13 @@ module.exports =
 							break;
 						case "needSupplyExtenders":
 							jobSupplyExtenders.work(creep);
+							break;
+						// motivation maintain
+						case "needBuild":
+							jobBuild.work(creep);
+							break;
+						case "needRepair":
+							jobRepair.work(creep);
 							break;
 						/*
 						case "needBuild":
