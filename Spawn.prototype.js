@@ -3,18 +3,6 @@
 //-------------------------------------------------------------------------
 "use strict";
 
-// game costs for spawning parts
-Spawn.prototype.costs = {};
-Spawn.prototype.costs[MOVE] = 50;
-Spawn.prototype.costs[WORK] = 100;
-Spawn.prototype.costs[CARRY] = 50;
-Spawn.prototype.costs[ATTACK] = 80;
-Spawn.prototype.costs[RANGED_ATTACK] = 150;
-Spawn.prototype.costs[HEAL] = 250;
-Spawn.prototype.costs[TOUGH] = 10;
-Spawn.prototype.costs[CLAIM] = 600;
-Spawn.prototype.rsl = [0 , 300 , 550 , 800 , 1300 , 1800 , 2300 , 5300 , 12300];
-
 // returns cost for an array of parts
 Spawn.prototype.getCostParts = function (parts)
 {
@@ -24,7 +12,7 @@ Spawn.prototype.getCostParts = function (parts)
 		for (let x in parts)
 		{
 			//console.log("P: " + parts[x]);
-			result += this.costs[parts[x]];
+			result += BODYPART_COST[parts[x]];
 		}
 	}
 	return result;
@@ -107,13 +95,13 @@ Spawn.prototype.spawnUnitByEnergy = function (unitName , energyBudget , forceRsl
 	let name;
 	let result;
 	let energyLeft = energyBudget;
-	let roomSpawnLevel = this.room.memory.rsl;
+	let roomSpawnLevel;
 	let spawnEnergy = this.room.getSpawnEnergy();
 	let partCost = 0;
 
 	// check rsl
 	let x = -1;
-	_.forEach(this.rsl , (en) =>
+	_.forEach(C.RSL , (en) =>
 	{
 		//console.log("en: " + en + " x: " + x);
 		if (energyBudget >= en)
@@ -195,6 +183,11 @@ Spawn.prototype.spawnUnitByEnergy = function (unitName , energyBudget , forceRsl
 	return false;
 };
 
+/**
+ *
+ * @param body
+ * @returns {*}
+ */
 Spawn.prototype.shuffle = function (body)
 {
 	if (body === undefined)

@@ -1,4 +1,10 @@
 var _transferEnergy = StructureLink.prototype.transferEnergy;
+/**
+ * by WarInternal
+ * @param target
+ * @param amount
+ * @returns {*}
+ */
 StructureLink.prototype.transferEnergy = function (target , amount)
 {
 	if (!target || !(target instanceof StructureLink))

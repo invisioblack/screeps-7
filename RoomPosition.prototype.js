@@ -1,3 +1,9 @@
+"use strict";
+
+/**
+ * by WarInternal
+ * @returns {*}
+ */
 RoomPosition.prototype.isEnclosed = function ()
 {
 	let room = Game.rooms[this.roomName];
@@ -22,11 +28,22 @@ RoomPosition.prototype.isEnclosed = function ()
 	).incomplete;
 };
 
+/**
+ * By Vaejor
+ * @param goals
+ * @param opts
+ * @returns {*}
+ */
 RoomPosition.prototype.search = function (goals , opts)
 {
 	return PathFinder.search(this , goals , opts);
 };
 
+/**
+ * By Vaejor
+ * @param memoryData
+ * @returns {*}
+ */
 RoomPosition.fromMemory = function (memoryData)
 {
 	if (( memoryData === undefined ) || ( memoryData === null ) || ( typeof memoryData !== 'string' ) || ( memoryData.length < 3 ))
@@ -40,6 +57,11 @@ RoomPosition.fromMemory = function (memoryData)
 	);
 };
 
+/**
+ * By Vaejor
+ * @param charCode
+ * @returns {number}
+ */
 RoomPosition.letterToPos = function (charCode)
 {
 	// 97 is 'a'
@@ -47,6 +69,11 @@ RoomPosition.letterToPos = function (charCode)
 	return ( charCode - ( ( charCode >= 97 ) ? 97 : 40 ) );
 };
 
+/**
+ * By Vaejor
+ * @param pos
+ * @returns {string}
+ */
 RoomPosition.posToLetter = function (pos)
 {
 	// 97 is 'a'
@@ -54,6 +81,10 @@ RoomPosition.posToLetter = function (pos)
 	return String.fromCharCode(pos + ( ( pos < 25 ) ? 97 : 40 ));
 };
 
+/**
+ * By Vaejor
+ * @returns {string}
+ */
 RoomPosition.prototype.toMemory = function ()
 {
 	return RoomPosition.posToLetter(this.x)

@@ -13,6 +13,7 @@ Room.prototype.init = function ()
 
 	let reservation = {};
 	reservation.time = Game.time;
+	this.memory.lastSeen = Game.time;
 
 	this.initMemCache();
 	this.updateEnergyPickupMode();
@@ -47,53 +48,6 @@ Room.prototype.init = function ()
 
 	this.memory.reservation = reservation;
 
-	// init RSL
-	if (this.isMine && !lib.isNull(this.memory.cache))
-	{
-		let numExtensions = lib.nullProtect(this.memory.cache.structures[STRUCTURE_EXTENSION] , []).length;
-		if (numExtensions < 5)
-		{
-			this.memory.rsl = 1;
-			this.memory.spawnEnergy = 300;
-		}
-		else if (numExtensions < 10)
-		{
-			this.memory.rsl = 2;
-			this.memory.spawnEnergy = 550;
-		}
-		else if (numExtensions < 20)
-		{
-			this.memory.rsl = 3;
-			this.memory.spawnEnergy = 800;
-		}
-		else if (numExtensions < 30)
-		{
-			this.memory.rsl = 4;
-			this.memory.spawnEnergy = 1300;
-		}
-		else if (numExtensions < 40)
-		{
-			this.memory.rsl = 5;
-			this.memory.spawnEnergy = 1800;
-		}
-		else if (numExtensions < 50)
-		{
-			this.memory.rsl = 6;
-			this.memory.spawnEnergy = 2300;
-		}
-		else if (numExtensions < 60)
-		{
-			this.memory.rsl = 7;
-			this.memory.spawnEnergy = 5300;
-		}
-		else
-		{
-			this.memory.rsl = 8;
-			this.memory.spawnEnergy = 12300;
-		}
-
-		this.memory.lastSeen = Game.time;
-	}
 	cpuManager.timerStop(`motivate.r1.ri.${this.name}` , config.cpuInitDetailDebug);
 };
 
@@ -1370,6 +1324,58 @@ if (Room.prototype.hasOwnProperty('maxHarvesters') === false)
 	});
 }
 
+if (Room.prototype.hasOwnProperty('rsl') === false)
+{
+	Object.defineProperty(Room.prototype , "rsl" , {
+		get: function ()
+		{
+			if (lib.isNull(this.memory.rsl) || Game.time !== this.memory.rsl.lastUpdated)
+			{
+				this.memory.rsl = {
+					rsl: 0 ,
+					lastUpdated: Game.time
+				};
+
+				if (this.isMine)
+				{
+					let numExtensions = Room.getStructureIdsType(this.name, STRUCTURE_EXTENSION).length;
+					if (numExtensions < 5)
+					{
+						this.memory.rsl.rsl = 1;
+					}
+					else if (numExtensions < 10)
+					{
+						this.memory.rsl.rsl= 2;
+					}
+					else if (numExtensions < 20)
+					{
+						this.memory.rsl.rsl = 3;
+					}
+					else if (numExtensions < 30)
+					{
+						this.memory.rsl.rsl = 4;
+					}
+					else if (numExtensions < 40)
+					{
+						this.memory.rsl.rsl = 5;
+					}
+					else if (numExtensions < 50)
+					{
+						this.memory.rsl.rsl = 6;
+					}
+					else if (numExtensions < 60)
+					{
+						this.memory.rsl.rsl = 7;
+					}
+					else
+					{
+						this.memory.rsl.rsl = 8;
+					}
+				}
+			}
+		}
+	});
+}
 
 /***********************************************************************************************************************
  * Export

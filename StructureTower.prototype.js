@@ -5,16 +5,13 @@
 
 StructureTower.prototype.autoAttack = function ()
 {
-	let roomName = this.room.name;
-	let targets = [];
 	let target;
 
-	if (Game.rooms[roomName].memory.threat.level >= C.THREAT_NPC)
+	if (this.room.threat.level >= C.THREAT_NPC)
 	{
-		targets = Game.rooms[roomName].memory.threat.threats;
-		if (targets.length > 0)
+		if (this.threat.threats.length > 0)
 		{
-			target = Game.getObjectById(targets[_.random(0 , targets.length - 1)].id);
+			target = Game.getObjectById(this.threat.threats[_.random(0 , this.threat.threats.length - 1)].id);
 		}
 
 		if (!lib.isNull(target))
@@ -26,8 +23,7 @@ StructureTower.prototype.autoAttack = function ()
 
 StructureTower.prototype.autoCreepHeal = function ()
 {
-	let roomName = this.room.name;
-	let woundedCreep = _.min(global.cache.rooms[roomName].creeps , o => o.hitsMax - o.hits);
+	let woundedCreep = _.min(Room.getCreeps(this.room.name) , o => o.hitsMax - o.hits);
 	let wounds = woundedCreep.hitsMax - woundedCreep.hits;
 
 	//console.log(":::::::::::::::::::::" + JSON.stringify(woundedCreep));
