@@ -27,6 +27,8 @@ global.needSupplyTowers = require("needSupplyTowers");
 profiler.registerClass(needSupplySpawn , 'needSupplyTowers');
 
 // Jobs
+global.jobSupplyExtenders = require("jobSupplyExtenders");
+profiler.registerClass(jobSupplyExtenders , 'jobSupplyExtenders');
 global.jobTransferEnergy = require("jobTransferEnergy");
 profiler.registerClass(jobTransferEnergy , 'jobTransferEnergy');
 

@@ -61,11 +61,58 @@ MotivationSupply.prototype.updateNeeds = function (roomName)
 	let memory = room.memory.motivations[this.name];
 	let needName, need;
 	let spawns = Room.getSpawns(roomName);
+	let towers = Room.getStructuresType(roomName, STRUCTURE_TOWER);
 
 	// insure memory is initialized for needs
 	if (lib.isNull(memory.needs))
 	{
 		memory.needs = {};
+	}
+
+	// build supply spawn needs
+	_.forEach(spawns, spawn =>
+	{
+		needName = "supplySpawn." + spawn.name;
+
+		if (spawn.energy < spawn.energyCapacity)
+		{
+			// create new need if one doesn't exist
+			if (lib.isNull(memory.needs[needName]))
+			{
+				memory.needs[needName] = {};
+				need = memory.needs[needName];
+				need.name = needName;
+				need.type = "needSupplySpawn";
+				need.targetId = spawn.id;
+				need.priority = C.PRIORITY_1;
+				need.demands = global[need.type].getUnitDemands(roomName);
+			}
+		}
+		else
+		{
+			delete memory.needs[needName];
+		}
+	});
+
+	// build extender need
+	needName = "supplyExtenders." + roomName;
+
+	if (room.extenderEnergy.energy < room.extenderEnergy.energyCapacity)
+	{
+		// create new need if one doesn't exist
+		if (lib.isNull(memory.needs[needName]))
+		{
+			memory.needs[needName] = {};
+			need = memory.needs[needName];
+			need.name = needName;
+			need.type = "needSupplyExtenders";
+			need.priority = C.PRIORITY_2;
+			need.demands = global[need.type].getUnitDemands(roomName);
+		}
+	}
+	else
+	{
+		delete memory.needs[needName];
 	}
 
 	// build supply controller
@@ -83,13 +130,12 @@ MotivationSupply.prototype.updateNeeds = function (roomName)
 		need.demands = global[need.type].getDemands(roomName);
 	}
 
-	// build supply spawn needs
-
-	_.forEach(spawns, spawn =>
+	// build extender need
+	_.forEach(towers, tower =>
 	{
-		needName = "supplySpawn." + spawn.name;
+		needName = "supplyTowers." + tower.id;
 
-		if (spawn.energy < spawn.energyCapacity)
+		if (tower.energy <= (tower.energyCapacity * config.towerPowerFactor))
 		{
 			// create new need if one doesn't exist
 			if (lib.isNull(memory.needs[needName]))
@@ -97,9 +143,9 @@ MotivationSupply.prototype.updateNeeds = function (roomName)
 				memory.needs[needName] = {};
 				need = memory.needs[needName];
 				need.name = needName;
-				need.type = "needSupplySpawn";
-				need.targetId = spawn.id;
-				need.priority = C.PRIORITY_1;
+				need.type = "needSupplyTowers";
+				need.targetId = tower.id;
+				need.priority = C.PRIORITY_4;
 				need.demands = global[need.type].getUnitDemands(roomName);
 			}
 		}

@@ -277,7 +277,7 @@ Creep.prototype.assignMotive = function (roomName , motivationName , needName)
  */
 Creep.prototype.deassignMotive = function (roomName)
 {
-	let debug = true;
+	let debug = false;
 	lib.log(`Creep: ${this.name} Room/target: ${roomLink(this.room.name)}/${roomName} Motive: ${this.memory.motive.motivation}/${this.memory.motive.need}` , debug);
 	this.say("Done!");
 

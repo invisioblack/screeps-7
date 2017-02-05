@@ -355,7 +355,7 @@ module.exports =
 		 */
 		findCreepJob: function (roomName , sortedMotivations , creep)
 		{
-			let debug = true;
+			let debug = false;
 			let assigned = false;
 			let isDemand = true;
 			let tryCount = 1;
@@ -495,10 +495,12 @@ module.exports =
 					{
 						// motivationSupply
 						case "needSupplyController":
-						case "needSupplyExtenders":
 						case "needSupplySpawn":
 						case "needSupplyTowers":
 							jobTransferEnergy.work(creep);
+							break;
+						case "needSupplyExtenders":
+							jobSupplyExtenders.work(creep);
 							break;
 						/*
 						case "needBuild":
