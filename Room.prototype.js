@@ -509,89 +509,82 @@ Room.updateUnitCache = function (roomName)
 };
 
 /**
- * room.memory.cache.unitMotive
- *  motivations
- *      units - count
- *      needs
- *          units - count
+ *
  * @param roomName
  */
 Room.updateUnitMotiveCache = function (roomName)
 {
 	// declare
 	let debug = false;
-	let roomMemory;
-	let roomCreeps;
+	let roomMemory = Memory.rooms[roomName];
 
 	// validate room memory
-	roomMemory = Memory.rooms[roomName];
-	if (lib.isNull(roomMemory) || lib.isNull(roomMemory.motivations))
+	if (roomMemory || lib.isNull(roomMemory.motivations))
 	{
 		lib.log(`Error: updateUnitMotiveCache(${roomName}): room memory or motivation memory not found.` , debug);
 		return;
 	}
 
 	// validate cache
-	if (lib.isNull(roomMemory.cache))
+	if (lib.isNull(global.cache.rooms))
 	{
-		roomMemory.cache = {};
+		global.cache.rooms = {};
 	}
 
 	// init unitMotive cache
-	roomMemory.cache.unitMotive = {};
+	global.cache.rooms[roomName] = {};
+	global.cache.rooms[roomName].unitMotive = {};
 
 	// init each motive memory
 	_.forEach(roomMemory.motivations , (motivation , motivationName) =>
 	{
-		roomMemory.cache.unitMotive[motivationName] = {};
-		roomMemory.cache.unitMotive[motivationName].units = {};
+		global.cache.rooms[roomName].unitMotive[motivationName] = {};
+		global.cache.rooms[roomName].unitMotive[motivationName].units = {};
 		_.forEach(units , (uv , uk) =>
 		{
-			roomMemory.cache.unitMotive[motivationName].units[uk] = 0;
+			global.cache.rooms[roomName].unitMotive[motivationName].units[uk] = 0;
 		});
 
 		// init needs
-		roomMemory.cache.unitMotive[motivationName].needs = {};
+		global.cache.rooms[roomName].unitMotive[motivationName].needs = {};
 		_.forEach(motivation.needs , (nv , nk) =>
 		{
-			roomMemory.cache.unitMotive[motivationName].needs[nk] = {};
-			roomMemory.cache.unitMotive[motivationName].needs[nk].units = {};
+			global.cache.rooms[roomName].unitMotive[motivationName].needs[nk] = {};
+			global.cache.rooms[roomName].unitMotive[motivationName].needs[nk].units = {};
 			_.forEach(units , (uv , uk) =>
 			{
-				roomMemory.cache.unitMotive[motivationName].needs[nk].units[uk] = 0;
+				global.cache.rooms[roomName].unitMotive[motivationName].needs[nk].units[uk] = 0;
 			});
 		});
 	});
 
 	// update creeps into cache
-	roomCreeps = global.cache.unitsByRoomMotive[roomName];
-
-	_.forEach(roomCreeps , (c , k) =>
+	_.forEach(global.cache.unitsByRoomMotive[roomName] , (c , k) =>
 	{
 		if (c.memory.motive.motivation !== "")
 		{
 			//console.log(`c: ${c.name} r: ${c.memory.motive.room} m: ${c.memory.motive.motivation}`);
 			if (lib.isNull(roomMemory.cache.unitMotive[c.memory.motive.motivation]))
 			{
-				roomMemory.cache.unitMotive[c.memory.motive.motivation] = {};
-				roomMemory.cache.unitMotive[c.memory.motive.motivation].units = {};
-				roomMemory.cache.unitMotive[c.memory.motive.motivation].units[c.memory.unit] = 0;
-				roomMemory.cache.unitMotive[c.memory.motive.motivation].needs = {};
+				global.cache.rooms[roomName].unitMotive[c.memory.motive.motivation] = {};
+				global.cache.rooms[roomName].unitMotive[c.memory.motive.motivation].units = {};
+				global.cache.rooms[roomName].unitMotive[c.memory.motive.motivation].units[c.memory.unit] = 0;
+				global.cache.rooms[roomName].unitMotive[c.memory.motive.motivation].needs = {};
 
 			}
-			roomMemory.cache.unitMotive[c.memory.motive.motivation].units[c.memory.unit]++;
-			if (lib.isNull(roomMemory.cache.unitMotive[c.memory.motive.motivation].needs[c.memory.motive.need]))
+			global.cache.rooms[roomName].unitMotive[c.memory.motive.motivation].units[c.memory.unit]++;
+			if (lib.isNull(global.cache.rooms[roomName].unitMotive[c.memory.motive.motivation].needs[c.memory.motive.need]))
 			{
-				roomMemory.cache.unitMotive[c.memory.motive.motivation].needs[c.memory.motive.need] = {};
-				roomMemory.cache.unitMotive[c.memory.motive.motivation].needs[c.memory.motive.need].units = {};
-				roomMemory.cache.unitMotive[c.memory.motive.motivation].needs[c.memory.motive.need].units[c.memory.unit] = 0;
+				global.cache.rooms[roomName].unitMotive[c.memory.motive.motivation].needs[c.memory.motive.need] = {};
+				global.cache.rooms[roomName].unitMotive[c.memory.motive.motivation].needs[c.memory.motive.need].units = {};
+				global.cache.rooms[roomName].unitMotive[c.memory.motive.motivation].needs[c.memory.motive.need].units[c.memory.unit] = 0;
 
 			}
-			roomMemory.cache.unitMotive[c.memory.motive.motivation].needs[c.memory.motive.need].units[c.memory.unit]++;
+			global.cache.rooms[roomName].unitMotive[c.memory.motive.motivation].needs[c.memory.motive.need].units[c.memory.unit]++;
 		}
 	});
 
-	lib.log(`updateUnitMotiveCache(${roomName}): ${JSON.stringify(roomMemory.cache.unitMotive)}` , debug);
+	//lib.log(`updateUnitMotiveCache(${roomName}): ${JSON.stringify(roomMemory.cache.unitMotive)}` , debug);
 };
 
 /**
@@ -743,7 +736,27 @@ Room.getSpawns = function (roomName)
  */
 Room.getCreeps = function (roomName)
 {
-	return _.has(global , "cache.rooms." + roomName + ".creeps") ? global.cache.rooms[roomName].creeps : [];
+	return _.has(global , `cache.rooms.${roomName}.creeps`) ? global.cache.rooms[roomName].creeps : [];
+};
+
+/**
+ *
+ * @param roomName
+ */
+Room.countCreeps = function (roomName)
+{
+	return Room.getCreeps(roomName).length;
+};
+
+/**
+ *
+ * @param roomName
+ * @param unitName
+ * @returns {Array}
+ */
+Room.getUnits = function (roomName, unitName)
+{
+	return _.has(global , `cache.rooms.${roomName}.units[${unitName}]`) ? global.cache.rooms[roomName].units[unitName] : [];
 };
 
 /**
@@ -754,19 +767,24 @@ Room.getCreeps = function (roomName)
  */
 Room.countUnits = function (roomName , unitName)
 {
-	let units = _.has(global , "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName] : [];
-	return units.length;
+	return Room.getUnits(roomName, unitName).length;
+};
+
+
+Room.getHomeRoomUnits = function (roomName, unitName)
+{
+	return _.has(global , `cache.homeRooms.${roomName}.units.${unitName}`) ? global.cache.homeRooms[roomName].units[unitName] : [];
 };
 
 /**
  *
  * @param roomName
  * @param unitName
- * @returns {Array}
+ * @returns {Number}
  */
-Room.getRoomUnits = function (roomName , unitName)
+Room.countHomeRoomUnits = function (roomName , unitName)
 {
-	return _.has(global , "cache.rooms." + roomName + ".units." + unitName) ? global.cache.rooms[roomName].units[unitName] : [];
+	return Room.getHomeRoomUnits(roomName, unitName).length;
 };
 
 /**
@@ -778,42 +796,7 @@ Room.getRoomUnits = function (roomName , unitName)
  */
 Room.countMotivationUnits = function (roomName , motivationName , unitName)
 {
-	// new cache
-	if (_.has(Memory , `rooms[${roomName}].cache.unitMotive[${motivationName}]`))
-	{
-		return Memory.rooms[roomName].cache.unitMotive[motivationName].units[unitName];
-	}
-	else
-	{
-		return 0;
-	}
-};
-
-/**
- *
- * @param roomName
- * @param unitName
- * @returns {Number}
- */
-Room.countHomeRoomUnits = function (roomName , unitName)
-{
-	let units = _.has(global , "cache.homeRooms." + roomName + ".units." + unitName) ? global.cache.homeRooms[roomName].units[unitName] : [];
-	return units.length;
-};
-
-/**
- *
- * @param roomName
- * @param motivationName
- * @returns {string[]|T[]}
- */
-Room.getRoomMotivationCreeps = function (roomName , motivationName)
-{
-	let result = _.filter(global.cache.rooms[roomName].creeps , function (creep)
-	{
-		return creep.memory.motive.motivation === motivationName;
-	});
-	return result;
+	return _.has(global , `cache.rooms[${roomName}].unitMotive[${motivationName}].units[${unitName}]`) ? global.cache.rooms[roomName].unitMotive[motivationName].units[unitName] : 0;
 };
 
 /**
@@ -826,14 +809,21 @@ Room.getRoomMotivationCreeps = function (roomName , motivationName)
  */
 Room.countMotivationNeedUnits = function (roomName , motivationName , needName , unitName)
 {
-	if (!lib.isNull(Memory.rooms[roomName].cache.unitMotive[motivationName].needs[needName]))
-	{
-		return Memory.rooms[roomName].cache.unitMotive[motivationName].needs[needName].units[unitName];
-	}
+	return _.has(`global.cache.rooms[${roomName}].unitMotive[${motivationName}].needs[${needName}].units[${unitName}]`) ? global.cache.rooms[roomName].unitMotive[motivationName].needs[needName].units[unitName] : 0;
+};
+
+/**
+ *
+ * @param roomName
+ * @param motivationName
+ * @returns {T[]|string[]}
+ */
+Room.getMotivationCreeps = function (roomName , motivationName)
+{
+	if (_.has(global, `cache.rooms[${roomName}].creeps`))
+		return _.filter(global.cache.rooms[roomName].creeps , creep => creep.memory.motive.motivation === motivationName);
 	else
-	{
-		return 0;
-	}
+		return [];
 };
 
 /**
@@ -841,9 +831,9 @@ Room.countMotivationNeedUnits = function (roomName , motivationName , needName ,
  * @param roomName
  * @returns {string[]|T[]}
  */
-Room.getRoomUnassignedCreeps = function (roomName)
+Room.getUnassignedCreeps = function (roomName)
 {
-	return _.filter(global.cache.rooms[roomName].creeps , creep => creep.memory.motive.motivation === "");
+	return _.has(`global.cache.rooms[${roomName}].creeps`) ? _.filter(global.cache.rooms[roomName].creeps , creep => creep.memory.motive.motivation === "") : [];
 };
 
 /***********************************************************************************************************************
