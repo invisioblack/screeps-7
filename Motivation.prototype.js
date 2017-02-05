@@ -35,7 +35,6 @@ module.exports = function ()
 
 			// init default memory
 			room.memory.motivations[this.name].name = this.name;
-			room.memory.motivations[this.name].allocatedUnits = {};
 			room.memory.motivations[this.name].spawnAllocated = false;
 			room.memory.motivations[this.name].needs = {};
 			room.memory.motivations[this.name].active = false;
@@ -73,31 +72,55 @@ module.exports = function ()
 	};
 
 	/**
-	 *
+	 * getDemands - lazy loading
 	 * @param roomName
-	 * @returns {{}}
 	 */
-	Motivation.prototype.getUnitDemands = function (roomName)
+	Motivation.prototype.getDemands = function (roomName)
+	{
+		if (lib.isNull(Memory.rooms[roomName].motivations[this.name].demands) || Memory.rooms[roomName].motivations[this.name].demands.lastUpdated !== Game.time)
+		{
+			Memory.rooms[roomName].motivations[this.name].demands = {};
+			let demands = Memory.rooms[roomName].motivations[this.name].demands;
+			demands.units = {};
+
+			_.forEach(Memory.rooms[roomName].motivations[this.name].needs , (need , needName) =>
+			{
+				let unitDemands = global[need.type].getUnitDemands(roomName , need , this.name);
+
+				//lib.log("----------- demands: " + JSON.stringify(unitDemands) , debug);
+				_.forEach(unitDemands , (demand , unitName) =>
+				{
+					if (lib.isNull(demands.units[unitName]))
+					{
+						demands.units[unitName] = 0;
+					}
+					demands.units[unitName] += demand;
+				});
+			});
+
+			// does this demand spawn?
+			demands.spawn = this.getDesireSpawn(roomName , demands.units);
+		}
+
+		return Memory.rooms[roomName].motivations[this.name].demands;
+	};
+
+	Motivation.prototype.getDesireSpawn = function (roomName , unitDemands)
 	{
 		let debug = false;
-		let result = {};
-		let roomMemory = Memory.rooms[roomName];
+		let result = false;
+		let room = Game.rooms[roomName];
+		let memory = room.memory.motivations[this.name];
+		let unitName = this.getDesiredSpawnUnit(roomName, unitDemands);
+		let unitsDemanded = unitDemands[unitName];
+		let units = Room.countMotivationUnits(roomName, this.name, "worker");
 
-		lib.log(roomName , debug);
-		_.forEach(roomMemory.motivations[this.name].needs , (need , needName) =>
+		if (unitsDemanded > units)
 		{
-			let demands = global[need.type].getUnitDemands(roomName , need , this.name);
+				result = true;
+		}
 
-			lib.log("----------- demands: " + JSON.stringify(demands) , debug);
-			_.forEach(demands , (demand , unitName) =>
-			{
-				if (lib.isNull(result[unitName]))
-				{
-					result[unitName] = 0;
-				}
-				result[unitName] += demand;
-			});
-		});
+		lib.log(`Room: ${roomLink(roomName)} ${this.name}.getDesireSpawn: active: ${memory.active} Result: ${result} unit: ${unitName} A/D: ${units}/${unitsDemanded}`, debug);
 
 		return result;
 	};

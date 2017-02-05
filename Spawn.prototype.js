@@ -58,7 +58,7 @@ Spawn.prototype.generateName = function (name)
 Spawn.prototype.spawnUnit = function (unitName , forceRsl = 0)
 {
 	let debug = false;
-	let spawnEnergy = this.room.getSpawnEnergy();
+	let spawnEnergy = this.room.spawnEnergy;
 	let energyBudget = 0;
 	let forceSpawn = false;
 
@@ -70,7 +70,7 @@ Spawn.prototype.spawnUnit = function (unitName , forceRsl = 0)
 	}
 
 	// panic worker override
-	if (this.room.memory.mode === C.ROOM_MODE_WORKER_PANIC && unitName === "worker")
+	if (this.room.roomMode === C.ROOM_MODE_WORKER_PANIC && unitName === "worker")
 	{
 		energyBudget = spawnEnergy.energy;
 	}
@@ -96,7 +96,7 @@ Spawn.prototype.spawnUnitByEnergy = function (unitName , energyBudget , forceRsl
 	let result;
 	let energyLeft = energyBudget;
 	let roomSpawnLevel;
-	let spawnEnergy = this.room.getSpawnEnergy();
+	let spawnEnergy = this.room.spawnEnergy;
 	let partCost = 0;
 
 	// check rsl

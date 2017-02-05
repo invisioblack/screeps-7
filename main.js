@@ -33,6 +33,8 @@ require('Creep.prototype');
 profiler.registerClass(Creep , 'Creep');
 require('Source.prototype');
 profiler.registerClass(Source , 'Source');
+require('Resource.prototype');
+profiler.registerClass(Source , 'Resource');
 require('Room.prototype');
 profiler.registerClass(Room , 'Room');
 require('RoomPosition.prototype');

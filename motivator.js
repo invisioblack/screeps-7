@@ -28,6 +28,18 @@ module.exports =
 				 * CORE
 				 */
 				cpuManager.timerStart(`\t  Motive Init ${roomName}` , `motivate.r1.mi.${roomName}`);
+
+				// supply ----------------------------------------------------------------------------------------------
+				if (room.isMine)
+				{
+					motivationSupply.init(room.name);
+					room.memory.motivations[motivationSupply.name].priority = C.PRIORITY_5;
+				}
+				else if (motivationSupply.isInit(room.name))
+				{
+					motivationSupply.deInit(room.name);
+				}
+
 				/*
 				 // harvestSource ---------------------------------------------------------------------------------------
 				 if (room.isMine || room.isLongDistanceHarvestTarget)
@@ -274,7 +286,7 @@ module.exports =
 					global[motivationMemory.name].updateNeeds(roomName);
 
 					// set up demands ----------------------------------------------------------------------------------
-					motivationMemory.demands = global[motivationMemory.name].getDemands(roomName);
+					global[motivationMemory.name].getDemands(roomName);
 
 					// allocate spawn ----------------------------------------------------------------------------------
 					if (!isSpawnAllocated && motivationMemory.demands.spawn)
@@ -295,7 +307,7 @@ module.exports =
 						{
 							if (!spawn.spawning && !isSpawning)
 							{
-								let unitName = global[motivationMemory.name].getDesiredSpawnUnit(roomName);
+								let unitName = global[motivationMemory.name].getDesiredSpawnUnit(roomName, global[motivationMemory.name].getDemands(roomName).units);
 								if (spawn.spawnUnit(unitName))
 								{
 									isSpawning = true;
@@ -320,9 +332,10 @@ module.exports =
 		motivateRound2: function (sortedMotivations , room)
 		{
 			cpuManager.timerStart(`\t  Motivate R2` , `motivate.r2.${room.name}`);
-			let debug = false;
+			let debug = true;
 			let roomName = room.name;
 			let unAssignedCreeps = Room.getUnassignedCreeps(roomName);
+
 			_.forEach(unAssignedCreeps , (creep) =>
 			{
 				lib.log(`${roomLink(roomName)}: ${creep.name}` , debug);
@@ -342,7 +355,7 @@ module.exports =
 		 */
 		findCreepJob: function (roomName , sortedMotivations , creep)
 		{
-			let debug = false;
+			let debug = true;
 			let assigned = false;
 			let isDemand = true;
 			let tryCount = 1;
@@ -354,6 +367,7 @@ module.exports =
 				console.lob(`!!!!!> Trying to find a creep job in wrong room: ${creep.name} assign room: ${roomName} motive room: ${creep.motive.room} creep room: ${creep.room.name}`);
 			}
 
+			lib.log(`findCreepJob: ${roomName} creep: ${creep.name}`, debug);
 			while (isDemand && !assigned && maxxed === false)
 			{
 				// reset this value, it needs to be set true in the loop to proceed to the next loop
@@ -413,17 +427,17 @@ module.exports =
 					case "hauler":
 						if (Room.getIsMine(creep.memory.motive.room))
 						{
-							creep.assignMotive(creep.memory.motive.room , "motivationSupplySpawn" , "supplyExtenders." + creep.memory.motive.room);
+							creep.assignMotive(creep.memory.motive.room , "motivationSupply" , "supplyExtenders." + creep.memory.motive.room);
 							assigned = true;
 						}
 						break;
 					case "worker":
-						if (Room.getIsMine(creep.memory.motive.room) && Memory.rooms[roomName].mode === C.ROOM_MODE_NORMAL)
+						if (Room.getIsMine(creep.memory.motive.room) && creep.room.roomMode === C.ROOM_MODE_NORMAL)
 						{
-							creep.assignMotive(creep.memory.motive.room , "motivationSupplyController" , "supplyController." + creep.memory.motive.room);
+							creep.assignMotive(creep.memory.motive.room , "motivationSupply" , "supplyController." + creep.memory.motive.room);
 							assigned = true;
 						}
-						else if (Room.getIsMine(creep.memory.motive.room) && Memory.rooms[roomName].mode === C.ROOM_MODE_SETTLE)
+						else if (Room.getIsMine(creep.memory.motive.room) && creep.room.roomMode === C.ROOM_MODE_SETTLE)
 						{
 							creep.assignMotive(creep.memory.motive.room , "motivationMaintainInfrastructure" , "build." + creep.memory.motive.room);
 						}
@@ -472,10 +486,15 @@ module.exports =
 				}
 				else
 				{
-					/*
+
 					switch (need.type)
 					{
-
+						// motivationSupply
+						case "needSupplyController":
+							lib.log("Creep: " + creep.name + " Working needSupplyController" , debug);
+							jobTransferEnergy.work(creep);
+							break;
+						/*
 						case "needTransferEnergy":
 							lib.log("Creep: " + creep.name + " Working needTransferEnergy" , debug);
 							jobTransfer.work(creep);
@@ -543,8 +562,9 @@ module.exports =
 							lib.log("Creep: " + creep.name + " Working needScout" , debug);
 							jobScout.work(creep);
 							break;
+						 */
 					}
-					*/
+
 					// creep edge protection
 					creep.getOffEdge();
 				}
@@ -561,7 +581,7 @@ module.exports =
 			let debug = false;
 			let lostCreeps = _.filter(Game.creeps , creep => creep.room.name !== creep.memory.motive.room);
 
-			console.log("Lost creeps: " + lostCreeps.length);
+			//console.log("Lost creeps: " + lostCreeps.length);
 			lostCreeps.forEach(function (creep)
 			{
 				let position = new RoomPosition(25 , 25 , creep.memory.motive.room);

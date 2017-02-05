@@ -231,12 +231,12 @@ Creep.prototype.assignMotive = function (roomName , motivationName , needName)
 	// if the creep is assigned, remove him from the cache
 	if (this.memory.motive.motivation !== "")
 	{
-		if (!lib.isNull(global.cache.rooms[this.name].unitMotive[this.memory.motive.motivation]))
+		if (!lib.isNull(global.cache.rooms[this.memory.motive.room].unitMotive[this.memory.motive.motivation]))
 		{
-			global.cache.rooms[this.name].unitMotive[this.memory.motive.motivation].units[this.memory.unit]--;
-			if (!lib.isNull(global.cache.rooms[this.name].unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need]))
+			global.cache.rooms[this.memory.motive.room].unitMotive[this.memory.motive.motivation].units[this.memory.unit]--;
+			if (!lib.isNull(global.cache.rooms[this.memory.motive.room].unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need]))
 			{
-				global.cache.rooms[this.name].unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need].units[this.memory.unit]--;
+				global.cache.rooms[this.memory.motive.room].unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need].units[this.memory.unit]--;
 			}
 		}
 	}
@@ -251,22 +251,22 @@ Creep.prototype.assignMotive = function (roomName , motivationName , needName)
 	// add to the cache
 	if (this.memory.motive.motivation !== "")
 	{
-		if (lib.isNull(global.cache.rooms[this.name].unitMotive[this.memory.motive.motivation]))
+		if (lib.isNull(global.cache.rooms[this.memory.motive.room].unitMotive[this.memory.motive.motivation]))
 		{
-			global.cache.rooms[this.name].unitMotive[this.memory.motive.motivation] = {};
-			global.cache.rooms[this.name].unitMotive[this.memory.motive.motivation].units = {};
-			global.cache.rooms[this.name].unitMotive[this.memory.motive.motivation].needs = {};
-			global.cache.rooms[this.name].unitMotive[this.memory.motive.motivation].units[this.memory.unit] = 0;
+			global.cache.rooms[this.memory.motive.room].unitMotive[this.memory.motive.motivation] = {};
+			global.cache.rooms[this.memory.motive.room].unitMotive[this.memory.motive.motivation].units = {};
+			global.cache.rooms[this.memory.motive.room].unitMotive[this.memory.motive.motivation].needs = {};
+			global.cache.rooms[this.memory.motive.room].unitMotive[this.memory.motive.motivation].units[this.memory.unit] = 0;
 		}
-		global.cache.rooms[this.name].unitMotive[this.memory.motive.motivation].units[this.memory.unit]++;
+		global.cache.rooms[this.memory.motive.room].unitMotive[this.memory.motive.motivation].units[this.memory.unit]++;
 
 		if (lib.isNull(global.cache.rooms[this.name].unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need]))
 		{
-			global.cache.rooms[this.name].unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need] = {};
-			global.cache.rooms[this.name].unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need].units = {};
-			global.cache.rooms[this.name].unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need].units[this.memory.unit] = 0;
+			global.cache.rooms[this.memory.motive.room].unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need] = {};
+			global.cache.rooms[this.memory.motive.room].unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need].units = {};
+			global.cache.rooms[this.memory.motive.room].unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need].units[this.memory.unit] = 0;
 		}
-		global.cache.rooms[this.name].unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need].units[this.memory.unit]++;
+		global.cache.rooms[this.memory.motive.room].unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need].units[this.memory.unit]++;
 	}
 };
 
@@ -276,19 +276,19 @@ Creep.prototype.assignMotive = function (roomName , motivationName , needName)
  */
 Creep.prototype.deassignMotive = function (roomName)
 {
-	let debug = false;
+	let debug = true;
 	lib.log(`Creep: ${this.name} Room/target: ${roomLink(this.room.name)}/${roomName} Motive: ${this.memory.motive.motivation}/${this.memory.motive.need}` , debug);
 	this.say("Done!");
 
 	// if the creep is assigned, remove him from the cache
 	if (this.memory.motive.motivation !== "")
 	{
-		if (!lib.isNull(global.cache.rooms[this.name].unitMotive[this.memory.motive.motivation]))
+		if (!lib.isNull(global.cache.rooms[this.memory.motive.room].unitMotive[this.memory.motive.motivation]))
 		{
-			global.cache.rooms[this.name].unitMotive[this.memory.motive.motivation].units[this.memory.unit]--;
-			if (!lib.isNull(global.cache.rooms[this.name].unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need]))
+			global.cache.rooms[this.memory.motive.room].unitMotive[this.memory.motive.motivation].units[this.memory.unit]--;
+			if (!lib.isNull(global.cache.rooms[this.memory.motive.room].unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need]))
 			{
-				global.cache.rooms[this.name].unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need].units[this.memory.unit]--;
+				global.cache.rooms[this.memory.motive.room].unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need].units[this.memory.unit]--;
 			}
 		}
 	}

@@ -58,10 +58,7 @@ global.clist = function (roomName)
 	}
 
 	output += `\n-- Creeps for ${roomName}`;
-	_.forEach(Memory.rooms[roomName].resources.units , function (c , k)
-	{
-		output += `\n${k}\n\ttotal: ${c.total}\tallocated: ${c.allocated}\tunallocated: ${c.unallocated}\tassigned: ${c.assigned}\tunassigned: ${c.unassigned}`;
-	});
+	output += '\nUnimplemented';
 
 	return output;
 };
@@ -71,7 +68,7 @@ global.fs = function (roomName , unit)
 {
 	if (lib.isNull(roomName) || lib.isNull(unit))
 	{
-		return "fs - forceSpawn arguments roomName, unit";
+		return "fs - forceSpawn arguments roomName, unit. Leave unit null to reset.";
 	}
 	if (lib.isNull(Memory.rooms[roomName]))
 	{
@@ -84,7 +81,8 @@ global.fs = function (roomName , unit)
 	}
 	else
 	{
-		return "Force Spawn for " + roomLink(roomName) + " is : " + Memory.rooms[roomName].forceSpawn;
+		Memory.rooms[roomName].forceSpawn = "";
+		return "Force Spawn for " + roomLink(roomName) + " reset";
 	}
 };
 
@@ -122,7 +120,7 @@ global.qlist = function ()
 	});
 
 	// output
-	console.log(outputString);
+	return outputString;
 };
 
 /**
@@ -479,7 +477,7 @@ global.mlist = function (roomName)
 	output += `\n-- Motivations for ${roomName}`;
 	_.forEach(sortedMotivations , function (motivation)
 	{
-		output += `\n${motivation.name}\n\tactive: ${motivation.active}\tdemand spawn:${motivation.demands.spawn}\tspawn allocated: ${motivation.spawnAllocated}\t unit: ${global[motivation.name].getDesiredSpawnUnit(roomName)}`;
+		output += `\n${motivation.name}\n\tactive: ${motivation.active}\tdemand spawn:${motivation.demands.spawn}\tspawn allocated: ${motivation.spawnAllocated}\t unit: ${global[motivation.name].getDesiredSpawnUnit(roomName, global[motivation.name].getDemands(roomName).units)}`;
 	});
 
 	return output;

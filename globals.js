@@ -1,17 +1,28 @@
 "use strict";
-//const profiler = require('screeps-profiler');
+const profiler = require('screeps-profiler');
 
 global.cacheManager = require("cacheManager");
-//profiler.registerClass(cacheManager , 'cacheManager');
+profiler.registerClass(cacheManager , 'cacheManager');
 global.cpuManager = require("cpuManager");
-//profiler.registerClass(cpuManager , 'cpuManager');
+profiler.registerClass(cpuManager , 'cpuManager');
 global.diplomacyManager = require("diplomacyManager");
-//profiler.registerClass(diplomacyManager , 'diplomacyManager');
+profiler.registerClass(diplomacyManager , 'diplomacyManager');
 global.lib = require("lib");
-//profiler.registerClass(lib , 'lib');
+profiler.registerClass(lib , 'lib');
 global.motivator = require("motivator");
-//profiler.registerClass(motivator , 'motivator');
+profiler.registerClass(motivator , 'motivator');
 
+// motivations
+global.motivationSupply = require("motivationSupply");
+profiler.registerClass(motivationSupply , 'motivationSupply');
+
+// Needs
+global.needSupplyController = require("needSupplyController");
+profiler.registerClass(needSupplyController , 'needSupplyController');
+
+// Jobs
+global.jobTransferEnergy = require("jobTransferEnergy");
+profiler.registerClass(jobTransferEnergy , 'jobTransferEnergy');
 
 // settings
 global.config = require("config");

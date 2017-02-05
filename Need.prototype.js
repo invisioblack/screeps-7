@@ -17,5 +17,16 @@ module.exports = function ()
 
 	Need.prototype.name = "Need";
 
+	Need.prototype.fillUnitDemands = function (unitDemands)
+	{
+		_.forEach(units, (unit, unitName) =>
+		{
+			if (lib.isNull(unitDemands[unitName]))
+			{
+				unitDemands[unitName] = 0;
+			}
+		});
+	};
+
 	return Need;
 };
