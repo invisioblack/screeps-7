@@ -754,25 +754,13 @@ Room.countMotivationUnits = function (roomName , motivationName , unitName)
  *
  * @param roomName
  * @param motivationName
- * @param unitName
- * @returns {number}
- */
-Room.countHomeRoomMotivationUnits = function (roomName , motivationName , unitName)
-{
-	return _.has(global , `cache.homeRooms[${roomName}].unitMotive[${motivationName}].units[${unitName}]`) ? global.cache.homeRooms[roomName].unitMotive[motivationName].units[unitName] : 0;
-};
-
-/**
- *
- * @param roomName
- * @param motivationName
  * @param needName
  * @param unitName
  * @returns {number}
  */
 Room.countMotivationNeedUnits = function (roomName , motivationName , needName , unitName)
 {
-	return _.has(global, `cache.rooms[${roomName}].unitMotive[${motivationName}].needs[${needName}].units[${unitName}]`) ? global.cache.rooms[roomName].unitMotive[motivationName].needs[needName].units[unitName] : 0;
+	return _.has(global, `cache.rooms["${roomName}"].unitMotive["${motivationName}"].needs["${needName}"].units["${unitName}"]`) ? global.cache.rooms[roomName].unitMotive[motivationName].needs[needName].units[unitName] : 0;
 };
 
 /**
@@ -1282,6 +1270,8 @@ if (Room.prototype.hasOwnProperty('controllerLevel') === false)
 					this.memory.controllerLevel.level = this.controller.level;
 				}
 			}
+
+			return this.memory.controllerLevel.level;
 		}
 	});
 }

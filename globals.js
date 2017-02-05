@@ -19,6 +19,12 @@ profiler.registerClass(motivationSupply , 'motivationSupply');
 // Needs
 global.needSupplyController = require("needSupplyController");
 profiler.registerClass(needSupplyController , 'needSupplyController');
+global.needSupplyExtenders = require("needSupplyExtenders");
+profiler.registerClass(needSupplyExtenders , 'needSupplyExtenders');
+global.needSupplySpawn = require("needSupplySpawn");
+profiler.registerClass(needSupplySpawn , 'needSupplySpawn');
+global.needSupplyTowers = require("needSupplyTowers");
+profiler.registerClass(needSupplySpawn , 'needSupplyTowers');
 
 // Jobs
 global.jobTransferEnergy = require("jobTransferEnergy");

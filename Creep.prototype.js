@@ -218,6 +218,7 @@ Creep.prototype.initMotive = function ()
 	this.memory.motive.room = this.room.name;
 	this.memory.motive.motivation = "";
 	this.memory.motive.need = "";
+	this.memory.sourceId = "";
 };
 
 /**
@@ -260,7 +261,7 @@ Creep.prototype.assignMotive = function (roomName , motivationName , needName)
 		}
 		global.cache.rooms[this.memory.motive.room].unitMotive[this.memory.motive.motivation].units[this.memory.unit]++;
 
-		if (lib.isNull(global.cache.rooms[this.name].unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need]))
+		if (lib.isNull(global.cache.rooms[this.memory.motive.room].unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need]))
 		{
 			global.cache.rooms[this.memory.motive.room].unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need] = {};
 			global.cache.rooms[this.memory.motive.room].unitMotive[this.memory.motive.motivation].needs[this.memory.motive.need].units = {};

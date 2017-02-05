@@ -368,39 +368,45 @@ module.exports =
 			}
 
 			lib.log(`findCreepJob: ${roomName} creep: ${creep.name}`, debug);
+			lib.log(`while.start isDemand: ${isDemand} assigned: ${assigned} maxxed ${maxxed}`, debug);
 			while (isDemand && !assigned && maxxed === false)
 			{
+
 				// reset this value, it needs to be set true in the loop to proceed to the next loop
 				isDemand = false;
 				// loop over motivations to look for an open spot
+				lib.log(`forEach.start sortedMotivations: ${sortedMotivations.length}`, debug);
 				_.forEach(sortedMotivations , (motivationMemory) =>
 				{
-					if (!assigned && motivationMemory.active && _.some(global[motivationMemory.name].getAssignableUnitNames() , (unitName) => unitName === creep.memory.unit))
+					let someUnits = _.some(global[motivationMemory.name].getAssignableUnitNames() , (unitName) => unitName === creep.memory.unit);
+					lib.log(`b4 if1 assigned: ${assigned} active: ${motivationMemory.active} someUnits: ${someUnits}`, debug);
+					if (!assigned && motivationMemory.active && someUnits)
 					{
-						let motiveUnits = Room.countMotivationUnits(roomName , motivationMemory.name , creep.memory.unit);
-						let demandedUnits = lib.nullProtect(motivationMemory.demands.units[creep.memory.unit] , 0);
-						if (!assigned && motiveUnits < demandedUnits)
+						// read up needs sorted by priority
+						let motiveUnits, demandedUnits;
+						let needs = _.sortByOrder(motivationMemory.needs , ['priority'] , ['desc']);
+						lib.log(`need forEach: ${_.size(needs)}`, debug);
+						_.forEach(needs , (need) =>
 						{
-							// read up needs sorted by priority
-							let needs = _.sortByOrder(motivationMemory.needs , ['priority'] , ['desc']);
-							_.forEach(needs , (need) =>
+							lib.log(`b4 need if1: assigned ${assigned} `, debug);
+							if (!assigned)
 							{
-								if (!assigned && !lib.isNull(need.demands))
+								let needUnits = Room.countMotivationNeedUnits(roomName , motivationMemory.name , need.name , creep.memory.unit);
+								let demandedNeedUnits = lib.nullProtect(need.demands[creep.memory.unit] , 0);
+								lib.log(`b4 need if2: needUnits ${needUnits} tryCount ${tryCount} demandedNeedUnits ${demandedNeedUnits}`, debug);
+								if (needUnits < tryCount && needUnits < demandedNeedUnits)
 								{
-									let needUnits = Room.countMotivationNeedUnits(roomName , motivationMemory.name , need.name , creep.memory.unit);
-									let demandedNeedUnits = lib.nullProtect(need.demands[creep.memory.unit] , 0);
-									if (needUnits < tryCount && needUnits < demandedNeedUnits)
-									{
-										creep.assignMotive(roomName , motivationMemory.name , need.name);
-										assigned = true;
-									}
+									creep.assignMotive(roomName , motivationMemory.name , need.name);
+									lib.log(`Assigned: roomName ${roomName} motive: ${motivationMemory.name} ${need.name}`, debug);
+									assigned = true;
 								}
-							});
-						}
+							}
+						});
 
 						// if there is still demand mark it so
 						motiveUnits = Room.countMotivationUnits(roomName , motivationMemory.name , creep.memory.unit);
 						demandedUnits = lib.nullProtect(motivationMemory.demands.units[creep.memory.unit] , 0);
+						lib.log(`b4 isDemand if: motiveUnits ${motiveUnits} demandedUnits ${demandedUnits}`, debug);
 						if (motiveUnits < demandedUnits)
 						{
 							isDemand = true;
@@ -428,6 +434,7 @@ module.exports =
 						if (Room.getIsMine(creep.memory.motive.room))
 						{
 							creep.assignMotive(creep.memory.motive.room , "motivationSupply" , "supplyExtenders." + creep.memory.motive.room);
+							lib.log(`Assigned: roomName ${creep.memory.motive.room} motive: ${creep.memory.motive.motivation} ${creep.memory.motive.need}`, debug);
 							assigned = true;
 						}
 						break;
@@ -435,11 +442,8 @@ module.exports =
 						if (Room.getIsMine(creep.memory.motive.room) && creep.room.roomMode === C.ROOM_MODE_NORMAL)
 						{
 							creep.assignMotive(creep.memory.motive.room , "motivationSupply" , "supplyController." + creep.memory.motive.room);
+							lib.log(`Assigned: roomName ${creep.memory.motive.room} motive: ${creep.memory.motive.motivation} ${creep.memory.motive.need}`, debug);
 							assigned = true;
-						}
-						else if (Room.getIsMine(creep.memory.motive.room) && creep.room.roomMode === C.ROOM_MODE_SETTLE)
-						{
-							creep.assignMotive(creep.memory.motive.room , "motivationMaintainInfrastructure" , "build." + creep.memory.motive.room);
 						}
 						break;
 				}
@@ -491,14 +495,12 @@ module.exports =
 					{
 						// motivationSupply
 						case "needSupplyController":
-							lib.log("Creep: " + creep.name + " Working needSupplyController" , debug);
+						case "needSupplyExtenders":
+						case "needSupplySpawn":
+						case "needSupplyTowers":
 							jobTransferEnergy.work(creep);
 							break;
 						/*
-						case "needTransferEnergy":
-							lib.log("Creep: " + creep.name + " Working needTransferEnergy" , debug);
-							jobTransfer.work(creep);
-							break;
 						case "needBuild":
 							lib.log("Creep: " + creep.name + " Working needBuild" , debug);
 							jobBuild.work(creep);
@@ -550,10 +552,6 @@ module.exports =
 							lib.log("Creep: " + creep.name + " Working needManualTactical" , debug);
 							jobManualTactical.work(creep);
 							break;
-						case "needSupplyExtenders":
-							lib.log("Creep: " + creep.name + " Working needSupplyExtenders" , debug);
-							jobSupplyExtenders.work(creep);
-							break;
 						case "needLongDistancePickup":
 							lib.log("Creep: " + creep.name + " Working needLongDistancePickup" , debug);
 							jobLongDistancePickup.work(creep);
@@ -565,6 +563,7 @@ module.exports =
 						 */
 					}
 
+					lib.log(`Creep: ${creep.name} Working ${need.type}`, debug);
 					// creep edge protection
 					creep.getOffEdge();
 				}

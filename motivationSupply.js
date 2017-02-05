@@ -18,7 +18,7 @@ MotivationSupply.prototype.constructor = MotivationSupply;
  */
 MotivationSupply.prototype.getDesiredSpawnUnit = function (roomName, unitDemands)
 {
-	let numWorkers = Room.countHomeRoomMotivationUnits(roomName, this.name, "worker");
+	let numWorkers = Room.countMotivationUnits(roomName, this.name, "worker");
 
 	if (numWorkers < unitDemands["worker"])
 	{
@@ -59,6 +59,8 @@ MotivationSupply.prototype.updateNeeds = function (roomName)
 {
 	let room = Game.rooms[roomName];
 	let memory = room.memory.motivations[this.name];
+	let needName, need;
+	let spawns = Room.getSpawns(roomName);
 
 	// insure memory is initialized for needs
 	if (lib.isNull(memory.needs))
@@ -67,8 +69,7 @@ MotivationSupply.prototype.updateNeeds = function (roomName)
 	}
 
 	// build supply controller
-	let needName = "supplyController." + roomName;
-	let need;
+	needName = "supplyController." + roomName;
 
 	// create new need if one doesn't exist
 	if (lib.isNull(memory.needs[needName]))
@@ -81,6 +82,32 @@ MotivationSupply.prototype.updateNeeds = function (roomName)
 		need.priority = C.PRIORITY_3;
 		need.demands = global[need.type].getDemands(roomName);
 	}
+
+	// build supply spawn needs
+
+	_.forEach(spawns, spawn =>
+	{
+		needName = "supplySpawn." + spawn.name;
+
+		if (spawn.energy < spawn.energyCapacity)
+		{
+			// create new need if one doesn't exist
+			if (lib.isNull(memory.needs[needName]))
+			{
+				memory.needs[needName] = {};
+				need = memory.needs[needName];
+				need.name = needName;
+				need.type = "needSupplySpawn";
+				need.targetId = spawn.id;
+				need.priority = C.PRIORITY_1;
+				need.demands = global[need.type].getUnitDemands(roomName);
+			}
+		}
+		else
+		{
+			delete memory.needs[needName];
+		}
+	});
 };
 
 /**
