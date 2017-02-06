@@ -6,16 +6,16 @@ let Need = require('Need.prototype')();
  *
  * @constructor
  */
-let NeedRPickup = function ()
+let NeedRHaul = function ()
 {
 	Need.call(this);
-	this.name = "needRPickup";
+	this.name = "needRHaul";
 };
 
-NeedRPickup.prototype = Object.create(Need.prototype);
-NeedRPickup.prototype.constructor = NeedRPickup;
+NeedRHaul.prototype = Object.create(Need.prototype);
+NeedRHaul.prototype.constructor = NeedRHaul;
 
-NeedRPickup.prototype.getUnitDemands = function (roomName , memory , motivationName)
+NeedRHaul.prototype.getUnitDemands = function (roomName , memory , motivationName)
 {
 	memory.demands = {};
 	memory.demands["hauler"] = global["motivationHaul"].getDemands(memory.targetRoom);
@@ -26,6 +26,6 @@ NeedRPickup.prototype.getUnitDemands = function (roomName , memory , motivationN
 	return memory.demands;
 };
 
-module.exports = new NeedRPickup();
+module.exports = new NeedRHaul();
 
 

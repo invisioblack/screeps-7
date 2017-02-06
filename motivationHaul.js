@@ -156,7 +156,7 @@ MotivationHaul.prototype.updateNeeds = function (roomName)
 					}
 					need = memory.needs[needName];
 					need.name = needName;
-					need.type = "needRPickup";
+					need.type = "needRHaul";
 					need.targetRoom = rN;
 					need.priority = C.PRIORITY_3;
 					need.demands = global[need.type].getUnitDemands(roomName , need , this.name);

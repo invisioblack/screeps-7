@@ -6,25 +6,25 @@ let Job = require("Job.prototype")();
  * JobTransferEnergy
  * @constructor
  */
-let JobTransferEnergy = function ()
+let JobHaul = function ()
 {
 	Job.call(this);
-	this.name = "jobTransferEnergy";
+	this.name = "jobHaul";
 };
 
-JobTransferEnergy.prototype = Object.create(Job.prototype);
-JobTransferEnergy.prototype.constructor = JobTransferEnergy;
+JobHaul.prototype = Object.create(Job.prototype);
+JobHaul.prototype.constructor = JobHaul;
 
 /**
  * work
  * @param creep
  */
-JobTransferEnergy.prototype.work = function (creep)
+JobHaul.prototype.work = function (creep)
 {
-	let debug = false;
+	let debug = true;
 	let need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
 	let target = Game.getObjectById(need.targetId);
-	let carry = creep.carry[RESOURCE_ENERGY];
+	let source = Game.getObjectById(need.sourceId);
 
 	//avoid hostiles
 	if (creep.avoidHostile(creep))
@@ -44,16 +44,49 @@ JobTransferEnergy.prototype.work = function (creep)
 
 	lib.log(creep.name + " job/mode: " + creep.memory.job.mode , debug);
 
+	// validate source and target
+	if (lib.isNull(source))
+	{
+		console.log("Null source");
+		creep.sing("Null source!");
+		return;
+	}
+	if (lib.isNull(target))
+	{
+		console.log("Null target");
+		creep.sing("Null target!");
+		return;
+	}
+	console.log(source);
 	// manage job
 	switch (creep.memory.job.mode)
 	{
 		case C.JOB_MODE_GETENERGY:
-			lib.log(creep.name + " getting energy " , debug);
-			this.getEnergy(creep);
+			lib.log(creep.name + " getting cargo " , debug);
+			let result;
+
+			if (source.carrying)
+			{
+				result = creep.withdraw(source , source.store[0]);
+				if (result === ERR_NOT_IN_RANGE)
+				{
+					result = creep.travelTo(source);
+					if (result < 0 && result != ERR_TIRED)
+						console.log(creep.name + " Can't move while getting from container: " + result);
+				}
+				console.log(result);
+				creep.say("Take!");
+			}
+			else
+			{
+				creep.say("Empty!");
+				creep.memory.job.mode = C.JOB_MODE_WORK;
+				creep.resetSource();
+			}
 			break;
 		case C.JOB_MODE_WORK:
 			creep.resetSource();
-			if (carry === 0)
+			if (creep.carrying === 0)
 			{
 				creep.memory.job.mode = C.JOB_MODE_GETENERGY;
 				creep.deassignMotive();
@@ -70,19 +103,12 @@ JobTransferEnergy.prototype.work = function (creep)
 						result = creep.transfer(target , k);
 						lib.log(creep.name + " transfer result: " + result , false);
 						creep.say("Give!");
-						return false;
 					}
 				});
 
-				_.forEach(creep.carry , (v , k) =>
-				{
-					result = creep.transfer(target , k);
-					lib.log(creep.name + " transfer result: " + result , false);
-					creep.say("Give!");
-					return false;
-				});
 				if (result === ERR_NOT_IN_RANGE)
 				{
+					creep.say("Haul!");
 					let moveResult = creep.travelTo(target);
 					//if (moveResult < 0 && moveResult != ERR_TIRED)
 					//	console.log(creep.name + " Can't move while transferring: " + moveResult);
@@ -99,6 +125,6 @@ JobTransferEnergy.prototype.work = function (creep)
 
 /**
  * Export
- * @type {JobTransferEnergy}
+ * @type {JobHaul}
  */
-module.exports = new JobTransferEnergy();
+module.exports = new JobHaul();
