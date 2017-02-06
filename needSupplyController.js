@@ -19,7 +19,7 @@ NeedSupplyController.prototype.getUnitDemands = function (roomName , memory , mo
 {
 	// TODO: this should scale to help maintain energy levels
 	memory.demands = {};
-	memory.demands["worker"] = 4;
+	memory.demands["worker"] = 2;
 
 	this.fillUnitDemands(memory.demands);
 

@@ -27,13 +27,23 @@ NeedSupplyExtenders.prototype.constructor = NeedSupplyExtenders;
 
 NeedSupplyExtenders.prototype.getUnitDemands = function (roomName , memory , motivationName)
 {
-	let numWorkers = Room.countHomeRoomUnits(roomName, "worker");
+	let room = Game.rooms[roomName];
+	let numHauler = Room.countHomeRoomUnits(roomName, "hauler");
 	memory.demands = {};
 
-	if (Game.rooms[roomName].controllerLevel < 3 || config.unit.max.worker < numWorkers)
+	if (room.energyPickupMode < C.ROOM_ENERGYPICKUPMODE_PRECONTAINER)
+	{
 		memory.demands["worker"] = 1;
-	else
+	}
+	else if (room.energyPickupMode >= C.ROOM_ENERGYPICKUPMODE_PRECONTAINER && numHauler === 0)
+	{
+		memory.demands["worker"] = 1;
 		memory.demands["hauler"] = 1;
+	}
+	else
+	{
+		memory.demands["hauler"] = 1;
+	}
 
 	//console.log(`${Game.rooms[roomName].controllerLevel} ${config.unit.max.worker} <  ${numWorkers} : ${ex(memory.demands)}`);
 	this.fillUnitDemands(memory.demands);

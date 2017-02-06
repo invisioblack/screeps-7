@@ -61,6 +61,7 @@ Spawn.prototype.spawnUnit = function (unitName , forceRsl = 0)
 	let spawnEnergy = this.room.spawnEnergy;
 	let energyBudget = 0;
 	let forceSpawn = false;
+	let maxxed = false;
 
 	// hijack if forceSpawn is enabled
 	if (!lib.isNull(this.room.memory.forceSpawn) && this.room.memory.forceSpawn != "")
@@ -79,8 +80,17 @@ Spawn.prototype.spawnUnit = function (unitName , forceRsl = 0)
 		energyBudget = spawnEnergy.energyCapacity;
 	}
 
-	lib.log(`Spawn Status Room: ${roomLink(this.room.name)} Unit: ${unitName} Energy Availability: ${spawnEnergy.energy}/${spawnEnergy.energyCapacity} Budget: ${energyBudget} FS: ${forceSpawn}` , debug);
-	return this.spawnUnitByEnergy(unitName , energyBudget , forceRsl);
+	if (Room.countHomeRoomUnits(this.room.name, unitName) >= this.room.maxUnits[unitName])
+	{
+		maxxed = true;
+	}
+
+	lib.log(`Spawn Status Room: ${roomLink(this.room.name)} Unit: ${unitName} Maxxed: ${maxxed} Energy Availability: ${spawnEnergy.energy}/${spawnEnergy.energyCapacity} Budget: ${energyBudget} FS: ${forceSpawn}` , debug);
+
+	if (!maxxed)
+		return this.spawnUnitByEnergy(unitName , energyBudget , forceRsl);
+	else
+		return false;
 };
 
 /**

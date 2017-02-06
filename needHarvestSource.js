@@ -1,20 +1,11 @@
-//-------------------------------------------------------------------------
-// needHarvestSource
-//-------------------------------------------------------------------------
 "use strict";
-//-------------------------------------------------------------------------
-// modules
-//-------------------------------------------------------------------------
-// script prototypes
+
 let Need = require('Need.prototype')();
 
-//-------------------------------------------------------------------------
-// Declarations
-//-------------------------------------------------------------------------
-
-//-------------------------------------------------------------------------
-// function
-//-------------------------------------------------------------------------
+/**
+ * NeedHarvestSource
+ * @constructor
+ */
 let NeedHarvestSource = function ()
 {
 	Need.call(this);
@@ -24,6 +15,13 @@ let NeedHarvestSource = function ()
 NeedHarvestSource.prototype = Object.create(Need.prototype);
 NeedHarvestSource.prototype.constructor = NeedHarvestSource;
 
+/**
+ * getUnitDemands
+ * @param roomName
+ * @param memory
+ * @param motivationName
+ * @returns {{}|*}
+ */
 NeedHarvestSource.prototype.getUnitDemands = function (roomName , memory , motivationName)
 {
 	let unitName = "";
@@ -36,7 +34,7 @@ NeedHarvestSource.prototype.getUnitDemands = function (roomName , memory , motiv
 	}
 	else
 	{
-		unitName = "ldharvester";
+		unitName = "rharvester";
 	}
 	// ---------------------------------------------------
 	memory.demands = {};
@@ -49,6 +47,12 @@ NeedHarvestSource.prototype.getUnitDemands = function (roomName , memory , motiv
 	return memory.demands;
 };
 
+/**
+ * getTicksTillHarvesterDeath
+ * @param roomName
+ * @param memory
+ * @returns {number}
+ */
 NeedHarvestSource.prototype.getTicksTillHarvesterDeath = function (roomName , memory)
 {
 	let unitName = "";
@@ -59,7 +63,7 @@ NeedHarvestSource.prototype.getTicksTillHarvesterDeath = function (roomName , me
 	}
 	else
 	{
-		unitName = "ldharvester";
+		unitName = "rharvester";
 	}
 
 	let harvester = Room.countUnits(roomName , unitName);

@@ -45,7 +45,7 @@ MotivationHaulToStorage.prototype.getDesiredSpawnUnit = function (roomName)
 
 MotivationHaulToStorage.prototype.getDesireSpawn = function (roomName, demands)
 {
-	if (Room.getIsLongDistanceHarvestTarget(roomName))
+	if (Room.getIsRHarvestTarget(roomName))
 		return false;
 
 	let debug = false;

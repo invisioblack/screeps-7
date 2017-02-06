@@ -113,7 +113,7 @@ module.exports = function ()
 		let memory = room.memory.motivations[this.name];
 		let unitName = this.getDesiredSpawnUnit(roomName, unitDemands);
 		let unitsDemanded = unitDemands[unitName];
-		let units = Room.countMotivationUnits(roomName, this.name, "worker");
+		let units = Room.countMotivationUnits(roomName, this.name, unitName);
 
 		if (unitsDemanded > units)
 		{

@@ -17,8 +17,6 @@ JobBuild.prototype.work = function (creep)
 	let target = _.min(constructionSites , (c) => c.progressTotal - c.progress);
 	let carry = _.sum(creep.carry);
 
-	creep.sing("Building things!");
-
 	//avoid hostiles
 	if (creep.avoidHostile(creep))
 	{
@@ -43,6 +41,7 @@ JobBuild.prototype.work = function (creep)
 			break;
 		case C.JOB_MODE_WORK:
 			creep.resetSource();
+			creep.say("Building!");
 			if (carry === 0)
 			{
 				creep.memory.job.mode = C.JOB_MODE_GETENERGY;

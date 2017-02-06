@@ -18,9 +18,9 @@ Room.prototype.init = function ()
 	this.initMemCache();
 
 	// init ldh targets mem
-	if (lib.isNull(this.memory.longDistanceHarvestTargets))
+	if (lib.isNull(this.memory.rHarvestTargets))
 	{
-		this.memory.longDistanceHarvestTargets = [];
+		this.memory.rHarvestTargets = [];
 	}
 
 	// update ldh reservations
@@ -543,9 +543,9 @@ Room.updateUnitMotiveCache = function (roomName)
  * @param roomName
  * @returns {boolean}
  */
-Room.getIsLongDistanceHarvestTarget = function (roomName)
+Room.getIsRHarvestTarget = function (roomName)
 {
-	return lib.nullProtect(Memory.rooms[roomName].longDistanceHarvestParents , []).length > 0;
+	return lib.nullProtect(Memory.rooms[roomName].rHarvestParents , []).length > 0;
 };
 
 /**
@@ -806,12 +806,12 @@ if (Room.prototype.hasOwnProperty('isMine') === false)
 	});
 }
 
-if (Room.prototype.hasOwnProperty('isLongDistanceHarvestTarget') === false)
+if (Room.prototype.hasOwnProperty('isRHarvestTarget') === false)
 {
-	Object.defineProperty(Room.prototype , "isLongDistanceHarvestTarget" , {
+	Object.defineProperty(Room.prototype , "isRHarvestTarget" , {
 		get: function ()
 		{
-			return Room.getIsLongDistanceHarvestTarget(this.name);
+			return Room.getIsRHarvestTarget(this.name);
 		}
 	});
 }
@@ -1063,7 +1063,7 @@ if (Room.prototype.hasOwnProperty('roomMode') === false)
 					}
 				}
 				// my harvest rooms
-				else if (this.isLongDistanceHarvestTarget)
+				else if (this.isRHarvestTarget)
 				{
 					if (this.threat.level >= C.THREAT_NPC)
 					{
@@ -1372,6 +1372,34 @@ if (Room.prototype.hasOwnProperty('rsl') === false)
 					}
 				}
 			}
+		}
+	});
+}
+
+if (Room.prototype.hasOwnProperty('maxUnits') === false)
+{
+	Object.defineProperty(Room.prototype , "maxUnits" , {
+		get: function ()
+		{
+			if (lib.isNull(this.memory.maxUnits) || Game.time !== this.memory.maxUnits.lastUpdated)
+			{
+				this.memory.maxUnits = {
+					units: [] ,
+					lastUpdated: Game.time
+				};
+
+				this.memory.maxUnits.units.worker = 10;
+				this.memory.maxUnits.units.harvester = Room.getSourceIds(this.name) * 2;
+				this.memory.maxUnits.units.rharvester = this.memory.rHarvestTargets.length * 2;
+				this.memory.maxUnits.units.hauler = 4;
+				this.memory.maxUnits.units.claimer = 0;
+				this.memory.maxUnits.units.guard = 0;
+				this.memory.maxUnits.units.rangedGuard = 0;
+				this.memory.maxUnits.units.heal = 0;
+				this.memory.maxUnits.units.scout = 0;
+			}
+
+			return this.memory.maxUnits.units;
 		}
 	});
 }

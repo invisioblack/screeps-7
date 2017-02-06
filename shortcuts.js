@@ -58,7 +58,14 @@ global.clist = function (roomName)
 	}
 
 	output += `\n-- Creeps for ${roomName}`;
-	output += '\nUnimplemented';
+	let creepsByMotive = global.global.cache.rooms[roomName].unitMotive;
+	_.forEach(creepsByMotive, (m, mn) => {
+		output += `\n\n\t${mn}`;
+		_.forEach(m.units, (count, unitName) => {
+			if (count > 0)
+				output += `\n\t\t${unitName}: ${count}`;
+		});
+	});
 
 	return output;
 };
@@ -188,25 +195,25 @@ global.llist = function ()
 
 	_.forEach(Memory.rooms , function (r , k)
 	{
-		if (lib.isNull(r.longDistanceHarvestTargets))
+		if (lib.isNull(r.rHarvestTargets))
 		{
-			r.longDistanceHarvestTargets = [];
+			r.rHarvestTargets = [];
 		}
-		if (lib.isNull(r.longDistanceHarvestParents))
+		if (lib.isNull(r.rHarvestParents))
 		{
-			r.longDistanceHarvestParents = [];
+			r.rHarvestParents = [];
 		}
 
 		link = roomLink(k);
 		outputString += `\nSource Room: ${link}`;
-		_.forEach(r.longDistanceHarvestTargets , function (target)
+		_.forEach(r.rHarvestTargets , function (target)
 		{
 			buttonCommand = "lremove('" + target + "','" + k + "')";
 			link = roomLink(target);
 			button = makeButton(getId() , undefined , "Stop Harvesting" , buttonCommand);
 			outputString += `\n\troom: ${link}\t ${button}\n`;
 		});
-		if (r.longDistanceHarvestTargets.length === 0)
+		if (r.rHarvestTargets.length === 0)
 		{
 			outputString += `\n\tNo targets.`;
 		}
@@ -226,17 +233,17 @@ global.ladd = function (targetRoomName, sourceRoomName)
 		return "Missing source room: " + sourceRoomName;
 	}
 
-	if (lib.isNull(Memory.rooms[targetRoomName].longDistanceHarvestTargets))
+	if (lib.isNull(Memory.rooms[targetRoomName].rHarvestTargets))
 	{
-		Memory.rooms[targetRoomName].longDistanceHarvestTargets = [];
+		Memory.rooms[targetRoomName].rHarvestTargets = [];
 	}
-	if (lib.isNull(Memory.rooms[targetRoomName].longDistanceHarvestParents))
+	if (lib.isNull(Memory.rooms[targetRoomName].rHarvestParents))
 	{
-		Memory.rooms[targetRoomName].longDistanceHarvestParents = [];
+		Memory.rooms[targetRoomName].rHarvestParents = [];
 	}
 
-	let targets = Memory.rooms[sourceRoomName].longDistanceHarvestTargets;
-	let parents = Memory.rooms[targetRoomName].longDistanceHarvestParents;
+	let targets = Memory.rooms[sourceRoomName].rHarvestTargets;
+	let parents = Memory.rooms[targetRoomName].rHarvestParents;
 	let target = _.find(targets , function (c)
 	{
 		return c === targetRoomName;
@@ -266,8 +273,8 @@ global.lremove = function (targetRoomName, sourceRoomName)
 		return "Missing source room: " + sourceRoomName;
 	}
 
-	let targets = Memory.rooms[sourceRoomName].longDistanceHarvestTargets;
-	let parents = Memory.rooms[targetRoomName].longDistanceHarvestParents;
+	let targets = Memory.rooms[sourceRoomName].rHarvestTargets;
+	let parents = Memory.rooms[targetRoomName].rHarvestParents;
 	let target = _.find(targets , function (c)
 	{
 		return c === targetRoomName;

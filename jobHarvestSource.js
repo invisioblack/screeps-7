@@ -1,19 +1,11 @@
-//-------------------------------------------------------------------------
-// jobHarvestSource
-//-------------------------------------------------------------------------
 "use strict";
-//-------------------------------------------------------------------------
-// modules
-//-------------------------------------------------------------------------
+
 let Job = require("Job.prototype")();
 
-//-------------------------------------------------------------------------
-// Declarations
-//-------------------------------------------------------------------------
-
-//-------------------------------------------------------------------------
-// constructor
-//-------------------------------------------------------------------------
+/**
+ * JobHarvestSource
+ * @constructor
+ */
 let JobHarvestSource = function ()
 {
 	Job.call(this);
@@ -23,9 +15,10 @@ let JobHarvestSource = function ()
 JobHarvestSource.prototype = Object.create(Job.prototype);
 JobHarvestSource.prototype.constructor = JobHarvestSource;
 
-//-------------------------------------------------------------------------
-// implementation
-//-------------------------------------------------------------------------
+/**
+ * work
+ * @param creep
+ */
 JobHarvestSource.prototype.work = function (creep)
 {
 	let need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
@@ -88,7 +81,8 @@ JobHarvestSource.prototype.work = function (creep)
 	}
 };
 
-//-------------------------------------------------------------------------
-// export
-//-------------------------------------------------------------------------
+/**
+ * Export
+ * @type {JobHarvestSource}
+ */
 module.exports = new JobHarvestSource();

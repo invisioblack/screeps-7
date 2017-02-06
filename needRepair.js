@@ -34,19 +34,7 @@ NeedRepair.prototype.getUnitDemands = function (roomName , memory , motivationNa
 	//console.log(`room: ${roomName} n: ${needName} s: ${numRepairSites}`);
 
 	memory.demands = {};
-
-	if (numRepairSites > 5)
-	{
-		memory.demands["worker"] = 2;
-	}
-	else if (numRepairSites > 0)
-	{
-		memory.demands["worker"] = 1;
-	}
-	else
-	{
-		memory.demands["worker"] = 0;
-	}
+	memory.demands["worker"] = numRepairSites;
 
 	this.fillUnitDemands(memory.demands);
 

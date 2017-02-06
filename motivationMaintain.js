@@ -19,7 +19,7 @@ MotivationMaintain.prototype.constructor = MotivationMaintain;
  * getDesiredSpawnUnit
  * @returns {string}
  */
-MotivationMaintain.prototype.getDesiredSpawnUnit = function ()
+MotivationMaintain.prototype.getDesiredSpawnUnit = function (roomName, unitDemands)
 {
 	return "worker";
 };
@@ -46,6 +46,10 @@ MotivationMaintain.prototype.updateActive = function (roomName)
 	return Memory.rooms[roomName].motivations[this.name].active;
 };
 
+/**
+ * updateNeeds
+ * @param roomName
+ */
 MotivationMaintain.prototype.updateNeeds = function (roomName)
 {
 	let debug = true;
@@ -57,6 +61,7 @@ MotivationMaintain.prototype.updateNeeds = function (roomName)
 	let structuresWall = Room.getStructuresType(roomName , STRUCTURE_ALL_WALL);
 	let wallHP = config.wallHP[lib.isNull(room.controller) ? 0 : room.controller.level];
 	let numConstructionSites = Room.getConstructionIds(room.name).length;
+	let need;
 
 	// insure memory is initialized for needs
 	if (lib.isNull(memory.needs))
@@ -72,10 +77,11 @@ MotivationMaintain.prototype.updateNeeds = function (roomName)
 		if (lib.isNull(memory.needs[needName]))
 		{
 			memory.needs[needName] = {};
-			memory.needs[needName].type = "needRepair";
-			memory.needs[needName].name = needName;
-			memory.needs[needName].priority = C.PRIORITY_2;
-			need.demands = global[need.type].getUnitDemands(roomName);
+			need = memory.needs[needName];
+			need.type = "needRepair";
+			need.name = needName;
+			need.priority = C.PRIORITY_2;
+			need.demands = global[need.type].getUnitDemands(roomName, need, this.name);
 		}
 	} else {
 		delete memory.needs[needName];
@@ -94,10 +100,11 @@ MotivationMaintain.prototype.updateNeeds = function (roomName)
 		if (lib.isNull(memory.needs[needName]))
 		{
 			memory.needs[needName] = {};
-			memory.needs[needName].type = "needRepair";
-			memory.needs[needName].name = needName;
-			memory.needs[needName].priority = C.PRIORITY_3;
-			need.demands = global[need.type].getUnitDemands(roomName);
+			need = memory.needs[needName];
+			need.type = "needRepair";
+			need.name = needName;
+			need.priority = C.PRIORITY_3;
+			need.demands = global[need.type].getUnitDemands(roomName, need, this.name);
 		}
 	} else {
 		delete memory.needs[needName];
@@ -113,17 +120,19 @@ MotivationMaintain.prototype.updateNeeds = function (roomName)
 		if (lib.isNull(memory.needs[needName]))
 		{
 			memory.needs[needName] = {};
-			memory.needs[needName].type = "needBuild";
-			memory.needs[needName].name = needName;
-			memory.needs[needName].priority = C.PRIORITY_1;
-			need.demands = global[need.type].getUnitDemands(roomName);
+			need = memory.needs[needName];
+			need.type = "needBuild";
+			need.name = needName;
+			need.priority = C.PRIORITY_1;
+			need.demands = global[need.type].getUnitDemands(roomName, need, this.name);
 		}
 	} else {
 		delete memory.needs[needName];
 	}
 };
 
-//-------------------------------------------------------------------------
-// export
-//-------------------------------------------------------------------------
+/**
+ * Export
+ * @type {MotivationMaintain}
+ */
 module.exports = new MotivationMaintain();

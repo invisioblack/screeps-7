@@ -13,6 +13,8 @@ global.motivator = require("motivator");
 profiler.registerClass(motivator , 'motivator');
 
 // motivations
+global.motivationHarvest = require("motivationHarvest");
+profiler.registerClass(motivationHarvest , 'motivationHarvest');
 global.motivationMaintain = require("motivationMaintain");
 profiler.registerClass(motivationMaintain , 'motivationMaintain');
 global.motivationSupply = require("motivationSupply");
@@ -21,8 +23,12 @@ profiler.registerClass(motivationSupply , 'motivationSupply');
 // Needs
 global.needBuild = require("needBuild");
 profiler.registerClass(needBuild , 'needBuild');
+global.needHarvestSource = require("needHarvestSource");
+profiler.registerClass(needHarvestSource , 'needHarvestSource');
 global.needRepair = require("needRepair");
 profiler.registerClass(needRepair , 'needRepair');
+global.needRHarvest = require("needRHarvest");
+profiler.registerClass(needRHarvest , 'needRHarvest');
 global.needSupplyController = require("needSupplyController");
 profiler.registerClass(needSupplyController , 'needSupplyController');
 global.needSupplyExtenders = require("needSupplyExtenders");
@@ -35,6 +41,10 @@ profiler.registerClass(needSupplySpawn , 'needSupplyTowers');
 // Jobs
 global.jobBuild = require("jobBuild");
 profiler.registerClass(jobBuild , 'jobBuild');
+global.jobHarvestSource = require("jobHarvestSource");
+profiler.registerClass(jobHarvestSource , 'jobHarvestSource');
+global.jobRHarvest = require("jobRHarvest");
+profiler.registerClass(jobRHarvest , 'jobRHarvest');
 global.jobRepair = require("jobRepair");
 profiler.registerClass(jobRepair , 'jobRepair');
 global.jobSupplyExtenders = require("jobSupplyExtenders");

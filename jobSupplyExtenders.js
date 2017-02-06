@@ -23,8 +23,6 @@ JobSupplyExtenders.prototype.work = function (creep)
 {
 	let debug = false;
 
-	creep.sing("Supplying extenders!");
-
 	//avoid hostiles
 	if (creep.avoidHostile(creep))
 	{
@@ -38,7 +36,7 @@ JobSupplyExtenders.prototype.work = function (creep)
 	}
 	if (lib.isNull(creep.memory.job.mode))
 	{
-		creep.memory.job.mode = this.JOB_MODE_GETENERGY;
+		creep.memory.job.mode = C.JOB_MODE_GETENERGY;
 	}
 
 	lib.log(creep.name + " job/mode: " + creep.memory.job.mode , debug);
@@ -51,6 +49,7 @@ JobSupplyExtenders.prototype.work = function (creep)
 			this.getEnergy(creep);
 			break;
 		case C.JOB_MODE_WORK:
+			creep.say("Extensions!");
 			creep.resetSource();
 			if (creep.carrying === 0)
 			{

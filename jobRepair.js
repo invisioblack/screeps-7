@@ -44,7 +44,7 @@ JobRepair.prototype.work = function (creep)
 		//console.log(`c: ${creep.name} New Target: ${target}`);
 	}
 
-	creep.sing("Fixing stuff!");
+
 
 	//avoid hostiles
 	if (creep.avoidHostile(creep))
@@ -65,12 +65,14 @@ JobRepair.prototype.work = function (creep)
 	// manage job
 	switch (creep.memory.job.mode)
 	{
-		case this.JOB_MODE_GETENERGY:
-			C.getEnergy(creep);
+		case C.JOB_MODE_GETENERGY:
+			this.getEnergy(creep);
 			break;
 		case C.JOB_MODE_WORK:
 			creep.resetSource();
-			if (carry === 0)
+			creep.sing("Repairing!");
+
+			if (creep.carrying === 0)
 			{
 				creep.memory.job.mode = C.JOB_MODE_GETENERGY;
 				creep.deassignMotive();

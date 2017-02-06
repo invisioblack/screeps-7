@@ -19,8 +19,9 @@ MotivationSupply.prototype.constructor = MotivationSupply;
 MotivationSupply.prototype.getDesiredSpawnUnit = function (roomName, unitDemands)
 {
 	let numWorkers = Room.countMotivationUnits(roomName, this.name, "worker");
+	let room = Game.rooms[roomName];
 
-	if (numWorkers < unitDemands["worker"])
+	if (numWorkers < unitDemands["worker"] || room.energyPickupMode < C.ROOM_ENERGYPICKUPMODE_PRECONTAINER)
 	{
 		return "worker"
 	}
@@ -84,8 +85,8 @@ MotivationSupply.prototype.updateNeeds = function (roomName)
 				need.name = needName;
 				need.type = "needSupplySpawn";
 				need.targetId = spawn.id;
-				need.priority = C.PRIORITY_1;
-				need.demands = global[need.type].getUnitDemands(roomName);
+				need.priority = C.PRIORITY_2;
+				need.demands = global[need.type].getUnitDemands(roomName, need, this.name);
 			}
 		}
 		else
@@ -106,8 +107,8 @@ MotivationSupply.prototype.updateNeeds = function (roomName)
 			need = memory.needs[needName];
 			need.name = needName;
 			need.type = "needSupplyExtenders";
-			need.priority = C.PRIORITY_2;
-			need.demands = global[need.type].getUnitDemands(roomName);
+			need.priority = C.PRIORITY_1;
+			need.demands = global[need.type].getUnitDemands(roomName, need, this.name);
 		}
 	}
 	else
@@ -127,7 +128,7 @@ MotivationSupply.prototype.updateNeeds = function (roomName)
 		need.type = "needSupplyController";
 		need.targetId = room.controller.id;
 		need.priority = C.PRIORITY_3;
-		need.demands = global[need.type].getDemands(roomName);
+		need.demands = global[need.type].getUnitDemands(roomName, need, this.name);
 	}
 
 	// build extender need
@@ -146,7 +147,7 @@ MotivationSupply.prototype.updateNeeds = function (roomName)
 				need.type = "needSupplyTowers";
 				need.targetId = tower.id;
 				need.priority = C.PRIORITY_4;
-				need.demands = global[need.type].getUnitDemands(roomName);
+				need.demands = global[need.type].getUnitDemands(roomName, need, this.name);
 			}
 		}
 		else

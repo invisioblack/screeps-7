@@ -16,18 +16,7 @@ NeedBuild.prototype.getUnitDemands = function (roomName , memory , motivationNam
 	let numSites = Room.getConstructionIds(roomName).length;
 	memory.demands = {};
 
-	if (numSites > 5)
-	{
-		memory.demands["worker"] = 2;
-	}
-	else if (numSites > 0)
-	{
-		memory.demands["worker"] = 1;
-	}
-	else
-	{
-		memory.demands["worker"] = 0;
-	}
+	memory.demands["worker"] = numSites;
 
 	this.fillUnitDemands(memory.demands);
 

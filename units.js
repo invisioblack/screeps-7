@@ -294,7 +294,7 @@ module.exports =
 			}
 		} ,
 
-		"ldharvester": {
+		"rharvester": {
 			"mode": 2 ,
 			"parts": [
 				WORK ,
@@ -307,7 +307,7 @@ module.exports =
 				MOVE
 			] ,
 			"memory": {
-				"unit": "ldharvester"
+				"unit": "rharvester"
 			}
 		} ,
 

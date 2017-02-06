@@ -20,7 +20,7 @@ module.exports = function ()
 		if (creep.carryCapacity === 0)
 		{
 			creep.deassignMotive();
-			creep.sing("NOCARRY!");
+			creep.say("NOCARRY!");
 			creep.resetSource();
 			return;
 		}
@@ -144,21 +144,29 @@ module.exports = function ()
 		}
 		else
 		{ // move to and pick up the goods
-			creep.sing("Getting energy!");
+
 			let result;
 			switch (creep.memory.sourceType)
 			{
 				case C.JOB_SOURCETYPE_DROP:
+					creep.sing("Energy drop!");
 					let drop = Game.getObjectById(creep.memory.sourceId);
-					result = creep.pickup(drop);
-					if (result === ERR_NOT_IN_RANGE)
+
+					if (lib.isNull(drop))
+						creep.resetSource();
+					else
 					{
-						let moveResult = creep.travelTo(drop);
-						//if (moveResult < 0 && moveResult != ERR_TIRED)
-						//	console.log(creep.name + " Can't move while getting from container: " + moveResult);
+						result = creep.pickup(drop);
+						if (result === ERR_NOT_IN_RANGE)
+						{
+							let moveResult = creep.travelTo(drop);
+							//if (moveResult < 0 && moveResult != ERR_TIRED)
+							//	console.log(creep.name + " Can't move while getting from container: " + moveResult);
+						}
 					}
 					break;
 				case C.JOB_SOURCETYPE_CONTAINER:
+					creep.sing("Energy container!");
 					let container = Game.getObjectById(creep.memory.sourceId);
 					result = creep.withdraw(container , RESOURCE_ENERGY);
 					if (result === ERR_NOT_IN_RANGE)
@@ -175,7 +183,7 @@ module.exports = function ()
 					}
 					break;
 				case C.JOB_SOURCETYPE_SOURCE:
-
+					creep.sing("Energy source!");
 					let source = Game.getObjectById(creep.memory.sourceId);
 					result = creep.harvest(source);
 					//console.log("harvest: " + creep.name + " :" + result);
@@ -192,6 +200,7 @@ module.exports = function ()
 					}
 					break;
 				case C.JOB_SOURCETYPE_LINK:
+					creep.sing("Energy link!");
 					let link = Game.getObjectById(creep.memory.sourceId);
 					result = creep.withdraw(link , RESOURCE_ENERGY);
 					if (result === ERR_NOT_IN_RANGE)
