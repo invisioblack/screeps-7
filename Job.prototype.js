@@ -238,7 +238,7 @@ module.exports = function ()
 				if (!found && creep.memory.sourceType != C.JOB_SOURCETYPE_DROP && drop.creepsOn.length === 0)
 				{
 					//console.log("I'll get it! dropID: " + drop.id);
-					creep.memory.sourceId = drop;
+					creep.memory.sourceId = drop.id;
 					creep.memory.sourceType = C.JOB_SOURCETYPE_DROP;
 					found = true;
 				}

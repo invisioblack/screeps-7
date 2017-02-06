@@ -41,6 +41,8 @@ require('RoomPosition.prototype');
 profiler.registerClass(RoomPosition , 'RoomPosition');
 require('Spawn.prototype');
 profiler.registerClass(Spawn , 'Spawn');
+require('StructureContainer.prototype');
+profiler.registerClass(StructureContainer , 'StructureContainer');
 require('StructureTower.prototype');
 profiler.registerClass(StructureTower , 'StructureTower');
 require('StructureLink.prototype');
