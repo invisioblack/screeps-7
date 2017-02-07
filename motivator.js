@@ -68,7 +68,7 @@ module.exports =
 				}
 
 				// maintainInfrastructure ------------------------------------------------------------------------------
-				if (room.isMine || room.isLongDistanceHarvestTarget)
+				if (room.isMine || room.isRHarvestTarget)
 				{
 					motivationMaintain.init(room.name);
 					room.memory.motivations[motivationMaintain.name].priority = C.PRIORITY_7;
@@ -410,101 +410,113 @@ module.exports =
 			let creeps = _.filter(Game.creeps , creep => creep.memory.motive.room === creep.room.name && creep.memory.motive.motivation !== "" && creep.memory.motive.need !== "");
 			_.forEach(creeps , creep =>
 			{
+				debug = creep.name === "hauler-2";
 				lib.log(`Creep executing need: ${creep.name}: room: ${creep.room.name} motive room:${creep.memory.motive.room} ${creep.memory.motive.motivation}: ${creep.memory.motive.need}` , debug);
 
-				let need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
-
-				lib.log("Creep: " + creep.name + " m: " + creep.memory.motive.motivation + " n: " + creep.memory.motive.need , debug);
-
-				// deassign motive if we can't find the need
-				if (lib.isNull(need))
-				{
-					creep.deassignMotive();
-				}
-				else if (lib.isNull(need.type))
+				if (lib.isNull(creep.room.memory.motivations[creep.memory.motive.motivation]))
 				{
 					creep.deassignMotive();
 				}
 				else
 				{
+					let need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
 
-					switch (need.type)
+					lib.log("Creep: " + creep.name + " m: " + creep.memory.motive.motivation + " n: " + creep.memory.motive.need , debug);
+
+					// deassign motive if we can't find the need
+					if (lib.isNull(need))
 					{
-						// motivationSupply
-						case "needSupplyController":
-						case "needSupplySpawn":
-						case "needSupplyTowers":
-							jobTransferEnergy.work(creep);
-							break;
-						case "needSupplyExtenders":
-							jobSupplyExtenders.work(creep);
-							break;
-						// motivationMaintain
-						case "needBuild":
-							jobBuild.work(creep);
-							break;
-						case "needRepair":
-							jobRepair.work(creep);
-							break;
-						// motivationHarvest
-						case "needHarvestSource":
-							lib.log("Creep: " + creep.name + " Working needHarvestSource" , debug);
-							jobHarvestSource.work(creep);
-							break;
-						case "needHarvestMinerals":
-							lib.log("Creep: " + creep.name + " Working needHarvestSource" , debug);
-							jobHavestMinerals.work(creep);
-							break;
-						case "needRHarvest":
-							lib.log("Creep: " + creep.name + " Working needHarvestSource" , debug);
-							jobRHavest.work(creep);
-							break;
-						// motivationHaul
-						case "needHaul":
-							lib.log("Creep: " + creep.name + " Working needHaul" , debug);
-							jobHaul.work(creep);
-							break;
-						case "needRHaul":
-							lib.log("Creep: " + creep.name + " Working needRHaul" , debug);
-							jobRHaul.work(creep);
-							break;
-						//motivationScout
-						case "needScout":
-							lib.log("Creep: " + creep.name + " Working needScout" , debug);
-							jobScout.work(creep);
-							break;
-
-						/*
-						case "needGarrison":
-							lib.log("Creep: " + creep.name + " Working needGarrison" , debug);
-							switch (creep.memory.unit)
-							{
-								case "guard":
-									jobGuard.work(creep);
-									break;
-								case "rangedGuard":
-									jobRangedGuard.work(creep);
-									break;
-								case "heal":
-									jobHeal.work(creep);
-									break;
-							}
-							break;
-						case "needClaim":
-							lib.log("Creep: " + creep.name + " Working needClaim" , debug);
-							jobClaim.work(creep);
-							break;
-						case "needManualTactical":
-							lib.log("Creep: " + creep.name + " Working needManualTactical" , debug);
-							jobManualTactical.work(creep);
-							break;
-
-						 */
+						creep.deassignMotive();
 					}
+					else if (lib.isNull(need.type))
+					{
+						creep.deassignMotive();
+					}
+					else
+					{
 
-					lib.log(`Creep: ${creep.name} Working ${need.type}`, debug);
-					// creep edge protection
-					creep.getOffEdge();
+						switch (need.type)
+						{
+							// motivationSupply
+							case "needSupplyController":
+							case "needSupplySpawn":
+							case "needSupplyTowers":
+								jobTransferEnergy.work(creep);
+								break;
+							case "needSupplyExtenders":
+								jobSupplyExtenders.work(creep);
+								break;
+							// motivationMaintain
+							case "needBuild":
+								jobBuild.work(creep);
+								break;
+							case "needRepair":
+								jobRepair.work(creep);
+								break;
+							case "needRMaintain":
+								lib.log("Creep: " + creep.name + " Working needRMaintain" , debug);
+								jobRemote.work(creep);
+								break;
+							// motivationHarvest
+							case "needHarvestSource":
+								lib.log("Creep: " + creep.name + " Working needHarvestSource" , debug);
+								jobHarvestSource.work(creep);
+								break;
+							case "needHarvestMinerals":
+								lib.log("Creep: " + creep.name + " Working needHarvestMinerals" , debug);
+								jobHavestMinerals.work(creep);
+								break;
+							case "needRHarvest":
+								lib.log("Creep: " + creep.name + " Working needRHarvest" , debug);
+								jobRemote.work(creep);
+								break;
+							// motivationHaul
+							case "needHaul":
+								lib.log("Creep: " + creep.name + " Working needHaul" , debug);
+								jobHaul.work(creep);
+								break;
+							case "needRHaul":
+								lib.log("Creep: " + creep.name + " Working needRHaul" , debug);
+								jobRemote.work(creep);
+								break;
+							//motivationScout
+							case "needScout":
+								lib.log("Creep: " + creep.name + " Working needScout" , debug);
+								jobScout.work(creep);
+								break;
+
+							/*
+							 case "needGarrison":
+							 lib.log("Creep: " + creep.name + " Working needGarrison" , debug);
+							 switch (creep.memory.unit)
+							 {
+							 case "guard":
+							 jobGuard.work(creep);
+							 break;
+							 case "rangedGuard":
+							 jobRangedGuard.work(creep);
+							 break;
+							 case "heal":
+							 jobHeal.work(creep);
+							 break;
+							 }
+							 break;
+							 case "needClaim":
+							 lib.log("Creep: " + creep.name + " Working needClaim" , debug);
+							 jobClaim.work(creep);
+							 break;
+							 case "needManualTactical":
+							 lib.log("Creep: " + creep.name + " Working needManualTactical" , debug);
+							 jobManualTactical.work(creep);
+							 break;
+
+							 */
+						}
+
+						lib.log(`Creep: ${creep.name} Working ${need.type}` , debug);
+						// creep edge protection
+						creep.getOffEdge();
+					}
 				}
 			});
 			cpuManager.timerStop("motivate.fulfillNeeds" , config.cpuNeedsDebug , 10 , 15);

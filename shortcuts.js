@@ -233,6 +233,11 @@ global.ladd = function (targetRoomName, sourceRoomName)
 		return "Missing source room: " + sourceRoomName;
 	}
 
+	if (lib.isNull(Memory.rooms[targetRoomName]))
+	{
+		return "No intel on room, scout first";
+	}
+
 	if (lib.isNull(Memory.rooms[targetRoomName].rHarvestTargets))
 	{
 		Memory.rooms[targetRoomName].rHarvestTargets = [];

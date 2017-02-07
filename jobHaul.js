@@ -122,6 +122,10 @@ JobHaul.prototype.work = function (creep)
 
 				if (result === ERR_NOT_IN_RANGE)
 				{
+					if (creep.room.name !== target.room.name)
+					{
+						creep.deassignMotive(target.room.name);
+					}
 					creep.say("Haul!");
 					let moveResult = creep.moveTo2(target);
 					//if (moveResult < 0 && moveResult != ERR_TIRED)

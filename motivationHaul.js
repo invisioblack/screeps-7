@@ -84,7 +84,7 @@ MotivationHaul.prototype.updateNeeds = function (roomName)
 			_.forEach(containers , container =>
 			{
 				needName = "haulContainer." + container.id;
-				if (container.carrying > 1000)
+				if (container.carrying > 500)
 				{
 					// create new need if one doesn't exist
 					if (lib.isNull(memory.needs[needName]))

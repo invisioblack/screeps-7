@@ -15,15 +15,15 @@ let NeedRHaul = function ()
 NeedRHaul.prototype = Object.create(Need.prototype);
 NeedRHaul.prototype.constructor = NeedRHaul;
 
-NeedRHaul.prototype.getUnitDemands = function (roomName , memory , motivationName)
+NeedRHaul.prototype.getUnitDemands = function (roomName , needMemory , motivationName)
 {
-	memory.demands = {};
-	memory.demands["hauler"] = global["motivationHaul"].getDemands(memory.targetRoom);
-	memory.demands["hauler"] -= Room.countMotivationUnits(memory.targetRoom, "motivationHaul", "hauler");
+	needMemory.demands = {};
+	needMemory.demands["hauler"] = global["motivationHaul"].getDemands(needMemory.targetRoom).units["hauler"];
+	needMemory.demands["hauler"] -= Room.countMotivationUnits(needMemory.targetRoom, "motivationHaul", "hauler");
 
-	this.fillUnitDemands(memory.demands);
+	this.fillUnitDemands(needMemory.demands);
 
-	return memory.demands;
+	return needMemory.demands;
 };
 
 module.exports = new NeedRHaul();

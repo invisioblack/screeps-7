@@ -53,7 +53,7 @@ module.exports = function ()
 	{
 		delete Game.rooms[roomName].memory.motivations[this.name];
 
-		let creeps = Room.getRoomMotivationCreeps(roomName , this.name);
+		let creeps = Room.getMotivationCreeps(roomName , this.name);
 		_.forEach(creeps , (c) =>
 		{
 			c.deassignMotive();
@@ -109,20 +109,34 @@ module.exports = function ()
 	{
 		let debug = false;
 		let result = false;
-		let room = Game.rooms[roomName];
-		let memory = room.memory.motivations[this.name];
-		let unitName = this.getDesiredSpawnUnit(roomName, unitDemands);
-		let unitsDemanded = unitDemands[unitName];
-		let units = Room.countMotivationUnits(roomName, this.name, unitName);
 
-		if (unitsDemanded > units)
+		if (Room.getIsMine(roomName))
 		{
+			let room = Game.rooms[roomName];
+			let memory = Memory.rooms[roomName].motivations[this.name];
+			let unitName = this.getDesiredSpawnUnit(roomName , unitDemands);
+			let unitsDemanded = unitDemands[unitName];
+			let units = Room.countMotivationUnits(roomName , this.name , unitName);
+			let numHomeRoomUnits = Room.countHomeRoomUnits(roomName, unitName);
+
+			if (numHomeRoomUnits >= room.maxUnits[unitName])
+			{
+				return false;
+			}
+
+			if (unitsDemanded > units)
+			{
 				result = true;
+			}
+
+			lib.log(`Room: ${roomLink(roomName)} ${this.name}.getDesireSpawn: active: ${memory.active} Result: ${result} unit: ${unitName} A/D: ${units}/${unitsDemanded}` , debug);
+
+			return result;
 		}
-
-		lib.log(`Room: ${roomLink(roomName)} ${this.name}.getDesireSpawn: active: ${memory.active} Result: ${result} unit: ${unitName} A/D: ${units}/${unitsDemanded}`, debug);
-
-		return result;
+		else
+		{
+			return false;
+		}
 	};
 
 	return Motivation;

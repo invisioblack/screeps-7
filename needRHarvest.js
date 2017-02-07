@@ -35,6 +35,7 @@ NeedRHarvest.prototype.getUnitDemands = function (roomName , needMemory , motiva
 	if (!lib.isNull(targetRoomMemory) && !lib.isNull(targetRoomMemory.motivations) && !lib.isNull(targetRoomMemory.motivations["motivationHarvest"]))
 	{
 		needMemory.demands["rharvester"] = global["motivationHarvest"].getDemands(needMemory.targetRoom).units["rharvester"];
+		needMemory.demands["rharvester"] -= Room.countMotivationUnits(needMemory.targetRoom, "motivationHarvest", "rharvester");
 	}
 	else
 	{

@@ -129,6 +129,33 @@ MotivationMaintain.prototype.updateNeeds = function (roomName)
 	} else {
 		delete memory.needs[needName];
 	}
+
+	// build remote maintain needs
+	_.forEach(room.memory.rHarvestTargets , (rN) =>
+	{
+		needName = "rMaintain." + rN;
+
+		// create new need if one doesn't exist
+		if (lib.isNull(memory.needs[needName]))
+		{
+			memory.needs[needName] = {};
+			need = memory.needs[needName];
+			need.name = needName;
+			need.type = "needRMaintain";
+			need.targetRoom = rN;
+			need.priority = C.PRIORITY_4;
+			need.demands = global[need.type].getUnitDemands(roomName , need , this.name);
+		}
+	});
+
+	// cull unneeded remote harvest needs
+	_.forEach(memory.needs , (v , k) =>
+	{
+		if (v.type === "needRMaintain" && !_.some(room.memory.rHarvestTargets , o => v.targetRoom === o))
+		{
+			delete memory.needs[k];
+		}
+	});
 };
 
 /**
