@@ -76,7 +76,7 @@ JobLongDistancePickup.prototype.work = function (creep)
 					result = creep.withdraw(container , RESOURCE_ENERGY);
 					if (result === ERR_NOT_IN_RANGE)
 					{
-						let moveResult = creep.travelTo(container);
+						let moveResult = creep.moveTo2(container);
 						//if (moveResult < 0 && moveResult != ERR_TIRED)
 						//	console.log(creep.name + " Can't move while getting from container: " + moveResult);
 					}

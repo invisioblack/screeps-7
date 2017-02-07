@@ -159,7 +159,7 @@ module.exports = function ()
 						result = creep.pickup(drop);
 						if (result === ERR_NOT_IN_RANGE)
 						{
-							let moveResult = creep.travelTo(drop);
+							let moveResult = creep.moveTo2(drop);
 							//if (moveResult < 0 && moveResult != ERR_TIRED)
 							//	console.log(creep.name + " Can't move while getting from container: " + moveResult);
 						}
@@ -171,7 +171,7 @@ module.exports = function ()
 					result = creep.withdraw(container , RESOURCE_ENERGY);
 					if (result === ERR_NOT_IN_RANGE)
 					{
-						let moveResult = creep.travelTo(container);
+						let moveResult = creep.moveTo2(container);
 						//if (moveResult < 0 && moveResult != ERR_TIRED)
 						//	console.log(creep.name + " Can't move while getting from container: " + moveResult);
 					}
@@ -194,7 +194,7 @@ module.exports = function ()
 					}
 					if (result === ERR_NOT_IN_RANGE)
 					{
-						let moveResult = creep.travelTo(source);
+						let moveResult = creep.moveTo2(source);
 						//if (moveResult < 0 && moveResult != ERR_TIRED)
 						//	console.log(creep.name + " Can't move while harvesting: " + moveResult);
 					}
@@ -205,7 +205,7 @@ module.exports = function ()
 					result = creep.withdraw(link , RESOURCE_ENERGY);
 					if (result === ERR_NOT_IN_RANGE)
 					{
-						let moveResult = creep.travelTo(link);
+						let moveResult = creep.moveTo2(link);
 						//if (moveResult < 0 && moveResult != ERR_TIRED)
 						//	console.log(creep.name + " Can't move while getting from container: " + moveResult);
 					}

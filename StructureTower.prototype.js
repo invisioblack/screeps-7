@@ -9,9 +9,9 @@ StructureTower.prototype.autoAttack = function ()
 
 	if (this.room.threat.level >= C.THREAT_NPC)
 	{
-		if (this.threat.threats.length > 0)
+		if (this.room.threat.threats.length > 0)
 		{
-			target = Game.getObjectById(this.threat.threats[_.random(0 , this.threat.threats.length - 1)].id);
+			target = Game.getObjectById(this.room.threat.threats[_.random(0 , this.room.threat.threats.length - 1)].id);
 		}
 
 		if (!lib.isNull(target))

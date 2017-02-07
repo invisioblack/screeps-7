@@ -96,7 +96,7 @@ JobHaulMinerals.prototype.work = function (creep)
 
 				if (result === ERR_NOT_IN_RANGE)
 				{
-					let moveResult = creep.travelTo(target);
+					let moveResult = creep.moveTo2(target);
 				}
 				else if (result === ERR_FULL)
 				{

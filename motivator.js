@@ -78,6 +78,25 @@ module.exports =
 					motivationMaintain.deInit(room.name);
 				}
 
+				// scout -----------------------------------------------------------------------------------------------
+				if (lib.isNull(Memory.scoutTargets))
+					Memory.scoutTargets = [];
+
+				if (Room.getIsMine(roomName) && room.roomMode >= C.ROOM_MODE_NORMAL && _.some(Memory.scoutTargets , {sourceRoom: roomName}))
+				{
+					motivationScout.init(room.name);
+					room.memory.motivations[motivationScout.name].priority = C.PRIORITY_1;
+				}
+				else if (_.some( Memory.scoutTargets, { targetRoom: roomName } ))
+				{
+					motivationScout.init(room.name);
+					room.memory.motivations[motivationScout.name].priority = C.PRIORITY_1;
+				}
+				else if (motivationScout.isInit(room.name))
+				{
+					motivationScout.deInit(room.name);
+				}
+
 				/*
 				 // claimRoom -------------------------------------------------------------------------------------------
 				 let isClaimed = _.some(Memory.claims , (c) => c.room === room.name);
@@ -115,24 +134,7 @@ module.exports =
 				 motivationSupplyTower.deInit(room.name);
 				 }
 
-				 // scout -----------------------------------------------------------------------------------------------
-				 if (lib.isNull(Memory.scoutTargets))
-				 Memory.scoutTargets = [];
 
-				 if (Room.getIsMine(roomName) && _.some(Memory.scoutTargets , {sourceRoom: roomName}))
-				 {
-				 motivationScout.init(room.name);
-				 room.memory.motivations[motivationScout.name].priority = C.PRIORITY_6;
-				 }
-				 else if (_.some( Memory.scoutTargets, { targetRoom: roomName } ))
-				 {
-				 motivationScout.init(room.name);
-				 room.memory.motivations[motivationScout.name].priority = C.PRIORITY_1;
-				 }
-				 else if (motivationScout.isInit(room.name))
-				 {
-				 motivationScout.deInit(room.name);
-				 }
 				 */
 				cpuManager.timerStop(`motivate.r1.mi.${roomName}` , config.cpuInitDetailDebug);
 			});
@@ -466,6 +468,11 @@ module.exports =
 							lib.log("Creep: " + creep.name + " Working needRHaul" , debug);
 							jobRHaul.work(creep);
 							break;
+						//motivationScout
+						case "needScout":
+							lib.log("Creep: " + creep.name + " Working needScout" , debug);
+							jobScout.work(creep);
+							break;
 
 						/*
 						case "needGarrison":
@@ -491,10 +498,7 @@ module.exports =
 							lib.log("Creep: " + creep.name + " Working needManualTactical" , debug);
 							jobManualTactical.work(creep);
 							break;
-						case "needScout":
-							lib.log("Creep: " + creep.name + " Working needScout" , debug);
-							jobScout.work(creep);
-							break;
+
 						 */
 					}
 
@@ -520,7 +524,7 @@ module.exports =
 			{
 				let position = new RoomPosition(25 , 25 , creep.memory.motive.room);
 				cpuManager.timerStart("\tLost Move" , "handleLostCreeps.move");
-				let moveResult = creep.travelTo(position);
+				let moveResult = creep.moveTo2(position);
 				cpuManager.timerStop("handleLostCreeps.move" , config.cpuHandleLostDebug , 1 , 5);
 				creep.say("Leave!");
 				lib.log(`LEAVE creep: ${creep.name} room: ${creep.room.name} dest: ${creep.memory.motive.room} move: ${moveResult}` , debug);

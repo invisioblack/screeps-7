@@ -19,6 +19,8 @@ global.motivationHaul = require("motivationHaul");
 profiler.registerClass(motivationHaul , 'motivationHaul');
 global.motivationMaintain = require("motivationMaintain");
 profiler.registerClass(motivationMaintain , 'motivationMaintain');
+global.motivationScout = require("motivationScout");
+profiler.registerClass(motivationScout , 'motivationScout');
 global.motivationSupply = require("motivationSupply");
 profiler.registerClass(motivationSupply , 'motivationSupply');
 
@@ -41,6 +43,8 @@ global.needSupplyController = require("needSupplyController");
 profiler.registerClass(needSupplyController , 'needSupplyController');
 global.needSupplyExtenders = require("needSupplyExtenders");
 profiler.registerClass(needSupplyExtenders , 'needSupplyExtenders');
+global.needScout = require("needScout");
+profiler.registerClass(needScout , 'needScout');
 global.needSupplySpawn = require("needSupplySpawn");
 profiler.registerClass(needSupplySpawn , 'needSupplySpawn');
 global.needSupplyTowers = require("needSupplyTowers");
@@ -61,6 +65,8 @@ global.jobRHarvest = require("jobRHarvest");
 profiler.registerClass(jobRHarvest , 'jobRHarvest');
 global.jobRepair = require("jobRepair");
 profiler.registerClass(jobRepair , 'jobRepair');
+global.jobScout = require("jobScout");
+profiler.registerClass(jobScout , 'jobScout');
 global.jobSupplyExtenders = require("jobSupplyExtenders");
 profiler.registerClass(jobSupplyExtenders , 'jobSupplyExtenders');
 global.jobTransferEnergy = require("jobTransferEnergy");
@@ -86,6 +92,7 @@ global.STRUCTURES = [STRUCTURE_SPAWN , STRUCTURE_EXTENSION , STRUCTURE_ROAD , ST
 // anon functions
 global.af = {};
 global.af.goid = id => Game.getObjectById( id );
+global.af.ogoid = o => Game.getObjectById( o.id );
 
 // lodash add _.count : by Vaejor -----
 _.mixin(

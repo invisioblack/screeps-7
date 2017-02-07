@@ -54,7 +54,7 @@ JobBuild.prototype.work = function (creep)
 				//console.log("build: " + target + " Result: " + result);
 				if (result === ERR_NOT_IN_RANGE)
 				{
-					let moveResult = creep.travelTo(target);
+					let moveResult = creep.moveTo2(target);
 					//if (moveResult < 0 && moveResult != ERR_TIRED)
 					//	console.log(creep.name + " Can't move while building: " + moveResult);
 				}

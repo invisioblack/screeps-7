@@ -1,20 +1,11 @@
-//-------------------------------------------------------------------------
-// needClaim
-//-------------------------------------------------------------------------
 "use strict";
-//-------------------------------------------------------------------------
-// modules
-//-------------------------------------------------------------------------
-// script prototypes
+
 let Need = require('Need.prototype')();
 
-//-------------------------------------------------------------------------
-// Declarations
-//-------------------------------------------------------------------------
-
-//-------------------------------------------------------------------------
-// function
-//-------------------------------------------------------------------------
+/**
+ * NeedScout
+ * @constructor
+ */
 let NeedScout = function ()
 {
 	Need.call(this);
@@ -24,11 +15,16 @@ let NeedScout = function ()
 NeedScout.prototype = Object.create(Need.prototype);
 NeedScout.prototype.constructor = NeedScout;
 
+/**
+ * getUnitDemands
+ * @param roomName
+ * @param memory
+ * @param motivationName
+ * @returns {{}|*}
+ */
 NeedScout.prototype.getUnitDemands = function (roomName , memory , motivationName)
 {
 	memory.demands = {};
-
-
 
 	if (!Room.getIsMine(roomName))
 	{
@@ -67,8 +63,6 @@ NeedScout.prototype.getUnitDemands = function (roomName , memory , motivationNam
 			}
 		}
 	}
-
-
 
 	return memory.demands;
 };

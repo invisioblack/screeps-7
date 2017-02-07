@@ -6,7 +6,7 @@
  * @param options
  * @returns {number}
  */
-Creep.prototype.travelTo = function (target , options)
+Creep.prototype.moveTo2 = function (target , options)
 {
 	let moveResult = ERR_TIRED;
 	if (this.fatigue === 0)
@@ -128,7 +128,7 @@ Creep.prototype.moveToRange = function (target , range)
 {
 	if (target.pos.inRangeTo(this.pos , range - 1))
 	{
-		this.travelTo(this.pos.x + this.pos.x - target.pos.x , creep.pos.y + creep.pos.y - target.pos.y);
+		this.moveTo2(this.pos.x + this.pos.x - target.pos.x , creep.pos.y + creep.pos.y - target.pos.y);
 		return true;
 	}
 	else if (target.pos.inRangeTo(this.pos , range))
@@ -137,7 +137,7 @@ Creep.prototype.moveToRange = function (target , range)
 	}
 	else
 	{
-		this.travelTo(target);
+		this.moveTo2(target);
 		return true;
 	}
 };
@@ -145,9 +145,9 @@ Creep.prototype.moveToRange = function (target , range)
 // TODO: work on this
 Creep.prototype.avoidHostile = function (range = 4)
 {
-	if (this.room.memory.threat.threats.length)
+	if (this.room.threat.threats.length)
 	{
-		let inRange = this.pos.findInRange(this.room.memory.threat.threats , range);
+		let inRange = this.pos.findInRange(this.room.threat.threats , range);
 		if (inRange && inRange.length)
 		{
 			let target = this.findClosestByRange(this.room.threat.threats);

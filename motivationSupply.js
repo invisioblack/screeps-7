@@ -41,10 +41,11 @@ MotivationSupply.prototype.getAssignableUnitNames = function ()
 };
 
 /**
- * updateActive - this updates the active state of a motivation.
+  * updateActive - this updates the active state of a motivation.
  * Make sure not to base anything on active state on something that is not updated for an inactive motivation. Like
  * demands.
  * @param roomName
+ * @returns boolean
  */
 MotivationSupply.prototype.updateActive = function (roomName)
 {

@@ -30,7 +30,7 @@ JobManualTactical.prototype.work = function (creep)
 	{
 		creep.memory.healing = true;
 		let flag = Game.flags.heal;
-		let result = creep.travelTo(flag);
+		let result = creep.moveTo2(flag);
 		if (result === ERR_NOT_IN_RANGE)
 		{
 			creep.rendezvous(flag , 2);
@@ -43,7 +43,7 @@ JobManualTactical.prototype.work = function (creep)
 	else if (Game.flags.move && Game.flags.move.room === creep.room)
 	{
 		let flag = Game.flags.move;
-		let result = creep.travelTo(flag);
+		let result = creep.moveTo2(flag);
 		if (result === ERR_NOT_IN_RANGE)
 		{
 			creep.rendezvous(flag , 2);
@@ -52,7 +52,7 @@ JobManualTactical.prototype.work = function (creep)
 	else if (Game.flags.move1 && Game.flags.heal.move1 === creep.room)
 	{
 		let flag = Game.flags.move1;
-		let result = creep.travelTo(flag);
+		let result = creep.moveTo2(flag);
 		if (result === ERR_NOT_IN_RANGE)
 		{
 			creep.rendezvous(flag , 2);
@@ -64,7 +64,7 @@ JobManualTactical.prototype.work = function (creep)
 
 		if (target && diplomacyManager.status(target.owner.username) === C.RELATION_HOSTILE)
 		{
-			creep.travelTo(target);
+			creep.moveTo2(target);
 			creep.attack(target);
 		}
 	}
@@ -79,7 +79,7 @@ JobManualTactical.prototype.work = function (creep)
 		let result = creep.attack(wall);
 		if (result === ERR_NOT_IN_RANGE)
 		{
-			creep.travelTo(wall);
+			creep.moveTo2(wall);
 		}
 	}
 	else if (Game.flags.spawn && Game.flags.spawn.room === creep.room)
@@ -91,7 +91,7 @@ JobManualTactical.prototype.work = function (creep)
 			let result = creep.attack(spawn);
 			if (result === ERR_NOT_IN_RANGE)
 			{
-				creep.travelTo(spawn);
+				creep.moveTo2(spawn);
 			}
 		}
 	}
@@ -104,7 +104,7 @@ JobManualTactical.prototype.work = function (creep)
 			let result = creep.attack(target);
 			if (result === ERR_NOT_IN_RANGE)
 			{
-				creep.travelTo(target);
+				creep.moveTo2(target);
 			}
 		}
 	}

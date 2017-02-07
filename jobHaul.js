@@ -21,7 +21,7 @@ JobHaul.prototype.constructor = JobHaul;
  */
 JobHaul.prototype.work = function (creep)
 {
-	let debug = true;
+	let debug = false;
 	let need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
 	let target = Game.getObjectById(need.targetId);
 	let source = Game.getObjectById(need.sourceId);
@@ -64,7 +64,7 @@ JobHaul.prototype.work = function (creep)
 		creep.sing("Null target!");
 		return;
 	}
-	console.log(source);
+
 	// manage job
 	switch (creep.memory.job.mode)
 	{
@@ -81,7 +81,7 @@ JobHaul.prototype.work = function (creep)
 						lib.log(creep.name + " withdraw result: " + result , debug);
 						if (result === ERR_NOT_IN_RANGE)
 						{
-							result = creep.travelTo(source);
+							result = creep.moveTo2(source);
 							if (result < 0 && result != ERR_TIRED)
 								console.log(creep.name + " Can't move while getting from container: " + result);
 						}
@@ -123,7 +123,7 @@ JobHaul.prototype.work = function (creep)
 				if (result === ERR_NOT_IN_RANGE)
 				{
 					creep.say("Haul!");
-					let moveResult = creep.travelTo(target);
+					let moveResult = creep.moveTo2(target);
 					//if (moveResult < 0 && moveResult != ERR_TIRED)
 					//	console.log(creep.name + " Can't move while transferring: " + moveResult);
 				}

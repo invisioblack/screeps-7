@@ -32,7 +32,7 @@ JobRangedGuard.prototype.work = function (creep)
 	{
 		if (target.pos.inRangeTo(creep.pos , 2))
 		{
-			creep.travelTo(creep.pos.x + creep.pos.x - target.pos.x , creep.pos.y + creep.pos.y - target.pos.y);
+			creep.moveTo2(creep.pos.x + creep.pos.x - target.pos.x , creep.pos.y + creep.pos.y - target.pos.y);
 		}
 		else if (target.pos.inRangeTo(creep.pos , 3))
 		{
@@ -40,7 +40,7 @@ JobRangedGuard.prototype.work = function (creep)
 		}
 		else
 		{
-			creep.travelTo(target);
+			creep.moveTo2(target);
 		}
 	}
 };

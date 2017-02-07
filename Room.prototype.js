@@ -824,12 +824,14 @@ if (Room.prototype.hasOwnProperty('threats') === false)
 			let hostiles = this.find(FIND_HOSTILE_CREEPS);
 			let result = _.map(hostiles , (c) =>
 			{
-				let r = {};
-				r.id = c.id;
-				r.status = diplomacyManager.status(c.owner.username);
-				//console.log("getThreats: " + c.owner.username);
+				let r = {
+					id: c.id,
+					status: diplomacyManager.status(c.owner.username)
+				};
+
 				return r;
 			});
+
 			return result;
 		}
 	});
@@ -864,8 +866,19 @@ if (Room.prototype.hasOwnProperty('threat') === false)
 		get: function ()
 		{
 			let debug = false;
+			let updateCondition;
 
-			if (lib.isNull(this.memory.threat) || Game.time != this.memory.threat.lastUpdated)
+
+			if (lib.isNull(this.memory.threat) || this.memory.threat.level >= C.THREAT_ALERT)
+			{
+				updateCondition = true;
+			}
+			else
+			{
+				updateCondition =  Game.time > this.memory.threat.lastUpdated + 5;
+			}
+
+			if (lib.isNull(this.memory.threat) || updateCondition)
 			{
 				let timeSinceSeen;
 				let threatCounts;
@@ -885,24 +898,12 @@ if (Room.prototype.hasOwnProperty('threat') === false)
 				timeSinceSeen = Game.time - this.memory.threat.lastSeen;
 
 				// update aggressives based on our current status
-				if (this.memory.threat.level >= C.THREAT_ALERT)
-				{
-					this.memory.threat.threats = this.threats;
-					if (Game.time % 5 === 0)
-					{
-						this.memory.threat.breach = this.breach;
-					}
-				}
-				else if (this.memory.threat.level >= C.THREAT_PLAYER)
-				{
-					this.memory.threat.threats = this.threats;
-					this.memory.threat.breach = this.breach;
-				}
-				else if (Game.time % 5 === 0)
-				{
-					this.memory.threat.threats = this.threats;
-					this.memory.threat.breach = this.breach;
-				}
+				this.memory.threat.threats = this.threats;
+				this.memory.threat.breach = this.breach;
+
+
+				//console.log(`this.threats: ${JSON.stringify(this.threats)}`);
+				//console.log(`mem threats: ${JSON.stringify(this.memory.threat.threats)}`);
 
 				threatCounts = _.countBy(this.memory.threat.threats , 'status');
 
@@ -931,9 +932,8 @@ if (Room.prototype.hasOwnProperty('threat') === false)
 				{
 					//console.log("Some threat!");
 					filteredThreats = _.filter(this.memory.threat.threats , o => o.status === C.RELATION_HOSTILE);
-					threatsRaw = _(filteredThreats).map(af.goid);
+					threatsRaw = _(filteredThreats).map(af.ogoid).filter().value();
 
-					//console.log(JSON.stringify(threatsRaw));
 					let isPlayer = _.some(threatsRaw , (o) => o.owner.username !== "Invader" && o.owner.username !== "Source Keeper");
 					let link = roomLink(this.name);
 
@@ -1396,7 +1396,7 @@ if (Room.prototype.hasOwnProperty('maxUnits') === false)
 				this.memory.maxUnits.units.guard = 0;
 				this.memory.maxUnits.units.rangedGuard = 0;
 				this.memory.maxUnits.units.heal = 0;
-				this.memory.maxUnits.units.scout = 0;
+				this.memory.maxUnits.units.scout = 1;
 			}
 
 			return this.memory.maxUnits.units;

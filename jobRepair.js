@@ -39,12 +39,10 @@ JobRepair.prototype.work = function (creep)
 			repairSites = _.filter(structuresWall , (s) => s.hits < (wallHP * config.repairFactor));
 		}
 
-		target = _.min(repairSites , (c) => c.hits);
+		target = _.min(repairSites , 'hits');
 		creep.memory.repairTargetId = target.id;
 		//console.log(`c: ${creep.name} New Target: ${target}`);
 	}
-
-
 
 	//avoid hostiles
 	if (creep.avoidHostile(creep))
@@ -85,7 +83,7 @@ JobRepair.prototype.work = function (creep)
 				//console.log("creep: " + creep.name);
 				if (result === ERR_NOT_IN_RANGE)
 				{
-					let moveResult = creep.travelTo(target);
+					let moveResult = creep.moveTo2(target);
 					//if (moveResult < 0 && moveResult != ERR_TIRED)
 					//	console.log(creep.name + " Can't move while repairing: " + moveResult);
 				}
