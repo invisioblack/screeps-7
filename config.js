@@ -16,6 +16,7 @@ module.exports =
 		"claimTicks": 1000 ,
 		'repairFactor': 0.8 ,
 		'towerPowerFactor': 0.8 ,
+		'towerFillFactor': 0.9 ,
 		'towerRepairFactor': 1 ,
 		"cpuDebug": false ,
 		"cpuDetailDebug": false ,

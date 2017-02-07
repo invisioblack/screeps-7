@@ -16,18 +16,27 @@ Creep.prototype.travelTo = function (target , options)
 			||
 			( this.pos.isEqualTo(RoomPosition.fromMemory(this.memory.movePosLast)) === false )
 		);
-		let recalculatePath = ( ( Game.time - ( this.memory.movePosLastTime || Game.time ) ) >= 3 );
-
+		let recalculatePath = (
+			( movePerformed === false )
+			&&
+			( ( Game.time - ( this.memory.movePosLastTime || Game.time ) ) >= 3 )
+		);
 		if (movePerformed === true)
 		{
 			this.memory.movePosLast = this.pos.toMemory();
 			this.memory.movePosLastTime = Game.time;
 		}
 
-
 			options = _.assign({
 				ignoreCreeps: recalculatePath === false ,
-				reusePath: recalculatePath ? 0 : 1500
+				reusePath: recalculatePath ? 0 : 1500,
+				visualizePathStyle: {
+                    fill: 'transparent',
+                    stroke: '#FFFFFF',
+                    lineStyle: 'dotted',
+                    strokeWidth: 0.2,
+                    opacity: 0.2
+                }
 			} , options);
 
 

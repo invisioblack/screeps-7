@@ -136,7 +136,7 @@ MotivationSupply.prototype.updateNeeds = function (roomName)
 	{
 		needName = "supplyTowers." + tower.id;
 
-		if (tower.energy <= (tower.energyCapacity * config.towerPowerFactor))
+		if (tower.energy <= (tower.energyCapacity * config.towerFillFactor))
 		{
 			// create new need if one doesn't exist
 			if (lib.isNull(memory.needs[needName]))

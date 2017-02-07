@@ -69,18 +69,11 @@ JobTransferEnergy.prototype.work = function (creep)
 					{
 						result = creep.transfer(target , k);
 						lib.log(creep.name + " transfer result: " + result , false);
-						creep.say("Give!");
+						creep.say("Transfer!");
 						return false;
 					}
 				});
 
-				_.forEach(creep.carry , (v , k) =>
-				{
-					result = creep.transfer(target , k);
-					lib.log(creep.name + " transfer result: " + result , false);
-					creep.say("Give!");
-					return false;
-				});
 				if (result === ERR_NOT_IN_RANGE)
 				{
 					let moveResult = creep.travelTo(target);

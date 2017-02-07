@@ -1388,7 +1388,7 @@ if (Room.prototype.hasOwnProperty('maxUnits') === false)
 					lastUpdated: Game.time
 				};
 
-				this.memory.maxUnits.units.worker = 4;
+				this.memory.maxUnits.units.worker = this.controllerLevel < 4 ? 10 : 4;
 				this.memory.maxUnits.units.harvester = Room.getSourceIds(this.name) * 2;
 				this.memory.maxUnits.units.rharvester = this.memory.rHarvestTargets.length * 2;
 				this.memory.maxUnits.units.hauler = 4;

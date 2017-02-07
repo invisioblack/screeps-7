@@ -32,6 +32,13 @@ JobHaul.prototype.work = function (creep)
 		return;
 	}
 
+	if (creep.carrying === creep.carryCapacity)
+	{
+		creep.say("Full!");
+		creep.resetSource();
+		creep.memory.job.mode = C.JOB_MODE_WORK;
+	}
+
 	// set up mode memory
 	if (lib.isNull(creep.memory.job))
 	{
@@ -64,18 +71,25 @@ JobHaul.prototype.work = function (creep)
 		case C.JOB_MODE_GETENERGY:
 			lib.log(creep.name + " getting cargo " , debug);
 			let result;
-
 			if (source.carrying)
 			{
-				result = creep.withdraw(source , source.store[0]);
-				if (result === ERR_NOT_IN_RANGE)
+				_.forEach(source.store , (v , k) =>
 				{
-					result = creep.travelTo(source);
-					if (result < 0 && result != ERR_TIRED)
-						console.log(creep.name + " Can't move while getting from container: " + result);
-				}
-				console.log(result);
-				creep.say("Take!");
+					if (v > 0)
+					{
+						result = creep.withdraw(source , k);
+						lib.log(creep.name + " withdraw result: " + result , debug);
+						if (result === ERR_NOT_IN_RANGE)
+						{
+							result = creep.travelTo(source);
+							if (result < 0 && result != ERR_TIRED)
+								console.log(creep.name + " Can't move while getting from container: " + result);
+						}
+
+						creep.say("Take!");
+						return false;
+					}
+				});
 			}
 			else
 			{
