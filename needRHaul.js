@@ -19,7 +19,7 @@ NeedRHaul.prototype.getUnitDemands = function (roomName , needMemory , motivatio
 {
 	needMemory.demands = {};
 	needMemory.demands["hauler"] = global["motivationHaul"].getDemands(needMemory.targetRoom).units["hauler"];
-	needMemory.demands["hauler"] -= Room.countMotivationUnits(needMemory.targetRoom, "motivationHaul", "hauler");
+	needMemory.demands["hauler"] -= Room.countUnits(needMemory.targetRoom, "hauler");
 
 	this.fillUnitDemands(needMemory.demands);
 

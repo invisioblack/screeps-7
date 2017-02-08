@@ -31,7 +31,12 @@ jobRemote.prototype.work = function (creep)
 
 	if (creep.room.isMine)
 	{
-		creep.deassignMotive(need.targetRoom);
+		if (!lib.isNull(need.rMotive))
+		{
+			creep.assignMotive(need.targetRoom, need.rMotive.motivation, need.rMotive.need);
+		}
+		else
+			creep.deassignMotive(need.targetRoom);
 	}
 	else
 	{

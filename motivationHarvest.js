@@ -188,18 +188,39 @@ MotivationHarvest.prototype.updateNeeds = function (roomName)
 	// build remote harvest needs
 	_.forEach(room.memory.rHarvestTargets , (rN) =>
 	{
-		needName = "rHarvest." + rN;
-
-		// create new need if one doesn't exist
-		if (lib.isNull(memory.needs[needName]))
+		if (_.has(Memory, `rooms[${rN}].motivations["motivationHarvest"]`))
 		{
-			memory.needs[needName] = {};
-			need = memory.needs[needName];
-			need.name = needName;
-			need.type = "needRHarvest";
-			need.targetRoom = rN;
-			need.priority = C.PRIORITY_3;
-			need.demands = global[need.type].getUnitDemands(roomName , need , this.name);
+			_.forEach(Memory.rooms[rN].motivations["motivationHarvest"].needs, (rNeed, rNeedName) =>
+			{
+				needName = "rHarvest." + rNeed.targetId;
+
+				// create new need if one doesn't exist
+				if (lib.isNull(memory.needs[needName]))
+				{
+					memory.needs[needName] = {};
+					need = memory.needs[needName];
+					need.name = needName;
+					need.type = "needRHarvest";
+					need.targetRoom = rN;
+					need.priority = C.PRIORITY_3;
+					need.demands = global[need.type].getUnitDemands(roomName , need , this.name);
+					need.rMotive = {
+						motivation: "motivationHarvest",
+						need: rNeedName
+					}
+				}
+			});
+		}
+		else
+		{
+			// cull unneeded remote harvest needs
+			_.forEach(memory.needs , (v , k) =>
+			{
+				if (v.type === "needRHarvest" && v.targetRoom === rN)
+				{
+					delete memory.needs[k];
+				}
+			});
 		}
 	});
 
