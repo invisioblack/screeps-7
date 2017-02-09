@@ -13,9 +13,8 @@ NeedRepair.prototype.constructor = NeedRepair;
 
 NeedRepair.prototype.getUnitDemands = function (roomName , memory , motivationName)
 {
-	let room = Game.rooms[roomName];
 	let needName = memory.name;
-	let wallHP = config.wallHP[lib.isNull(room.controller) ? 0 : room.controller.level];
+	let wallHP = config.wallHP[Room.getControllerLevel(roomName)];
 	let repairSites = [];
 	let numRepairSites;
 

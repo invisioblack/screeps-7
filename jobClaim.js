@@ -1,19 +1,11 @@
-//-------------------------------------------------------------------------
-// jobHarvestSource
-//-------------------------------------------------------------------------
 "use strict";
-//-------------------------------------------------------------------------
-// modules
-//-------------------------------------------------------------------------
+
 let Job = require("Job.prototype")();
 
-//-------------------------------------------------------------------------
-// Declarations
-//-------------------------------------------------------------------------
-
-//-------------------------------------------------------------------------
-// constructor
-//-------------------------------------------------------------------------
+/**
+ * JobClaim
+ * @constructor
+ */
 let JobClaim = function ()
 {
 	Job.call(this);
@@ -23,9 +15,10 @@ let JobClaim = function ()
 JobClaim.prototype = Object.create(Job.prototype);
 JobClaim.prototype.constructor = JobClaim;
 
-//-------------------------------------------------------------------------
-// implementation
-//-------------------------------------------------------------------------
+/**
+ * work
+ * @param creep
+ */
 JobClaim.prototype.work = function (creep)
 {
 	let need = creep.room.memory.motivations[creep.memory.motive.motivation].needs[creep.memory.motive.need];
@@ -43,16 +36,12 @@ JobClaim.prototype.work = function (creep)
 		if (creep.memory.motive.room === creep.room.name)
 		{
 			// filter this to only claims spawning in specified room
-			let spawnClaims = _.filter(Memory.claims , function (c)
-			{
-				return c.spawnRoom === creep.memory.motive.room;
-			});
-
+			let spawnClaims = _.filter(Memory.claims , 'spawnRoom' , creep.memory.motive.room);
 			let assigned = false;
+
 			_.forEach(spawnClaims , function (c)
 			{
 				let countUnits = Room.countUnits(c.room , "claimer");
-				//_.has(global, "cache.rooms." + c.room + ".units.claimer") ? global.cache.rooms[c.room].units["claimer"].length : 0;
 				if (!countUnits && !assigned)
 				{
 					let reservation = 0;
@@ -83,10 +72,7 @@ JobClaim.prototype.work = function (creep)
 	}
 	else
 	{
-		let claim = _.find(Memory.claims , function (c)
-		{
-			return c.room === creep.memory.motive.room;
-		});
+		let claim = _.find(Memory.claims , 'room' , creep.memory.motive.room);
 
 		if (!lib.isNull(claim))
 		{
@@ -115,7 +101,6 @@ JobClaim.prototype.work = function (creep)
 			{
 				creep.sing("No Type!");
 			}
-
 		}
 		else
 		{
@@ -124,7 +109,8 @@ JobClaim.prototype.work = function (creep)
 	}
 };
 
-//-------------------------------------------------------------------------
-// export
-//-------------------------------------------------------------------------
+/**
+ * JobClaim
+ * @type {JobClaim}
+ */
 module.exports = new JobClaim();

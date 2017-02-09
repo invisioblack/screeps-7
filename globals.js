@@ -13,6 +13,8 @@ global.motivator = require("motivator");
 profiler.registerClass(motivator , 'motivator');
 
 // motivations
+global.motivationClaim = require("motivationClaim");
+profiler.registerClass(motivationClaim , 'motivationClaim');
 global.motivationHarvest = require("motivationHarvest");
 profiler.registerClass(motivationHarvest , 'motivationHarvest');
 global.motivationHaul = require("motivationHaul");
@@ -27,6 +29,8 @@ profiler.registerClass(motivationSupply , 'motivationSupply');
 // Needs
 global.needBuild = require("needBuild");
 profiler.registerClass(needBuild , 'needBuild');
+global.needClaim = require("needClaim");
+profiler.registerClass(needClaim , 'needClaim');
 global.needHarvestSource = require("needHarvestSource");
 profiler.registerClass(needHarvestSource , 'needHarvestSource');
 global.needHarvestMinerals = require("needHarvestMinerals");
@@ -55,6 +59,8 @@ profiler.registerClass(needSupplySpawn , 'needSupplyTowers');
 // Jobs
 global.jobBuild = require("jobBuild");
 profiler.registerClass(jobBuild , 'jobBuild');
+global.jobClaim = require("jobClaim");
+profiler.registerClass(jobClaim , 'jobClaim');
 global.jobHarvestSource = require("jobHarvestSource");
 profiler.registerClass(jobHarvestSource , 'jobHarvestSource');
 global.jobHarvestMinerals = require("jobHarvestMinerals");

@@ -2,6 +2,10 @@
 
 module.exports =
 	{
+		'CLAIM_NONE': "none",
+		'CLAIM_RESERVE': "reserve",
+		'CLAIM_CLAIM': "claim",
+
 		'CPU_THROTTLE_NORMAL': 0 ,
 		'CPU_THROTTLE_THIRD': 1 ,
 		'CPU_THROTTLE_HALF': 2 ,

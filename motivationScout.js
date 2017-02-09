@@ -69,6 +69,7 @@ MotivationScout.prototype.updateNeeds = function (roomName)
 			need.targetRoom = st.targetRoom;
 			need.sourceRoom = st.sourceRoom;
 			need.priority = C.PRIORITY_1;
+			need.demands = global[need.type].getUnitDemands(roomName , need , this.name);
 		}
 	});
 

@@ -100,20 +100,22 @@ module.exports =
 					motivationScout.deInit(room.name);
 				}
 
-				/*
-				 // claimRoom -------------------------------------------------------------------------------------------
-				 let isClaimed = _.some(Memory.claims , (c) => c.room === room.name);
-				 if ((room.isMine && room.memory.mode === C.ROOM_MODE_NORMAL) || isClaimed)
-				 {
-				 motivationClaimRoom.init(room.name);
-				 room.memory.motivations[motivationClaimRoom.name].priority = C.PRIORITY_6;
-				 }
-				 else if (motivationClaimRoom.isInit(room.name))
-				 {
-				 motivationClaimRoom.deInit(room.name);
-				 }
-
-				 */
+				// claimRoom -------------------------------------------------------------------------------------------
+				//console.log(`Claim Init Room:${room.name} isMine: ${room.isMine} roomMode: ${room.roomMode} claimSpawn: ${room.claimSpawn} getClaim(): ${Room.getClaim(this.name)}`);
+				if (room.isMine && room.roomMode >= C.ROOM_MODE_NORMAL && room.claimSpawn)
+				{
+					motivationClaim.init(room.name);
+					room.memory.motivations[motivationClaim.name].priority = C.PRIORITY_6;
+				}
+				else if (!room.isMine && Room.getClaim(room.name) !== C.CLAIM_NONE)
+				{
+					motivationClaim.init(room.name);
+					room.memory.motivations[motivationClaim.name].priority = C.PRIORITY_4;
+				}
+				else if (motivationClaim.isInit(room.name))
+				{
+					motivationClaim.deInit(room.name);
+				}
 				/*******************************************************************************************************
 				 * COMBAT
 				 */
@@ -487,6 +489,11 @@ module.exports =
 								jobScout.work(creep);
 								break;
 
+							// motivationClaim
+							case "needClaim":
+								lib.log("Creep: " + creep.name + " Working needClaim" , debug);
+								jobClaim.work(creep);
+								break;
 							/*
 							 case "needGarrison":
 							 lib.log("Creep: " + creep.name + " Working needGarrison" , debug);
@@ -503,10 +510,7 @@ module.exports =
 							 break;
 							 }
 							 break;
-							 case "needClaim":
-							 lib.log("Creep: " + creep.name + " Working needClaim" , debug);
-							 jobClaim.work(creep);
-							 break;
+
 							 case "needManualTactical":
 							 lib.log("Creep: " + creep.name + " Working needManualTactical" , debug);
 							 jobManualTactical.work(creep);

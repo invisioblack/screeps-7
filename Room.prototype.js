@@ -549,6 +549,60 @@ Room.getIsRHarvestTarget = function (roomName)
 };
 
 /**
+ * Returns "claim", "reserve",
+ * @param roomName
+ * @returns {*}
+ */
+Room.getClaim = function (roomName)
+{
+
+	let claim = _.find(Memory.claims, 'room', roomName);
+	//console.log(`getClaim(${roomName}) claim: ${JSON.stringify(claim)}`);
+
+	if (!lib.isNull(claim))
+	{
+		return claim.type;
+	}
+	else
+	{
+		return C.CLAIM_NONE;
+	}
+};
+
+Room.getControllerLevel = function (roomName)
+{
+	if (!lib.isNull(Game.rooms[roomName]))
+	{
+		let room = Game.rooms[roomName];
+		if (lib.isNull(room.memory.controllerLevel) || Game.time !== room.memory.controllerLevel.lastUpdated)
+		{
+			room.memory.controllerLevel = {
+				level: 0 ,
+				lastUpdated: Game.time
+			};
+
+			if (!lib.isNull(room.controller))
+			{
+				room.memory.controllerLevel.level = room.controller.level;
+			}
+		}
+
+		return room.memory.controllerLevel.level;
+	}
+	else
+	{
+		if (_.has(Memory, `rooms[${roomName}].controllerLevel.level`))
+		{
+			return Memory.rooms[roomName].controllerLevel.level;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+};
+
+/**
  *
  * @param roomName
  * @param structureType
@@ -1258,20 +1312,7 @@ if (Room.prototype.hasOwnProperty('controllerLevel') === false)
 	Object.defineProperty(Room.prototype , "controllerLevel" , {
 		get: function ()
 		{
-			if (lib.isNull(this.memory.controllerLevel) || Game.time !== this.memory.controllerLevel.lastUpdated)
-			{
-				this.memory.controllerLevel = {
-					level: 0 ,
-					lastUpdated: Game.time
-				};
-
-				if (!lib.isNull(this.controller))
-				{
-					this.memory.controllerLevel.level = this.controller.level;
-				}
-			}
-
-			return this.memory.controllerLevel.level;
+			return Room.getControllerLevel(this.name);
 		}
 	});
 }
@@ -1392,7 +1433,7 @@ if (Room.prototype.hasOwnProperty('maxUnits') === false)
 				this.memory.maxUnits.units.harvester = Room.getSourceIds(this.name) * 2;
 				this.memory.maxUnits.units.rharvester = this.memory.rHarvestTargets.length * 2;
 				this.memory.maxUnits.units.hauler = 4;
-				this.memory.maxUnits.units.claimer = 0;
+				this.memory.maxUnits.units.claimer = 1;
 				this.memory.maxUnits.units.guard = 0;
 				this.memory.maxUnits.units.rangedGuard = 0;
 				this.memory.maxUnits.units.heal = 0;
@@ -1400,6 +1441,16 @@ if (Room.prototype.hasOwnProperty('maxUnits') === false)
 			}
 
 			return this.memory.maxUnits.units;
+		}
+	});
+}
+
+if (Room.prototype.hasOwnProperty('claimSpawn') === false)
+{
+	Object.defineProperty(Room.prototype , "claimSpawn" , {
+		get: function ()
+		{
+			return !lib.isNull(_.find(Memory.claims , 'spawnRoom', this.name));
 		}
 	});
 }

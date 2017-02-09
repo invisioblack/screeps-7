@@ -77,11 +77,13 @@ module.exports = function ()
 	 */
 	Motivation.prototype.getDemands = function (roomName)
 	{
+		//lib.log(`getDemands Room: ${roomName} Motive: ${this.name} Time: ${Memory.rooms[roomName].motivations[this.name].demands.lastUpdated} / ${Game.time}`, roomName === "W8N3");
 		if (lib.isNull(Memory.rooms[roomName].motivations[this.name].demands) || Memory.rooms[roomName].motivations[this.name].demands.lastUpdated !== Game.time)
 		{
 			Memory.rooms[roomName].motivations[this.name].demands = {};
 			let demands = Memory.rooms[roomName].motivations[this.name].demands;
 			demands.units = {};
+			demands.lastUpdated = Game.time;
 
 			_.forEach(Memory.rooms[roomName].motivations[this.name].needs , (need , needName) =>
 			{
@@ -110,8 +112,10 @@ module.exports = function ()
 		let debug = false;
 		let result = false;
 
+		//lib.log(`Room: ${roomLink(roomName)} ${this.name}.getDesireSpawn` , debug);
 		if (Room.getIsMine(roomName))
 		{
+			lib.log(`Room: ${roomLink(roomName)} ${this.name}.getDesireSpawn` , debug);
 			let room = Game.rooms[roomName];
 			let memory = Memory.rooms[roomName].motivations[this.name];
 			let unitName = this.getDesiredSpawnUnit(roomName , unitDemands);
@@ -129,7 +133,7 @@ module.exports = function ()
 				result = true;
 			}
 
-			lib.log(`Room: ${roomLink(roomName)} ${this.name}.getDesireSpawn: active: ${memory.active} Result: ${result} unit: ${unitName} A/D: ${units}/${unitsDemanded}` , debug);
+			//lib.log(`Room: ${roomLink(roomName)} ${this.name}.getDesireSpawn: active: ${memory.active} Result: ${result} unit: ${unitName} A/D: ${units}/${unitsDemanded}` , debug);
 
 			return result;
 		}
