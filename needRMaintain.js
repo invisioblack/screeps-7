@@ -15,20 +15,23 @@ let NeedRMaintain = function ()
 NeedRMaintain.prototype = Object.create(Need.prototype);
 NeedRMaintain.prototype.constructor = NeedRMaintain;
 
-NeedRMaintain.prototype.getUnitDemands = function (roomName , memory , motivationName)
+NeedRMaintain.prototype.getUnitDemands = function (roomName , needMemory , motivationName)
 {
-	let numRWorkers = Room.countUnits(memory.targetRoom, "worker");
-	let demandedWorkers = global["motivationMaintain"].getDemands(memory.targetRoom).units["worker"];
 
-	memory.demands = {};
-	if (numRWorkers === 0 && demandedWorkers > 0)
+	needMemory.demands = {};
+	if (_.has(Memory, `rooms[${needMemory.targetRoom}].motivations["motivationMaintain"]`))
 	{
-		memory.demands["worker"] = 1;
+		let numRWorkers = Room.countUnits(needMemory.targetRoom , "worker");
+		let demandedWorkers = global["motivationMaintain"].getDemands(needMemory.targetRoom).units["worker"];
+
+		if (numRWorkers === 0 && demandedWorkers > 0)
+		{
+			needMemory.demands["worker"] = 1;
+		}
 	}
+	this.fillUnitDemands(needMemory.demands);
 
-	this.fillUnitDemands(memory.demands);
-
-	return memory.demands;
+	return needMemory.demands;
 };
 
 module.exports = new NeedRMaintain();

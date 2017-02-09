@@ -195,7 +195,7 @@ MotivationHarvest.prototype.updateNeeds = function (roomName)
 				needName = "rHarvest." + rNeed.targetId;
 
 				// create new need if one doesn't exist
-				if (lib.isNull(memory.needs[needName]))
+				if (0 === 0 || lib.isNull(memory.needs[needName]))
 				{
 					memory.needs[needName] = {};
 					need = memory.needs[needName];

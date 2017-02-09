@@ -26,7 +26,6 @@ NeedHarvestSource.prototype.getUnitDemands = function (roomName , memory , motiv
 {
 	let unitName = "";
 	let room = Game.rooms[roomName];
-	let ticksTillHarvesterDeath = this.getTicksTillHarvesterDeath(roomName , memory);
 
 	if (!lib.isNull(room) && room.isMine)
 	{
@@ -40,41 +39,7 @@ NeedHarvestSource.prototype.getUnitDemands = function (roomName , memory , motiv
 	memory.demands = {};
 	memory.demands[unitName] = 1;
 
-	if (ticksTillHarvesterDeath != 0 && ticksTillHarvesterDeath < config.harvesterPrespawnTicks)
-	{
-		memory.demands[unitName] = 2;
-	}
 	return memory.demands;
-};
-
-/**
- * getTicksTillHarvesterDeath
- * @param roomName
- * @param memory
- * @returns {number}
- */
-NeedHarvestSource.prototype.getTicksTillHarvesterDeath = function (roomName , memory)
-{
-	let unitName = "";
-	let room = Game.rooms[roomName];
-	if (!lib.isNull(room) && room.isMine)
-	{
-		unitName = "harvester";
-	}
-	else
-	{
-		unitName = "rharvester";
-	}
-
-	let harvester = Room.countUnits(roomName , unitName);
-	if (lib.isNull(harvester))
-	{
-		return 0;
-	}
-	else
-	{
-		return harvester.ticksToLive;
-	}
 };
 
 module.exports = new NeedHarvestSource();

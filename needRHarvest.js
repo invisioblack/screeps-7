@@ -28,14 +28,22 @@ NeedRHarvest.prototype.getUnitDemands = function (roomName , needMemory , motiva
 	}
 
 	// implementation
-	let targetRoomMemory = Memory.rooms[needMemory.targetRoom];
 	needMemory.demands = {};
 	needMemory.demands["rharvester"] = 0;
 
-	if (!lib.isNull(targetRoomMemory) && !lib.isNull(targetRoomMemory.motivations) && !lib.isNull(targetRoomMemory.motivations["motivationHarvest"]))
+	if (_.has(Memory, `rooms[${needMemory.targetRoom}].motivations["motivationHarvest"].needs`))
 	{
-		needMemory.demands["rharvester"] = global["motivationHarvest"].getDemands(needMemory.targetRoom).units["rharvester"];
-		needMemory.demands["rharvester"] -= Room.countMotivationUnits(needMemory.targetRoom, "motivationHarvest", "rharvester");
+		let rNeeds = Memory.rooms[needMemory.targetRoom].motivations["motivationHarvest"].needs;
+
+		if (!lib.isNull(rNeeds[needMemory.rMotive]))
+		{
+			needMemory.demands["rharvester"] = global["needHarvestSource"].getUnitDemands(needMemory.targetRoom, rNeeds[needMemory.rMotive.need], "motivationHarvest")["rharvester"];
+			needMemory.demands["rharvester"] -= Room.countMotivationNeedUnits(needMemory.targetRoom , "motivationHarvest", needMemory.rMotive.need , "rharvester");
+		}
+		else
+		{
+			needMemory.demands["rharvester"] = 0;
+		}
 	}
 	else
 	{

@@ -33,7 +33,10 @@ module.exports =
 				if ((room.isMine && room.energyPickupMode >= C.ROOM_ENERGYPICKUPMODE_PRECONTAINER) || room.isRHarvestTarget)
 				{
 					motivationHarvest.init(room.name);
-					room.memory.motivations[motivationHarvest.name].priority = C.PRIORITY_1;
+					if (room.roomMode >= C.ROOM_MODE_NORMAL)
+						room.memory.motivations[motivationHarvest.name].priority = C.PRIORITY_1;
+					else
+						room.memory.motivations[motivationHarvest.name].priority = C.PRIORITY_2;
 				}
 				else if (motivationHarvest.isInit(room.name))
 				{
@@ -410,7 +413,6 @@ module.exports =
 			let creeps = _.filter(Game.creeps , creep => creep.memory.motive.room === creep.room.name && creep.memory.motive.motivation !== "" && creep.memory.motive.need !== "");
 			_.forEach(creeps , creep =>
 			{
-				debug = creep.name === "hauler-2";
 				lib.log(`Creep executing need: ${creep.name}: room: ${creep.room.name} motive room:${creep.memory.motive.room} ${creep.memory.motive.motivation}: ${creep.memory.motive.need}` , debug);
 
 				if (lib.isNull(creep.room.memory.motivations[creep.memory.motive.motivation]))

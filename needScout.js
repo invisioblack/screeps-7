@@ -36,7 +36,6 @@ NeedScout.prototype.getUnitDemands = function (roomName , memory , motivationNam
 		// find scout setting
 		let scoutTarget = _.find(Memory.scoutTargets , {sourceRoom: memory.sourceRoom , targetRoom: memory.targetRoom});
 
-
 		// insure last seen is set
 
 		if (lib.isNull(scoutTarget))
@@ -55,7 +54,9 @@ NeedScout.prototype.getUnitDemands = function (roomName , memory , motivationNam
 				scoutTarget.travelTime = 0;
 			}
 
-			if (!numScouts && (Game.time - scoutTarget.lastSeen - 1) > (scoutTarget.scoutInterval + scoutTarget.travelTime))
+			//console.log(`numScouts: ${numScouts.length} ${(Game.time - scoutTarget.lastSeen - 1)} ${(scoutTarget.scoutInterval + scoutTarget.travelTime)} `);
+
+			if (!numScouts.length && (Game.time - scoutTarget.lastSeen - 1) > (scoutTarget.scoutInterval + scoutTarget.travelTime))
 			{
 				memory.demands["scout"] = 1;
 			}

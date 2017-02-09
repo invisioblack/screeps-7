@@ -259,7 +259,7 @@ Creep.prototype.assignMotive = function (roomName , motivationName , needName)
 	this.resetSource();
 
 	// add to the cache
-	if (this.memory.motive.motivation !== "" && !lib.isNull(global.cache.rooms[this.memory.motive.room]))
+	if (this.memory.motive.motivation !== "" && _.has(global, `cache.rooms[${this.memory.motive.room}]`))
 	{
 		if (lib.isNull(global.cache.rooms[this.memory.motive.room].unitMotive[this.memory.motive.motivation]))
 		{
