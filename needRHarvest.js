@@ -31,12 +31,16 @@ NeedRHarvest.prototype.getUnitDemands = function (roomName , needMemory , motiva
 	needMemory.demands = {};
 	needMemory.demands["rharvester"] = 0;
 
+
+
 	if (_.has(Memory, `rooms[${needMemory.targetRoom}].motivations["motivationHarvest"].needs`))
 	{
+
 		let rNeeds = Memory.rooms[needMemory.targetRoom].motivations["motivationHarvest"].needs;
 
-		if (!lib.isNull(rNeeds[needMemory.rMotive]))
+		if (!lib.isNull(rNeeds[needMemory.rMotive.need]))
 		{
+
 			needMemory.demands["rharvester"] = global["needHarvestSource"].getUnitDemands(needMemory.targetRoom, rNeeds[needMemory.rMotive.need], "motivationHarvest")["rharvester"];
 			needMemory.demands["rharvester"] -= Room.countMotivationNeedUnits(needMemory.targetRoom , "motivationHarvest", needMemory.rMotive.need , "rharvester");
 		}
@@ -52,5 +56,6 @@ NeedRHarvest.prototype.getUnitDemands = function (roomName , needMemory , motiva
 
 	return needMemory.demands;
 };
+
 
 module.exports = new NeedRHarvest();

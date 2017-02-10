@@ -1433,7 +1433,7 @@ if (Room.prototype.hasOwnProperty('maxUnits') === false)
 				this.memory.maxUnits.units.harvester = Room.getSourceIds(this.name) * 2;
 				this.memory.maxUnits.units.rharvester = this.memory.rHarvestTargets.length * 2;
 				this.memory.maxUnits.units.hauler = 4;
-				this.memory.maxUnits.units.claimer = 1;
+				this.memory.maxUnits.units.claimer = this.claimSpawn * 2;
 				this.memory.maxUnits.units.guard = 0;
 				this.memory.maxUnits.units.rangedGuard = 0;
 				this.memory.maxUnits.units.heal = 0;
@@ -1450,7 +1450,7 @@ if (Room.prototype.hasOwnProperty('claimSpawn') === false)
 	Object.defineProperty(Room.prototype , "claimSpawn" , {
 		get: function ()
 		{
-			return !lib.isNull(_.find(Memory.claims , 'spawnRoom', this.name));
+			return _(Memory.claims ).filter('spawnRoom', this.name).size();
 		}
 	});
 }

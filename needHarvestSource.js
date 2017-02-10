@@ -18,11 +18,11 @@ NeedHarvestSource.prototype.constructor = NeedHarvestSource;
 /**
  * getUnitDemands
  * @param roomName
- * @param memory
+ * @param needMemory
  * @param motivationName
  * @returns {{}|*}
  */
-NeedHarvestSource.prototype.getUnitDemands = function (roomName , memory , motivationName)
+NeedHarvestSource.prototype.getUnitDemands = function (roomName , needMemory , motivationName)
 {
 	let unitName = "";
 	let room = Game.rooms[roomName];
@@ -36,10 +36,10 @@ NeedHarvestSource.prototype.getUnitDemands = function (roomName , memory , motiv
 		unitName = "rharvester";
 	}
 	// ---------------------------------------------------
-	memory.demands = {};
-	memory.demands[unitName] = 1;
+	needMemory.demands = {};
+	needMemory.demands[unitName] = 1;
 
-	return memory.demands;
+	return needMemory.demands;
 };
 
 module.exports = new NeedHarvestSource();
