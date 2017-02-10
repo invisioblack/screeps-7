@@ -3,13 +3,13 @@
 let Job = require("Job.prototype")();
 
 /**
- * JobHarvestSource
+ * JobHarvestMinerals
  * @constructor
  */
 let JobHarvestMinerals = function ()
 {
 	Job.call(this);
-	this.name = "jobHarvestSource";
+	this.name = "jobHarvestMinerals";
 };
 
 JobHarvestMinerals.prototype = Object.create(Job.prototype);

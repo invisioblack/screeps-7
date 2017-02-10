@@ -18,7 +18,7 @@ module.exports =
 		'towerPowerFactor': 0.8 ,
 		'towerFillFactor': 0.9 ,
 		'towerRepairFactor': 1 ,
-		"cpuDebug": false ,
+		"cpuDebug": true ,
 		"cpuDetailDebug": false ,
 		"cpuInitDebug": false ,
 		"cpuInitDetailDebug": false ,

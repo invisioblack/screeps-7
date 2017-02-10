@@ -112,7 +112,7 @@ MotivationHarvest.prototype.updateNeeds = function (roomName)
 			{
 				need.containerId = "";
 			}
-			need.priority = C.PRIORITY_2;
+			need.priority = C.PRIORITY_1;
 			need.demands = global[need.type].getUnitDemands(roomName , need , this.name);
 		}
 		else
@@ -121,13 +121,9 @@ MotivationHarvest.prototype.updateNeeds = function (roomName)
 		}
 
 		container = Game.getObjectById(memory.needs[needName].containerId);
-		if (room.memory.energyPickupMode === C.ROOM_ENERGYPICKUPMODE_LINK && !lib.isNull(container) && lib.isNull(need.linkId))
+		if (room.energyPickupMode === C.ROOM_ENERGYPICKUPMODE_LINK && !lib.isNull(container) && lib.isNull(need.linkId))
 		{
-
-			let links = _.map(room.memory.cache.structures[STRUCTURE_LINK] , (id) =>
-			{
-				return Game.getObjectById(id);
-			});
+			let links = Room.getStructuresType(roomName, STRUCTURE_LINK);
 			let link = container.pos.findInRange(links , 1)[0];
 			if (!lib.isNull(link))
 			{
@@ -175,7 +171,7 @@ MotivationHarvest.prototype.updateNeeds = function (roomName)
 		{
 			need.containerId = "";
 		}
-		need.priority = C.PRIORITY_2;
+		need.priority = C.PRIORITY_3;
 		need.demands = global[need.type].getUnitDemands(roomName , need , this.name);
 	}
 

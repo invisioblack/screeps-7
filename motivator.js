@@ -116,31 +116,14 @@ module.exports =
 				{
 					motivationClaim.deInit(room.name);
 				}
+
 				/*******************************************************************************************************
 				 * COMBAT
 				 */
-				/*
-				 // manualTactical --------------------------------------------------------------------------------------
-				 motivationManualTactical.init(room.name);
-				 room.memory.motivations[motivationManualTactical.name].priority = C.PRIORITY_1;
+				// defense ---------------------------------------------------------------------------------------------
+				motivationDefense.init(room.name);
+				room.memory.motivations[motivationDefense.name].priority = C.PRIORITY_2;
 
-				 // garrison --------------------------------------------------------------------------------------------
-				 motivationGarrison.init(room.name);
-				 room.memory.motivations[motivationGarrison.name].priority = C.PRIORITY_2;
-
-				 // supplyTower -----------------------------------------------------------------------------------------
-				 if (room.getIsMine() && room.memory.cache.structures[STRUCTURE_TOWER].length > 0)
-				 {
-				 motivationSupplyTower.init(room.name);
-				 room.memory.motivations[motivationSupplyTower.name].priority = C.PRIORITY_7;
-				 }
-				 else if (motivationSupplyTower.isInit(room.name))
-				 {
-				 motivationSupplyTower.deInit(room.name);
-				 }
-
-
-				 */
 				cpuManager.timerStop(`motivate.r1.mi.${roomName}` , config.cpuInitDetailDebug);
 			});
 
@@ -468,7 +451,7 @@ module.exports =
 								break;
 							case "needHarvestMinerals":
 								lib.log("Creep: " + creep.name + " Working needHarvestMinerals" , debug);
-								jobHavestMinerals.work(creep);
+								jobHarvestMinerals.work(creep);
 								break;
 							case "needRHarvest":
 								lib.log("Creep: " + creep.name + " Working needRHarvest" , debug);

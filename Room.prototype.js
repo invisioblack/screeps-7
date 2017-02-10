@@ -730,6 +730,31 @@ Room.getSpawns = function (roomName)
 	return _( ids ).map( af.goid ).filter().value();
 };
 
+
+Room.getThreat = function (roomName)
+{
+	let room = Game.rooms[roomName];
+	if (!lib.isNull(room))
+	{
+		return room.threat;
+	}
+	else if (_.has(Memory, `rooms[${roomName}].threat`))
+	{
+		return Memory.rooms.threat;
+	}
+	else
+	{
+		return {
+			lastSeen: 0 ,
+			count: 0 ,
+			threats: [] ,
+			level: C.THREAT_STANDBY ,
+			breach: false ,
+			lastUpdated: 0
+		};
+	}
+};
+
 /***********************************************************************************************************************
  * Creep finding functions
  */
@@ -1432,7 +1457,7 @@ if (Room.prototype.hasOwnProperty('maxUnits') === false)
 				this.memory.maxUnits.units.worker = this.controllerLevel < 4 ? 10 : 4;
 				this.memory.maxUnits.units.harvester = Room.getSourceIds(this.name) * 2;
 				this.memory.maxUnits.units.rharvester = this.memory.rHarvestTargets.length * 2;
-				this.memory.maxUnits.units.hauler = 4;
+				this.memory.maxUnits.units.hauler = 4 + this.memory.rHarvestTargets.length;
 				this.memory.maxUnits.units.claimer = this.claimSpawn * 2;
 				this.memory.maxUnits.units.guard = 0;
 				this.memory.maxUnits.units.rangedGuard = 0;

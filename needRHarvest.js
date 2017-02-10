@@ -31,14 +31,12 @@ NeedRHarvest.prototype.getUnitDemands = function (roomName , needMemory , motiva
 	needMemory.demands = {};
 	needMemory.demands["rharvester"] = 0;
 
-
-
 	if (_.has(Memory, `rooms[${needMemory.targetRoom}].motivations["motivationHarvest"].needs`))
 	{
 
 		let rNeeds = Memory.rooms[needMemory.targetRoom].motivations["motivationHarvest"].needs;
 
-		if (!lib.isNull(rNeeds[needMemory.rMotive.need]))
+		if (!lib.isNull(rNeeds) && !lib.isNull(needMemory.rMotive) && !lib.isNull(rNeeds[needMemory.rMotive.need]))
 		{
 
 			needMemory.demands["rharvester"] = global["needHarvestSource"].getUnitDemands(needMemory.targetRoom, rNeeds[needMemory.rMotive.need], "motivationHarvest")["rharvester"];

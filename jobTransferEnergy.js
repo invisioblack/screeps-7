@@ -58,21 +58,18 @@ JobTransferEnergy.prototype.work = function (creep)
 				creep.memory.job.mode = C.JOB_MODE_GETENERGY;
 				creep.deassignMotive();
 			}
+			else if (creep.carry[RESOURCE_ENERGY] === 0 && creep.memory.unit === "hauler")
+			{
+				creep.assignMotive(creep.memory.homeRoom, "motivationHaul", "haulDropoff" + creep.memory.homeRoom);
+			}
 			else
 			{
 				//console.log("return: " + target);
 				creep.resetSource();
 				let result;
-				_.forEach(creep.carry , (v , k) =>
-				{
-					if (v > 0)
-					{
-						result = creep.transfer(target , k);
-						lib.log(creep.name + " transfer result: " + result , false);
-						creep.say("Transfer!");
-						return false;
-					}
-				});
+				result = creep.transfer(target , RESOURCE_ENERGY);
+				lib.log(creep.name + " transfer result: " + result , debug);
+				creep.say("Transfer!");
 
 				if (result === ERR_NOT_IN_RANGE)
 				{
