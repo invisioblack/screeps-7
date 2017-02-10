@@ -32,7 +32,7 @@ JobHaul.prototype.work = function (creep)
 		return;
 	}
 
-	if (creep.carrying === creep.carryCapacity)
+	if (creep.carrying > 0)
 	{
 		creep.say("Full!");
 		creep.resetSource();

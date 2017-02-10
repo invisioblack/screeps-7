@@ -48,7 +48,7 @@ module.exports =
 				if (room.isMine || room.isRHarvestTarget)
 				{
 					motivationHaul.init(room.name);
-					room.memory.motivations[motivationHaul.name].priority = C.PRIORITY_2;
+					room.memory.motivations[motivationHaul.name].priority = C.PRIORITY_4;
 				}
 				else if (motivationHaul.isInit(room.name))
 				{
@@ -61,7 +61,7 @@ module.exports =
 				{
 					motivationSupply.init(room.name);
 					if (room.roomMode >= C.ROOM_MODE_NORMAL)
-						room.memory.motivations[motivationSupply.name].priority = C.PRIORITY_5;
+						room.memory.motivations[motivationSupply.name].priority = C.PRIORITY_3;
 					else
 						room.memory.motivations[motivationSupply.name].priority = C.PRIORITY_1;
 				}
@@ -482,6 +482,10 @@ module.exports =
 							case "needRHaul":
 								lib.log("Creep: " + creep.name + " Working needRHaul" , debug);
 								jobRemote.work(creep);
+								break;
+							case "needDropoff":
+								lib.log("Creep: " + creep.name + " Working needHaul" , debug);
+								jobDropoff.work(creep);
 								break;
 							//motivationScout
 							case "needScout":

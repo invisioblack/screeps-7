@@ -79,33 +79,42 @@ MotivationHaul.prototype.updateNeeds = function (roomName)
 	{
 		if (!lib.isNull(storage))
 		{
+			// create drop off need, this need is used to capture all dropoffs of energy
+			needName = "haulDropoff." + roomName;
+			// create new need if one doesn't exist
+			if (0 === 0 || lib.isNull(memory.needs[needName]))
+			{
+				memory.needs[needName] = {};
+				need = memory.needs[needName];
+				need.name = needName;
+				need.type = "needDropoff";
+				need.targetId = storage.id;
+				need.priority = C.PRIORITY_8;
+				need.demands = global[need.type].getUnitDemands(roomName , need , this.name);
+			}
+			else
+			{
+				need = memory.needs[needName];
+			}
 			// create needs to empty all containers in the room
-
 			_.forEach(containers , container =>
 			{
 				needName = "haulContainer." + container.id;
-				if (container.carrying > 500)
+				// create new need if one doesn't exist
+				if (lib.isNull(memory.needs[needName]))
 				{
-					// create new need if one doesn't exist
-					if (lib.isNull(memory.needs[needName]))
-					{
-						memory.needs[needName] = {};
-						need = memory.needs[needName];
-						need.name = needName;
-						need.type = "needHaul";
-						need.sourceId = container.id;
-						need.targetId = storage.id;
-						need.priority = C.PRIORITY_1;
-						need.demands = global[need.type].getUnitDemands(roomName , need , this.name);
-					}
-					else
-					{
-						need = memory.needs[needName];
-					}
+					memory.needs[needName] = {};
+					need = memory.needs[needName];
+					need.name = needName;
+					need.type = "needHaul";
+					need.sourceId = container.id;
+					need.targetId = storage.id;
+					need.priority = C.PRIORITY_1;
+					need.demands = global[need.type].getUnitDemands(roomName , need , this.name);
 				}
 				else
 				{
-					delete memory.needs[needName];
+					need = memory.needs[needName];
 				}
 			});
 
@@ -185,27 +194,20 @@ MotivationHaul.prototype.updateNeeds = function (roomName)
 			_.forEach(containers , container =>
 			{
 				needName = "haulContainer." + container.id;
-				if (container.carrying > 1000)
+				// create new need if one doesn't exist
+				if (lib.isNull(memory.needs[needName]))
 				{
-					// create new need if one doesn't exist
-					if (lib.isNull(memory.needs[needName]))
-					{
-						memory.needs[needName] = {};
-						need = memory.needs[needName];
-						need.name = needName;
-						need.type = "needHaul";
-						need.sourceId = container.id;
-						need.targetId = storage.id;
-						need.priority = C.PRIORITY_1;
-					}
-					else
-					{
-						need = memory.needs[needName];
-					}
+					memory.needs[needName] = {};
+					need = memory.needs[needName];
+					need.name = needName;
+					need.type = "needHaul";
+					need.sourceId = container.id;
+					need.targetId = storage.id;
+					need.priority = C.PRIORITY_1;
 				}
 				else
 				{
-					delete memory.needs[needName];
+					need = memory.needs[needName];
 				}
 			});
 		}

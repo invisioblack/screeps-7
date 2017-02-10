@@ -31,9 +31,13 @@ jobRemote.prototype.work = function (creep)
 
 	if (creep.room.isMine)
 	{
-		if (!lib.isNull(need.rMotive))
+		if (creep.memory.unit === "hauler" && creep.carrying > 0)
 		{
-			creep.assignMotive(need.targetRoom, need.rMotive.motivation, need.rMotive.need);
+			creep.assignMotive(creep.memory.homeRoom, "motivationHaul", `haulDropoff.${creep.memory.homeRoom}`);
+		}
+		else if (!lib.isNull(need.rMotive))
+		{
+			creep.assignMotive(need.targetRoom , need.rMotive.motivation , need.rMotive.need);
 		}
 		else
 			creep.deassignMotive(need.targetRoom);

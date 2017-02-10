@@ -15,14 +15,23 @@ let NeedHaul = function ()
 NeedHaul.prototype = Object.create(Need.prototype);
 NeedHaul.prototype.constructor = NeedHaul;
 
-NeedHaul.prototype.getUnitDemands = function (roomName , memory , motivationName)
+NeedHaul.prototype.getUnitDemands = function (roomName , needMemory , motivationName)
 {
-	memory.demands = {};
-	memory.demands["hauler"] = 1;
+	let container = Game.getObjectById(needMemory.sourceId);
+	needMemory.demands = {};
 
-	this.fillUnitDemands(memory.demands);
+	if (!lib.isNull(container) && container.carrying > 1000)
+	{
+		needMemory.demands["hauler"] = 1;
+	}
+	else
+	{
+		needMemory.demands["hauler"] = 0;
+	}
 
-	return memory.demands;
+	this.fillUnitDemands(needMemory.demands);
+
+	return needMemory.demands;
 };
 
 module.exports = new NeedHaul();
